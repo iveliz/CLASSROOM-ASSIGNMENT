@@ -6,7 +6,7 @@ import UpdatePasswordForm from '@/Domains/Profile/UpdatePasswordForm';
 import UpdateProfileInformationForm from '@/Domains/Profile/UpdateProfileInformationForm';
 import useTypedPage from '@/Hooks/useTypedPage';
 import JetSectionBorder from '@/Jetstream/SectionBorder';
-import AppLayout from '@/Layouts/AppLayout';
+import AppLayout from '@/Layouts/AppLayoutTeacher';
 import { Session } from '@/types';
 
 interface Props {
