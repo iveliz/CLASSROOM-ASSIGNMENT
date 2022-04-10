@@ -2,3 +2,7 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 @import 'bootstrap';
+
+.colorPrimary{
+  background-color: #2B629C;
+}

@@ -7297,7 +7297,7 @@ function JetNavLink(_a) {
   var active = _a.active,
       href = _a.href,
       children = _a.children;
-  var classes = active ? 'inline-flex items-center px-1 pt-1 border-b-2 border-indigo-400 text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-indigo-700 transition' : 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition';
+  var classes = active ? 'inline-flex items-center px-1 pt-1 border-b-4 border-purple-50 text-sm font-medium leading-5 text-white focus:outline-none focus:border-indigo-700 transition' : 'inline-flex items-center px-1 pt-1 border-b-4 border-transparent text-sm font-medium leading-5 text-white hover:text-white hover:border-transparent focus:outline-none focus:text-white focus:border-transparent transition';
   return react_1["default"].createElement(inertia_react_1.InertiaLink, {
     href: href,
     className: classes
@@ -7669,7 +7669,7 @@ function AppLayout(_a) {
   }), react_1["default"].createElement(Banner_1["default"], null), react_1["default"].createElement("div", {
     className: "min-h-screen bg-gray-100"
   }, react_1["default"].createElement("nav", {
-    className: "colorPrimary border-b border-gray-100"
+    className: "colorPrimary border-b border-gray-100 drop-shadow-2xl"
   }, react_1["default"].createElement("div", {
     className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
   }, react_1["default"].createElement("div", {
