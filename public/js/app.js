@@ -7504,6 +7504,40 @@ exports["default"] = JetSectionTitle;
 
 /***/ }),
 
+/***/ "./resources/js/Jetstream/SolicitarCard.tsx":
+/*!**************************************************!*\
+  !*** ./resources/js/Jetstream/SolicitarCard.tsx ***!
+  \**************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+function JetAuthenticationCard(_a) {
+  var children = _a.children;
+  return react_1["default"].createElement("div", {
+    className: "min-h-screen flex flex-col sm:justify-center items-center bg-gray-100"
+  }, react_1["default"].createElement("div", null), react_1["default"].createElement("div", {
+    className: "w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg"
+  }, children));
+}
+
+exports["default"] = JetAuthenticationCard;
+
+/***/ }),
+
 /***/ "./resources/js/Jetstream/ValidationErrors.tsx":
 /*!*****************************************************!*\
   !*** ./resources/js/Jetstream/ValidationErrors.tsx ***!
@@ -8942,16 +8976,18 @@ var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/r
 
 var AppLayoutTeacher_1 = __importDefault(__webpack_require__(/*! @/Layouts/AppLayoutTeacher */ "./resources/js/Layouts/AppLayoutTeacher.tsx"));
 
+var SolicitarCard_1 = __importDefault(__webpack_require__(/*! @/Jetstream/SolicitarCard */ "./resources/js/Jetstream/SolicitarCard.tsx"));
+
 function default_1() {
-  return react_1["default"].createElement(AppLayoutTeacher_1["default"], {
+  return react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement(AppLayoutTeacher_1["default"], {
     title: "Informacion"
-  }, react_1["default"].createElement("div", {
-    className: "py-12"
-  }, react_1["default"].createElement("div", {
+  }, react_1["default"].createElement("div", null, react_1["default"].createElement("div", {
     className: "max-w-7xl mx-auto sm:px-6 lg:px-8"
   }, react_1["default"].createElement("div", {
     className: "bg-white overflow-hidden shadow-xl sm:rounded-lg"
-  }, react_1["default"].createElement("h1", null, "Solicitar")))));
+  }))), react_1["default"].createElement(SolicitarCard_1["default"], null, react_1["default"].createElement("h1", {
+    className: 'text-center'
+  }, "Solicitar Aula"))));
 }
 
 exports["default"] = default_1;
