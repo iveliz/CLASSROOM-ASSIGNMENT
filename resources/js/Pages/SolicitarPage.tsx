@@ -5,6 +5,14 @@ import SolicitarCard from '@/Jetstream/SolicitarCard';
 import Select from 'react-select';
 import Calendar from '@/Jetstream/Calendar';
 
+const grupo = [
+  { label: '1', value: '1' },
+  { label: '2', value: '2' },
+  { label: '3', value: '3' },
+]
+
+
+
 const materias= [
   { label: 'Introduccion a la Programación', value: 'Leticia Blanco' },
   { label: 'Elementos de la Programación', value: 'Leticia Blanco' },
@@ -47,6 +55,7 @@ export default function () {
             <Select
               options={docentes}
               isMulti
+              noOptionsMessage={() => 'No hay opciones disponibles'}
               placeholder="Selecciona o Busca Docentes"
             ></Select>
           </div>
@@ -54,7 +63,18 @@ export default function () {
             <p className="text-left">Materias</p>
             <Select
               options={materias}
+              noOptionsMessage={() => 'No hay opciones disponibles'}
               placeholder="Materia"
+            ></Select>
+          </div>
+          <div>
+            <p className="text-left">Grupo(s)</p>
+            <Select
+              options={grupo}
+              isSearchable={false}
+              isMulti
+              noOptionsMessage={() => 'No hay opciones disponibles'}
+              placeholder="Grupo"
             ></Select>
           </div>
           <div className="grid grid-flow-col auto-cols-max">
@@ -68,6 +88,7 @@ export default function () {
                 options={horarios}
                 placeholder="06:45"
                 isSearchable={false}
+                noOptionsMessage={() => 'No hay opciones disponibles'}
                 onChange={(opt: { label: any; value: any }) =>
                   console.log(opt.label, opt.value)
                 }

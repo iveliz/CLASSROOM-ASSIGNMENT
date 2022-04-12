@@ -14252,6 +14252,16 @@ var react_select_1 = __importDefault(__webpack_require__(/*! react-select */ "./
 
 var Calendar_1 = __importDefault(__webpack_require__(/*! @/Jetstream/Calendar */ "./resources/js/Jetstream/Calendar.tsx"));
 
+var grupo = [{
+  label: '1',
+  value: '1'
+}, {
+  label: '2',
+  value: '2'
+}, {
+  label: '3',
+  value: '3'
+}];
 var materias = [{
   label: 'Introduccion a la Programación',
   value: 'Leticia Blanco'
@@ -14321,12 +14331,28 @@ function default_1() {
   }, "Nombre(s) Docente(s)"), react_1["default"].createElement(react_select_1["default"], {
     options: docentes,
     isMulti: true,
+    noOptionsMessage: function noOptionsMessage() {
+      return 'No hay opciones disponibles';
+    },
     placeholder: "Selecciona o Busca Docentes"
   })), react_1["default"].createElement("div", null, react_1["default"].createElement("p", {
     className: "text-left"
   }, "Materias"), react_1["default"].createElement(react_select_1["default"], {
     options: materias,
+    noOptionsMessage: function noOptionsMessage() {
+      return 'No hay opciones disponibles';
+    },
     placeholder: "Materia"
+  })), react_1["default"].createElement("div", null, react_1["default"].createElement("p", {
+    className: "text-left"
+  }, "Grupo(s)"), react_1["default"].createElement(react_select_1["default"], {
+    options: grupo,
+    isSearchable: false,
+    isMulti: true,
+    noOptionsMessage: function noOptionsMessage() {
+      return 'No hay opciones disponibles';
+    },
+    placeholder: "Grupo"
   })), react_1["default"].createElement("div", {
     className: "grid grid-flow-col auto-cols-max"
   }, react_1["default"].createElement("div", {
@@ -14335,6 +14361,9 @@ function default_1() {
     options: horarios,
     placeholder: "06:45",
     isSearchable: false,
+    noOptionsMessage: function noOptionsMessage() {
+      return 'No hay opciones disponibles';
+    },
     onChange: function onChange(opt) {
       return console.log(opt.label, opt.value);
     }
