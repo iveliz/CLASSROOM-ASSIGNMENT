@@ -867,10 +867,19 @@ Ensure the default browser behavior of the `hidden` attribute.
   list-style-position: inside;
 }.list-disc{
   list-style-type: disc;
+}.auto-cols-max{
+  grid-auto-columns: -webkit-max-content;
+  grid-auto-columns: max-content;
+}.grid-flow-col{
+  grid-auto-flow: column;
 }.grid-cols-6{
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }.grid-cols-1{
   grid-template-columns: repeat(1, minmax(0, 1fr));
+}.grid-cols-3{
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}.grid-cols-2{
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }.flex-row{
   flex-direction: row;
 }.flex-col{
