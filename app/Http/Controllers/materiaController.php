@@ -48,31 +48,10 @@ class materiaController extends Controller
      */
     public function show($idDocentes)
     {
-        foreach($idDocentes as $idDocente){
-          $contador=0;
-          //materias como objeto?sacar solo el nombre
-          $materiasIdDocente = docente_materias:: find($idDocente)->id_materia;
-          
-          $listMateriasDocente= [];
-          $listMateriasDocente=Arr::add( $listMateriasDocente,count, $materiasIdDocente);
-          $contador=$contador+1;
-        }
-        $materiasComun=array();
-        $tamaño=count($listMateriasDocente);
-        for ($x = 0; $x < $tamaño-1; $x++) {
-            $ListMaterias= $listMateriasDocente[$x];
-            $tamañoLista=count($ListMaterias);
-            for ($i = 0; $i <  $tamañoLista; $i++) {
-                $materia = $listMateriasDocente[$i];
-                 if (in_array($materia,$listMateriasDocente[$x+1] ) and !(in_array($materia,$materiasComun[$x+1] ))){
-                          array_push($materiasComun, $materia);
-                     }
-                    }
-                
-            
-        }
-        return Inertia::render('solicitar', ['materiasComun' => $materiasComun]);
-        }
+    return Inertia::render('solicitar', [
+        'materiasIdDocente' => docente_materias:: find(idDocentes)->id_materia,//$comments = Post::find(1)->comments;
+    ]);
+    }
              
     
 
