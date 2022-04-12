@@ -6325,6 +6325,82 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./resources/js/Const/docentesPrueba.tsx":
+/*!***********************************************!*\
+  !*** ./resources/js/Const/docentesPrueba.tsx ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.horarios = void 0;
+exports.horarios = [{
+  label: 'Leticia Blanco',
+  value: '06:45'
+}, {
+  label: 'Vladimir Costa',
+  value: '08:15'
+}, {
+  label: 'Rosemary Torrico',
+  value: '11:15'
+}, {
+  label: 'Boris Calancha',
+  value: '12:45'
+}, {
+  label: 'Marcelo Flores',
+  value: '14:15'
+}];
+
+/***/ }),
+
+/***/ "./resources/js/Const/horarios.tsx":
+/*!*****************************************!*\
+  !*** ./resources/js/Const/horarios.tsx ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.horarios = void 0;
+exports.horarios = [{
+  label: '06:45',
+  value: '06:45'
+}, {
+  label: '08:15',
+  value: '08:15'
+}, {
+  label: '11:15',
+  value: '11:15'
+}, {
+  label: '12:45',
+  value: '12:45'
+}, {
+  label: '14:15',
+  value: '14:15'
+}, {
+  label: '15:45',
+  value: '15:45'
+}, {
+  label: '17:15',
+  value: '17:15'
+}, {
+  label: '18:45',
+  value: '18:45'
+}, {
+  label: '20:15',
+  value: '20:15'
+}];
+
+/***/ }),
+
 /***/ "./resources/js/Domains/API/APITokenManager.tsx":
 /*!******************************************************!*\
   !*** ./resources/js/Domains/API/APITokenManager.tsx ***!
@@ -11034,6 +11110,46 @@ exports["default"] = Show;
 "use strict";
 
 
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  var desc = Object.getOwnPropertyDescriptor(m, k);
+
+  if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+    desc = {
+      enumerable: true,
+      get: function get() {
+        return m[k];
+      }
+    };
+  }
+
+  Object.defineProperty(o, k2, desc);
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
     "default": mod
@@ -11052,34 +11168,9 @@ var SolicitarCard_1 = __importDefault(__webpack_require__(/*! @/Jetstream/Solici
 
 var react_select_1 = __importDefault(__webpack_require__(/*! react-select */ "./node_modules/react-select/dist/react-select.browser.esm.js"));
 
-var horarios = [{
-  label: '06:45',
-  value: '06:45'
-}, {
-  label: '08:15',
-  value: '08:15'
-}, {
-  label: '11:15',
-  value: '11:15'
-}, {
-  label: '12:45',
-  value: '12:45'
-}, {
-  label: '14:15',
-  value: '14:15'
-}, {
-  label: '15:45',
-  value: '15:45'
-}, {
-  label: '17:15',
-  value: '17:15'
-}, {
-  label: '18:45',
-  value: '18:45'
-}, {
-  label: '20:15',
-  value: '20:15'
-}];
+var horarios = __importStar(__webpack_require__(/*! ../Const/horarios */ "./resources/js/Const/horarios.tsx"));
+
+var docentes = __importStar(__webpack_require__(/*! ../Const/docentesPrueba */ "./resources/js/Const/docentesPrueba.tsx"));
 
 function default_1() {
   return react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement(AppLayoutTeacher_1["default"], {
@@ -11090,7 +11181,13 @@ function default_1() {
     className: "bg-white overflow-hidden shadow-xl sm:rounded-lg"
   }))), react_1["default"].createElement(SolicitarCard_1["default"], null, react_1["default"].createElement("h1", {
     className: "text-center"
-  }, "Solicitar Aula"), react_1["default"].createElement("p", null, "Hora de inicio"), react_1["default"].createElement("div", null, react_1["default"].createElement(react_select_1["default"], {
+  }, "Solicitar Aula"), react_1["default"].createElement("div", null, react_1["default"].createElement("p", {
+    className: "text-left"
+  }, "Nombre(s) Docente(s)"), react_1["default"].createElement(react_select_1["default"], {
+    options: docentes,
+    isMulti: true,
+    placeholder: "Selecciona o Busca Docentes"
+  })), react_1["default"].createElement("p", null, "Hora de inicio"), react_1["default"].createElement("div", null, react_1["default"].createElement(react_select_1["default"], {
     options: horarios,
     placeholder: "06:45",
     onChange: function onChange(opt) {
