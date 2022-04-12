@@ -14252,6 +14252,16 @@ var react_select_1 = __importDefault(__webpack_require__(/*! react-select */ "./
 
 var Calendar_1 = __importDefault(__webpack_require__(/*! @/Jetstream/Calendar */ "./resources/js/Jetstream/Calendar.tsx"));
 
+var materias = [{
+  label: 'Introduccion a la Programación',
+  value: 'Leticia Blanco'
+}, {
+  label: 'Elementos de la Programación',
+  value: 'Leticia Blanco'
+}, {
+  label: 'Programacion web',
+  value: 'Leticia Blanco'
+}];
 var docentes = [{
   label: 'Leticia Blanco',
   value: 'Leticia Blanco'
@@ -14312,6 +14322,11 @@ function default_1() {
     options: docentes,
     isMulti: true,
     placeholder: "Selecciona o Busca Docentes"
+  })), react_1["default"].createElement("div", null, react_1["default"].createElement("p", {
+    className: "text-left"
+  }, "Materias"), react_1["default"].createElement(react_select_1["default"], {
+    options: materias,
+    placeholder: "Materia"
   })), react_1["default"].createElement("div", {
     className: "grid grid-flow-col auto-cols-max"
   }, react_1["default"].createElement("div", {
@@ -14319,6 +14334,7 @@ function default_1() {
   }, react_1["default"].createElement("p", null, "Fecha Inicio"), react_1["default"].createElement(Calendar_1["default"], null)), react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Hora de inicio"), react_1["default"].createElement(react_select_1["default"], {
     options: horarios,
     placeholder: "06:45",
+    isSearchable: false,
     onChange: function onChange(opt) {
       return console.log(opt.label, opt.value);
     }

@@ -4,6 +4,14 @@ import AppLayout from '@/Layouts/AppLayoutTeacher';
 import SolicitarCard from '@/Jetstream/SolicitarCard';
 import Select from 'react-select';
 import Calendar from '@/Jetstream/Calendar';
+
+const materias= [
+  { label: 'Introduccion a la Programación', value: 'Leticia Blanco' },
+  { label: 'Elementos de la Programación', value: 'Leticia Blanco' },
+  { label: 'Programacion web', value: 'Leticia Blanco' },
+]
+
+
 const docentes = [
   { label: 'Leticia Blanco', value: 'Leticia Blanco' },
   { label: 'Vladimir Costa', value: 'Leticia Blanco' },
@@ -42,6 +50,13 @@ export default function () {
               placeholder="Selecciona o Busca Docentes"
             ></Select>
           </div>
+          <div>
+            <p className="text-left">Materias</p>
+            <Select
+              options={materias}
+              placeholder="Materia"
+            ></Select>
+          </div>
           <div className="grid grid-flow-col auto-cols-max">
             <div className='mr-3'>
               <p>Fecha Inicio</p>
@@ -52,6 +67,7 @@ export default function () {
               <Select
                 options={horarios}
                 placeholder="06:45"
+                isSearchable={false}
                 onChange={(opt: { label: any; value: any }) =>
                   console.log(opt.label, opt.value)
                 }
