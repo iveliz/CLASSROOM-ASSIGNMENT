@@ -14,18 +14,18 @@ const grupo = [
 
 
 const materias= [
-  { label: 'Introduccion a la Programación', value: 'Leticia Blanco' },
-  { label: 'Elementos de la Programación', value: 'Leticia Blanco' },
-  { label: 'Programacion web', value: 'Leticia Blanco' },
+  { label: 'Introduccion a la Programación', value: 'Introduccion a la Programación' },
+  { label: 'Elementos de la Programación', value: 'Elementos de la Programación' },
+  { label: 'Programacion web', value: 'Programacion web' },
 ]
 
 
 const docentes = [
   { label: 'Leticia Blanco', value: 'Leticia Blanco' },
-  { label: 'Vladimir Costa', value: 'Leticia Blanco' },
-  { label: 'Rosemary Torrico', value: 'Leticia Blanco' },
-  { label: 'Boris Calancha', value: 'Leticia Blanco' },
-  { label: 'Marcelo Flores', value: 'Leticia Blanco' },
+  { label: 'Vladimir Costa', value:'Vladimir Costa' },
+  { label: 'Rosemary Torrico', value: 'Rosemary Torrico' },
+  { label: 'Boris Calancha', value: 'Boris Calancha' },
+  { label: 'Marcelo Flores', value: 'Marcelo Flores'},
 ];
 const horarios = [
   { label: '06:45', value: '06:45' },
@@ -43,6 +43,7 @@ export default function () {
   return (
     <>
       <AppLayout title="Informacion">
+
         <div>
           <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div className="bg-white overflow-hidden shadow-xl sm:rounded-lg"></div>
@@ -50,6 +51,7 @@ export default function () {
         </div>
         <SolicitarCard>
           <h1 className="text-center">Solicitar Aula</h1>
+          <div className='flex flex-col space-y-4'>
           <div>
             <p className="text-left">Nombre(s) Docente(s)</p>
             <Select
@@ -95,6 +97,8 @@ export default function () {
               ></Select>
             </div>
           </div>
+          </div>
+         
         </SolicitarCard>
       </AppLayout>
     </>

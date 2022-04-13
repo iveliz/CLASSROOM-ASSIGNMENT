@@ -6,3 +6,13 @@
 .colorPrimary{
   background-color: #2B629C;
 }
+
+.react-datepicker-wrapper,
+.react-datepicker__input-container,
+.react-datepicker__input-container input {
+  border-width: 1;
+  border-radius: 0.25rem;
+  border-style: solid;
+  border-color: #cccccc;
+  box-sizing: border-box;
+}
