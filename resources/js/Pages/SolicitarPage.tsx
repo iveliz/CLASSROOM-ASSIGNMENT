@@ -4,7 +4,8 @@ import AppLayout from '@/Layouts/AppLayoutTeacher';
 import SolicitarCard from '@/Jetstream/SolicitarCard';
 import Select from 'react-select';
 import Calendar from '@/Jetstream/Calendar';
-
+import { NumberPicker } from 'react-widgets/cjs';
+import "react-widgets/styles.css";
 const grupo = [
   { label: '1', value: '1' },
   { label: '2', value: '2' },
@@ -80,11 +81,11 @@ export default function () {
             ></Select>
           </div>
           <div className="grid grid-flow-col auto-cols-max">
-            <div className='mr-3'>
+            <div className='mr-8'>
               <p>Fecha Inicio</p>
               <Calendar></Calendar>
             </div>
-            <div>
+            <div className='mr-8'>
               <p>Hora de inicio</p>
               <Select
                 options={horarios}
@@ -95,6 +96,15 @@ export default function () {
                   console.log(opt.label, opt.value)
                 }
               ></Select>
+            </div>
+            <div>
+              <p>Periodos</p>
+              <NumberPicker
+              
+               defaultValue={1}
+               min={1}
+               
+              ></NumberPicker>
             </div>
           </div>
           </div>

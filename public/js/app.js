@@ -7298,6 +7298,800 @@ function withinMaxClamp(min, value, max) {
 
 /***/ }),
 
+/***/ "./node_modules/@restart/hooks/esm/useCallbackRef.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useCallbackRef.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ useCallbackRef)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+/**
+ * A convenience hook around `useState` designed to be paired with
+ * the component [callback ref](https://reactjs.org/docs/refs-and-the-dom.html#callback-refs) api.
+ * Callback refs are useful over `useRef()` when you need to respond to the ref being set
+ * instead of lazily accessing it in an effect.
+ *
+ * ```ts
+ * const [element, attachRef] = useCallbackRef<HTMLDivElement>()
+ *
+ * useEffect(() => {
+ *   if (!element) return
+ *
+ *   const calendar = new FullCalendar.Calendar(element)
+ *
+ *   return () => {
+ *     calendar.destroy()
+ *   }
+ * }, [element])
+ *
+ * return <div ref={attachRef} />
+ * ```
+ *
+ * @category refs
+ */
+
+function useCallbackRef() {
+  return (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+}
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useCommittedRef.js":
+/*!************************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useCommittedRef.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+/**
+ * Creates a `Ref` whose value is updated in an effect, ensuring the most recent
+ * value is the one rendered with. Generally only required for Concurrent mode usage
+ * where previous work in `render()` may be discarded before being used.
+ *
+ * This is safe to access in an event handler.
+ *
+ * @param value The `Ref` value
+ */
+
+function useCommittedRef(value) {
+  var ref = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(value);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    ref.current = value;
+  }, [value]);
+  return ref;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (useCommittedRef);
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useCustomEffect.js":
+/*!************************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useCustomEffect.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _useMounted__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./useMounted */ "./node_modules/@restart/hooks/esm/useMounted.js");
+
+
+
+function useCustomEffect(effect, dependencies, isEqualOrOptions) {
+  var isMounted = (0,_useMounted__WEBPACK_IMPORTED_MODULE_1__["default"])();
+
+  var _ref = typeof isEqualOrOptions === 'function' ? {
+    isEqual: isEqualOrOptions
+  } : isEqualOrOptions,
+      isEqual = _ref.isEqual,
+      _ref$effectHook = _ref.effectHook,
+      effectHook = _ref$effectHook === void 0 ? react__WEBPACK_IMPORTED_MODULE_0__.useEffect : _ref$effectHook;
+
+  var dependenciesRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();
+  dependenciesRef.current = dependencies;
+  var cleanupRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+  effectHook(function () {
+    // If the ref the is `null` it's either the first effect or the last effect
+    // ran and was cleared, meaning _this_ update should run, b/c the equality
+    // check failed on in the cleanup of the last effect.
+    if (cleanupRef.current === null) {
+      var cleanup = effect();
+
+      cleanupRef.current = function () {
+        if (isMounted() && isEqual(dependenciesRef.current, dependencies)) {
+          return;
+        }
+
+        cleanupRef.current = null;
+        if (cleanup) cleanup();
+      };
+    }
+
+    return cleanupRef.current;
+  });
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useDebugValue)(effect);
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (useCustomEffect);
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useEventCallback.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useEventCallback.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ useEventCallback)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _useCommittedRef__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./useCommittedRef */ "./node_modules/@restart/hooks/esm/useCommittedRef.js");
+
+
+function useEventCallback(fn) {
+  var ref = (0,_useCommittedRef__WEBPACK_IMPORTED_MODULE_1__["default"])(fn);
+  return (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {
+    return ref.current && ref.current.apply(ref, arguments);
+  }, [ref]);
+}
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useEventListener.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useEventListener.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ useEventListener)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _useEventCallback__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./useEventCallback */ "./node_modules/@restart/hooks/esm/useEventCallback.js");
+
+
+
+/**
+ * Attaches an event handler outside directly to specified DOM element
+ * bypassing the react synthetic event system.
+ *
+ * @param element The target to listen for events on
+ * @param event The DOM event name
+ * @param handler An event handler
+ * @param capture Whether or not to listen during the capture event phase
+ */
+function useEventListener(eventTarget, event, listener, capture) {
+  if (capture === void 0) {
+    capture = false;
+  }
+
+  var handler = (0,_useEventCallback__WEBPACK_IMPORTED_MODULE_1__["default"])(listener);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    var target = typeof eventTarget === 'function' ? eventTarget() : eventTarget;
+    target.addEventListener(event, handler, capture);
+    return function () {
+      return target.removeEventListener(event, handler, capture);
+    };
+  }, [eventTarget]);
+}
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useFocusManager.js":
+/*!************************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useFocusManager.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ useFocusManager)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _useEventCallback__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./useEventCallback */ "./node_modules/@restart/hooks/esm/useEventCallback.js");
+/* harmony import */ var _useMounted__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./useMounted */ "./node_modules/@restart/hooks/esm/useMounted.js");
+
+
+
+
+/**
+ * useFocusManager provides a way to track and manage focus as it moves around
+ * a container element. An `onChange` is fired when focus enters or leaves the
+ * element, but not when it moves around inside the element, similar to
+ * `pointerenter` and `pointerleave` DOM events.
+ *
+ * ```tsx
+ * const [focused, setFocusState] = useState(false)
+ *
+ * const { onBlur, onFocus } = useFocusManager({
+ *   onChange: nextFocused => setFocusState(nextFocused)
+ * })
+ *
+ * return (
+ *   <div tabIndex="-1" onFocus={onFocus} onBlur={onBlur}>
+ *     {String(focused)}
+ *     <input />
+ *     <input />
+ *
+ *     <button>A button</button>
+ *   </div>
+ * ```
+ *
+ * @returns a memoized FocusController containing event handlers
+ */
+function useFocusManager(opts) {
+  var isMounted = (0,_useMounted__WEBPACK_IMPORTED_MODULE_2__["default"])();
+  var lastFocused = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();
+  var handle = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();
+  var willHandle = (0,_useEventCallback__WEBPACK_IMPORTED_MODULE_1__["default"])(opts.willHandle);
+  var didHandle = (0,_useEventCallback__WEBPACK_IMPORTED_MODULE_1__["default"])(opts.didHandle);
+  var onChange = (0,_useEventCallback__WEBPACK_IMPORTED_MODULE_1__["default"])(opts.onChange);
+  var isDisabled = (0,_useEventCallback__WEBPACK_IMPORTED_MODULE_1__["default"])(opts.isDisabled);
+  var handleFocusChange = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (focused, event) {
+    if (event && event.persist) event.persist();
+    if (willHandle && willHandle(focused, event) === false) return;
+    clearTimeout(handle.current);
+    handle.current = window.setTimeout(function () {
+      if (focused !== lastFocused.current) {
+        if (didHandle) didHandle(focused, event); // only fire a change when unmounted if its a blur
+
+        if (isMounted() || !focused) {
+          lastFocused.current = focused;
+          onChange && onChange(focused, event);
+        }
+      }
+    });
+  }, [isMounted, willHandle, didHandle, onChange, lastFocused]);
+  var handleBlur = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (event) {
+    if (!isDisabled()) handleFocusChange(false, event);
+  }, [handleFocusChange, isDisabled]);
+  var handleFocus = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (event) {
+    if (!isDisabled()) handleFocusChange(true, event);
+  }, [handleFocusChange, isDisabled]);
+  return (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(function () {
+    return {
+      onBlur: handleBlur,
+      onFocus: handleFocus
+    };
+  }, [handleBlur, handleFocus]);
+}
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useGlobalListener.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useGlobalListener.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ useGlobalListener)
+/* harmony export */ });
+/* harmony import */ var _useEventListener__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./useEventListener */ "./node_modules/@restart/hooks/esm/useEventListener.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+
+
+/**
+ * Attaches an event handler outside directly to the `document`,
+ * bypassing the react synthetic event system.
+ *
+ * ```ts
+ * useGlobalListener('keydown', (event) => {
+ *  console.log(event.key)
+ * })
+ * ```
+ *
+ * @param event The DOM event name
+ * @param handler An event handler
+ * @param capture Whether or not to listen during the capture event phase
+ */
+function useGlobalListener(event, handler, capture) {
+  if (capture === void 0) {
+    capture = false;
+  }
+
+  var documentTarget = (0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(function () {
+    return document;
+  }, []);
+  return (0,_useEventListener__WEBPACK_IMPORTED_MODULE_0__["default"])(documentTarget, event, handler, capture);
+}
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useImmediateUpdateEffect.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useImmediateUpdateEffect.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _useUpdateImmediateEffect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./useUpdateImmediateEffect */ "./node_modules/@restart/hooks/esm/useUpdateImmediateEffect.js");
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_useUpdateImmediateEffect__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useMergedRefs.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useMergedRefs.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "mergeRefs": () => (/* binding */ mergeRefs)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+
+var toFnRef = function toFnRef(ref) {
+  return !ref || typeof ref === 'function' ? ref : function (value) {
+    ref.current = value;
+  };
+};
+
+function mergeRefs(refA, refB) {
+  var a = toFnRef(refA);
+  var b = toFnRef(refB);
+  return function (value) {
+    if (a) a(value);
+    if (b) b(value);
+  };
+}
+/**
+ * Create and returns a single callback ref composed from two other Refs.
+ *
+ * ```tsx
+ * const Button = React.forwardRef((props, ref) => {
+ *   const [element, attachRef] = useCallbackRef<HTMLButtonElement>();
+ *   const mergedRef = useMergedRefs(ref, attachRef);
+ *
+ *   return <button ref={mergedRef} {...props}/>
+ * })
+ * ```
+ *
+ * @param refA A Callback or mutable Ref
+ * @param refB A Callback or mutable Ref
+ * @category refs
+ */
+
+function useMergedRefs(refA, refB) {
+  return (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(function () {
+    return mergeRefs(refA, refB);
+  }, [refA, refB]);
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (useMergedRefs);
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useMounted.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useMounted.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ useMounted)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+/**
+ * Track whether a component is current mounted. Generally less preferable than
+ * properlly canceling effects so they don't run after a component is unmounted,
+ * but helpful in cases where that isn't feasible, such as a `Promise` resolution.
+ *
+ * @returns a function that returns the current isMounted state of the component
+ *
+ * ```ts
+ * const [data, setData] = useState(null)
+ * const isMounted = useMounted()
+ *
+ * useEffect(() => {
+ *   fetchdata().then((newData) => {
+ *      if (isMounted()) {
+ *        setData(newData);
+ *      }
+ *   })
+ * })
+ * ```
+ */
+
+function useMounted() {
+  var mounted = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(true);
+  var isMounted = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(function () {
+    return mounted.current;
+  });
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    mounted.current = true;
+    return function () {
+      mounted.current = false;
+    };
+  }, []);
+  return isMounted.current;
+}
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useMutationObserver.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useMutationObserver.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _useCustomEffect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./useCustomEffect */ "./node_modules/@restart/hooks/esm/useCustomEffect.js");
+/* harmony import */ var dequal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! dequal */ "./node_modules/dequal/dist/index.mjs");
+/* harmony import */ var _useImmediateUpdateEffect__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./useImmediateUpdateEffect */ "./node_modules/@restart/hooks/esm/useImmediateUpdateEffect.js");
+/* harmony import */ var _useEventCallback__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./useEventCallback */ "./node_modules/@restart/hooks/esm/useEventCallback.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+
+
+
+
+
+function isDepsEqual(_ref, _ref2) {
+  var nextElement = _ref[0],
+      nextConfig = _ref[1];
+  var prevElement = _ref2[0],
+      prevConfig = _ref2[1];
+  return nextElement === prevElement && (0,dequal__WEBPACK_IMPORTED_MODULE_1__.dequal)(nextConfig, prevConfig);
+}
+/**
+ * Observe mutations on a DOM node or tree of DOM nodes.
+ * Depends on the `MutationObserver` api.
+ *
+ * ```tsx
+ * const [element, attachRef] = useCallbackRef(null);
+ *
+ * useMutationObserver(element, { subtree: true }, (records) => {
+ *
+ * });
+ *
+ * return (
+ *   <div ref={attachRef} />
+ * )
+ * ```
+ *
+ * @param element The DOM element to observe
+ * @param config The observer configuration
+ * @param callback A callback fired when a mutation occurs
+ */
+
+
+function useMutationObserver(element, config, callback) {
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_4__.useState)(null),
+      records = _useState[0],
+      setRecords = _useState[1];
+
+  var handler = (0,_useEventCallback__WEBPACK_IMPORTED_MODULE_3__["default"])(callback || setRecords);
+  (0,_useCustomEffect__WEBPACK_IMPORTED_MODULE_0__["default"])(function () {
+    if (!element) return; // The behavior around reusing mutation observers is confusing
+    // observing again _should_ disable the last listener but doesn't
+    // seem to always be the case, maybe just in JSDOM? In any case the cost
+    // to redeclaring it is gonna be fairly low anyway, so make it simple
+
+    var observer = new MutationObserver(handler);
+    observer.observe(element, config);
+    return function () {
+      observer.disconnect();
+    };
+  }, [element, config], {
+    isEqual: isDepsEqual,
+    // Intentionally done in render, otherwise observer will miss any
+    // changes made to the DOM during this update
+    effectHook: _useImmediateUpdateEffect__WEBPACK_IMPORTED_MODULE_2__["default"]
+  });
+  return callback ? void 0 : records || [];
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (useMutationObserver);
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useStableMemo.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useStableMemo.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ useStableMemo)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+
+function isEqual(a, b) {
+  if (a.length !== b.length) return false;
+
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Identical to `useMemo` _except_ that it provides a semantic guarantee that
+ * values will not be invalidated unless the dependencies change. This is unlike
+ * the built in `useMemo` which may discard memoized values for performance reasons.
+ *
+ * @param factory A function that returns a value to be memoized
+ * @param deps A dependency array
+ */
+function useStableMemo(factory, deps) {
+  var isValid = true;
+  var valueRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(); // initial hook call
+
+  if (!valueRef.current) {
+    valueRef.current = {
+      deps: deps,
+      result: factory()
+    }; // subsequent calls
+  } else {
+    isValid = !!(deps && valueRef.current.deps && isEqual(deps, valueRef.current.deps));
+  }
+
+  var cache = isValid ? valueRef.current : {
+    deps: deps,
+    result: factory()
+  }; // must update immediately so any sync renders here don't cause an infinite loop
+
+  valueRef.current = cache;
+  return cache.result;
+}
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useTimeout.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useTimeout.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ useTimeout)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _useMounted__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./useMounted */ "./node_modules/@restart/hooks/esm/useMounted.js");
+/* harmony import */ var _useWillUnmount__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./useWillUnmount */ "./node_modules/@restart/hooks/esm/useWillUnmount.js");
+
+
+
+/*
+ * Browsers including Internet Explorer, Chrome, Safari, and Firefox store the
+ * delay as a 32-bit signed integer internally. This causes an integer overflow
+ * when using delays larger than 2,147,483,647 ms (about 24.8 days),
+ * resulting in the timeout being executed immediately.
+ *
+ * via: https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout
+ */
+
+var MAX_DELAY_MS = Math.pow(2, 31) - 1;
+
+function setChainedTimeout(handleRef, fn, timeoutAtMs) {
+  var delayMs = timeoutAtMs - Date.now();
+  handleRef.current = delayMs <= MAX_DELAY_MS ? setTimeout(fn, delayMs) : setTimeout(function () {
+    return setChainedTimeout(handleRef, fn, timeoutAtMs);
+  }, MAX_DELAY_MS);
+}
+/**
+ * Returns a controller object for setting a timeout that is properly cleaned up
+ * once the component unmounts. New timeouts cancel and replace existing ones.
+ *
+ *
+ *
+ * ```tsx
+ * const { set, clear } = useTimeout();
+ * const [hello, showHello] = useState(false);
+ * //Display hello after 5 seconds
+ * set(() => showHello(true), 5000);
+ * return (
+ *   <div className="App">
+ *     {hello ? <h3>Hello</h3> : null}
+ *   </div>
+ * );
+ * ```
+ */
+
+
+function useTimeout() {
+  var isMounted = (0,_useMounted__WEBPACK_IMPORTED_MODULE_1__["default"])(); // types are confused between node and web here IDK
+
+  var handleRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();
+  (0,_useWillUnmount__WEBPACK_IMPORTED_MODULE_2__["default"])(function () {
+    return clearTimeout(handleRef.current);
+  });
+  return (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(function () {
+    var clear = function clear() {
+      return clearTimeout(handleRef.current);
+    };
+
+    function set(fn, delayMs) {
+      if (delayMs === void 0) {
+        delayMs = 0;
+      }
+
+      if (!isMounted()) return;
+      clear();
+
+      if (delayMs <= MAX_DELAY_MS) {
+        // For simplicity, if the timeout is short, just set a normal timeout.
+        handleRef.current = setTimeout(fn, delayMs);
+      } else {
+        setChainedTimeout(handleRef, fn, Date.now() + delayMs);
+      }
+    }
+
+    return {
+      set: set,
+      clear: clear
+    };
+  }, []);
+}
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useUpdateImmediateEffect.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useUpdateImmediateEffect.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _useStableMemo__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./useStableMemo */ "./node_modules/@restart/hooks/esm/useStableMemo.js");
+/* harmony import */ var _useWillUnmount__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./useWillUnmount */ "./node_modules/@restart/hooks/esm/useWillUnmount.js");
+
+
+
+/**
+ * An _immediate_ effect that runs an effect callback when its dependency array
+ * changes. This is helpful for updates should must run during render, most
+ * commonly state derived from props; a more ergonomic version of https://reactjs.org/docs/hooks-faq.html#how-do-i-implement-getderivedstatefromprops
+ *
+ * ```ts
+ * function Example({ value }) {
+ *   const [intermediaryValue, setValue] = useState(value);
+ *
+ *   useUpdateImmediateEffect(() => {
+ *     setValue(value)
+ *   }, [value])
+ * ```
+ *
+ * @category effects
+ */
+
+function useUpdateImmediateEffect(effect, deps) {
+  var firstRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(true);
+  var tearDown = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)();
+  (0,_useWillUnmount__WEBPACK_IMPORTED_MODULE_2__["default"])(function () {
+    if (tearDown.current) tearDown.current();
+  });
+  (0,_useStableMemo__WEBPACK_IMPORTED_MODULE_1__["default"])(function () {
+    if (firstRef.current) {
+      firstRef.current = false;
+      return;
+    }
+
+    if (tearDown.current) tearDown.current();
+    tearDown.current = effect();
+  }, deps);
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (useUpdateImmediateEffect);
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useUpdatedRef.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useUpdatedRef.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ useUpdatedRef)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+/**
+ * Returns a ref that is immediately updated with the new value
+ *
+ * @param value The Ref value
+ * @category refs
+ */
+
+function useUpdatedRef(value) {
+  var valueRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(value);
+  valueRef.current = value;
+  return valueRef;
+}
+
+/***/ }),
+
+/***/ "./node_modules/@restart/hooks/esm/useWillUnmount.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useWillUnmount.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ useWillUnmount)
+/* harmony export */ });
+/* harmony import */ var _useUpdatedRef__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./useUpdatedRef */ "./node_modules/@restart/hooks/esm/useUpdatedRef.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+
+/**
+ * Attach a callback that fires when a component unmounts
+ *
+ * @param fn Handler to run when the component unmounts
+ * @category effects
+ */
+
+function useWillUnmount(fn) {
+  var onUnmount = (0,_useUpdatedRef__WEBPACK_IMPORTED_MODULE_0__["default"])(fn);
+  (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(function () {
+    return function () {
+      return onUnmount.current();
+    };
+  }, []);
+}
+
+/***/ }),
+
 /***/ "./node_modules/axios/index.js":
 /*!*************************************!*\
   !*** ./node_modules/axios/index.js ***!
@@ -14252,6 +15046,10 @@ var react_select_1 = __importDefault(__webpack_require__(/*! react-select */ "./
 
 var Calendar_1 = __importDefault(__webpack_require__(/*! @/Jetstream/Calendar */ "./resources/js/Jetstream/Calendar.tsx"));
 
+var cjs_1 = __webpack_require__(/*! react-widgets/cjs */ "./node_modules/react-widgets/cjs/index.js");
+
+__webpack_require__(/*! react-widgets/styles.css */ "./node_modules/react-widgets/styles.css");
+
 var grupo = [{
   label: '1',
   value: '1'
@@ -14358,8 +15156,10 @@ function default_1() {
   })), react_1["default"].createElement("div", {
     className: "grid grid-flow-col auto-cols-max"
   }, react_1["default"].createElement("div", {
-    className: 'mr-3'
-  }, react_1["default"].createElement("p", null, "Fecha Inicio"), react_1["default"].createElement(Calendar_1["default"], null)), react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Hora de inicio"), react_1["default"].createElement(react_select_1["default"], {
+    className: 'mr-8'
+  }, react_1["default"].createElement("p", null, "Fecha Inicio"), react_1["default"].createElement(Calendar_1["default"], null)), react_1["default"].createElement("div", {
+    className: 'mr-8'
+  }, react_1["default"].createElement("p", null, "Hora de inicio"), react_1["default"].createElement(react_select_1["default"], {
     options: horarios,
     placeholder: "06:45",
     isSearchable: false,
@@ -14369,6 +15169,9 @@ function default_1() {
     onChange: function onChange(opt) {
       return console.log(opt.label, opt.value);
     }
+  })), react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Periodos"), react_1["default"].createElement(cjs_1.NumberPicker, {
+    defaultValue: 1,
+    min: 1
   })))))));
 }
 
@@ -14883,6 +15686,30 @@ ___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\n.react-datepicker
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[7].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[7].oneOf[1].use[2]!./node_modules/react-widgets/styles.css":
+/*!*********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[7].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[7].oneOf[1].use[2]!./node_modules/react-widgets/styles.css ***!
+  \*********************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "/* for debugging */\n@-webkit-keyframes react-widgets-autofill-start {\n  from {\n    /**/\n  }\n  to {\n    /**/\n  }\n}\n@keyframes react-widgets-autofill-start {\n  from {\n    /**/\n  }\n  to {\n    /**/\n  }\n}\n@-webkit-keyframes react-widgets-autofill-cancel {\n  from {\n    /**/\n  }\n  to {\n    /**/\n  }\n}\n@keyframes react-widgets-autofill-cancel {\n  from {\n    /**/\n  }\n  to {\n    /**/\n  }\n}\n.rw-btn {\n  padding: 0;\n  margin: 0;\n  border: none;\n  color: inherit;\n  box-shadow: none;\n  background: none;\n  font: inherit;\n  line-height: inherit;\n  touch-action: manipulation;\n  outline: 0;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  background-clip: padding-box;\n  cursor: pointer;\n}\n.rw-btn:focus {\n  outline: none;\n}\n.rw-btn:disabled, fieldset[disabled] .rw-btn, .rw-state-disabled .rw-btn, .rw-state-readonly .rw-btn {\n  cursor: inherit;\n}\nfieldset[disabled] .rw-btn {\n  pointer-events: none;\n}\n\n.rw-picker-caret,\n.rw-picker-btn {\n  color: #212529;\n}\n\n.rw-picker-btn:hover {\n  background-color: #e9ecef;\n}\n.rw-picker-btn:active {\n  background-color: #dee2e6;\n}\n.rw-picker-btn:disabled, fieldset[disabled] .rw-picker-btn {\n  background-color: #e9ecef;\n}\n\n.rw-input-addon, .rw-input-addon.rw-picker-btn {\n  border-left: #ccc 1px solid;\n}\n[dir=rtl] .rw-input-addon, [dir=rtl] .rw-input-addon.rw-picker-btn {\n  border-right: #ccc 1px solid;\n  border-left: none;\n}\n\n.rw-sr {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  margin: -1px;\n  padding: 0;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  border: 0;\n}\n\n.rw-widget {\n  border: none;\n  color: #212529;\n  font-size: 1em;\n  font-family: inherit;\n  outline: none;\n  position: relative;\n}\n.rw-widget, .rw-widget *, .rw-widget:after, .rw-widget:before, .rw-widget *:after, .rw-widget *:before {\n  box-sizing: border-box;\n}\n\n.rw-state-readonly,\n.rw-state-disabled,\nfieldset[disabled] .rw-widget {\n  cursor: not-allowed;\n}\n\n.rw-widget-picker {\n  display: grid;\n  overflow: hidden;\n  min-height: 38px;\n  background-color: #fff;\n  border: #ccc 1px solid;\n  border-radius: 4px;\n  outline: none;\n  grid-template: 1fr/1fr 1.9em;\n  width: 100%;\n}\n.rw-widget-picker.rw-hide-caret {\n  grid-template-columns: 1fr;\n}\n.rw-state-focus .rw-widget-picker {\n  border-color: #80bdff;\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);\n  transition: box-shadow 0.15s ease-in-out;\n}\n.rw-state-focus .rw-widget-picker.rw-widget-input {\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25), inset 0 1px 1px rgba(0, 0, 0, 0.075);\n}\n\n.rw-input {\n  padding: 0;\n  margin: 0;\n  border: none;\n  color: inherit;\n  box-shadow: none;\n  background: none;\n  font: inherit;\n  line-height: inherit;\n  touch-action: manipulation;\n  outline: 0;\n  padding: 0 0.857em;\n}\n.rw-input:disabled {\n  opacity: 1;\n}\n.rw-input[type=text]::-ms-clear {\n  display: none;\n}\n.rw-input:-moz-read-only {\n  cursor: inherit;\n}\n.rw-input:disabled, .rw-input:read-only {\n  cursor: inherit;\n}\n\n.rw-widget-input {\n  color: #495057;\n  background-color: #fff;\n  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);\n  background-clip: padding-box;\n  width: inherit;\n}\n.rw-widget-input.rw-state-disabled, .rw-state-disabled .rw-widget-input, fieldset[disabled] .rw-widget-input {\n  background-color: #e9ecef;\n}\n\n.rw-input::-moz-placeholder {\n  color: #999;\n}\n\n.rw-input:-ms-input-placeholder {\n  color: #999;\n}\n\n.rw-placeholder,\n.rw-input::placeholder {\n  color: #999;\n}\n.rw-state-disabled .rw-input::-moz-placeholder {\n  color: #999;\n}\n.rw-state-disabled .rw-input:-ms-input-placeholder {\n  color: #999;\n}\n.rw-state-disabled .rw-placeholder,\n.rw-state-disabled .rw-input::placeholder {\n  color: #999;\n}\n\n.rw-detect-autofill {\n  padding: 0;\n  margin: 0;\n  border: none;\n  color: inherit;\n  box-shadow: none;\n  background: none;\n  font: inherit;\n  line-height: inherit;\n  touch-action: manipulation;\n  outline: 0;\n}\n.rw-detect-autofill:disabled {\n  opacity: 1;\n}\n\n.rw-detect-autofill:-webkit-autofill {\n  -webkit-animation-name: react-widgets-autofill-start;\n          animation-name: react-widgets-autofill-start;\n  -webkit-animation-duration: 0.01ms;\n          animation-duration: 0.01ms;\n}\n\n.rw-detect-autofill:not(:-webkit-autofill) {\n  -webkit-animation-name: react-widgets-autofill-cancel;\n          animation-name: react-widgets-autofill-cancel;\n  -webkit-animation-duration: 0.01ms;\n          animation-duration: 0.01ms;\n}\n\n.rw-webkit-autofill .rw-widget-container,\n.rw-input:-webkit-autofill {\n  background-color: #e8f0fe !important;\n  background-image: none !important;\n  color: black !important;\n}\n\n.rw-list {\n  font-size: 1em;\n  overflow-x: visible;\n  overflow-y: auto;\n  padding-top: 0.5em;\n  padding-bottom: 0.5em;\n}\n.rw-list:focus {\n  outline: none;\n}\n\n.rw-list-option, .rw-list-option-create {\n  -webkit-user-select: none;\n     -moz-user-select: none;\n      -ms-user-select: none;\n          user-select: none;\n  color: #212529;\n  cursor: pointer;\n  border: 1px solid transparent;\n  background-clip: padding-box;\n}\n.rw-list-option:hover, .rw-list-option-create:hover, [data-intent=keyboard] .rw-list-option.rw-state-focus:not(.rw-state-selected), [data-intent=keyboard] .rw-state-focus.rw-list-option-create:not(.rw-state-selected) {\n  background-color: #e9ecef;\n  border-color: #e9ecef;\n}\n.rw-list-option.rw-state-selected, .rw-state-selected.rw-list-option-create {\n  background-color: #007bff;\n  border-color: #007bff;\n  color: #fff;\n}\n.rw-list-option.rw-state-disabled, .rw-state-disabled.rw-list-option-create {\n  cursor: not-allowed;\n  background-color: transparent;\n  border-color: transparent;\n  color: #dee2e6;\n}\n\n.rw-list-empty,\n.rw-list-option,\n.rw-list-option-create,\n.rw-list-optgroup {\n  padding: 0.25em 1.5em;\n  outline: none;\n}\n\n.rw-list-empty {\n  text-align: center;\n  color: #ced4da;\n}\n\n.rw-list-optgroup {\n  font-weight: bold;\n  padding-top: 7px;\n}\n\n.rw-list-option-create {\n  display: block;\n  font-size: 1em;\n  padding: 0.25em 1.5em;\n}\n\n.rw-listbox {\n  border-radius: 4px;\n  background-color: #fff;\n  border: #ccc 1px solid;\n}\n.rw-listbox.rw-state-focus {\n  border-color: #80bdff;\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25), inset 0 1px 1px rgba(0, 0, 0, 0.075);\n  transition: box-shadow 0.15s ease-in-out;\n}\n.rw-listbox.rw-state-disabled > *, fieldset[disabled] .rw-listbox > * {\n  pointer-events: none;\n}\n.rw-listbox.rw-state-readonly > * {\n  cursor: inherit;\n}\n\n.rw-popup-container {\n  position: absolute;\n  z-index: 1005;\n  top: 100%;\n  left: -1em;\n  right: -1em;\n  padding: 0 1em;\n}\n.rw-popup-container.rw-dropup {\n  top: auto;\n  bottom: 100%;\n}\n.rw-state-focus .rw-popup-container {\n  z-index: 1006;\n}\n\n.rw-slide-transition {\n  margin-bottom: 1em;\n}\n.rw-dropup > .rw-slide-transition {\n  margin-bottom: 0;\n  margin-top: 1em;\n}\n\n.rw-popup {\n  overflow: auto;\n  -webkit-overflow-scrolling: touch;\n  margin-top: 2px;\n  border-radius: 4px;\n  box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.175);\n  border: #ccc 1px solid;\n  background-clip: padding-box;\n  background: #fff;\n}\n.rw-popup .rw-list {\n  max-height: 250px;\n}\n.rw-dropup .rw-popup {\n  margin-top: 0;\n  margin-bottom: 2px;\n  box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.175);\n}\n\n.rw-slide-transition {\n  transition: transform 130ms, opacity 100ms;\n}\n\n.rw-slide-transition-entering {\n  overflow: hidden;\n}\n.rw-slide-transition-entering .rw-slide-transition {\n  transform: translateY(0);\n  opacity: 1;\n  transition-timing-function: ease-out;\n}\n\n.rw-slide-transition-exiting .rw-slide-transition {\n  transition-timing-function: ease-in;\n}\n\n.rw-slide-transition-exiting,\n.rw-slide-transition-exited {\n  overflow: hidden;\n}\n.rw-slide-transition-exiting .rw-slide-transition,\n.rw-slide-transition-exited .rw-slide-transition {\n  opacity: 0;\n  transform: translateY(-10%);\n}\n.rw-slide-transition-exiting.rw-dropup .rw-slide-transition,\n.rw-slide-transition-exited.rw-dropup .rw-slide-transition {\n  opacity: 0;\n  transform: translateY(10%);\n}\n\n.rw-slide-transition-exited {\n  display: none;\n}\n\n.rw-dropdown-list {\n  width: 100%;\n}\n\n.rw-dropdownlist-search {\n  padding: 0;\n  margin: 0;\n  border: none;\n  color: inherit;\n  box-shadow: none;\n  background: none;\n  font: inherit;\n  line-height: inherit;\n  touch-action: manipulation;\n  outline: 0;\n}\n.rw-dropdownlist-search:disabled {\n  opacity: 1;\n}\n\n.rw-dropdown-list-input {\n  padding: 0 0.857em;\n  align-self: center;\n  display: grid;\n  min-width: 0;\n  grid-template: 1fr/1fr;\n}\n.rw-dropdown-list-input > * {\n  grid-area: 1/1;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  overflow: hidden;\n}\n[dir=rtl] .rw-dropdown-list-input {\n  padding-right: 0.857em;\n  padding-left: 0;\n}\n\n.rw-combobox-input {\n  background-color: transparent;\n  z-index: 1;\n}\n\n.rw-multiselect-input {\n  padding: 0;\n  margin: 0;\n  border: none;\n  color: inherit;\n  box-shadow: none;\n  background: none;\n  font: inherit;\n  line-height: inherit;\n  touch-action: manipulation;\n  outline: 0;\n  height: calc(38px - 1px * 2);\n  padding: 0 0.857em;\n  max-width: 100%;\n}\n.rw-multiselect-input:disabled {\n  opacity: 1;\n}\n.rw-multiselect-input:-moz-read-only {\n  cursor: inherit;\n}\n.rw-multiselect-input:disabled, .rw-multiselect-input:read-only {\n  cursor: inherit;\n}\n\n.rw-multiselect-taglist {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: flex-start;\n  width: 100%;\n  outline: none;\n  cursor: text;\n}\n.rw-state-disabled .rw-multiselect-taglist {\n  cursor: unset;\n}\n\n.rw-multiselect-tag {\n  display: inline-flex;\n  margin-left: calc(\n  38px * 0.115 - 1px\n);\n  margin-top: calc(\n  38px * 0.115 - 1px\n);\n  min-height: calc(38px * 0.77);\n  border-radius: 3px;\n  background-color: #dee2e6;\n  border: 1px solid #dee2e6;\n  cursor: default;\n  max-width: 100%;\n  align-items: center;\n  overflow: hidden;\n}\n.rw-multiselect-tag:focus {\n  outline: none;\n}\n[dir=rtl] .rw-multiselect-tag {\n  margin-left: 0;\n  margin-right: calc(\n  38px * 0.115 - 1px\n);\n  padding: 0 0.35em 0 0.35em;\n}\n.rw-multiselect-tag.rw-state-focus {\n  z-index: 1;\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);\n  transition: box-shadow 0.15s ease-in-out;\n}\n.rw-multiselect-tag.rw-state-disabled, fieldset[disabled] .rw-multiselect-tag {\n  opacity: 0.65;\n}\n\n.rw-multiselect-tag-label {\n  padding: 0 0.35em 0 0.35em;\n}\n\n.rw-multiselect-tag-btn {\n  padding: 0;\n  margin: 0;\n  border: none;\n  color: inherit;\n  box-shadow: none;\n  background: none;\n  font: inherit;\n  line-height: inherit;\n  touch-action: manipulation;\n  outline: 0;\n  cursor: pointer;\n  align-self: stretch;\n  padding: 0 0.35em;\n}\n.rw-multiselect-tag-btn:focus {\n  outline: none;\n}\n.rw-multiselect-tag-btn:disabled {\n  cursor: inherit;\n}\n\n.rw-calendar-popup {\n  right: auto;\n  min-width: 0;\n  width: 22em;\n}\n\n.rw-calendar {\n  overflow: hidden;\n}\n\n.rw-calendar-contained {\n  border-radius: 4px;\n  background-color: #fff;\n  border: #ccc 1px solid;\n}\n\n.rw-calendar-now {\n  font-weight: bold;\n}\n\n.rw-calendar-header {\n  display: flex;\n  padding: 0.8em;\n}\n\n.rw-cell,\n.rw-calendar-btn {\n  background-clip: padding-box;\n}\n.rw-cell:focus,\n.rw-calendar-btn:focus {\n  z-index: 1;\n  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);\n  transition: box-shadow 0.15s ease-in-out;\n}\n[data-intent=mouse] .rw-cell:focus,\n[data-intent=mouse] .rw-calendar-btn:focus {\n  z-index: auto;\n  box-shadow: none;\n}\n.rw-cell:disabled, .rw-cell.rw-state-disabled,\n.rw-calendar-btn:disabled,\n.rw-calendar-btn.rw-state-disabled {\n  pointer-events: none;\n  opacity: 0.35;\n}\n\n.rw-calendar-btn {\n  line-height: 2em;\n  border-radius: 4px;\n}\n.rw-calendar-btn:hover {\n  background-color: #e9ecef;\n}\n.rw-calendar-btn:active {\n  background-color: #dee2e6;\n}\n\n.rw-calendar-btn-left,\n.rw-calendar-btn-today,\n.rw-calendar-btn-right,\n.rw-calendar-btn-view {\n  padding: 0.3em 0.6em;\n}\n\n[dir=rtl] .rw-calendar-btn-left,\n[dir=rtl] .rw-calendar-btn-right {\n  transform: scale(-1, 1);\n}\n\n.rw-calendar-btn-view {\n  font-weight: bold;\n}\n.rw-calendar-btn-view > :last-child {\n  margin: 0 0.5em;\n}\n.rw-calendar-btn-view + * {\n  margin-left: auto;\n}\n[dir=rtl] .rw-calendar-btn-view + * {\n  margin-left: 0;\n  margin-right: auto;\n}\n\n.rw-calendar-grid {\n  display: table;\n  outline: none;\n  height: 14em;\n  padding: 3px;\n  table-layout: fixed;\n  border-collapse: separate;\n  border-spacing: 0;\n  width: 100%;\n  background-color: #fff;\n}\n\n.rw-calendar-head {\n  display: table-header-group;\n}\n\n.rw-calendar-body {\n  display: table-row-group;\n}\n\n.rw-calendar-row {\n  display: table-row;\n}\n\n.rw-head-cell {\n  display: table-cell;\n  text-align: center;\n  border-bottom: 1px solid #ccc;\n  padding: 0.25em;\n}\n\n.rw-cell {\n  display: table-cell;\n  color: #212529;\n  vertical-align: middle;\n  border-radius: 4px;\n  cursor: pointer;\n  line-height: normal;\n  text-align: center;\n  border: 1px solid transparent;\n  padding: 0.25em;\n  outline: none;\n}\n.rw-cell:hover {\n  background-color: #e9ecef;\n}\n.rw-cell:active {\n  background-color: #dee2e6;\n}\n.rw-cell.rw-state-selected {\n  background-color: #007bff;\n  border-color: #007bff;\n  color: #fff;\n}\n.rw-calendar-month .rw-cell {\n  text-align: center;\n}\n\n.rw-cell-off-range {\n  color: #ced4da;\n}\n\n.rw-calendar-transition-group {\n  position: relative;\n  overflow: hidden;\n}\n\n.rw-calendar-transition {\n  width: 100%;\n  overflow: hidden;\n  transition: transform 0.2s ease-in-out 0ms;\n  transform: translate(0, 0);\n}\n@supports (transform-style: preserve-3d) {\n  .rw-calendar-transition {\n    transform: translate3d(0, 0, 0);\n  }\n}\n\n.rw-calendar-transition-next {\n  -webkit-backface-visibility: hidden;\n  backface-visibility: hidden;\n}\n.rw-calendar-transition-top .rw-calendar-transition-next {\n  transform: translate(0, -100%);\n}\n@supports (transform-style: preserve-3d) {\n  .rw-calendar-transition-top .rw-calendar-transition-next {\n    transform: translate3d(0, -100%, 0);\n  }\n}\n.rw-calendar-transition-bottom .rw-calendar-transition-next {\n  transform: translate(0, 100%);\n}\n@supports (transform-style: preserve-3d) {\n  .rw-calendar-transition-bottom .rw-calendar-transition-next {\n    transform: translate3d(0, 100%, 0);\n  }\n}\n.rw-calendar-transition-right .rw-calendar-transition-next {\n  transform: translate(-100%, 0);\n}\n@supports (transform-style: preserve-3d) {\n  .rw-calendar-transition-right .rw-calendar-transition-next {\n    transform: translate3d(-100%, 0, 0);\n  }\n}\n.rw-calendar-transition-left .rw-calendar-transition-next {\n  transform: translate(100%, 0);\n}\n@supports (transform-style: preserve-3d) {\n  .rw-calendar-transition-left .rw-calendar-transition-next {\n    transform: translate3d(100%, 0, 0);\n  }\n}\n.rw-calendar-transition-next.rw-calendar-transition-active {\n  transform: translate(0, 0);\n}\n@supports (transform-style: preserve-3d) {\n  .rw-calendar-transition-next.rw-calendar-transition-active {\n    transform: translate3d(0, 0, 0);\n  }\n}\n\n.rw-calendar-transition-prev {\n  -webkit-backface-visibility: hidden;\n  backface-visibility: hidden;\n  position: absolute;\n  left: 0;\n  top: 0;\n}\n.rw-calendar-transition-top .rw-calendar-transition-prev {\n  transform: translate(0, 100%);\n}\n@supports (transform-style: preserve-3d) {\n  .rw-calendar-transition-top .rw-calendar-transition-prev {\n    transform: translate3d(0, 100%, 0);\n  }\n}\n.rw-calendar-transition-bottom .rw-calendar-transition-prev {\n  transform: translate(0, -100%);\n}\n@supports (transform-style: preserve-3d) {\n  .rw-calendar-transition-bottom .rw-calendar-transition-prev {\n    transform: translate3d(0, -100%, 0);\n  }\n}\n.rw-calendar-transition-right .rw-calendar-transition-prev {\n  transform: translate(100%, 0);\n}\n@supports (transform-style: preserve-3d) {\n  .rw-calendar-transition-right .rw-calendar-transition-prev {\n    transform: translate3d(100%, 0, 0);\n  }\n}\n.rw-calendar-transition-left .rw-calendar-transition-prev {\n  transform: translate(-100%, 0);\n}\n@supports (transform-style: preserve-3d) {\n  .rw-calendar-transition-left .rw-calendar-transition-prev {\n    transform: translate3d(-100%, 0, 0);\n  }\n}\n\n.rw-popup {\n  display: flex;\n  flex-direction: column;\n}\n.rw-popup > .rw-time-input {\n  align-self: center;\n  margin: 1em 0;\n}\n\n.rw-time-input {\n  display: inline-flex;\n  min-height: 38px;\n  align-items: center;\n  background-color: #fff;\n  border: #ccc 1px solid;\n  border-radius: 4px;\n  outline: none;\n  cursor: text;\n}\n\n.rw-time-part-input {\n  padding: 0;\n  margin: 0;\n  border: none;\n  color: inherit;\n  box-shadow: none;\n  background: none;\n  font: inherit;\n  line-height: inherit;\n  touch-action: manipulation;\n  outline: 0;\n  padding: 0 0.5em;\n}\n.rw-time-part-input:disabled {\n  opacity: 1;\n}\n.rw-time-part-input::-moz-placeholder {\n  text-align: center;\n}\n.rw-time-part-input:-ms-input-placeholder {\n  text-align: center;\n}\n.rw-time-part-input, .rw-time-part-input::placeholder {\n  text-align: center;\n}\n\n.rw-time-part-meridiem {\n  padding: 0;\n  margin: 0;\n  border: none;\n  color: inherit;\n  box-shadow: none;\n  background: none;\n  font: inherit;\n  line-height: inherit;\n  touch-action: manipulation;\n  outline: 0;\n  padding: 0 0.5em;\n  text-transform: lowercase;\n  font-variant: small-caps;\n}\n.rw-time-part-meridiem :focus {\n  outline: none;\n}\n\n.rw-time-input-clear {\n  padding: 0 0.4em;\n  outline: none;\n  opacity: 0;\n  margin-left: auto;\n}\n[dir=rtl] .rw-time-input-clear {\n  margin-left: revert;\n  margin-right: auto;\n}\n.rw-time-input:hover .rw-time-input-clear.rw-show, .rw-time-input.rw-state-focus .rw-time-input-clear.rw-show {\n  opacity: 1;\n}\n\n.rw-number-picker-spinners {\n  display: flex;\n  flex-direction: column;\n}\n.rw-number-picker-spinners .rw-btn {\n  flex: 1 1 0;\n}\n", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/runtime/api.js":
 /*!*****************************************************!*\
   !*** ./node_modules/css-loader/dist/runtime/api.js ***!
@@ -14956,6 +15783,345 @@ module.exports = function (cssWithMappingToString) {
 
   return list;
 };
+
+/***/ }),
+
+/***/ "./node_modules/date-arithmetic/index.js":
+/*!***********************************************!*\
+  !*** ./node_modules/date-arithmetic/index.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "add": () => (/* binding */ add),
+/* harmony export */   "century": () => (/* binding */ century),
+/* harmony export */   "date": () => (/* binding */ date),
+/* harmony export */   "day": () => (/* binding */ day),
+/* harmony export */   "decade": () => (/* binding */ decade),
+/* harmony export */   "diff": () => (/* binding */ diff),
+/* harmony export */   "endOf": () => (/* binding */ endOf),
+/* harmony export */   "eq": () => (/* binding */ eq),
+/* harmony export */   "gt": () => (/* binding */ gt),
+/* harmony export */   "gte": () => (/* binding */ gte),
+/* harmony export */   "hours": () => (/* binding */ hours),
+/* harmony export */   "inRange": () => (/* binding */ inRange),
+/* harmony export */   "lt": () => (/* binding */ lt),
+/* harmony export */   "lte": () => (/* binding */ lte),
+/* harmony export */   "max": () => (/* binding */ max),
+/* harmony export */   "milliseconds": () => (/* binding */ milliseconds),
+/* harmony export */   "min": () => (/* binding */ min),
+/* harmony export */   "minutes": () => (/* binding */ minutes),
+/* harmony export */   "month": () => (/* binding */ month),
+/* harmony export */   "neq": () => (/* binding */ neq),
+/* harmony export */   "seconds": () => (/* binding */ seconds),
+/* harmony export */   "startOf": () => (/* binding */ startOf),
+/* harmony export */   "subtract": () => (/* binding */ subtract),
+/* harmony export */   "weekday": () => (/* binding */ weekday),
+/* harmony export */   "year": () => (/* binding */ year)
+/* harmony export */ });
+var MILI    = 'milliseconds'
+  , SECONDS = 'seconds'
+  , MINUTES = 'minutes'
+  , HOURS   = 'hours'
+  , DAY     = 'day'
+  , WEEK    = 'week'
+  , MONTH   = 'month'
+  , YEAR    = 'year'
+  , DECADE  = 'decade'
+  , CENTURY = 'century';
+
+var multiplierMilli = {
+  'milliseconds': 1,
+  'seconds': 1000,
+  'minutes': 60 * 1000,
+  'hours': 60 * 60 * 1000,
+  'day': 24 * 60 * 60 * 1000,
+  'week': 7 * 24 * 60 * 60 * 1000 
+}
+
+var multiplierMonth = {
+  'month': 1,
+  'year': 12,
+  'decade': 10 * 12,
+  'century': 100 * 12
+}
+
+function daysOf(year) {
+  return [31, daysInFeb(year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+}
+
+function daysInFeb(year) {
+  return (
+      year % 4 === 0 
+      && year % 100 !== 0
+    ) || year % 400 === 0
+      ? 29
+      : 28
+}
+
+function add(d, num, unit) {
+  d = new Date(d)
+
+  switch (unit){
+    case MILI:
+    case SECONDS:
+    case MINUTES:
+    case HOURS:
+    case DAY:
+    case WEEK:
+      return addMillis(d, num * multiplierMilli[unit])
+    case MONTH:
+    case YEAR:
+    case DECADE:
+    case CENTURY:
+      return addMonths(d, num * multiplierMonth[unit])
+  }
+
+  throw new TypeError('Invalid units: "' + unit + '"')
+}
+
+function addMillis(d, num) {
+  var nextDate = new Date(+(d) + num)
+
+  return solveDST(d, nextDate)
+}
+
+function addMonths(d, num) {
+  var year = d.getFullYear()
+    , month = d.getMonth()
+    , day = d.getDate()
+    , totalMonths = year * 12 + month + num
+    , nextYear = Math.trunc(totalMonths / 12)
+    , nextMonth = totalMonths % 12
+    , nextDay = Math.min(day, daysOf(nextYear)[nextMonth])
+
+  var nextDate = new Date(d)
+  nextDate.setFullYear(nextYear)
+
+  // To avoid a bug when sets the Feb month
+  // with a date > 28 or date > 29 (leap year)
+  nextDate.setDate(1)
+
+  nextDate.setMonth(nextMonth)
+  nextDate.setDate(nextDay)
+
+  return nextDate
+}
+
+function solveDST(currentDate, nextDate) {
+  var currentOffset = currentDate.getTimezoneOffset()
+    , nextOffset = nextDate.getTimezoneOffset()
+
+  // if is DST, add the difference in minutes
+  // else the difference is zero
+  var diffMinutes = (nextOffset - currentOffset)
+
+  return new Date(+(nextDate) + diffMinutes * multiplierMilli['minutes'])
+}
+
+function subtract(d, num, unit) {
+  return add(d, -num, unit)
+}
+
+function startOf(d, unit, firstOfWeek) {
+  d = new Date(d)
+
+  switch (unit) {
+    case CENTURY:
+    case DECADE:
+    case YEAR:
+        d = month(d, 0);
+    case MONTH:
+        d = date(d, 1);
+    case WEEK:
+    case DAY:
+        d = hours(d, 0);
+    case HOURS:
+        d = minutes(d, 0);
+    case MINUTES:
+        d = seconds(d, 0);
+    case SECONDS:
+        d = milliseconds(d, 0);
+  }
+
+  if (unit === DECADE)
+    d = subtract(d, year(d) % 10, 'year')
+
+  if (unit === CENTURY)
+    d = subtract(d, year(d) % 100, 'year')
+
+  if (unit === WEEK)
+    d = weekday(d, 0, firstOfWeek);
+
+  return d
+}
+
+function endOf(d, unit, firstOfWeek){
+  d = new Date(d)
+  d = startOf(d, unit, firstOfWeek)
+  switch (unit) {
+    case CENTURY:
+    case DECADE:
+    case YEAR:
+    case MONTH:
+    case WEEK:
+      d = add(d, 1, unit)
+      d = subtract(d, 1, DAY)
+      d.setHours(23, 59, 59, 999)
+      break;
+    case DAY:
+      d.setHours(23, 59, 59, 999)
+      break;
+    case HOURS:
+    case MINUTES:
+    case SECONDS:
+      d = add(d, 1, unit)
+      d = subtract(d, 1, MILI)
+  }
+  return d
+}
+
+var eq =  createComparer(function(a, b){ return a === b })
+var neq = createComparer(function(a, b){ return a !== b })
+var gt =  createComparer(function(a, b){ return a > b })
+var gte = createComparer(function(a, b){ return a >= b })
+var lt =  createComparer(function(a, b){ return a < b })
+var lte = createComparer(function(a, b){ return a <= b })
+
+function min(){
+  return new Date(Math.min.apply(Math, arguments))
+}
+
+function max(){
+  return new Date(Math.max.apply(Math, arguments))
+}
+
+function inRange(day, min, max, unit){
+  unit = unit || 'day'
+
+  return (!min || gte(day, min, unit))
+      && (!max || lte(day, max, unit))
+}
+
+var milliseconds = createAccessor('Milliseconds')
+var seconds =      createAccessor('Seconds')
+var minutes =      createAccessor('Minutes')
+var hours =        createAccessor('Hours')
+var day =          createAccessor('Day')
+var date =         createAccessor('Date')
+var month =        createAccessor('Month')
+var year =         createAccessor('FullYear')
+
+function decade(d, val) {
+  return val === undefined
+    ? year(startOf(d, DECADE))
+    : add(d, val + 10, YEAR);
+}
+
+function century(d, val) {
+  return val === undefined
+    ? year(startOf(d, CENTURY))
+    : add(d, val + 100, YEAR);
+}
+
+function weekday(d, val, firstDay) {
+    var w = (day(d) + 7 - (firstDay || 0) ) % 7;
+
+    return val === undefined
+      ? w
+      : add(d, val - w, DAY);
+}
+
+function diff(date1, date2, unit, asFloat) {
+  var dividend, divisor, result;
+
+  switch (unit) {
+    case MILI:
+    case SECONDS:
+    case MINUTES:
+    case HOURS:
+    case DAY:
+    case WEEK:
+      dividend = date2.getTime() - date1.getTime(); break;
+    case MONTH:
+    case YEAR:
+    case DECADE:
+    case CENTURY:
+      dividend = (year(date2) - year(date1)) * 12 + month(date2) - month(date1); break;
+    default:
+      throw new TypeError('Invalid units: "' + unit + '"');
+  }
+
+  switch (unit) {
+    case MILI:
+        divisor = 1; break;
+    case SECONDS:
+        divisor = 1000; break;
+    case MINUTES:
+        divisor = 1000 * 60; break;
+    case HOURS:
+        divisor = 1000 * 60 * 60; break;
+    case DAY:
+        divisor = 1000 * 60 * 60 * 24; break;
+    case WEEK:
+        divisor = 1000 * 60 * 60 * 24 * 7; break;
+    case MONTH:
+        divisor = 1; break;
+    case YEAR:
+        divisor = 12; break;
+    case DECADE:
+        divisor = 120; break;
+    case CENTURY:
+        divisor = 1200; break;
+    default:
+      throw new TypeError('Invalid units: "' + unit + '"');
+  }
+
+  result = dividend / divisor;
+
+  return asFloat ? result : Math.round(result);
+}
+
+function createAccessor(method){
+  var hourLength = (function(method) {  
+    switch(method) {
+      case 'Milliseconds':
+        return 3600000;
+      case 'Seconds':
+        return 3600;
+      case 'Minutes':
+        return 60;
+      case 'Hours':
+        return 1;
+      default:
+        return null;
+    }
+  })(method);
+  
+  return function(d, val){
+    if (val === undefined)
+      return d['get' + method]()
+
+    var dateOut = new Date(d)
+    dateOut['set' + method](val)
+    
+    if(hourLength && dateOut['get'+method]() != val && (method === 'Hours' || val >=hourLength && (dateOut.getHours()-d.getHours()<Math.floor(val/hourLength))) ){
+      //Skip DST hour, if it occurs
+      dateOut['set'+method](val+hourLength);
+    }
+    
+    return dateOut
+  }
+}
+
+function createComparer(operator) {
+  return function (a, b, unit) {
+    return operator(+startOf(a, unit), +startOf(b, unit))
+  };
+}
+
 
 /***/ }),
 
@@ -35946,6 +37112,850 @@ deepmerge.all = function deepmergeAll(array, options) {
 var deepmerge_1 = deepmerge;
 
 module.exports = deepmerge_1;
+
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/activeElement.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/activeElement.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ activeElement)
+/* harmony export */ });
+/* harmony import */ var _ownerDocument__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ownerDocument */ "./node_modules/dom-helpers/esm/ownerDocument.js");
+
+/**
+ * Returns the actively focused element safely.
+ *
+ * @param doc the document to check
+ */
+
+function activeElement(doc) {
+  if (doc === void 0) {
+    doc = (0,_ownerDocument__WEBPACK_IMPORTED_MODULE_0__["default"])();
+  }
+
+  // Support: IE 9 only
+  // IE9 throws an "Unspecified error" accessing document.activeElement from an <iframe>
+  try {
+    var active = doc.activeElement; // IE11 returns a seemingly empty object in some cases when accessing
+    // document.activeElement from an <iframe>
+
+    if (!active || !active.nodeName) return null;
+    return active;
+  } catch (e) {
+    /* ie throws if no active element */
+    return doc.body;
+  }
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/addEventListener.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/addEventListener.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "onceSupported": () => (/* binding */ onceSupported),
+/* harmony export */   "optionsSupported": () => (/* binding */ optionsSupported)
+/* harmony export */ });
+/* harmony import */ var _canUseDOM__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./canUseDOM */ "./node_modules/dom-helpers/esm/canUseDOM.js");
+/* eslint-disable no-return-assign */
+
+var optionsSupported = false;
+var onceSupported = false;
+
+try {
+  var options = {
+    get passive() {
+      return optionsSupported = true;
+    },
+
+    get once() {
+      // eslint-disable-next-line no-multi-assign
+      return onceSupported = optionsSupported = true;
+    }
+
+  };
+
+  if (_canUseDOM__WEBPACK_IMPORTED_MODULE_0__["default"]) {
+    window.addEventListener('test', options, options);
+    window.removeEventListener('test', options, true);
+  }
+} catch (e) {
+  /* */
+}
+
+/**
+ * An `addEventListener` ponyfill, supports the `once` option
+ * 
+ * @param node the element
+ * @param eventName the event name
+ * @param handle the handler
+ * @param options event options
+ */
+function addEventListener(node, eventName, handler, options) {
+  if (options && typeof options !== 'boolean' && !onceSupported) {
+    var once = options.once,
+        capture = options.capture;
+    var wrappedHandler = handler;
+
+    if (!onceSupported && once) {
+      wrappedHandler = handler.__once || function onceHandler(event) {
+        this.removeEventListener(eventName, onceHandler, capture);
+        handler.call(this, event);
+      };
+
+      handler.__once = wrappedHandler;
+    }
+
+    node.addEventListener(eventName, wrappedHandler, optionsSupported ? options : capture);
+  }
+
+  node.addEventListener(eventName, handler, options);
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (addEventListener);
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/canUseDOM.js":
+/*!***************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/canUseDOM.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (!!(typeof window !== 'undefined' && window.document && window.document.createElement));
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/closest.js":
+/*!*************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/closest.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ closest)
+/* harmony export */ });
+/* harmony import */ var _matches__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./matches */ "./node_modules/dom-helpers/esm/matches.js");
+
+/**
+ * Returns the closest parent element that matches a given selector.
+ * 
+ * @param node the reference element
+ * @param selector the selector to match
+ * @param stopAt stop traversing when this element is found
+ */
+
+function closest(node, selector, stopAt) {
+  if (node.closest && !stopAt) node.closest(selector);
+  var nextNode = node;
+
+  do {
+    if ((0,_matches__WEBPACK_IMPORTED_MODULE_0__["default"])(nextNode, selector)) return nextNode;
+    nextNode = nextNode.parentElement;
+  } while (nextNode && nextNode !== stopAt && nextNode.nodeType === document.ELEMENT_NODE);
+
+  return null;
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/contains.js":
+/*!**************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/contains.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ contains)
+/* harmony export */ });
+/* eslint-disable no-bitwise, no-cond-assign */
+
+/**
+ * Checks if an element contains another given element.
+ * 
+ * @param context the context element
+ * @param node the element to check
+ */
+function contains(context, node) {
+  // HTML DOM and SVG DOM may have different support levels,
+  // so we need to check on context instead of a document root element.
+  if (context.contains) return context.contains(node);
+  if (context.compareDocumentPosition) return context === node || !!(context.compareDocumentPosition(node) & 16);
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/css.js":
+/*!*********************************************!*\
+  !*** ./node_modules/dom-helpers/esm/css.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _getComputedStyle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getComputedStyle */ "./node_modules/dom-helpers/esm/getComputedStyle.js");
+/* harmony import */ var _hyphenateStyle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./hyphenateStyle */ "./node_modules/dom-helpers/esm/hyphenateStyle.js");
+/* harmony import */ var _isTransform__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./isTransform */ "./node_modules/dom-helpers/esm/isTransform.js");
+
+
+
+
+function style(node, property) {
+  var css = '';
+  var transforms = '';
+
+  if (typeof property === 'string') {
+    return node.style.getPropertyValue((0,_hyphenateStyle__WEBPACK_IMPORTED_MODULE_1__["default"])(property)) || (0,_getComputedStyle__WEBPACK_IMPORTED_MODULE_0__["default"])(node).getPropertyValue((0,_hyphenateStyle__WEBPACK_IMPORTED_MODULE_1__["default"])(property));
+  }
+
+  Object.keys(property).forEach(function (key) {
+    var value = property[key];
+
+    if (!value && value !== 0) {
+      node.style.removeProperty((0,_hyphenateStyle__WEBPACK_IMPORTED_MODULE_1__["default"])(key));
+    } else if ((0,_isTransform__WEBPACK_IMPORTED_MODULE_2__["default"])(key)) {
+      transforms += key + "(" + value + ") ";
+    } else {
+      css += (0,_hyphenateStyle__WEBPACK_IMPORTED_MODULE_1__["default"])(key) + ": " + value + ";";
+    }
+  });
+
+  if (transforms) {
+    css += "transform: " + transforms + ";";
+  }
+
+  node.style.cssText += ";" + css;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (style);
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/getComputedStyle.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/getComputedStyle.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ getComputedStyle)
+/* harmony export */ });
+/* harmony import */ var _ownerWindow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ownerWindow */ "./node_modules/dom-helpers/esm/ownerWindow.js");
+
+/**
+ * Returns one or all computed style properties of an element.
+ * 
+ * @param node the element
+ * @param psuedoElement the style property
+ */
+
+function getComputedStyle(node, psuedoElement) {
+  return (0,_ownerWindow__WEBPACK_IMPORTED_MODULE_0__["default"])(node).getComputedStyle(node, psuedoElement);
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/getScrollAccessor.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/getScrollAccessor.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ getscrollAccessor)
+/* harmony export */ });
+/* harmony import */ var _isWindow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isWindow */ "./node_modules/dom-helpers/esm/isWindow.js");
+
+function getscrollAccessor(offset) {
+  var prop = offset === 'pageXOffset' ? 'scrollLeft' : 'scrollTop';
+
+  function scrollAccessor(node, val) {
+    var win = (0,_isWindow__WEBPACK_IMPORTED_MODULE_0__["default"])(node);
+
+    if (val === undefined) {
+      return win ? win[offset] : node[prop];
+    }
+
+    if (win) {
+      win.scrollTo(win[offset], val);
+    } else {
+      node[prop] = val;
+    }
+  }
+
+  return scrollAccessor;
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/height.js":
+/*!************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/height.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ height)
+/* harmony export */ });
+/* harmony import */ var _isWindow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isWindow */ "./node_modules/dom-helpers/esm/isWindow.js");
+/* harmony import */ var _offset__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./offset */ "./node_modules/dom-helpers/esm/offset.js");
+
+
+/**
+ * Returns the height of a given element.
+ * 
+ * @param node the element
+ * @param client whether to use `clientHeight` if possible
+ */
+
+function height(node, client) {
+  var win = (0,_isWindow__WEBPACK_IMPORTED_MODULE_0__["default"])(node);
+  return win ? win.innerHeight : client ? node.clientHeight : (0,_offset__WEBPACK_IMPORTED_MODULE_1__["default"])(node).height;
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/hyphenate.js":
+/*!***************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/hyphenate.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ hyphenate)
+/* harmony export */ });
+var rUpper = /([A-Z])/g;
+function hyphenate(string) {
+  return string.replace(rUpper, '-$1').toLowerCase();
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/hyphenateStyle.js":
+/*!********************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/hyphenateStyle.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ hyphenateStyleName)
+/* harmony export */ });
+/* harmony import */ var _hyphenate__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./hyphenate */ "./node_modules/dom-helpers/esm/hyphenate.js");
+/**
+ * Copyright 2013-2014, Facebook, Inc.
+ * All rights reserved.
+ * https://github.com/facebook/react/blob/2aeb8a2a6beb00617a4217f7f8284924fa2ad819/src/vendor/core/hyphenateStyleName.js
+ */
+
+var msPattern = /^ms-/;
+function hyphenateStyleName(string) {
+  return (0,_hyphenate__WEBPACK_IMPORTED_MODULE_0__["default"])(string).replace(msPattern, '-ms-');
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/isDocument.js":
+/*!****************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/isDocument.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ isDocument)
+/* harmony export */ });
+function isDocument(element) {
+  return 'nodeType' in element && element.nodeType === document.DOCUMENT_NODE;
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/isTransform.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/isTransform.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ isTransform)
+/* harmony export */ });
+var supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i;
+function isTransform(value) {
+  return !!(value && supportedTransforms.test(value));
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/isWindow.js":
+/*!**************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/isWindow.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ isWindow)
+/* harmony export */ });
+/* harmony import */ var _isDocument__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isDocument */ "./node_modules/dom-helpers/esm/isDocument.js");
+
+function isWindow(node) {
+  if ('window' in node && node.window === node) return node;
+  if ((0,_isDocument__WEBPACK_IMPORTED_MODULE_0__["default"])(node)) return node.defaultView || false;
+  return false;
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/listen.js":
+/*!************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/listen.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _addEventListener__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./addEventListener */ "./node_modules/dom-helpers/esm/addEventListener.js");
+/* harmony import */ var _removeEventListener__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./removeEventListener */ "./node_modules/dom-helpers/esm/removeEventListener.js");
+
+
+
+function listen(node, eventName, handler, options) {
+  (0,_addEventListener__WEBPACK_IMPORTED_MODULE_0__["default"])(node, eventName, handler, options);
+  return function () {
+    (0,_removeEventListener__WEBPACK_IMPORTED_MODULE_1__["default"])(node, eventName, handler, options);
+  };
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (listen);
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/matches.js":
+/*!*************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/matches.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ matches)
+/* harmony export */ });
+var matchesImpl;
+/**
+ * Checks if a given element matches a selector.
+ * 
+ * @param node the element
+ * @param selector the selector
+ */
+
+function matches(node, selector) {
+  if (!matchesImpl) {
+    var body = document.body;
+    var nativeMatch = body.matches || body.matchesSelector || body.webkitMatchesSelector || body.mozMatchesSelector || body.msMatchesSelector;
+
+    matchesImpl = function matchesImpl(n, s) {
+      return nativeMatch.call(n, s);
+    };
+  }
+
+  return matchesImpl(node, selector);
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/offset.js":
+/*!************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/offset.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ offset)
+/* harmony export */ });
+/* harmony import */ var _contains__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./contains */ "./node_modules/dom-helpers/esm/contains.js");
+/* harmony import */ var _ownerDocument__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ownerDocument */ "./node_modules/dom-helpers/esm/ownerDocument.js");
+/* harmony import */ var _scrollLeft__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./scrollLeft */ "./node_modules/dom-helpers/esm/scrollLeft.js");
+/* harmony import */ var _scrollTop__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./scrollTop */ "./node_modules/dom-helpers/esm/scrollTop.js");
+
+
+
+
+/**
+ * Returns the offset of a given element, including top and left positions, width and height.
+ * 
+ * @param node the element
+ */
+
+function offset(node) {
+  var doc = (0,_ownerDocument__WEBPACK_IMPORTED_MODULE_1__["default"])(node);
+  var box = {
+    top: 0,
+    left: 0,
+    height: 0,
+    width: 0
+  };
+  var docElem = doc && doc.documentElement; // Make sure it's not a disconnected DOM node
+
+  if (!docElem || !(0,_contains__WEBPACK_IMPORTED_MODULE_0__["default"])(docElem, node)) return box;
+  if (node.getBoundingClientRect !== undefined) box = node.getBoundingClientRect();
+  box = {
+    top: box.top + (0,_scrollTop__WEBPACK_IMPORTED_MODULE_3__["default"])(docElem) - (docElem.clientTop || 0),
+    left: box.left + (0,_scrollLeft__WEBPACK_IMPORTED_MODULE_2__["default"])(docElem) - (docElem.clientLeft || 0),
+    width: box.width,
+    height: box.height
+  };
+  return box;
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/ownerDocument.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/ownerDocument.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ownerDocument)
+/* harmony export */ });
+/**
+ * Returns the owner document of a given element.
+ * 
+ * @param node the element
+ */
+function ownerDocument(node) {
+  return node && node.ownerDocument || document;
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/ownerWindow.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/ownerWindow.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ownerWindow)
+/* harmony export */ });
+/* harmony import */ var _ownerDocument__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ownerDocument */ "./node_modules/dom-helpers/esm/ownerDocument.js");
+
+/**
+ * Returns the owner window of a given element.
+ * 
+ * @param node the element
+ */
+
+function ownerWindow(node) {
+  var doc = (0,_ownerDocument__WEBPACK_IMPORTED_MODULE_0__["default"])(node);
+  return doc && doc.defaultView || window;
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/querySelectorAll.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/querySelectorAll.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ qsa)
+/* harmony export */ });
+var toArray = Function.prototype.bind.call(Function.prototype.call, [].slice);
+/**
+ * Runs `querySelectorAll` on a given element.
+ * 
+ * @param element the element
+ * @param selector the selector
+ */
+
+function qsa(element, selector) {
+  return toArray(element.querySelectorAll(selector));
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/removeEventListener.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/removeEventListener.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/**
+ * A `removeEventListener` ponyfill
+ * 
+ * @param node the element
+ * @param eventName the event name
+ * @param handle the handler
+ * @param options event options
+ */
+function removeEventListener(node, eventName, handler, options) {
+  var capture = options && typeof options !== 'boolean' ? options.capture : options;
+  node.removeEventListener(eventName, handler, capture);
+
+  if (handler.__once) {
+    node.removeEventListener(eventName, handler.__once, capture);
+  }
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (removeEventListener);
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/scrollLeft.js":
+/*!****************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/scrollLeft.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _getScrollAccessor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getScrollAccessor */ "./node_modules/dom-helpers/esm/getScrollAccessor.js");
+
+/**
+ * Gets or sets the scroll left position of a given element.
+ * 
+ * @param node the element
+ * @param val the position to set
+ */
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_getScrollAccessor__WEBPACK_IMPORTED_MODULE_0__["default"])('pageXOffset'));
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/scrollTop.js":
+/*!***************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/scrollTop.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _getScrollAccessor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getScrollAccessor */ "./node_modules/dom-helpers/esm/getScrollAccessor.js");
+
+/**
+ * Gets or sets the scroll top position of a given element.
+ * 
+ * @param node the element
+ * @param val the position to set
+ */
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_getScrollAccessor__WEBPACK_IMPORTED_MODULE_0__["default"])('pageYOffset'));
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/transitionEnd.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/transitionEnd.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ transitionEnd)
+/* harmony export */ });
+/* harmony import */ var _css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./css */ "./node_modules/dom-helpers/esm/css.js");
+/* harmony import */ var _listen__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./listen */ "./node_modules/dom-helpers/esm/listen.js");
+/* harmony import */ var _triggerEvent__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./triggerEvent */ "./node_modules/dom-helpers/esm/triggerEvent.js");
+
+
+
+
+function parseDuration(node) {
+  var str = (0,_css__WEBPACK_IMPORTED_MODULE_0__["default"])(node, 'transitionDuration') || '';
+  var mult = str.indexOf('ms') === -1 ? 1000 : 1;
+  return parseFloat(str) * mult;
+}
+
+function emulateTransitionEnd(element, duration, padding) {
+  if (padding === void 0) {
+    padding = 5;
+  }
+
+  var called = false;
+  var handle = setTimeout(function () {
+    if (!called) (0,_triggerEvent__WEBPACK_IMPORTED_MODULE_2__["default"])(element, 'transitionend', true);
+  }, duration + padding);
+  var remove = (0,_listen__WEBPACK_IMPORTED_MODULE_1__["default"])(element, 'transitionend', function () {
+    called = true;
+  }, {
+    once: true
+  });
+  return function () {
+    clearTimeout(handle);
+    remove();
+  };
+}
+
+function transitionEnd(element, handler, duration, padding) {
+  if (duration == null) duration = parseDuration(element) || 0;
+  var removeEmulate = emulateTransitionEnd(element, duration, padding);
+  var remove = (0,_listen__WEBPACK_IMPORTED_MODULE_1__["default"])(element, 'transitionend', handler);
+  return function () {
+    removeEmulate();
+    remove();
+  };
+}
+
+/***/ }),
+
+/***/ "./node_modules/dom-helpers/esm/triggerEvent.js":
+/*!******************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/triggerEvent.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ triggerEvent)
+/* harmony export */ });
+/**
+ * Triggers an event on a given element.
+ * 
+ * @param node the element
+ * @param eventName the event name to trigger
+ * @param bubbles whether the event should bubble up
+ * @param cancelable whether the event should be cancelable
+ */
+function triggerEvent(node, eventName, bubbles, cancelable) {
+  if (bubbles === void 0) {
+    bubbles = false;
+  }
+
+  if (cancelable === void 0) {
+    cancelable = true;
+  }
+
+  if (node) {
+    var event = document.createEvent('HTMLEvents');
+    event.initEvent(eventName, bubbles, cancelable);
+    node.dispatchEvent(event);
+  }
+}
+
+/***/ }),
+
+/***/ "./node_modules/invariant/browser.js":
+/*!*******************************************!*\
+  !*** ./node_modules/invariant/browser.js ***!
+  \*******************************************/
+/***/ ((module) => {
+
+"use strict";
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
+
+/**
+ * Use invariant() to assert state which your program assumes to be true.
+ *
+ * Provide sprintf-style format (only %s is supported) and arguments
+ * to provide information about what broke and what you were
+ * expecting.
+ *
+ * The invariant message will be stripped in production, but the invariant
+ * will remain to ensure logic does not differ in production.
+ */
+
+var invariant = function(condition, format, a, b, c, d, e, f) {
+  if (true) {
+    if (format === undefined) {
+      throw new Error('invariant requires an error message argument');
+    }
+  }
+
+  if (!condition) {
+    var error;
+    if (format === undefined) {
+      error = new Error(
+        'Minified exception occurred; use the non-minified dev environment ' +
+        'for the full error message and additional helpful warnings.'
+      );
+    } else {
+      var args = [a, b, c, d, e, f];
+      var argIndex = 0;
+      error = new Error(
+        format.replace(/%s/g, function() { return args[argIndex++]; })
+      );
+      error.name = 'Invariant Violation';
+    }
+
+    error.framesToPop = 1; // we don't care about invariant's own frame
+    throw error;
+  }
+};
+
+module.exports = invariant;
 
 
 /***/ }),
@@ -84511,6 +86521,179 @@ if (false) {} else {
 
 /***/ }),
 
+/***/ "./node_modules/react-lifecycles-compat/react-lifecycles-compat.es.js":
+/*!****************************************************************************!*\
+  !*** ./node_modules/react-lifecycles-compat/react-lifecycles-compat.es.js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "polyfill": () => (/* binding */ polyfill)
+/* harmony export */ });
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+function componentWillMount() {
+  // Call this.constructor.gDSFP to support sub-classes.
+  var state = this.constructor.getDerivedStateFromProps(this.props, this.state);
+  if (state !== null && state !== undefined) {
+    this.setState(state);
+  }
+}
+
+function componentWillReceiveProps(nextProps) {
+  // Call this.constructor.gDSFP to support sub-classes.
+  // Use the setState() updater to ensure state isn't stale in certain edge cases.
+  function updater(prevState) {
+    var state = this.constructor.getDerivedStateFromProps(nextProps, prevState);
+    return state !== null && state !== undefined ? state : null;
+  }
+  // Binding "this" is important for shallow renderer support.
+  this.setState(updater.bind(this));
+}
+
+function componentWillUpdate(nextProps, nextState) {
+  try {
+    var prevProps = this.props;
+    var prevState = this.state;
+    this.props = nextProps;
+    this.state = nextState;
+    this.__reactInternalSnapshotFlag = true;
+    this.__reactInternalSnapshot = this.getSnapshotBeforeUpdate(
+      prevProps,
+      prevState
+    );
+  } finally {
+    this.props = prevProps;
+    this.state = prevState;
+  }
+}
+
+// React may warn about cWM/cWRP/cWU methods being deprecated.
+// Add a flag to suppress these warnings for this special case.
+componentWillMount.__suppressDeprecationWarning = true;
+componentWillReceiveProps.__suppressDeprecationWarning = true;
+componentWillUpdate.__suppressDeprecationWarning = true;
+
+function polyfill(Component) {
+  var prototype = Component.prototype;
+
+  if (!prototype || !prototype.isReactComponent) {
+    throw new Error('Can only polyfill class components');
+  }
+
+  if (
+    typeof Component.getDerivedStateFromProps !== 'function' &&
+    typeof prototype.getSnapshotBeforeUpdate !== 'function'
+  ) {
+    return Component;
+  }
+
+  // If new component APIs are defined, "unsafe" lifecycles won't be called.
+  // Error if any of these lifecycles are present,
+  // Because they would work differently between older and newer (16.3+) versions of React.
+  var foundWillMountName = null;
+  var foundWillReceivePropsName = null;
+  var foundWillUpdateName = null;
+  if (typeof prototype.componentWillMount === 'function') {
+    foundWillMountName = 'componentWillMount';
+  } else if (typeof prototype.UNSAFE_componentWillMount === 'function') {
+    foundWillMountName = 'UNSAFE_componentWillMount';
+  }
+  if (typeof prototype.componentWillReceiveProps === 'function') {
+    foundWillReceivePropsName = 'componentWillReceiveProps';
+  } else if (typeof prototype.UNSAFE_componentWillReceiveProps === 'function') {
+    foundWillReceivePropsName = 'UNSAFE_componentWillReceiveProps';
+  }
+  if (typeof prototype.componentWillUpdate === 'function') {
+    foundWillUpdateName = 'componentWillUpdate';
+  } else if (typeof prototype.UNSAFE_componentWillUpdate === 'function') {
+    foundWillUpdateName = 'UNSAFE_componentWillUpdate';
+  }
+  if (
+    foundWillMountName !== null ||
+    foundWillReceivePropsName !== null ||
+    foundWillUpdateName !== null
+  ) {
+    var componentName = Component.displayName || Component.name;
+    var newApiName =
+      typeof Component.getDerivedStateFromProps === 'function'
+        ? 'getDerivedStateFromProps()'
+        : 'getSnapshotBeforeUpdate()';
+
+    throw Error(
+      'Unsafe legacy lifecycles will not be called for components using new component APIs.\n\n' +
+        componentName +
+        ' uses ' +
+        newApiName +
+        ' but also contains the following legacy lifecycles:' +
+        (foundWillMountName !== null ? '\n  ' + foundWillMountName : '') +
+        (foundWillReceivePropsName !== null
+          ? '\n  ' + foundWillReceivePropsName
+          : '') +
+        (foundWillUpdateName !== null ? '\n  ' + foundWillUpdateName : '') +
+        '\n\nThe above lifecycles should be removed. Learn more about this warning here:\n' +
+        'https://fb.me/react-async-component-lifecycle-hooks'
+    );
+  }
+
+  // React <= 16.2 does not support static getDerivedStateFromProps.
+  // As a workaround, use cWM and cWRP to invoke the new static lifecycle.
+  // Newer versions of React will ignore these lifecycles if gDSFP exists.
+  if (typeof Component.getDerivedStateFromProps === 'function') {
+    prototype.componentWillMount = componentWillMount;
+    prototype.componentWillReceiveProps = componentWillReceiveProps;
+  }
+
+  // React <= 16.2 does not support getSnapshotBeforeUpdate.
+  // As a workaround, use cWU to invoke the new lifecycle.
+  // Newer versions of React will ignore that lifecycle if gSBU exists.
+  if (typeof prototype.getSnapshotBeforeUpdate === 'function') {
+    if (typeof prototype.componentDidUpdate !== 'function') {
+      throw new Error(
+        'Cannot polyfill getSnapshotBeforeUpdate() for components that do not define componentDidUpdate() on the prototype'
+      );
+    }
+
+    prototype.componentWillUpdate = componentWillUpdate;
+
+    var componentDidUpdate = prototype.componentDidUpdate;
+
+    prototype.componentDidUpdate = function componentDidUpdatePolyfill(
+      prevProps,
+      prevState,
+      maybeSnapshot
+    ) {
+      // 16.3+ will not execute our will-update method;
+      // It will pass a snapshot value to did-update though.
+      // Older versions will require our polyfilled will-update value.
+      // We need to handle both cases, but can't just check for the presence of "maybeSnapshot",
+      // Because for <= 15.x versions this might be a "prevContext" object.
+      // We also can't just check "__reactInternalSnapshot",
+      // Because get-snapshot might return a falsy value.
+      // So check for the explicit __reactInternalSnapshotFlag flag to determine behavior.
+      var snapshot = this.__reactInternalSnapshotFlag
+        ? this.__reactInternalSnapshot
+        : maybeSnapshot;
+
+      componentDidUpdate.call(this, prevProps, prevState, snapshot);
+    };
+  }
+
+  return Component;
+}
+
+
+
+
+/***/ }),
+
 /***/ "./node_modules/react-onclickoutside/dist/react-onclickoutside.es.js":
 /*!***************************************************************************!*\
   !*** ./node_modules/react-onclickoutside/dist/react-onclickoutside.es.js ***!
@@ -89820,6 +92003,7907 @@ function isMobileDevice() {
 
 /***/ }),
 
+/***/ "./node_modules/react-transition-group/esm/Transition.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/react-transition-group/esm/Transition.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ENTERED": () => (/* binding */ ENTERED),
+/* harmony export */   "ENTERING": () => (/* binding */ ENTERING),
+/* harmony export */   "EXITED": () => (/* binding */ EXITED),
+/* harmony export */   "EXITING": () => (/* binding */ EXITING),
+/* harmony export */   "UNMOUNTED": () => (/* binding */ UNMOUNTED),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_esm_objectWithoutPropertiesLoose__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/esm/objectWithoutPropertiesLoose */ "./node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
+/* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/esm/inheritsLoose */ "./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./config */ "./node_modules/react-transition-group/esm/config.js");
+/* harmony import */ var _utils_PropTypes__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/PropTypes */ "./node_modules/react-transition-group/esm/utils/PropTypes.js");
+/* harmony import */ var _TransitionGroupContext__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./TransitionGroupContext */ "./node_modules/react-transition-group/esm/TransitionGroupContext.js");
+
+
+
+
+
+
+
+
+var UNMOUNTED = 'unmounted';
+var EXITED = 'exited';
+var ENTERING = 'entering';
+var ENTERED = 'entered';
+var EXITING = 'exiting';
+/**
+ * The Transition component lets you describe a transition from one component
+ * state to another _over time_ with a simple declarative API. Most commonly
+ * it's used to animate the mounting and unmounting of a component, but can also
+ * be used to describe in-place transition states as well.
+ *
+ * ---
+ *
+ * **Note**: `Transition` is a platform-agnostic base component. If you're using
+ * transitions in CSS, you'll probably want to use
+ * [`CSSTransition`](https://reactcommunity.org/react-transition-group/css-transition)
+ * instead. It inherits all the features of `Transition`, but contains
+ * additional features necessary to play nice with CSS transitions (hence the
+ * name of the component).
+ *
+ * ---
+ *
+ * By default the `Transition` component does not alter the behavior of the
+ * component it renders, it only tracks "enter" and "exit" states for the
+ * components. It's up to you to give meaning and effect to those states. For
+ * example we can add styles to a component when it enters or exits:
+ *
+ * ```jsx
+ * import { Transition } from 'react-transition-group';
+ *
+ * const duration = 300;
+ *
+ * const defaultStyle = {
+ *   transition: `opacity ${duration}ms ease-in-out`,
+ *   opacity: 0,
+ * }
+ *
+ * const transitionStyles = {
+ *   entering: { opacity: 1 },
+ *   entered:  { opacity: 1 },
+ *   exiting:  { opacity: 0 },
+ *   exited:  { opacity: 0 },
+ * };
+ *
+ * const Fade = ({ in: inProp }) => (
+ *   <Transition in={inProp} timeout={duration}>
+ *     {state => (
+ *       <div style={{
+ *         ...defaultStyle,
+ *         ...transitionStyles[state]
+ *       }}>
+ *         I'm a fade Transition!
+ *       </div>
+ *     )}
+ *   </Transition>
+ * );
+ * ```
+ *
+ * There are 4 main states a Transition can be in:
+ *  - `'entering'`
+ *  - `'entered'`
+ *  - `'exiting'`
+ *  - `'exited'`
+ *
+ * Transition state is toggled via the `in` prop. When `true` the component
+ * begins the "Enter" stage. During this stage, the component will shift from
+ * its current transition state, to `'entering'` for the duration of the
+ * transition and then to the `'entered'` stage once it's complete. Let's take
+ * the following example (we'll use the
+ * [useState](https://reactjs.org/docs/hooks-reference.html#usestate) hook):
+ *
+ * ```jsx
+ * function App() {
+ *   const [inProp, setInProp] = useState(false);
+ *   return (
+ *     <div>
+ *       <Transition in={inProp} timeout={500}>
+ *         {state => (
+ *           // ...
+ *         )}
+ *       </Transition>
+ *       <button onClick={() => setInProp(true)}>
+ *         Click to Enter
+ *       </button>
+ *     </div>
+ *   );
+ * }
+ * ```
+ *
+ * When the button is clicked the component will shift to the `'entering'` state
+ * and stay there for 500ms (the value of `timeout`) before it finally switches
+ * to `'entered'`.
+ *
+ * When `in` is `false` the same thing happens except the state moves from
+ * `'exiting'` to `'exited'`.
+ */
+
+var Transition = /*#__PURE__*/function (_React$Component) {
+  (0,_babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_1__["default"])(Transition, _React$Component);
+
+  function Transition(props, context) {
+    var _this;
+
+    _this = _React$Component.call(this, props, context) || this;
+    var parentGroup = context; // In the context of a TransitionGroup all enters are really appears
+
+    var appear = parentGroup && !parentGroup.isMounting ? props.enter : props.appear;
+    var initialStatus;
+    _this.appearStatus = null;
+
+    if (props.in) {
+      if (appear) {
+        initialStatus = EXITED;
+        _this.appearStatus = ENTERING;
+      } else {
+        initialStatus = ENTERED;
+      }
+    } else {
+      if (props.unmountOnExit || props.mountOnEnter) {
+        initialStatus = UNMOUNTED;
+      } else {
+        initialStatus = EXITED;
+      }
+    }
+
+    _this.state = {
+      status: initialStatus
+    };
+    _this.nextCallback = null;
+    return _this;
+  }
+
+  Transition.getDerivedStateFromProps = function getDerivedStateFromProps(_ref, prevState) {
+    var nextIn = _ref.in;
+
+    if (nextIn && prevState.status === UNMOUNTED) {
+      return {
+        status: EXITED
+      };
+    }
+
+    return null;
+  } // getSnapshotBeforeUpdate(prevProps) {
+  //   let nextStatus = null
+  //   if (prevProps !== this.props) {
+  //     const { status } = this.state
+  //     if (this.props.in) {
+  //       if (status !== ENTERING && status !== ENTERED) {
+  //         nextStatus = ENTERING
+  //       }
+  //     } else {
+  //       if (status === ENTERING || status === ENTERED) {
+  //         nextStatus = EXITING
+  //       }
+  //     }
+  //   }
+  //   return { nextStatus }
+  // }
+  ;
+
+  var _proto = Transition.prototype;
+
+  _proto.componentDidMount = function componentDidMount() {
+    this.updateStatus(true, this.appearStatus);
+  };
+
+  _proto.componentDidUpdate = function componentDidUpdate(prevProps) {
+    var nextStatus = null;
+
+    if (prevProps !== this.props) {
+      var status = this.state.status;
+
+      if (this.props.in) {
+        if (status !== ENTERING && status !== ENTERED) {
+          nextStatus = ENTERING;
+        }
+      } else {
+        if (status === ENTERING || status === ENTERED) {
+          nextStatus = EXITING;
+        }
+      }
+    }
+
+    this.updateStatus(false, nextStatus);
+  };
+
+  _proto.componentWillUnmount = function componentWillUnmount() {
+    this.cancelNextCallback();
+  };
+
+  _proto.getTimeouts = function getTimeouts() {
+    var timeout = this.props.timeout;
+    var exit, enter, appear;
+    exit = enter = appear = timeout;
+
+    if (timeout != null && typeof timeout !== 'number') {
+      exit = timeout.exit;
+      enter = timeout.enter; // TODO: remove fallback for next major
+
+      appear = timeout.appear !== undefined ? timeout.appear : enter;
+    }
+
+    return {
+      exit: exit,
+      enter: enter,
+      appear: appear
+    };
+  };
+
+  _proto.updateStatus = function updateStatus(mounting, nextStatus) {
+    if (mounting === void 0) {
+      mounting = false;
+    }
+
+    if (nextStatus !== null) {
+      // nextStatus will always be ENTERING or EXITING.
+      this.cancelNextCallback();
+
+      if (nextStatus === ENTERING) {
+        this.performEnter(mounting);
+      } else {
+        this.performExit();
+      }
+    } else if (this.props.unmountOnExit && this.state.status === EXITED) {
+      this.setState({
+        status: UNMOUNTED
+      });
+    }
+  };
+
+  _proto.performEnter = function performEnter(mounting) {
+    var _this2 = this;
+
+    var enter = this.props.enter;
+    var appearing = this.context ? this.context.isMounting : mounting;
+
+    var _ref2 = this.props.nodeRef ? [appearing] : [react_dom__WEBPACK_IMPORTED_MODULE_3__.findDOMNode(this), appearing],
+        maybeNode = _ref2[0],
+        maybeAppearing = _ref2[1];
+
+    var timeouts = this.getTimeouts();
+    var enterTimeout = appearing ? timeouts.appear : timeouts.enter; // no enter animation skip right to ENTERED
+    // if we are mounting and running this it means appear _must_ be set
+
+    if (!mounting && !enter || _config__WEBPACK_IMPORTED_MODULE_4__["default"].disabled) {
+      this.safeSetState({
+        status: ENTERED
+      }, function () {
+        _this2.props.onEntered(maybeNode);
+      });
+      return;
+    }
+
+    this.props.onEnter(maybeNode, maybeAppearing);
+    this.safeSetState({
+      status: ENTERING
+    }, function () {
+      _this2.props.onEntering(maybeNode, maybeAppearing);
+
+      _this2.onTransitionEnd(enterTimeout, function () {
+        _this2.safeSetState({
+          status: ENTERED
+        }, function () {
+          _this2.props.onEntered(maybeNode, maybeAppearing);
+        });
+      });
+    });
+  };
+
+  _proto.performExit = function performExit() {
+    var _this3 = this;
+
+    var exit = this.props.exit;
+    var timeouts = this.getTimeouts();
+    var maybeNode = this.props.nodeRef ? undefined : react_dom__WEBPACK_IMPORTED_MODULE_3__.findDOMNode(this); // no exit animation skip right to EXITED
+
+    if (!exit || _config__WEBPACK_IMPORTED_MODULE_4__["default"].disabled) {
+      this.safeSetState({
+        status: EXITED
+      }, function () {
+        _this3.props.onExited(maybeNode);
+      });
+      return;
+    }
+
+    this.props.onExit(maybeNode);
+    this.safeSetState({
+      status: EXITING
+    }, function () {
+      _this3.props.onExiting(maybeNode);
+
+      _this3.onTransitionEnd(timeouts.exit, function () {
+        _this3.safeSetState({
+          status: EXITED
+        }, function () {
+          _this3.props.onExited(maybeNode);
+        });
+      });
+    });
+  };
+
+  _proto.cancelNextCallback = function cancelNextCallback() {
+    if (this.nextCallback !== null) {
+      this.nextCallback.cancel();
+      this.nextCallback = null;
+    }
+  };
+
+  _proto.safeSetState = function safeSetState(nextState, callback) {
+    // This shouldn't be necessary, but there are weird race conditions with
+    // setState callbacks and unmounting in testing, so always make sure that
+    // we can cancel any pending setState callbacks after we unmount.
+    callback = this.setNextCallback(callback);
+    this.setState(nextState, callback);
+  };
+
+  _proto.setNextCallback = function setNextCallback(callback) {
+    var _this4 = this;
+
+    var active = true;
+
+    this.nextCallback = function (event) {
+      if (active) {
+        active = false;
+        _this4.nextCallback = null;
+        callback(event);
+      }
+    };
+
+    this.nextCallback.cancel = function () {
+      active = false;
+    };
+
+    return this.nextCallback;
+  };
+
+  _proto.onTransitionEnd = function onTransitionEnd(timeout, handler) {
+    this.setNextCallback(handler);
+    var node = this.props.nodeRef ? this.props.nodeRef.current : react_dom__WEBPACK_IMPORTED_MODULE_3__.findDOMNode(this);
+    var doesNotHaveTimeoutOrListener = timeout == null && !this.props.addEndListener;
+
+    if (!node || doesNotHaveTimeoutOrListener) {
+      setTimeout(this.nextCallback, 0);
+      return;
+    }
+
+    if (this.props.addEndListener) {
+      var _ref3 = this.props.nodeRef ? [this.nextCallback] : [node, this.nextCallback],
+          maybeNode = _ref3[0],
+          maybeNextCallback = _ref3[1];
+
+      this.props.addEndListener(maybeNode, maybeNextCallback);
+    }
+
+    if (timeout != null) {
+      setTimeout(this.nextCallback, timeout);
+    }
+  };
+
+  _proto.render = function render() {
+    var status = this.state.status;
+
+    if (status === UNMOUNTED) {
+      return null;
+    }
+
+    var _this$props = this.props,
+        children = _this$props.children,
+        _in = _this$props.in,
+        _mountOnEnter = _this$props.mountOnEnter,
+        _unmountOnExit = _this$props.unmountOnExit,
+        _appear = _this$props.appear,
+        _enter = _this$props.enter,
+        _exit = _this$props.exit,
+        _timeout = _this$props.timeout,
+        _addEndListener = _this$props.addEndListener,
+        _onEnter = _this$props.onEnter,
+        _onEntering = _this$props.onEntering,
+        _onEntered = _this$props.onEntered,
+        _onExit = _this$props.onExit,
+        _onExiting = _this$props.onExiting,
+        _onExited = _this$props.onExited,
+        _nodeRef = _this$props.nodeRef,
+        childProps = (0,_babel_runtime_helpers_esm_objectWithoutPropertiesLoose__WEBPACK_IMPORTED_MODULE_0__["default"])(_this$props, ["children", "in", "mountOnEnter", "unmountOnExit", "appear", "enter", "exit", "timeout", "addEndListener", "onEnter", "onEntering", "onEntered", "onExit", "onExiting", "onExited", "nodeRef"]);
+
+    return (
+      /*#__PURE__*/
+      // allows for nested Transitions
+      react__WEBPACK_IMPORTED_MODULE_2__.createElement(_TransitionGroupContext__WEBPACK_IMPORTED_MODULE_5__["default"].Provider, {
+        value: null
+      }, typeof children === 'function' ? children(status, childProps) : react__WEBPACK_IMPORTED_MODULE_2__.cloneElement(react__WEBPACK_IMPORTED_MODULE_2__.Children.only(children), childProps))
+    );
+  };
+
+  return Transition;
+}(react__WEBPACK_IMPORTED_MODULE_2__.Component);
+
+Transition.contextType = _TransitionGroupContext__WEBPACK_IMPORTED_MODULE_5__["default"];
+Transition.propTypes =  true ? {
+  /**
+   * A React reference to DOM element that need to transition:
+   * https://stackoverflow.com/a/51127130/4671932
+   *
+   *   - When `nodeRef` prop is used, `node` is not passed to callback functions
+   *      (e.g. `onEnter`) because user already has direct access to the node.
+   *   - When changing `key` prop of `Transition` in a `TransitionGroup` a new
+   *     `nodeRef` need to be provided to `Transition` with changed `key` prop
+   *     (see
+   *     [test/CSSTransition-test.js](https://github.com/reactjs/react-transition-group/blob/13435f897b3ab71f6e19d724f145596f5910581c/test/CSSTransition-test.js#L362-L437)).
+   */
+  nodeRef: prop_types__WEBPACK_IMPORTED_MODULE_6___default().shape({
+    current: typeof Element === 'undefined' ? (prop_types__WEBPACK_IMPORTED_MODULE_6___default().any) : function (propValue, key, componentName, location, propFullName, secret) {
+      var value = propValue[key];
+      return prop_types__WEBPACK_IMPORTED_MODULE_6___default().instanceOf(value && 'ownerDocument' in value ? value.ownerDocument.defaultView.Element : Element)(propValue, key, componentName, location, propFullName, secret);
+    }
+  }),
+
+  /**
+   * A `function` child can be used instead of a React element. This function is
+   * called with the current transition status (`'entering'`, `'entered'`,
+   * `'exiting'`, `'exited'`), which can be used to apply context
+   * specific props to a component.
+   *
+   * ```jsx
+   * <Transition in={this.state.in} timeout={150}>
+   *   {state => (
+   *     <MyComponent className={`fade fade-${state}`} />
+   *   )}
+   * </Transition>
+   * ```
+   */
+  children: prop_types__WEBPACK_IMPORTED_MODULE_6___default().oneOfType([(prop_types__WEBPACK_IMPORTED_MODULE_6___default().func.isRequired), (prop_types__WEBPACK_IMPORTED_MODULE_6___default().element.isRequired)]).isRequired,
+
+  /**
+   * Show the component; triggers the enter or exit states
+   */
+  in: (prop_types__WEBPACK_IMPORTED_MODULE_6___default().bool),
+
+  /**
+   * By default the child component is mounted immediately along with
+   * the parent `Transition` component. If you want to "lazy mount" the component on the
+   * first `in={true}` you can set `mountOnEnter`. After the first enter transition the component will stay
+   * mounted, even on "exited", unless you also specify `unmountOnExit`.
+   */
+  mountOnEnter: (prop_types__WEBPACK_IMPORTED_MODULE_6___default().bool),
+
+  /**
+   * By default the child component stays mounted after it reaches the `'exited'` state.
+   * Set `unmountOnExit` if you'd prefer to unmount the component after it finishes exiting.
+   */
+  unmountOnExit: (prop_types__WEBPACK_IMPORTED_MODULE_6___default().bool),
+
+  /**
+   * By default the child component does not perform the enter transition when
+   * it first mounts, regardless of the value of `in`. If you want this
+   * behavior, set both `appear` and `in` to `true`.
+   *
+   * > **Note**: there are no special appear states like `appearing`/`appeared`, this prop
+   * > only adds an additional enter transition. However, in the
+   * > `<CSSTransition>` component that first enter transition does result in
+   * > additional `.appear-*` classes, that way you can choose to style it
+   * > differently.
+   */
+  appear: (prop_types__WEBPACK_IMPORTED_MODULE_6___default().bool),
+
+  /**
+   * Enable or disable enter transitions.
+   */
+  enter: (prop_types__WEBPACK_IMPORTED_MODULE_6___default().bool),
+
+  /**
+   * Enable or disable exit transitions.
+   */
+  exit: (prop_types__WEBPACK_IMPORTED_MODULE_6___default().bool),
+
+  /**
+   * The duration of the transition, in milliseconds.
+   * Required unless `addEndListener` is provided.
+   *
+   * You may specify a single timeout for all transitions:
+   *
+   * ```jsx
+   * timeout={500}
+   * ```
+   *
+   * or individually:
+   *
+   * ```jsx
+   * timeout={{
+   *  appear: 500,
+   *  enter: 300,
+   *  exit: 500,
+   * }}
+   * ```
+   *
+   * - `appear` defaults to the value of `enter`
+   * - `enter` defaults to `0`
+   * - `exit` defaults to `0`
+   *
+   * @type {number | { enter?: number, exit?: number, appear?: number }}
+   */
+  timeout: function timeout(props) {
+    var pt = _utils_PropTypes__WEBPACK_IMPORTED_MODULE_7__.timeoutsShape;
+    if (!props.addEndListener) pt = pt.isRequired;
+
+    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    return pt.apply(void 0, [props].concat(args));
+  },
+
+  /**
+   * Add a custom transition end trigger. Called with the transitioning
+   * DOM node and a `done` callback. Allows for more fine grained transition end
+   * logic. Timeouts are still used as a fallback if provided.
+   *
+   * **Note**: when `nodeRef` prop is passed, `node` is not passed.
+   *
+   * ```jsx
+   * addEndListener={(node, done) => {
+   *   // use the css transitionend event to mark the finish of a transition
+   *   node.addEventListener('transitionend', done, false);
+   * }}
+   * ```
+   */
+  addEndListener: (prop_types__WEBPACK_IMPORTED_MODULE_6___default().func),
+
+  /**
+   * Callback fired before the "entering" status is applied. An extra parameter
+   * `isAppearing` is supplied to indicate if the enter stage is occurring on the initial mount
+   *
+   * **Note**: when `nodeRef` prop is passed, `node` is not passed.
+   *
+   * @type Function(node: HtmlElement, isAppearing: bool) -> void
+   */
+  onEnter: (prop_types__WEBPACK_IMPORTED_MODULE_6___default().func),
+
+  /**
+   * Callback fired after the "entering" status is applied. An extra parameter
+   * `isAppearing` is supplied to indicate if the enter stage is occurring on the initial mount
+   *
+   * **Note**: when `nodeRef` prop is passed, `node` is not passed.
+   *
+   * @type Function(node: HtmlElement, isAppearing: bool)
+   */
+  onEntering: (prop_types__WEBPACK_IMPORTED_MODULE_6___default().func),
+
+  /**
+   * Callback fired after the "entered" status is applied. An extra parameter
+   * `isAppearing` is supplied to indicate if the enter stage is occurring on the initial mount
+   *
+   * **Note**: when `nodeRef` prop is passed, `node` is not passed.
+   *
+   * @type Function(node: HtmlElement, isAppearing: bool) -> void
+   */
+  onEntered: (prop_types__WEBPACK_IMPORTED_MODULE_6___default().func),
+
+  /**
+   * Callback fired before the "exiting" status is applied.
+   *
+   * **Note**: when `nodeRef` prop is passed, `node` is not passed.
+   *
+   * @type Function(node: HtmlElement) -> void
+   */
+  onExit: (prop_types__WEBPACK_IMPORTED_MODULE_6___default().func),
+
+  /**
+   * Callback fired after the "exiting" status is applied.
+   *
+   * **Note**: when `nodeRef` prop is passed, `node` is not passed.
+   *
+   * @type Function(node: HtmlElement) -> void
+   */
+  onExiting: (prop_types__WEBPACK_IMPORTED_MODULE_6___default().func),
+
+  /**
+   * Callback fired after the "exited" status is applied.
+   *
+   * **Note**: when `nodeRef` prop is passed, `node` is not passed
+   *
+   * @type Function(node: HtmlElement) -> void
+   */
+  onExited: (prop_types__WEBPACK_IMPORTED_MODULE_6___default().func)
+} : 0; // Name the function so it is clearer in the documentation
+
+function noop() {}
+
+Transition.defaultProps = {
+  in: false,
+  mountOnEnter: false,
+  unmountOnExit: false,
+  appear: false,
+  enter: true,
+  exit: true,
+  onEnter: noop,
+  onEntering: noop,
+  onEntered: noop,
+  onExit: noop,
+  onExiting: noop,
+  onExited: noop
+};
+Transition.UNMOUNTED = UNMOUNTED;
+Transition.EXITED = EXITED;
+Transition.ENTERING = ENTERING;
+Transition.ENTERED = ENTERED;
+Transition.EXITING = EXITING;
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Transition);
+
+/***/ }),
+
+/***/ "./node_modules/react-transition-group/esm/TransitionGroupContext.js":
+/*!***************************************************************************!*\
+  !*** ./node_modules/react-transition-group/esm/TransitionGroupContext.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (react__WEBPACK_IMPORTED_MODULE_0__.createContext(null));
+
+/***/ }),
+
+/***/ "./node_modules/react-transition-group/esm/config.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/react-transition-group/esm/config.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  disabled: false
+});
+
+/***/ }),
+
+/***/ "./node_modules/react-transition-group/esm/utils/PropTypes.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/react-transition-group/esm/utils/PropTypes.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "classNamesShape": () => (/* binding */ classNamesShape),
+/* harmony export */   "timeoutsShape": () => (/* binding */ timeoutsShape)
+/* harmony export */ });
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_0__);
+
+var timeoutsShape =  true ? prop_types__WEBPACK_IMPORTED_MODULE_0___default().oneOfType([(prop_types__WEBPACK_IMPORTED_MODULE_0___default().number), prop_types__WEBPACK_IMPORTED_MODULE_0___default().shape({
+  enter: (prop_types__WEBPACK_IMPORTED_MODULE_0___default().number),
+  exit: (prop_types__WEBPACK_IMPORTED_MODULE_0___default().number),
+  appear: (prop_types__WEBPACK_IMPORTED_MODULE_0___default().number)
+}).isRequired]) : 0;
+var classNamesShape =  true ? prop_types__WEBPACK_IMPORTED_MODULE_0___default().oneOfType([(prop_types__WEBPACK_IMPORTED_MODULE_0___default().string), prop_types__WEBPACK_IMPORTED_MODULE_0___default().shape({
+  enter: (prop_types__WEBPACK_IMPORTED_MODULE_0___default().string),
+  exit: (prop_types__WEBPACK_IMPORTED_MODULE_0___default().string),
+  active: (prop_types__WEBPACK_IMPORTED_MODULE_0___default().string)
+}), prop_types__WEBPACK_IMPORTED_MODULE_0___default().shape({
+  enter: (prop_types__WEBPACK_IMPORTED_MODULE_0___default().string),
+  enterDone: (prop_types__WEBPACK_IMPORTED_MODULE_0___default().string),
+  enterActive: (prop_types__WEBPACK_IMPORTED_MODULE_0___default().string),
+  exit: (prop_types__WEBPACK_IMPORTED_MODULE_0___default().string),
+  exitDone: (prop_types__WEBPACK_IMPORTED_MODULE_0___default().string),
+  exitActive: (prop_types__WEBPACK_IMPORTED_MODULE_0___default().string)
+})]) : 0;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/A11y.js":
+/*!************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/A11y.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.useActiveDescendant = exports.setActiveDescendant = void 0;
+
+var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+/**
+ * Do a "hard" set on the aria, so that it's always announced
+ * even if the id hasn't changed, this saves us from having to have a different id
+ * per item.
+ */
+const setActiveDescendant = (ref, activeId) => {
+  if (!ref) return;
+  ref.removeAttribute('aria-activedescendant');
+  if (activeId) ref.setAttribute('aria-activedescendant', activeId);
+};
+
+exports.setActiveDescendant = setActiveDescendant;
+
+const useActiveDescendant = (ref, id, visible, deps) => {
+  (0, _react.useEffect)(() => {
+    setActiveDescendant(ref.current, visible ? id : ''); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ref, id, visible, ...deps]);
+};
+
+exports.useActiveDescendant = useActiveDescendant;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Accessors.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Accessors.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.dataIndexOf = dataIndexOf;
+exports.dataItem = dataItem;
+exports.useAccessors = exports.dataValue = exports.dataText = void 0;
+exports.valueMatcher = valueMatcher;
+
+var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+const dataValue = (dataItem, field) => {
+  if (typeof field === 'function') return field(dataItem);
+  if (dataItem == null) return dataItem;
+  if (typeof field === 'string' && typeof dataItem === 'object' && field in dataItem) return dataItem[field];
+  return dataItem;
+};
+
+exports.dataValue = dataValue;
+
+const dataText = (dataItem, textField) => {
+  const value = dataValue(dataItem, textField);
+  return value == null ? '' : String(value);
+};
+/**
+ * I don't know that the shallow equal makes sense here but am too afraid to
+ * remove it.
+ */
+
+
+exports.dataText = dataText;
+
+function valueMatcher(a, b, dataKey) {
+  return dataValue(a, dataKey) === dataValue(b, dataKey);
+}
+
+function dataIndexOf(data, value, dataKey) {
+  const valueDataKey = dataValue(value, dataKey);
+  let idx = -1;
+
+  while (++idx < data.length) {
+    const datum = data[idx];
+    if (datum === value || dataValue(datum, dataKey) === valueDataKey) return idx;
+  }
+
+  return -1;
+}
+
+function dataItem(data, value, dataKey) {
+  const idx = dataIndexOf(data, value, dataKey); // This isn't strictly safe, but we want to allow items that aren't in the list
+
+  return idx !== -1 ? data[idx] : value;
+}
+
+const useAccessors = (textField, dataKey) => {
+  return (0, _react.useMemo)(() => ({
+    text: item => dataText(item, textField),
+    value: item => dataValue(item, dataKey),
+    indexOf: (data, value) => dataIndexOf(data, value, dataKey),
+    matches: (a, b) => valueMatcher(a, b, dataKey),
+    findOrSelf: (data, value) => dataItem(data, value, dataKey),
+    includes: (data, value) => dataIndexOf(data, value, dataKey) !== -1
+  }), [textField, dataKey]);
+};
+
+exports.useAccessors = useAccessors;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/AddToListOption.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/AddToListOption.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = exports.CREATE_OPTION = void 0;
+
+var PropTypes = _interopRequireWildcard(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _ListOption = _interopRequireDefault(__webpack_require__(/*! ./ListOption */ "./node_modules/react-widgets/cjs/ListOption.js"));
+
+const _excluded = ["children"];
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const CREATE_OPTION = {};
+exports.CREATE_OPTION = CREATE_OPTION;
+const propTypes = {
+  searchTerm: PropTypes.string,
+  focused: PropTypes.bool,
+  onSelect: PropTypes.func.isRequired,
+  activeId: PropTypes.string
+};
+
+function AddToListOption(_ref) {
+  let {
+    children
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  return /*#__PURE__*/_react.default.createElement(_ListOption.default, _extends({}, props, {
+    dataItem: CREATE_OPTION,
+    className: 'rw-list-option-create',
+    selected: false
+  }), children);
+}
+
+AddToListOption.propTypes = propTypes;
+var _default = AddToListOption;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Button.js":
+/*!**************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Button.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var React = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _Icon = __webpack_require__(/*! ./Icon */ "./node_modules/react-widgets/cjs/Icon.js");
+
+const _excluded = ["className", "disabled", "label", "icon", "busy", "children", "spinner"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function Button(_ref) {
+  let {
+    className,
+    disabled,
+    label,
+    icon,
+    busy,
+    children,
+    spinner = _Icon.Spinner
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  return /*#__PURE__*/React.createElement("button", _extends({
+    tabIndex: -1
+  }, props, {
+    title: label,
+    type: "button",
+    disabled: disabled,
+    "aria-label": label,
+    "aria-disabled": disabled,
+    className: (0, _classnames.default)(className, 'rw-btn')
+  }), busy ? spinner : icon, children);
+}
+
+var _default = Button;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Calendar.js":
+/*!****************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Calendar.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _uncontrollable = __webpack_require__(/*! uncontrollable */ "./node_modules/uncontrollable/lib/esm/index.js");
+
+var _CalendarHeader = _interopRequireDefault(__webpack_require__(/*! ./CalendarHeader */ "./node_modules/react-widgets/cjs/CalendarHeader.js"));
+
+var _Century = _interopRequireDefault(__webpack_require__(/*! ./Century */ "./node_modules/react-widgets/cjs/Century.js"));
+
+var _Decade = _interopRequireDefault(__webpack_require__(/*! ./Decade */ "./node_modules/react-widgets/cjs/Decade.js"));
+
+var _Localization = __webpack_require__(/*! ./Localization */ "./node_modules/react-widgets/cjs/Localization.js");
+
+var _Month = _interopRequireDefault(__webpack_require__(/*! ./Month */ "./node_modules/react-widgets/cjs/Month.js"));
+
+var _SlideTransitionGroup = _interopRequireDefault(__webpack_require__(/*! ./SlideTransitionGroup */ "./node_modules/react-widgets/cjs/SlideTransitionGroup.js"));
+
+var _Widget = _interopRequireDefault(__webpack_require__(/*! ./Widget */ "./node_modules/react-widgets/cjs/Widget.js"));
+
+var _Year = _interopRequireDefault(__webpack_require__(/*! ./Year */ "./node_modules/react-widgets/cjs/Year.js"));
+
+var _dates = _interopRequireDefault(__webpack_require__(/*! ./dates */ "./node_modules/react-widgets/cjs/dates.js"));
+
+var _useAutoFocus = _interopRequireDefault(__webpack_require__(/*! ./useAutoFocus */ "./node_modules/react-widgets/cjs/useAutoFocus.js"));
+
+var _useFocusManager = _interopRequireDefault(__webpack_require__(/*! ./useFocusManager */ "./node_modules/react-widgets/cjs/useFocusManager.js"));
+
+var _WidgetHelpers = __webpack_require__(/*! ./WidgetHelpers */ "./node_modules/react-widgets/cjs/WidgetHelpers.js");
+
+const _excluded = ["id", "autoFocus", "bordered", "views", "tabIndex", "disabled", "readOnly", "className", "value", "defaultValue", "onChange", "currentDate", "defaultCurrentDate", "onCurrentDateChange", "min", "max", "view", "defaultView", "onViewChange", "onKeyDown", "onNavigate", "renderDay", "messages", "formats"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+let last = a => a[a.length - 1];
+
+const CELL_CLASSNAME = 'rw-cell';
+const FOCUSED_CELL_SELECTOR = `.${CELL_CLASSNAME}[tabindex]`;
+const MIN = new Date(1900, 0, 1);
+const MAX = new Date(2099, 11, 31);
+const VIEW_OPTIONS = ['month', 'year', 'decade', 'century'];
+const VIEW_UNIT = {
+  month: 'day',
+  year: 'month',
+  decade: 'year',
+  century: 'decade'
+};
+const VIEW = {
+  month: _Month.default,
+  year: _Year.default,
+  decade: _Decade.default,
+  century: _Century.default
+};
+const ARROWS_TO_DIRECTION = {
+  ArrowDown: 'DOWN',
+  ArrowUp: 'UP',
+  ArrowRight: 'RIGHT',
+  ArrowLeft: 'LEFT'
+};
+const OPPOSITE_DIRECTION = {
+  LEFT: 'RIGHT',
+  RIGHT: 'LEFT'
+};
+const MULTIPLIER = {
+  year: 1,
+  decade: 10,
+  century: 100
+};
+
+function inRangeValue(_value, min, max) {
+  let value = dateOrNull(_value);
+  if (value === null) return value;
+  return _dates.default.max(_dates.default.min(value, max), min);
+}
+
+const propTypes = {
+  /**
+   * @example ['disabled', ['new Date()']]
+   */
+  disabled: _propTypes.default.bool,
+
+  /**
+   * @example ['readOnly', ['new Date()']]
+   */
+  readOnly: _propTypes.default.bool,
+
+  /**
+   * @example ['onChangePicker', [ ['new Date()'] ]]
+   */
+  onChange: _propTypes.default.func,
+
+  /**
+   * The selected Date.
+   *
+   * ```tsx live
+   * import { Calendar } from 'react-widgets';
+   *
+   * <Calendar value={new Date()} />
+   * ```
+   * @example false
+   */
+  value: _propTypes.default.instanceOf(Date),
+
+  /**
+   * The minimum date that the Calendar can navigate from.
+   *
+   * @example ['prop', ['min', 'new Date()']]
+   */
+  min: _propTypes.default.instanceOf(Date),
+
+  /**
+   * The maximum date that the Calendar can navigate to.
+   *
+   * @example ['prop', ['max', 'new Date()']]
+   */
+  max: _propTypes.default.instanceOf(Date),
+
+  /**
+   * Default current date at which the calendar opens. If none is provided, opens at today's date or the `value` date (if any).
+   */
+  currentDate: _propTypes.default.instanceOf(Date),
+
+  /**
+   * Change event Handler that is called when the currentDate is changed. The handler is called with the currentDate object.
+   */
+  onCurrentDateChange: _propTypes.default.func,
+
+  /** Specify the navigate into the past header icon */
+  navigatePrevIcon: _propTypes.default.node,
+
+  /** Specify the navigate into the future header icon */
+  navigateNextIcon: _propTypes.default.node,
+
+  /**
+   * Controls the currently displayed calendar view. Use `defaultView` to set a unique starting view.
+   *
+   * @type {("month"|"year"|"decade"|"century")}
+   * @controllable onViewChange
+   */
+  view(props, ...args) {
+    // @ts-ignore
+    return _propTypes.default.oneOf(props.views || VIEW_OPTIONS)(props, ...args);
+  },
+
+  /**
+   * Defines a list of views the Calendar can traverse through, starting with the
+   * first in the list to the last.
+   *
+   * @type array<"month"|"year"|"decade"|"century">
+   */
+  views: _propTypes.default.arrayOf(_propTypes.default.oneOf(VIEW_OPTIONS)),
+
+  /**
+   * A callback fired when the `view` changes.
+   *
+   * @controllable view
+   */
+  onViewChange: _propTypes.default.func,
+
+  /**
+   * Callback fired when the Calendar navigates between views, or forward and backwards in time.
+   *
+   * @type function(date: ?Date, direction: string, view: string)
+   */
+  onNavigate: _propTypes.default.func,
+  culture: _propTypes.default.string,
+  autoFocus: _propTypes.default.bool,
+
+  /**
+   * Show or hide the Calendar footer.
+   *
+   * @example ['prop', ['footer', true]]
+   */
+  footer: _propTypes.default.bool,
+
+  /**
+   * Provide a custom component to render the days of the month. The Component is provided the following props
+   *
+   * - `date`: a `Date` object for the day of the month to render
+   * - `label`: a formatted `string` of the date to render. To adjust the format of the `label` string use the `dateFormat` prop, listed below.
+   */
+  renderDay: _propTypes.default.func,
+  formats: _propTypes.default.shape({
+    /**
+     * A formatter for the header button of the month view.
+     *
+     * @example ['dateFormat', ['headerFormat', "{ date: 'medium' }"]]
+     */
+    header: _propTypes.default.any,
+
+    /**
+     * A formatter for the Calendar footer, formats today's Date as a string.
+     *
+     * @example ['dateFormat', ['footerFormat', "{ date: 'medium' }", "date => 'Today is: ' + formatter(date)"]]
+     */
+    footer: _propTypes.default.any,
+
+    /**
+     * A formatter calendar days of the week, the default formats each day as a Narrow name: "Mo", "Tu", etc.
+     *
+     * @example ['prop', { day: "day => \n['🎉', 'M', 'T','W','Th', 'F', '🎉'][day.getDay()]" }]
+     */
+    day: _propTypes.default.any,
+
+    /**
+     * A formatter for day of the month
+     *
+     * @example ['prop', { date: "dt => String(dt.getDate())" }]
+     */
+    date: _propTypes.default.any,
+
+    /**
+     * A formatter for month name.
+     *
+     * @example ['dateFormat', ['monthFormat', "{ raw: 'MMMM' }", null, { defaultView: '"year"' }]]
+     */
+    month: _propTypes.default.any,
+
+    /**
+     * A formatter for month name.
+     *
+     * @example ['dateFormat', ['yearFormat', "{ raw: 'yy' }", null, { defaultView: '"decade"' }]]
+     */
+    year: _propTypes.default.any,
+
+    /**
+     * A formatter for decade, the default formats the first and last year of the decade like: 2000 - 2009.
+     */
+    decade: _propTypes.default.any,
+
+    /**
+     * A formatter for century, the default formats the first and last year of the century like: 1900 - 1999.
+     */
+    century: _propTypes.default.any
+  }),
+  messages: _propTypes.default.shape({
+    moveBack: _propTypes.default.string,
+    moveForward: _propTypes.default.string
+  }),
+  onKeyDown: _propTypes.default.func,
+
+  /** @ignore */
+  tabIndex: _propTypes.default.any
+};
+
+const useViewState = (views, view = views[0], currentDate) => {
+  const lastView = (0, _react.useRef)(view);
+  const lastDate = (0, _react.useRef)(currentDate);
+  let slideDirection;
+
+  if (view !== lastView.current) {
+    slideDirection = views.indexOf(lastView.current) > views.indexOf(view) ? 'top' : 'bottom';
+  } else if (lastDate.current !== currentDate) {
+    slideDirection = _dates.default.gt(currentDate, lastDate.current) ? 'left' : 'right';
+  }
+
+  (0, _react.useEffect)(() => {
+    lastDate.current = currentDate;
+    lastView.current = view;
+  });
+  return slideDirection;
+};
+
+/**
+ * @public
+ */
+function Calendar(_ref) {
+  let {
+    id,
+    autoFocus,
+    bordered = true,
+    views = VIEW_OPTIONS,
+    tabIndex = 0,
+    disabled,
+    readOnly,
+    className,
+    value,
+    defaultValue,
+    onChange,
+    currentDate: pCurrentDate,
+    defaultCurrentDate,
+    onCurrentDateChange,
+    min = MIN,
+    max = MAX,
+    view,
+    defaultView = views[0],
+    onViewChange,
+    onKeyDown,
+    onNavigate,
+    renderDay,
+    messages,
+    formats
+  } = _ref,
+      elementProps = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  const [currentValue, handleChange] = (0, _uncontrollable.useUncontrolledProp)(value, defaultValue, onChange);
+  const [currentDate, handleCurrentDateChange] = (0, _uncontrollable.useUncontrolledProp)(pCurrentDate, defaultCurrentDate || currentValue || new Date(), onCurrentDateChange);
+  const [currentView, handleViewChange] = (0, _uncontrollable.useUncontrolledProp)(view, defaultView, onViewChange);
+  const localizer = (0, _Localization.useLocalizer)(messages, formats);
+  const ref = (0, _react.useRef)(null);
+  const viewId = (0, _WidgetHelpers.useInstanceId)(id, '_calendar');
+  const labelId = (0, _WidgetHelpers.useInstanceId)(id, '_calendar_label');
+  (0, _useAutoFocus.default)(!!autoFocus, ref);
+  const slideDirection = useViewState(views, currentView, currentDate);
+  const [, focused] = (0, _useFocusManager.default)(ref, {
+    disabled
+  }, {
+    willHandle() {
+      if (tabIndex == -1) return false;
+    }
+
+  });
+  const lastValue = (0, _react.useRef)(currentValue);
+  (0, _react.useEffect)(() => {
+    const inValue = inRangeValue(currentValue, min, max);
+    const last = lastValue.current;
+    lastValue.current = currentValue;
+    if (!_dates.default.eq(inValue, dateOrNull(last), VIEW_UNIT[currentView])) maybeSetCurrentDate(inValue);
+  });
+  const isDisabled = disabled || readOnly;
+  /**
+   * Handlers
+   */
+
+  const handleViewChangeImpl = () => {
+    navigate('UP');
+  };
+
+  const handleMoveBack = () => {
+    navigate('LEFT');
+  };
+
+  const handleMoveForward = () => {
+    navigate('RIGHT');
+  };
+
+  const handleDateChange = date => {
+    if (views[0] === currentView) {
+      maybeSetCurrentDate(date);
+      (0, _WidgetHelpers.notify)(handleChange, [date]);
+      focus();
+      return;
+    }
+
+    navigate('DOWN', date);
+  };
+
+  const handleMoveToday = () => {
+    let date = new Date();
+    let firstView = views[0];
+    (0, _WidgetHelpers.notify)(onChange, [date]);
+
+    if (_dates.default.inRange(date, min, max, firstView)) {
+      focus();
+      maybeSetCurrentDate(date);
+      (0, _WidgetHelpers.notify)(handleViewChange, [firstView]);
+    }
+  };
+
+  const handleKeyDown = e => {
+    let ctrl = e.ctrlKey || e.metaKey;
+    let key = e.key;
+    let direction = ARROWS_TO_DIRECTION[key];
+    let unit = VIEW_UNIT[currentView];
+
+    if (key === 'Enter') {
+      e.preventDefault();
+      return handleDateChange(currentDate);
+    }
+
+    if (direction) {
+      if (ctrl) {
+        e.preventDefault();
+        navigate(direction);
+      } else {
+        const isRTL = getComputedStyle(e.currentTarget).getPropertyValue('direction') === 'rtl';
+        if (isRTL && direction in OPPOSITE_DIRECTION) direction = OPPOSITE_DIRECTION[direction];
+        let nextDate = Calendar.move(currentDate, min, max, currentView, direction);
+
+        if (!_dates.default.eq(currentDate, nextDate, unit)) {
+          e.preventDefault();
+          if (_dates.default.gt(nextDate, currentDate, currentView)) navigate('RIGHT', nextDate);else if (_dates.default.lt(nextDate, currentDate, currentView)) navigate('LEFT', nextDate);else maybeSetCurrentDate(nextDate);
+        }
+      }
+    }
+
+    (0, _WidgetHelpers.notify)(onKeyDown, [e]);
+  };
+
+  function navigate(direction, date) {
+    let nextView = currentView;
+    let slideDir = direction === 'LEFT' || direction === 'UP' ? 'right' : 'left';
+    if (direction === 'UP') nextView = views[views.indexOf(currentView) + 1] || nextView;
+    if (direction === 'DOWN') nextView = views[views.indexOf(currentView) - 1] || nextView;
+    if (!date) date = ['LEFT', 'RIGHT'].indexOf(direction) !== -1 ? nextDate(direction) : currentDate;
+
+    if (_dates.default.inRange(date, min, max, nextView)) {
+      (0, _WidgetHelpers.notify)(onNavigate, [date, slideDir, nextView]); //this.focus()
+
+      maybeSetCurrentDate(date);
+      (0, _WidgetHelpers.notify)(handleViewChange, [nextView]);
+    }
+  }
+
+  const focus = () => {
+    var _ref$current;
+
+    const node = (_ref$current = ref.current) == null ? void 0 : _ref$current.querySelector(FOCUSED_CELL_SELECTOR);
+    node == null ? void 0 : node.focus();
+  };
+
+  const moveFocus = (node, hadFocus) => {
+    let current = document.activeElement;
+
+    if (hadFocus && (!current || !node.contains(current))) {
+      node.focus();
+    }
+  };
+
+  function maybeSetCurrentDate(date) {
+    let inRangeDate = inRangeValue(date ? new Date(date) : currentDate, min, max);
+    if (date === currentDate || _dates.default.eq(inRangeDate, dateOrNull(currentDate), VIEW_UNIT[currentView])) return;
+    (0, _WidgetHelpers.notify)(handleCurrentDateChange, [inRangeDate]);
+  }
+
+  function nextDate(direction) {
+    let method = direction === 'LEFT' ? 'subtract' : 'add';
+    let unit = currentView === 'month' ? currentView : 'year';
+    let multi = MULTIPLIER[currentView] || 1;
+    return _dates.default[method](currentDate, 1 * multi, unit);
+  }
+
+  function getHeaderLabel() {
+    switch (currentView) {
+      case 'month':
+        return localizer.formatDate(currentDate, 'header');
+
+      case 'year':
+        return localizer.formatDate(currentDate, 'year');
+
+      case 'decade':
+        return localizer.formatDate(_dates.default.startOf(currentDate, 'decade'), 'decade');
+
+      case 'century':
+        return localizer.formatDate(_dates.default.startOf(currentDate, 'century'), 'century');
+    }
+  }
+
+  let View = VIEW[currentView];
+  let todayNotInRange = !_dates.default.inRange(new Date(), min, max, currentView);
+
+  let key = currentView + '_' + _dates.default[currentView](currentDate); // let elementProps = Props.pickElementProps(this),
+  // let viewProps = pick(uncontrolledProps, View)
+
+
+  const prevDisabled = isDisabled || !_dates.default.inRange(nextDate('LEFT'), min, max, currentView);
+  const nextDisabled = isDisabled || !_dates.default.inRange(nextDate('RIGHT'), min, max, currentView);
+  return /*#__PURE__*/_react.default.createElement(_Widget.default, _extends({}, elementProps, {
+    role: "group",
+    ref: ref,
+    focused: focused,
+    disabled: disabled,
+    readOnly: readOnly,
+    tabIndex: tabIndex,
+    className: (0, _classnames.default)(className, 'rw-calendar', bordered && 'rw-calendar-contained')
+  }), /*#__PURE__*/_react.default.createElement(_CalendarHeader.default, {
+    label: getHeaderLabel(),
+    labelId: labelId,
+    localizer: localizer,
+    upDisabled: isDisabled || currentView === last(views),
+    prevDisabled: prevDisabled,
+    todayDisabled: isDisabled || todayNotInRange,
+    nextDisabled: nextDisabled,
+    onViewChange: handleViewChangeImpl,
+    onMoveLeft: handleMoveBack,
+    onMoveRight: handleMoveForward,
+    onMoveToday: handleMoveToday
+  }), /*#__PURE__*/_react.default.createElement(Calendar.Transition, {
+    direction: slideDirection,
+    onTransitionEnd: moveFocus
+  }, /*#__PURE__*/_react.default.createElement(View, {
+    key: key,
+    min: min,
+    max: max,
+    id: viewId,
+    value: currentValue,
+    localizer: localizer,
+    disabled: isDisabled,
+    focusedItem: currentDate,
+    onChange: handleDateChange,
+    onKeyDown: handleKeyDown,
+    "aria-labelledby": labelId,
+    renderDay: renderDay
+  })));
+}
+
+function dateOrNull(dt) {
+  if (dt && !isNaN(dt.getTime())) return dt;
+  return null;
+}
+
+Calendar.displayName = 'Calendar';
+Calendar.propTypes = propTypes; // Calendar.defaultProps = {
+//   min: new Date(1900, 0, 1),
+//   max: new Date(2099, 11, 31),
+//   views: VIEW_OPTIONS,
+//   tabIndex: '0',
+// }
+
+Calendar.Transition = _SlideTransitionGroup.default;
+
+Calendar.move = (date, min, max, view, direction) => {
+  let isMonth = view === 'month';
+  let isUpOrDown = direction === 'UP' || direction === 'DOWN';
+  let rangeUnit = view && VIEW_UNIT[view];
+  let addUnit = isMonth && isUpOrDown ? 'week' : VIEW_UNIT[view];
+  let amount = isMonth || !isUpOrDown ? 1 : 4;
+  let newDate;
+  if (direction === 'UP' || direction === 'LEFT') amount *= -1;
+  newDate = _dates.default.add(date, amount, addUnit);
+  return _dates.default.inRange(newDate, min, max, rangeUnit) ? newDate : date;
+};
+
+var _default = Calendar;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/CalendarButton.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/CalendarButton.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var React = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _Button = _interopRequireDefault(__webpack_require__(/*! ./Button */ "./node_modules/react-widgets/cjs/Button.js"));
+
+const _excluded = ["className"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function CalendarButton(_ref) {
+  let {
+    className
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  return /*#__PURE__*/React.createElement(_Button.default, _extends({}, props, {
+    tabIndex: undefined,
+    className: (0, _classnames.default)(className, 'rw-calendar-btn')
+  }));
+}
+
+var _default = CalendarButton;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/CalendarHeader.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/CalendarHeader.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _CalendarButton = _interopRequireDefault(__webpack_require__(/*! ./CalendarButton */ "./node_modules/react-widgets/cjs/CalendarButton.js"));
+
+var _Icon = __webpack_require__(/*! ./Icon */ "./node_modules/react-widgets/cjs/Icon.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function CalendarHeader({
+  localizer,
+  label,
+  labelId,
+  onMoveRight,
+  onMoveToday,
+  onMoveLeft,
+  onViewChange,
+  prevDisabled,
+  todayDisabled,
+  upDisabled,
+  nextDisabled,
+  navigatePrevIcon = _Icon.chevronLeft,
+  navigateNextIcon = _Icon.chevronRight
+}) {
+  return /*#__PURE__*/_react.default.createElement("div", {
+    className: "rw-calendar-header"
+  }, /*#__PURE__*/_react.default.createElement(_CalendarButton.default, {
+    id: labelId,
+    onClick: onViewChange,
+    className: "rw-calendar-btn-view",
+    disabled: upDisabled,
+    "aria-live": "polite",
+    "aria-atomic": "true"
+  }, label, " ", _Icon.caretDown), /*#__PURE__*/_react.default.createElement(_CalendarButton.default, {
+    className: "rw-calendar-btn-left",
+    onClick: onMoveLeft,
+    disabled: prevDisabled,
+    label: localizer.messages.moveBack(),
+    icon: navigatePrevIcon
+  }), /*#__PURE__*/_react.default.createElement(_CalendarButton.default, {
+    className: "rw-calendar-btn-today",
+    disabled: todayDisabled,
+    onClick: onMoveToday
+  }, localizer.messages.moveToday()), /*#__PURE__*/_react.default.createElement(_CalendarButton.default, {
+    className: "rw-calendar-btn-right",
+    onClick: onMoveRight,
+    disabled: nextDisabled,
+    label: localizer.messages.moveForward(),
+    icon: navigateNextIcon
+  }));
+}
+
+var _default = CalendarHeader;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/CalendarView.js":
+/*!********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/CalendarView.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _dates = _interopRequireDefault(__webpack_require__(/*! ./dates */ "./node_modules/react-widgets/cjs/dates.js"));
+
+var _useFocusManager = _interopRequireDefault(__webpack_require__(/*! ./useFocusManager */ "./node_modules/react-widgets/cjs/useFocusManager.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function clamp(date, min, max) {
+  return _dates.default.max(_dates.default.min(date, max), min);
+}
+
+function CalendarView({
+  className,
+  focusedItem,
+  onKeyDown,
+  children,
+  'aria-labelledby': labelledby
+}) {
+  const ref = (0, _react.useRef)(null);
+  const [focusEvents, focused] = (0, _useFocusManager.default)(ref);
+  (0, _react.useEffect)(() => {
+    var _node$querySelector;
+
+    const node = ref.current;
+    if (!node || !focused) return;
+    (_node$querySelector = node.querySelector('.rw-cell[tabindex]')) == null ? void 0 : _node$querySelector.focus();
+  }, [focusedItem, focused, ref]);
+  return /*#__PURE__*/_react.default.createElement("div", _extends({
+    role: "grid",
+    ref: ref,
+    tabIndex: -1
+  }, focusEvents, {
+    onKeyDown: onKeyDown,
+    "aria-labelledby": labelledby,
+    className: (0, _classnames.default)(className, 'rw-nav-view', 'rw-calendar-grid')
+  }), children);
+}
+
+function CalendarViewCell({
+  onChange,
+  min,
+  max,
+  date,
+  unit,
+  disabled,
+  selected,
+  focusedItem,
+  viewUnit,
+  children,
+  label
+}) {
+  const isEqual = nextDate => _dates.default.eq(date, nextDate, unit);
+
+  const isEmpty = !_dates.default.inRange(date, min, max, unit);
+  const isDisabled = disabled || isEmpty; // const isNow = now && isEqual(now)
+
+  const isFocused = !disabled && !isEmpty && isEqual(focusedItem);
+  const isSelected = selected && isEqual(selected);
+
+  const isOffView = date && focusedItem && viewUnit && _dates.default[viewUnit](date) !== _dates.default[viewUnit](focusedItem);
+
+  const handleChange = () => {
+    onChange(clamp(date, min, max));
+  };
+
+  return /*#__PURE__*/_react.default.createElement("div", {
+    role: "gridcell",
+    title: label,
+    "aria-label": label,
+    "aria-readonly": disabled,
+    "aria-selected": Boolean(isSelected),
+    tabIndex: isFocused ? 0 : void 0,
+    onClick: !isDisabled ? handleChange : undefined,
+    className: (0, _classnames.default)('rw-cell', // isNow && 'rw-now',
+    isDisabled && 'rw-state-disabled', isEmpty && 'rw-cell-not-allowed', isOffView && 'rw-cell-off-range', isSelected && 'rw-state-selected')
+  }, /*#__PURE__*/_react.default.createElement("span", {
+    "aria-hidden": true
+  }, children));
+}
+
+CalendarView.Body = props => /*#__PURE__*/_react.default.createElement("div", _extends({
+  role: "rowgroup",
+  className: "rw-calendar-body"
+}, props));
+
+CalendarView.Row = props => /*#__PURE__*/_react.default.createElement("div", _extends({
+  role: "row",
+  className: "rw-calendar-row"
+}, props));
+
+CalendarView.Cell = CalendarViewCell;
+var _default = CalendarView;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Century.js":
+/*!***************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Century.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _CalendarView = _interopRequireDefault(__webpack_require__(/*! ./CalendarView */ "./node_modules/react-widgets/cjs/CalendarView.js"));
+
+var _ = __webpack_require__(/*! ./_ */ "./node_modules/react-widgets/cjs/_.js");
+
+var _dates = _interopRequireDefault(__webpack_require__(/*! ./dates */ "./node_modules/react-widgets/cjs/dates.js"));
+
+const _excluded = ["focusedItem", "disabled", "onChange", "value", "localizer", "min", "max"];
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function CenturyView(_ref) {
+  let {
+    focusedItem,
+    disabled,
+    onChange,
+    value,
+    localizer,
+    min,
+    max
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  const chunks = (0, _react.useMemo)(() => (0, _.chunk)(getCenturyDecades(focusedItem), 4), [focusedItem]);
+  return /*#__PURE__*/_react.default.createElement(_CalendarView.default, _extends({}, props, {
+    focusedItem: focusedItem
+  }), /*#__PURE__*/_react.default.createElement(_CalendarView.default.Body, null, chunks.map((row, rowIdx) => /*#__PURE__*/_react.default.createElement(_CalendarView.default.Row, {
+    key: rowIdx
+  }, row.map((date, colIdx) => {
+    let label = localizer.formatDate(_dates.default.startOf(date, 'decade'), 'decade');
+    return /*#__PURE__*/_react.default.createElement(_CalendarView.default.Cell, {
+      key: colIdx,
+      unit: "decade",
+      viewUnit: "century",
+      label: label,
+      date: date,
+      min: min,
+      max: max,
+      onChange: onChange,
+      focusedItem: focusedItem,
+      selected: value,
+      disabled: disabled
+    }, label);
+  })))));
+}
+
+function getCenturyDecades(_date) {
+  let days = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+  let date = _dates.default.add(_dates.default.startOf(_date, 'century'), -20, 'year');
+
+  return days.map(() => date = _dates.default.add(date, 10, 'year'));
+}
+
+var _default = CenturyView;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Combobox.js":
+/*!****************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Combobox.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var PropTypes = _interopRequireWildcard(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var React = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _uncontrollable = __webpack_require__(/*! uncontrollable */ "./node_modules/uncontrollable/lib/esm/index.js");
+
+var _Icon = __webpack_require__(/*! ./Icon */ "./node_modules/react-widgets/cjs/Icon.js");
+
+var _Input = _interopRequireDefault(__webpack_require__(/*! ./Input */ "./node_modules/react-widgets/cjs/Input.js"));
+
+var _List = _interopRequireDefault(__webpack_require__(/*! ./List */ "./node_modules/react-widgets/cjs/List.js"));
+
+var _FocusListContext = __webpack_require__(/*! ./FocusListContext */ "./node_modules/react-widgets/cjs/FocusListContext.js");
+
+var _Popup = _interopRequireDefault(__webpack_require__(/*! ./Popup */ "./node_modules/react-widgets/cjs/Popup.js"));
+
+var _InputAddon = _interopRequireDefault(__webpack_require__(/*! ./InputAddon */ "./node_modules/react-widgets/cjs/InputAddon.js"));
+
+var _Widget = _interopRequireDefault(__webpack_require__(/*! ./Widget */ "./node_modules/react-widgets/cjs/Widget.js"));
+
+var _WidgetPicker = _interopRequireDefault(__webpack_require__(/*! ./WidgetPicker */ "./node_modules/react-widgets/cjs/WidgetPicker.js"));
+
+var _messages = __webpack_require__(/*! ./messages */ "./node_modules/react-widgets/cjs/messages.js");
+
+var _A11y = __webpack_require__(/*! ./A11y */ "./node_modules/react-widgets/cjs/A11y.js");
+
+var CustomPropTypes = _interopRequireWildcard(__webpack_require__(/*! ./PropTypes */ "./node_modules/react-widgets/cjs/PropTypes.js"));
+
+var _Accessors = __webpack_require__(/*! ./Accessors */ "./node_modules/react-widgets/cjs/Accessors.js");
+
+var _Filter = __webpack_require__(/*! ./Filter */ "./node_modules/react-widgets/cjs/Filter.js");
+
+var _useDropdownToggle = _interopRequireDefault(__webpack_require__(/*! ./useDropdownToggle */ "./node_modules/react-widgets/cjs/useDropdownToggle.js"));
+
+var _useFocusManager = _interopRequireDefault(__webpack_require__(/*! ./useFocusManager */ "./node_modules/react-widgets/cjs/useFocusManager.js"));
+
+var _WidgetHelpers = __webpack_require__(/*! ./WidgetHelpers */ "./node_modules/react-widgets/cjs/WidgetHelpers.js");
+
+const _excluded = ["id", "className", "containerClassName", "placeholder", "autoFocus", "textField", "dataKey", "autoSelectMatches", "focusFirstItem", "value", "defaultValue", "onChange", "open", "defaultOpen", "onToggle", "filter", "busy", "disabled", "readOnly", "selectIcon", "hideCaret", "hideEmptyPopup", "busySpinner", "dropUp", "tabIndex", "popupTransition", "name", "onSelect", "onKeyDown", "onBlur", "onFocus", "inputProps", "listProps", "popupProps", "groupBy", "renderListItem", "renderListGroup", "optionComponent", "listComponent", "popupComponent", "data", "messages"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function indexOf(data, searchTerm, text) {
+  if (!searchTerm.trim()) return -1;
+
+  for (let idx = 0; idx < data.length; idx++) if (text(data[idx]).toLowerCase() === searchTerm) return idx;
+
+  return -1;
+}
+
+let propTypes = {
+  value: PropTypes.any,
+  onChange: PropTypes.func,
+  open: PropTypes.bool,
+  onToggle: PropTypes.func,
+  renderListItem: PropTypes.func,
+  listComponent: PropTypes.elementType,
+  renderListGroup: PropTypes.func,
+  groupBy: CustomPropTypes.accessor,
+  data: PropTypes.array,
+  dataKey: CustomPropTypes.accessor,
+  textField: CustomPropTypes.accessor,
+  name: PropTypes.string,
+
+  /** Do not show the auto complete list when it returns no results. */
+  hideEmptyPopup: PropTypes.bool,
+
+  /** Hide the combobox dropdown indicator. */
+  hideCaret: PropTypes.bool,
+
+  /**
+   *
+   * @type {(dataItem: ?any, metadata: { originalEvent: SyntheticEvent }) => void}
+   */
+  onSelect: PropTypes.func,
+  autoFocus: PropTypes.bool,
+  disabled: CustomPropTypes.disabled.acceptsArray,
+  readOnly: CustomPropTypes.disabled,
+  busy: PropTypes.bool,
+
+  /** Specify the element used to render the select (down arrow) icon. */
+  selectIcon: PropTypes.node,
+
+  /** Specify the element used to render the busy indicator */
+  busySpinner: PropTypes.node,
+  dropUp: PropTypes.bool,
+  popupTransition: PropTypes.elementType,
+  placeholder: PropTypes.string,
+
+  /** Adds a css class to the input container element. */
+  containerClassName: PropTypes.string,
+  inputProps: PropTypes.object,
+  listProps: PropTypes.object,
+  messages: PropTypes.shape({
+    openCombobox: CustomPropTypes.message,
+    emptyList: CustomPropTypes.message,
+    emptyFilter: CustomPropTypes.message
+  })
+};
+
+/**
+ * ---
+ * shortcuts:
+ *   - { key: alt + down arrow, label: open combobox }
+ *   - { key: alt + up arrow, label: close combobox }
+ *   - { key: down arrow, label: move focus to next item }
+ *   - { key: up arrow, label: move focus to previous item }
+ *   - { key: home, label: move focus to first item }
+ *   - { key: end, label: move focus to last item }
+ *   - { key: enter, label: select focused item }
+ *   - { key: any key, label: search list for item starting with key }
+ * ---
+ *
+ * Select an item from the list, or input a custom value. The Combobox can also make suggestions as you type.
+
+ * @public
+ */
+const ComboboxImpl = /*#__PURE__*/React.forwardRef(function Combobox(_ref, outerRef) {
+  let {
+    id,
+    className,
+    containerClassName,
+    placeholder,
+    autoFocus,
+    textField,
+    dataKey,
+    autoSelectMatches,
+    focusFirstItem = false,
+    value,
+    defaultValue = '',
+    onChange,
+    open,
+    defaultOpen = false,
+    onToggle,
+    filter = true,
+    busy,
+    disabled,
+    readOnly,
+    selectIcon = _Icon.caretDown,
+    hideCaret,
+    hideEmptyPopup,
+    busySpinner,
+    dropUp,
+    tabIndex,
+    popupTransition,
+    name,
+    onSelect,
+    onKeyDown,
+    onBlur,
+    onFocus,
+    inputProps,
+    listProps,
+    popupProps,
+    groupBy,
+    renderListItem,
+    renderListGroup,
+    optionComponent,
+    listComponent: ListComponent = _List.default,
+    popupComponent: Popup = _Popup.default,
+    data: rawData = [],
+    messages: userMessages
+  } = _ref,
+      elementProps = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  let [currentValue, handleChange] = (0, _uncontrollable.useUncontrolledProp)(value, defaultValue, onChange);
+  const [currentOpen, handleOpen] = (0, _uncontrollable.useUncontrolledProp)(open, defaultOpen, onToggle);
+  const ref = (0, React.useRef)(null);
+  const inputRef = (0, React.useRef)(null);
+  const listRef = (0, React.useRef)(null);
+  const [suggestion, setSuggestion] = (0, React.useState)(null);
+  const shouldFilter = (0, React.useRef)(false);
+  const inputId = (0, _WidgetHelpers.useInstanceId)(id, '_input');
+  const listId = (0, _WidgetHelpers.useInstanceId)(id, '_listbox');
+  const activeId = (0, _WidgetHelpers.useInstanceId)(id, '_listbox_active_option');
+  const accessors = (0, _Accessors.useAccessors)(textField, dataKey);
+  const messages = (0, _messages.useMessagesWithDefaults)(userMessages);
+  const toggle = (0, _useDropdownToggle.default)(currentOpen, handleOpen);
+  const isDisabled = disabled === true;
+  const isReadOnly = !!readOnly;
+  const data = (0, _Filter.useFilteredData)(rawData, filter, shouldFilter.current ? accessors.text(currentValue) : void 0, accessors.text);
+  const selectedItem = (0, React.useMemo)(() => data[accessors.indexOf(data, currentValue)], [data, currentValue, accessors]);
+  const list = (0, _FocusListContext.useFocusList)({
+    activeId,
+    scope: ref,
+    focusFirstItem,
+    anchorItem: currentOpen ? selectedItem : undefined
+  });
+  const [focusEvents, focused] = (0, _useFocusManager.default)(ref, {
+    disabled: isDisabled,
+    onBlur,
+    onFocus
+  }, {
+    didHandle(focused) {
+      if (!focused) {
+        shouldFilter.current = false;
+        toggle.close();
+        setSuggestion(null);
+        list.focus(undefined);
+      } else {
+        focus({
+          preventScroll: true
+        });
+      }
+    }
+
+  });
+  (0, _A11y.useActiveDescendant)(ref, activeId, currentOpen, [list.getFocused()]);
+  /**
+   * Handlers
+   */
+
+  const handleClick = e => {
+    if (readOnly || isDisabled) return; // prevents double clicks when in a <label>
+
+    e.preventDefault();
+    focus();
+    toggle();
+  };
+
+  const handleSelect = (data, originalEvent) => {
+    toggle.close();
+    shouldFilter.current = false;
+    setSuggestion(null);
+    (0, _WidgetHelpers.notify)(onSelect, [data, {
+      originalEvent
+    }]);
+    change(data, originalEvent, true);
+    focus({
+      preventScroll: true
+    });
+  };
+
+  const handleInputKeyDown = ({
+    key
+  }) => {
+    if (key === 'Backspace' || key === 'Delete') {
+      list.focus(null);
+    }
+  };
+
+  const handleInputChange = event => {
+    let idx = autoSelectMatches ? indexOf(rawData, event.target.value.toLowerCase(), accessors.text) : -1;
+    shouldFilter.current = true;
+    setSuggestion(null);
+    const nextValue = idx === -1 ? event.target.value : rawData[idx];
+    change(nextValue, event);
+    if (!nextValue) toggle.close();else toggle.open();
+  };
+
+  const handleKeyDown = e => {
+    if (readOnly) return;
+    let {
+      key,
+      altKey,
+      shiftKey
+    } = e;
+    (0, _WidgetHelpers.notify)(onKeyDown, [e]);
+    if (e.defaultPrevented) return;
+
+    const select = item => item != null && handleSelect(item, e);
+
+    const setFocused = el => {
+      if (!el) return;
+      setSuggestion(list.toDataItem(el));
+      list.focus(el);
+    };
+
+    if (key === 'End' && currentOpen && !shiftKey) {
+      e.preventDefault();
+      setFocused(list.last());
+    } else if (key === 'Home' && currentOpen && !shiftKey) {
+      e.preventDefault();
+      setFocused(list.first());
+    } else if (key === 'Escape' && currentOpen) {
+      e.preventDefault();
+      setSuggestion(null);
+      toggle.close();
+    } else if (key === 'Enter' && currentOpen) {
+      e.preventDefault();
+      select(list.getFocused());
+    } else if (key === 'ArrowDown') {
+      e.preventDefault();
+
+      if (currentOpen) {
+        setFocused(list.next());
+      } else {
+        return toggle.open();
+      }
+    } else if (key === 'ArrowUp') {
+      e.preventDefault();
+      if (altKey) return toggle.close();
+
+      if (currentOpen) {
+        setFocused(list.prev());
+      }
+    }
+  };
+  /**
+   * Methods
+   */
+
+
+  function focus(opts) {
+    if (inputRef.current) inputRef.current.focus(opts);
+  }
+
+  function change(nextValue, originalEvent, selected = false) {
+    handleChange(nextValue, {
+      lastValue: currentValue,
+      originalEvent,
+      source: selected ? 'listbox' : 'input'
+    });
+  }
+  /**
+   * Rendering
+   */
+
+
+  (0, React.useImperativeHandle)(outerRef, () => ({
+    focus
+  }));
+  let shouldRenderPopup = (0, _WidgetHelpers.useFirstFocusedRender)(focused, currentOpen);
+  let valueItem = accessors.findOrSelf(data, currentValue);
+  let inputValue = accessors.text(suggestion || valueItem);
+  let completeType = filter ? 'list' : 'none';
+  let popupOpen = currentOpen && (!hideEmptyPopup || !!data.length);
+  let inputReadOnly = // @ts-ignore
+  (inputProps == null ? void 0 : inputProps.readOnly) != null ? inputProps == null ? void 0 : inputProps.readOnly : readOnly;
+  let inputAddon = false;
+
+  if (!hideCaret) {
+    inputAddon = /*#__PURE__*/React.createElement(_InputAddon.default, {
+      busy: busy,
+      icon: selectIcon,
+      spinner: busySpinner,
+      onClick: handleClick,
+      disabled: !!isDisabled || isReadOnly // FIXME
+      ,
+      label: messages.openCombobox()
+    });
+  } else if (busy) {
+    inputAddon = /*#__PURE__*/React.createElement("span", {
+      "aria-hidden": "true",
+      className: "rw-btn rw-picker-caret"
+    }, busySpinner || _Icon.Spinner);
+  }
+
+  return /*#__PURE__*/React.createElement(_Widget.default, _extends({}, elementProps, {
+    ref: ref,
+    open: currentOpen,
+    dropUp: dropUp,
+    focused: focused,
+    disabled: isDisabled,
+    readOnly: isReadOnly
+  }, focusEvents, {
+    onKeyDown: handleKeyDown,
+    className: (0, _classnames.default)(className, 'rw-combobox')
+  }), /*#__PURE__*/React.createElement(_WidgetPicker.default, {
+    className: (0, _classnames.default)(containerClassName, hideCaret && 'rw-widget-input', hideCaret && !busy && 'rw-hide-caret')
+  }, /*#__PURE__*/React.createElement(_Input.default, _extends({}, inputProps, {
+    role: "combobox",
+    name: name,
+    id: inputId,
+    className: (0, _classnames.default)( // @ts-ignore
+    inputProps && inputProps.className, 'rw-combobox-input', !hideCaret && 'rw-widget-input'),
+    autoFocus: autoFocus,
+    tabIndex: tabIndex,
+    disabled: isDisabled,
+    readOnly: inputReadOnly,
+    "aria-busy": !!busy,
+    "aria-owns": listId,
+    "aria-autocomplete": completeType,
+    "aria-expanded": currentOpen,
+    "aria-haspopup": true,
+    placeholder: placeholder,
+    value: inputValue,
+    onChange: handleInputChange,
+    onKeyDown: handleInputKeyDown,
+    ref: inputRef
+  })), inputAddon), /*#__PURE__*/React.createElement(_FocusListContext.FocusListContext.Provider, {
+    value: list.context
+  }, shouldRenderPopup && /*#__PURE__*/React.createElement(Popup, _extends({}, popupProps, {
+    dropUp: dropUp,
+    open: popupOpen,
+    transition: popupTransition,
+    onEntering: () => listRef.current.scrollIntoView()
+  }), /*#__PURE__*/React.createElement(ListComponent, _extends({}, listProps, {
+    id: listId,
+    tabIndex: -1,
+    data: data,
+    groupBy: groupBy,
+    disabled: disabled,
+    accessors: accessors,
+    renderItem: renderListItem,
+    renderGroup: renderListGroup,
+    optionComponent: optionComponent,
+    value: selectedItem,
+    searchTerm: valueItem && accessors.text(valueItem) || '',
+    "aria-hidden": !popupOpen,
+    "aria-labelledby": inputId,
+    "aria-live": popupOpen ? 'polite' : void 0,
+    onChange: (d, meta) => handleSelect(d, meta.originalEvent),
+    ref: listRef,
+    messages: {
+      emptyList: rawData.length ? messages.emptyFilter : messages.emptyList
+    }
+  })))));
+});
+ComboboxImpl.displayName = 'Combobox';
+ComboboxImpl.propTypes = propTypes;
+var _default = ComboboxImpl;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/DatePicker.js":
+/*!******************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/DatePicker.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _uncontrollable = __webpack_require__(/*! uncontrollable */ "./node_modules/uncontrollable/lib/esm/index.js");
+
+var _Calendar = _interopRequireDefault(__webpack_require__(/*! ./Calendar */ "./node_modules/react-widgets/cjs/Calendar.js"));
+
+var _DatePickerInput = _interopRequireDefault(__webpack_require__(/*! ./DatePickerInput */ "./node_modules/react-widgets/cjs/DatePickerInput.js"));
+
+var _Icon = __webpack_require__(/*! ./Icon */ "./node_modules/react-widgets/cjs/Icon.js");
+
+var _Localization = __webpack_require__(/*! ./Localization */ "./node_modules/react-widgets/cjs/Localization.js");
+
+var _Popup = _interopRequireDefault(__webpack_require__(/*! ./Popup */ "./node_modules/react-widgets/cjs/Popup.js"));
+
+var _TimeInput = _interopRequireDefault(__webpack_require__(/*! ./TimeInput */ "./node_modules/react-widgets/cjs/TimeInput.js"));
+
+var _Widget = _interopRequireDefault(__webpack_require__(/*! ./Widget */ "./node_modules/react-widgets/cjs/Widget.js"));
+
+var _WidgetPicker = _interopRequireDefault(__webpack_require__(/*! ./WidgetPicker */ "./node_modules/react-widgets/cjs/WidgetPicker.js"));
+
+var _dates = _interopRequireDefault(__webpack_require__(/*! ./dates */ "./node_modules/react-widgets/cjs/dates.js"));
+
+var _useDropdownToggle = _interopRequireDefault(__webpack_require__(/*! ./useDropdownToggle */ "./node_modules/react-widgets/cjs/useDropdownToggle.js"));
+
+var _useTabTrap = _interopRequireDefault(__webpack_require__(/*! ./useTabTrap */ "./node_modules/react-widgets/cjs/useTabTrap.js"));
+
+var _useFocusManager = _interopRequireDefault(__webpack_require__(/*! ./useFocusManager */ "./node_modules/react-widgets/cjs/useFocusManager.js"));
+
+var _WidgetHelpers = __webpack_require__(/*! ./WidgetHelpers */ "./node_modules/react-widgets/cjs/WidgetHelpers.js");
+
+var _useEventCallback = _interopRequireDefault(__webpack_require__(/*! @restart/hooks/useEventCallback */ "./node_modules/@restart/hooks/esm/useEventCallback.js"));
+
+var _InputAddon = _interopRequireDefault(__webpack_require__(/*! ./InputAddon */ "./node_modules/react-widgets/cjs/InputAddon.js"));
+
+const _excluded = ["id", "value", "onChange", "onSelect", "onToggle", "onKeyDown", "onKeyPress", "onCurrentDateChange", "inputProps", "calendarProps", "timeInputProps", "popupProps", "autoFocus", "tabIndex", "disabled", "readOnly", "className", "valueFormat", "valueDisplayFormat", "valueEditFormat", "containerClassName", "name", "selectIcon", "placeholder", "includeTime", "min", "max", "open", "dropUp", "parse", "messages", "formats", "currentDate", "popupTransition", "popupComponent", "timePrecision", "aria-labelledby", "aria-describedby"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+let propTypes = {
+  /**
+   * @example ['valuePicker', [ ['new Date()', null] ]]
+   */
+  value: _propTypes.default.instanceOf(Date),
+
+  /**
+   * @example ['onChangePicker', [ ['new Date()', null] ]]
+   */
+  onChange: _propTypes.default.func,
+
+  /**
+   * @example ['openDate']
+   */
+  open: _propTypes.default.bool,
+  onToggle: _propTypes.default.func,
+
+  /**
+   * Default current date at which the calendar opens. If none is provided, opens at today's date or the `value` date (if any).
+   */
+  currentDate: _propTypes.default.instanceOf(Date),
+
+  /**
+   * Change event Handler that is called when the currentDate is changed. The handler is called with the currentDate object.
+   */
+  onCurrentDateChange: _propTypes.default.func,
+  onSelect: _propTypes.default.func,
+
+  /**
+   * The minimum Date that can be selected. Min only limits selection, it doesn't constrain the date values that
+   * can be typed or pasted into the widget. If you need this behavior you can constrain values via
+   * the `onChange` handler.
+   *
+   * @example ['prop', ['min', 'new Date()']]
+   */
+  min: _propTypes.default.instanceOf(Date),
+
+  /**
+   * The maximum Date that can be selected. Max only limits selection, it doesn't constrain the date values that
+   * can be typed or pasted into the widget. If you need this behavior you can constrain values via
+   * the `onChange` handler.
+   *
+   * @example ['prop', ['max', 'new Date()']]
+   */
+  max: _propTypes.default.instanceOf(Date),
+
+  /**
+   * A formatting options used to display the date value. This is a shorthand for
+   * setting both `valueDisplayFormat` and `valueEditFormat`.
+   */
+  valueFormat: _propTypes.default.any,
+
+  /**
+   * A formatting options used to display the date value. For more information about formats
+   * visit the [Localization page](./localization)
+   *
+   * ```tsx live
+   * import { DatePicker } from 'react-widgets';
+   *
+   * <DatePicker
+   *   defaultValue={new Date()}
+   *   valueDisplayFormat={{ dateStyle: "medium" }}
+   * />
+   * ```
+   */
+  valueDisplayFormat: _propTypes.default.any,
+
+  /**
+   * A formatting options used while the date input has focus. Useful for showing a simpler format for inputing.
+   * For more information about formats visit the [Localization page](./localization)
+   *
+   * ```tsx live
+   * import { DatePicker } from 'react-widgets';
+   *
+   * <DatePicker
+   *   defaultValue={new Date()}
+   *   valueEditFormat={{ dateStyle: "short" }}
+   *   valueDisplayFormat={{ dateStyle: "medium" }}
+   * />
+   * ```
+   */
+  valueEditFormat: _propTypes.default.any,
+
+  /**
+   * Enable the time list component of the picker.
+   */
+  includeTime: _propTypes.default.bool,
+  timePrecision: _propTypes.default.oneOf(['minutes', 'seconds', 'milliseconds']),
+  timeInputProps: _propTypes.default.object,
+
+  /** Specify the element used to render the calendar dropdown icon. */
+  selectIcon: _propTypes.default.node,
+  dropUp: _propTypes.default.bool,
+  popupTransition: _propTypes.default.elementType,
+  placeholder: _propTypes.default.string,
+  name: _propTypes.default.string,
+  autoFocus: _propTypes.default.bool,
+
+  /**
+   * @example ['disabled', ['new Date()']]
+   */
+  disabled: _propTypes.default.bool,
+
+  /**
+   * @example ['readOnly', ['new Date()']]
+   */
+  readOnly: _propTypes.default.bool,
+
+  /**
+   * Determines how the widget parses the typed date string into a Date object. You can provide an array of formats to try,
+   * or provide a function that returns a date to handle parsing yourself. When `parse` is unspecified and
+   * the `format` prop is a `string` parse will automatically use that format as its default.
+   */
+  parse: _propTypes.default.oneOfType([_propTypes.default.any, _propTypes.default.func]),
+
+  /** @ignore */
+  tabIndex: _propTypes.default.any,
+
+  /** @ignore */
+  'aria-labelledby': _propTypes.default.string,
+
+  /** @ignore */
+  'aria-describedby': _propTypes.default.string,
+
+  /** @ignore */
+  localizer: _propTypes.default.any,
+  onKeyDown: _propTypes.default.func,
+  onKeyPress: _propTypes.default.func,
+  onBlur: _propTypes.default.func,
+  onFocus: _propTypes.default.func,
+
+  /** Adds a css class to the input container element. */
+  containerClassName: _propTypes.default.string,
+  calendarProps: _propTypes.default.object,
+  inputProps: _propTypes.default.object,
+  messages: _propTypes.default.shape({
+    dateButton: _propTypes.default.string
+  })
+};
+const defaultProps = Object.assign({}, _Calendar.default.defaultProps, {
+  min: new Date(1900, 0, 1),
+  max: new Date(2099, 11, 31),
+  selectIcon: _Icon.calendar,
+  formats: {}
+});
+
+/**
+ * ---
+ * subtitle: DatePicker, TimePicker
+ * localized: true
+ * shortcuts:
+ *   - { key: alt + down arrow, label:  open calendar or time }
+ *   - { key: alt + up arrow, label: close calendar or time }
+ *   - { key: down arrow, label: move focus to next item }
+ *   - { key: up arrow, label: move focus to previous item }
+ *   - { key: home, label: move focus to first item }
+ *   - { key: end, label: move focus to last item }
+ *   - { key: enter, label: select focused item }
+ *   - { key: any key, label: search list for item starting with key }
+ * ---
+ *
+ * @public
+ * @extends Calendar
+ */
+const DatePicker = /*#__PURE__*/_react.default.forwardRef((uncontrolledProps, outerRef) => {
+  const _useUncontrolled = (0, _uncontrollable.useUncontrolled)(uncontrolledProps, {
+    open: 'onToggle',
+    value: 'onChange',
+    currentDate: 'onCurrentDateChange'
+  }),
+        {
+    id,
+    value,
+    onChange,
+    onSelect,
+    onToggle,
+    onKeyDown,
+    onKeyPress,
+    onCurrentDateChange,
+    inputProps,
+    calendarProps,
+    timeInputProps,
+    popupProps,
+    autoFocus,
+    tabIndex,
+    disabled,
+    readOnly,
+    className,
+    // @ts-ignore
+    valueFormat,
+    valueDisplayFormat = valueFormat,
+    valueEditFormat = valueFormat,
+    containerClassName,
+    name,
+    selectIcon,
+    placeholder,
+    includeTime = false,
+    min,
+    max,
+    open,
+    dropUp,
+    parse,
+    messages,
+    formats,
+    currentDate,
+    popupTransition,
+    popupComponent: Popup = _Popup.default,
+    timePrecision,
+    'aria-labelledby': ariaLabelledby,
+    'aria-describedby': ariaDescribedby
+  } = _useUncontrolled,
+        elementProps = _objectWithoutPropertiesLoose(_useUncontrolled, _excluded);
+
+  const localizer = (0, _Localization.useLocalizer)(messages, formats);
+  const ref = (0, _react.useRef)(null);
+  const calRef = (0, _react.useRef)(null);
+  const tabTrap = (0, _useTabTrap.default)(calRef);
+  const inputId = (0, _WidgetHelpers.useInstanceId)(id, '_input');
+  const dateId = (0, _WidgetHelpers.useInstanceId)(id, '_date');
+  const currentFormat = includeTime ? 'datetime' : 'date';
+  const toggle = (0, _useDropdownToggle.default)(open, onToggle);
+  const [focusEvents, focused] = (0, _useFocusManager.default)(ref, uncontrolledProps, {
+    didHandle(focused) {
+      if (!focused) {
+        toggle.close();
+        tabTrap.stop();
+      } else if (open) {
+        tabTrap.focus();
+      }
+    }
+
+  });
+  const dateParser = (0, _react.useCallback)(str => {
+    var _localizer$parseDate, _ref;
+
+    if (typeof parse == 'function') {
+      var _parse;
+
+      return (_parse = parse(str, localizer)) != null ? _parse : null;
+    }
+
+    return (_localizer$parseDate = localizer.parseDate(str, (_ref = parse != null ? parse : valueEditFormat) != null ? _ref : valueDisplayFormat)) != null ? _localizer$parseDate : null;
+  }, [localizer, parse, valueDisplayFormat, valueEditFormat]);
+  /**
+   * Handlers
+   */
+
+  const handleChange = (0, _useEventCallback.default)((date, str, constrain) => {
+    if (readOnly || disabled) return;
+    if (constrain) date = inRangeValue(date);
+
+    if (onChange) {
+      if (date == null || value == null) {
+        if (date != value //eslint-disable-line eqeqeq
+        ) onChange(date, str);
+      } else if (!_dates.default.eq(date, value)) {
+        onChange(date, str);
+      }
+    }
+  });
+  const handleKeyDown = (0, _useEventCallback.default)(e => {
+    if (readOnly) return;
+    (0, _WidgetHelpers.notify)(onKeyDown, [e]);
+    if (e.defaultPrevented) return;
+
+    if (e.key === 'Escape' && open) {
+      toggle.close();
+    } else if (e.altKey) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        toggle.open();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        toggle.close();
+      }
+    }
+  });
+  const handleKeyPress = (0, _useEventCallback.default)(e => {
+    (0, _WidgetHelpers.notify)(onKeyPress, [e]);
+    if (e.defaultPrevented) return;
+  });
+  const handleDateSelect = (0, _useEventCallback.default)(date => {
+    var _ref$current;
+
+    let dateTime = _dates.default.merge(date, value, currentDate);
+
+    let dateStr = formatDate(date);
+    if (!includeTime) toggle.close();
+    (0, _WidgetHelpers.notify)(onSelect, [dateTime, dateStr]);
+    handleChange(dateTime, dateStr, true);
+    (_ref$current = ref.current) == null ? void 0 : _ref$current.focus();
+  });
+  const handleTimeChange = (0, _useEventCallback.default)(date => {
+    handleChange(date, formatDate(date), true);
+  });
+  const handleCalendarClick = (0, _useEventCallback.default)(e => {
+    if (readOnly || disabled) return; // prevents double clicks when in a <label>
+
+    e.preventDefault();
+    toggle();
+  });
+
+  const handleOpening = () => {
+    tabTrap.start();
+    requestAnimationFrame(() => {
+      tabTrap.focus();
+    });
+  };
+
+  const handleClosing = () => {
+    tabTrap.stop();
+    if (focused) focus();
+  };
+  /**
+   * Methods
+   */
+
+
+  function focus() {
+    var _calRef$current, _ref$current2;
+
+    if (open) (_calRef$current = calRef.current) == null ? void 0 : _calRef$current.focus();else (_ref$current2 = ref.current) == null ? void 0 : _ref$current2.focus();
+  }
+
+  function inRangeValue(value) {
+    if (value == null) return value;
+    return _dates.default.max(_dates.default.min(value, max), min);
+  }
+
+  function formatDate(date) {
+    return date instanceof Date && !isNaN(date.getTime()) ? localizer.formatDate(date, currentFormat) : '';
+  }
+
+  (0, _react.useImperativeHandle)(outerRef, () => ({
+    focus
+  }));
+  let shouldRenderList = (0, _WidgetHelpers.useFirstFocusedRender)(focused, open);
+  const inputReadOnly = (inputProps == null ? void 0 : inputProps.readOnly) != null ? inputProps == null ? void 0 : inputProps.readOnly : readOnly;
+  return /*#__PURE__*/_react.default.createElement(_Widget.default, _extends({}, elementProps, {
+    defaultValue: undefined,
+    open: !!open,
+    dropUp: dropUp,
+    focused: focused,
+    disabled: disabled,
+    readOnly: readOnly,
+    onKeyDown: handleKeyDown,
+    onKeyPress: handleKeyPress
+  }, focusEvents, {
+    className: (0, _classnames.default)(className, 'rw-date-picker')
+  }), /*#__PURE__*/_react.default.createElement(_WidgetPicker.default, {
+    className: containerClassName
+  }, /*#__PURE__*/_react.default.createElement(_DatePickerInput.default, _extends({}, inputProps, {
+    id: inputId,
+    ref: ref,
+    role: "combobox",
+    name: name,
+    value: value,
+    tabIndex: tabIndex,
+    autoFocus: autoFocus,
+    placeholder: placeholder,
+    disabled: disabled,
+    readOnly: inputReadOnly,
+    formatter: currentFormat,
+    displayFormat: valueDisplayFormat,
+    editFormat: valueEditFormat,
+    editing: focused,
+    localizer: localizer,
+    parse: dateParser,
+    onChange: handleChange,
+    "aria-haspopup": true,
+    "aria-labelledby": ariaLabelledby,
+    "aria-describedby": ariaDescribedby,
+    "aria-expanded": !!open,
+    "aria-owns": dateId
+  })), /*#__PURE__*/_react.default.createElement(_InputAddon.default, {
+    icon: selectIcon,
+    label: localizer.messages.dateButton(),
+    disabled: disabled || readOnly,
+    onClick: handleCalendarClick
+  })), !!shouldRenderList && /*#__PURE__*/_react.default.createElement(Popup, _extends({}, popupProps, {
+    dropUp: dropUp,
+    open: open,
+    role: "dialog",
+    ref: calRef,
+    id: dateId,
+    className: "rw-calendar-popup",
+    transition: popupTransition,
+    onEntering: handleOpening,
+    onExited: handleClosing
+  }), /*#__PURE__*/_react.default.createElement(_Calendar.default, _extends({
+    min: min,
+    max: max,
+    bordered: false
+  }, calendarProps, {
+    messages: Object.assign({}, messages, calendarProps == null ? void 0 : calendarProps.messages),
+    tabIndex: -1,
+    value: value,
+    autoFocus: false,
+    onChange: handleDateSelect,
+    currentDate: currentDate,
+    onCurrentDateChange: onCurrentDateChange,
+    "aria-hidden": !open,
+    "aria-live": "polite",
+    "aria-labelledby": inputId
+  })), includeTime && /*#__PURE__*/_react.default.createElement(_TimeInput.default, _extends({}, timeInputProps, {
+    value: value,
+    precision: timePrecision,
+    onChange: handleTimeChange,
+    datePart: currentDate
+  }))));
+});
+
+DatePicker.displayName = 'DatePicker';
+DatePicker.propTypes = propTypes;
+DatePicker.defaultProps = defaultProps;
+var _default = DatePicker;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/DatePickerInput.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/DatePickerInput.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _dates = __webpack_require__(/*! ./dates */ "./node_modules/react-widgets/cjs/dates.js");
+
+var _Input = _interopRequireDefault(__webpack_require__(/*! ./Input */ "./node_modules/react-widgets/cjs/Input.js"));
+
+const _excluded = ["value", "formatter", "editing", "editFormat", "displayFormat", "localizer", "parse", "onChange", "onBlur", "disabled", "readOnly"];
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const DatePickerInput = /*#__PURE__*/_react.default.forwardRef((_ref, ref) => {
+  let {
+    value,
+    formatter,
+    editing,
+    editFormat,
+    displayFormat,
+    localizer,
+    parse,
+    onChange,
+    onBlur,
+    disabled,
+    readOnly
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  const needsFlush = (0, _react.useRef)(false);
+  const nextTextValue = (0, _react.useMemo)(() => value instanceof Date && isValid(value) ? localizer.formatDate(value, formatter, editing ? editFormat : displayFormat) : '', [value, formatter, localizer, displayFormat, editing, editFormat]);
+  const [prevValue, setPrevValue] = (0, _react.useState)(nextTextValue);
+  const [textValue, setTextValue] = (0, _react.useState)(nextTextValue);
+
+  if (prevValue !== nextTextValue) {
+    setPrevValue(nextTextValue);
+    setTextValue(nextTextValue);
+  }
+
+  const handleBlur = event => {
+    if (onBlur) onBlur(event);
+
+    if (needsFlush.current) {
+      let date = parse(event.target.value);
+      const dateIsInvalid = event.target.value != '' && (0, _dates.isNullOrInvalid)(date);
+
+      if (dateIsInvalid) {
+        setTextValue('');
+      }
+
+      needsFlush.current = false;
+      setPrevValue(null);
+      onChange(date, event.target.value);
+    }
+  };
+
+  const handleChange = ({
+    target
+  }) => {
+    needsFlush.current = true;
+    setTextValue(target.value);
+  };
+
+  return /*#__PURE__*/_react.default.createElement(_Input.default, _extends({}, props, {
+    type: "text",
+    ref: ref,
+    className: "rw-widget-input",
+    value: textValue,
+    disabled: disabled,
+    readOnly: readOnly,
+    onChange: handleChange,
+    onBlur: handleBlur
+  }));
+});
+
+DatePickerInput.displayName = 'DatePickerInput';
+var _default = DatePickerInput;
+exports["default"] = _default;
+
+function isValid(d) {
+  return !isNaN(d.getTime());
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/DateTimePartInput.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/DateTimePartInput.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+const _excluded = ["value", "valueText", "pad", "placeholder", "min", "max", "emptyChar"];
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const padStart = (value, len, padding) => {
+  let str = String(value != null ? value : '');
+
+  while (str.length < len) str = padding + str;
+
+  return str;
+};
+
+const DateTimePartInput = /*#__PURE__*/_react.default.forwardRef((_ref, ref) => {
+  let {
+    value,
+    valueText = String(value != null ? value : ''),
+    pad,
+    placeholder,
+    min,
+    max,
+    emptyChar
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  return /*#__PURE__*/_react.default.createElement("input", _extends({}, props, {
+    ref: ref,
+    "data-focusable": true,
+    autoComplete: "off",
+    role: "spinbutton",
+    "aria-valuenow": value != null ? value : void 0,
+    "aria-valuemin": min,
+    "aria-valuemax": max,
+    "aria-valuetext": valueText // seems readonly is not valid
+    ,
+    "aria-disabled": props.disabled || props.readOnly,
+    "arai-placeholder": placeholder,
+    placeholder: placeholder,
+    className: "rw-time-part-input",
+    value: placeholder && !value ? '' : padStart(value, pad || 0, value == null ? emptyChar : '0')
+  }));
+});
+
+var _default = DateTimePartInput;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Decade.js":
+/*!**************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Decade.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _CalendarView = _interopRequireDefault(__webpack_require__(/*! ./CalendarView */ "./node_modules/react-widgets/cjs/CalendarView.js"));
+
+var _ = __webpack_require__(/*! ./_ */ "./node_modules/react-widgets/cjs/_.js");
+
+var _dates = _interopRequireDefault(__webpack_require__(/*! ./dates */ "./node_modules/react-widgets/cjs/dates.js"));
+
+const _excluded = ["focusedItem", "disabled", "onChange", "value", "localizer", "min", "max"];
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function DecadeView(_ref) {
+  let {
+    focusedItem,
+    disabled,
+    onChange,
+    value,
+    localizer,
+    min,
+    max
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  const chunks = (0, _react.useMemo)(() => (0, _.chunk)(getDecadeYears(focusedItem), 4), [focusedItem]);
+  return /*#__PURE__*/_react.default.createElement(_CalendarView.default, _extends({}, props, {
+    focusedItem: focusedItem
+  }), /*#__PURE__*/_react.default.createElement(_CalendarView.default.Body, null, chunks.map((row, rowIdx) => /*#__PURE__*/_react.default.createElement(_CalendarView.default.Row, {
+    key: rowIdx
+  }, row.map((date, colIdx) => {
+    let label = localizer.formatDate(date, 'year');
+    return /*#__PURE__*/_react.default.createElement(_CalendarView.default.Cell, {
+      key: colIdx,
+      unit: "year",
+      viewUnit: "decade",
+      label: label,
+      date: date,
+      min: min,
+      max: max,
+      onChange: onChange,
+      focusedItem: focusedItem,
+      selected: value,
+      disabled: disabled
+    }, label);
+  })))));
+}
+
+function getDecadeYears(_date) {
+  let days = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+  let date = _dates.default.add(_dates.default.startOf(_date, 'decade'), -2, 'year');
+
+  return days.map(() => date = _dates.default.add(date, 1, 'year'));
+}
+
+var _default = DecadeView;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/DropdownList.js":
+/*!********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/DropdownList.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _uncontrollable = __webpack_require__(/*! uncontrollable */ "./node_modules/uncontrollable/lib/esm/index.js");
+
+var _useTimeout = _interopRequireDefault(__webpack_require__(/*! @restart/hooks/useTimeout */ "./node_modules/@restart/hooks/esm/useTimeout.js"));
+
+var _AddToListOption = _interopRequireWildcard(__webpack_require__(/*! ./AddToListOption */ "./node_modules/react-widgets/cjs/AddToListOption.js"));
+
+var _DropdownListInput = _interopRequireDefault(__webpack_require__(/*! ./DropdownListInput */ "./node_modules/react-widgets/cjs/DropdownListInput.js"));
+
+var _Icon = __webpack_require__(/*! ./Icon */ "./node_modules/react-widgets/cjs/Icon.js");
+
+var _List = _interopRequireDefault(__webpack_require__(/*! ./List */ "./node_modules/react-widgets/cjs/List.js"));
+
+var _FocusListContext = __webpack_require__(/*! ./FocusListContext */ "./node_modules/react-widgets/cjs/FocusListContext.js");
+
+var _Popup = _interopRequireDefault(__webpack_require__(/*! ./Popup */ "./node_modules/react-widgets/cjs/Popup.js"));
+
+var _Widget = _interopRequireDefault(__webpack_require__(/*! ./Widget */ "./node_modules/react-widgets/cjs/Widget.js"));
+
+var _WidgetPicker = _interopRequireDefault(__webpack_require__(/*! ./WidgetPicker */ "./node_modules/react-widgets/cjs/WidgetPicker.js"));
+
+var _A11y = __webpack_require__(/*! ./A11y */ "./node_modules/react-widgets/cjs/A11y.js");
+
+var _Filter = __webpack_require__(/*! ./Filter */ "./node_modules/react-widgets/cjs/Filter.js");
+
+var CustomPropTypes = _interopRequireWildcard(__webpack_require__(/*! ./PropTypes */ "./node_modules/react-widgets/cjs/PropTypes.js"));
+
+var _canShowCreate = _interopRequireDefault(__webpack_require__(/*! ./canShowCreate */ "./node_modules/react-widgets/cjs/canShowCreate.js"));
+
+var _Accessors = __webpack_require__(/*! ./Accessors */ "./node_modules/react-widgets/cjs/Accessors.js");
+
+var _useAutoFocus = _interopRequireDefault(__webpack_require__(/*! ./useAutoFocus */ "./node_modules/react-widgets/cjs/useAutoFocus.js"));
+
+var _useDropdownToggle = _interopRequireDefault(__webpack_require__(/*! ./useDropdownToggle */ "./node_modules/react-widgets/cjs/useDropdownToggle.js"));
+
+var _useFocusManager = _interopRequireDefault(__webpack_require__(/*! ./useFocusManager */ "./node_modules/react-widgets/cjs/useFocusManager.js"));
+
+var _Localization = __webpack_require__(/*! ./Localization */ "./node_modules/react-widgets/cjs/Localization.js");
+
+var _WidgetHelpers = __webpack_require__(/*! ./WidgetHelpers */ "./node_modules/react-widgets/cjs/WidgetHelpers.js");
+
+var _PickerCaret = _interopRequireDefault(__webpack_require__(/*! ./PickerCaret */ "./node_modules/react-widgets/cjs/PickerCaret.js"));
+
+const _excluded = ["id", "autoFocus", "textField", "dataKey", "value", "defaultValue", "onChange", "open", "defaultOpen", "onToggle", "searchTerm", "defaultSearchTerm", "onSearch", "filter", "allowCreate", "delay", "focusFirstItem", "className", "containerClassName", "placeholder", "busy", "disabled", "readOnly", "selectIcon", "busySpinner", "dropUp", "tabIndex", "popupTransition", "name", "autoComplete", "onSelect", "onCreate", "onKeyPress", "onKeyDown", "onClick", "inputProps", "listProps", "popupProps", "renderListItem", "renderListGroup", "optionComponent", "renderValue", "groupBy", "onBlur", "onFocus", "listComponent", "popupComponent", "data", "messages"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const propTypes = {
+  value: _propTypes.default.any,
+
+  /**
+   * @type {function (
+   *  dataItems: ?any,
+   *  metadata: {
+   *    lastValue: ?any,
+   *    searchTerm: ?string
+   *    originalEvent: SyntheticEvent,
+   *  }
+   * ): void}
+   */
+  onChange: _propTypes.default.func,
+  open: _propTypes.default.bool,
+  onToggle: _propTypes.default.func,
+  data: _propTypes.default.array,
+  dataKey: CustomPropTypes.accessor,
+  textField: CustomPropTypes.accessor,
+  allowCreate: _propTypes.default.oneOf([true, false, 'onFilter']),
+
+  /**
+   * A React render prop for customizing the rendering of the DropdownList
+   * value
+   */
+  renderValue: _propTypes.default.func,
+  renderListItem: _propTypes.default.func,
+  listComponent: CustomPropTypes.elementType,
+  optionComponent: CustomPropTypes.elementType,
+  renderPopup: _propTypes.default.func,
+  renderListGroup: _propTypes.default.func,
+  groupBy: CustomPropTypes.accessor,
+
+  /**
+   *
+   * @type {(dataItem: ?any, metadata: { originalEvent: SyntheticEvent }) => void}
+   */
+  onSelect: _propTypes.default.func,
+  onCreate: _propTypes.default.func,
+
+  /**
+   * @type function(searchTerm: string, metadata: { action, lastSearchTerm, originalEvent? })
+   */
+  onSearch: _propTypes.default.func,
+  searchTerm: _propTypes.default.string,
+  busy: _propTypes.default.bool,
+
+  /** Specify the element used to render the select (down arrow) icon. */
+  selectIcon: _propTypes.default.node,
+
+  /** Specify the element used to render the busy indicator */
+  busySpinner: _propTypes.default.node,
+  placeholder: _propTypes.default.string,
+  dropUp: _propTypes.default.bool,
+  popupTransition: CustomPropTypes.elementType,
+  disabled: CustomPropTypes.disabled.acceptsArray,
+  readOnly: CustomPropTypes.disabled,
+
+  /** Adds a css class to the input container element. */
+  containerClassName: _propTypes.default.string,
+  inputProps: _propTypes.default.object,
+  listProps: _propTypes.default.object,
+  messages: _propTypes.default.shape({
+    open: _propTypes.default.string,
+    emptyList: CustomPropTypes.message,
+    emptyFilter: CustomPropTypes.message,
+    createOption: CustomPropTypes.message
+  })
+};
+
+function useSearchWordBuilder(delay) {
+  const timeout = (0, _useTimeout.default)();
+  const wordRef = (0, _react.useRef)('');
+
+  function search(character, cb) {
+    let word = (wordRef.current + character).toLowerCase();
+    if (!character) return;
+    wordRef.current = word;
+    timeout.set(() => {
+      wordRef.current = '';
+      cb(word);
+    }, delay);
+  }
+
+  return search;
+}
+
+/**
+ * A `<select>` replacement for single value lists.
+ * @public
+ */
+const DropdownListImpl = /*#__PURE__*/_react.default.forwardRef(function DropdownList(_ref, outerRef) {
+  let {
+    id,
+    autoFocus,
+    textField,
+    dataKey,
+    value,
+    defaultValue,
+    onChange,
+    open,
+    defaultOpen = false,
+    onToggle,
+    searchTerm,
+    defaultSearchTerm = '',
+    onSearch,
+    filter = true,
+    allowCreate = false,
+    delay = 500,
+    focusFirstItem,
+    className,
+    containerClassName,
+    placeholder,
+    busy,
+    disabled,
+    readOnly,
+    selectIcon = _Icon.caretDown,
+    busySpinner,
+    dropUp,
+    tabIndex,
+    popupTransition,
+    name,
+    autoComplete,
+    onSelect,
+    onCreate,
+    onKeyPress,
+    onKeyDown,
+    onClick,
+    inputProps,
+    listProps,
+    popupProps,
+    renderListItem,
+    renderListGroup,
+    optionComponent,
+    renderValue,
+    groupBy,
+    onBlur,
+    onFocus,
+    listComponent: ListComponent = _List.default,
+    popupComponent: Popup = _Popup.default,
+    data: rawData = [],
+    messages: userMessages
+  } = _ref,
+      elementProps = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  const [currentValue, handleChange] = (0, _uncontrollable.useUncontrolledProp)(value, defaultValue, onChange);
+  const [currentOpen, handleOpen] = (0, _uncontrollable.useUncontrolledProp)(open, defaultOpen, onToggle);
+  const [currentSearch, handleSearch] = (0, _uncontrollable.useUncontrolledProp)(searchTerm, defaultSearchTerm, onSearch);
+  const ref = (0, _react.useRef)(null);
+  const filterRef = (0, _react.useRef)(null);
+  const listRef = (0, _react.useRef)(null);
+  const inputId = (0, _WidgetHelpers.useInstanceId)(id, '_input');
+  const listId = (0, _WidgetHelpers.useInstanceId)(id, '_listbox');
+  const activeId = (0, _WidgetHelpers.useInstanceId)(id, '_listbox_active_option');
+  const accessors = (0, _Accessors.useAccessors)(textField, dataKey);
+  const localizer = (0, _Localization.useLocalizer)(userMessages);
+  (0, _useAutoFocus.default)(!!autoFocus, ref);
+  const toggle = (0, _useDropdownToggle.default)(currentOpen, handleOpen);
+  const isDisabled = disabled === true; // const disabledItems = toItemArray(disabled)
+
+  const isReadOnly = !!readOnly;
+  const [focusEvents, focused] = (0, _useFocusManager.default)(ref, {
+    disabled: isDisabled,
+    onBlur,
+    onFocus
+  }, {
+    didHandle(focused) {
+      if (focused) {
+        if (filter) focus();
+        return;
+      }
+
+      toggle.close();
+      clearSearch();
+    }
+
+  });
+  const data = (0, _Filter.useFilteredData)(rawData, currentOpen ? filter : false, currentSearch, accessors.text);
+  const selectedItem = (0, _react.useMemo)(() => data[accessors.indexOf(data, currentValue)], [data, currentValue, accessors]);
+  const list = (0, _FocusListContext.useFocusList)({
+    activeId,
+    scope: ref,
+    focusFirstItem,
+    anchorItem: currentOpen ? selectedItem : undefined
+  });
+  const [autofilling, setAutofilling] = (0, _react.useState)(false);
+  const nextSearchChar = useSearchWordBuilder(delay);
+  const focusedItem = list.getFocused();
+  (0, _A11y.useActiveDescendant)(ref, activeId, focusedItem && currentOpen, [focusedItem]);
+  const showCreateOption = (0, _canShowCreate.default)(allowCreate, {
+    searchTerm: currentSearch,
+    data,
+    accessors
+  });
+
+  const handleCreate = event => {
+    (0, _WidgetHelpers.notify)(onCreate, [currentSearch]);
+    clearSearch(event);
+    toggle.close();
+    focus();
+  };
+
+  const handleSelect = (dataItem, originalEvent) => {
+    if (readOnly || isDisabled) return;
+    if (dataItem === undefined) return;
+    originalEvent == null ? void 0 : originalEvent.preventDefault();
+
+    if (dataItem === _AddToListOption.CREATE_OPTION) {
+      handleCreate(originalEvent);
+      return;
+    }
+
+    (0, _WidgetHelpers.notify)(onSelect, [dataItem, {
+      originalEvent
+    }]);
+    change(dataItem, originalEvent, true);
+    toggle.close();
+    focus();
+  };
+
+  const handleClick = e => {
+    if (readOnly || isDisabled) return; // prevents double clicks when in a <label>
+
+    e.preventDefault();
+    focus();
+    toggle();
+    (0, _WidgetHelpers.notify)(onClick, [e]);
+  };
+
+  const handleKeyDown = e => {
+    if (readOnly || isDisabled) return;
+    let {
+      key,
+      altKey,
+      ctrlKey,
+      shiftKey
+    } = e;
+    (0, _WidgetHelpers.notify)(onKeyDown, [e]);
+
+    let closeWithFocus = () => {
+      clearSearch();
+      toggle.close();
+      if (currentOpen) setTimeout(focus);
+    };
+
+    if (e.defaultPrevented) return;
+
+    if (key === 'End' && currentOpen && !shiftKey) {
+      e.preventDefault();
+      list.focus(list.last());
+    } else if (key === 'Home' && currentOpen && !shiftKey) {
+      e.preventDefault();
+      list.focus(list.first());
+    } else if (key === 'Escape' && (currentOpen || currentSearch)) {
+      e.preventDefault();
+      closeWithFocus();
+    } else if (key === 'Enter' && currentOpen && ctrlKey && showCreateOption) {
+      e.preventDefault();
+      handleCreate(e);
+    } else if ((key === 'Enter' || key === ' ' && !filter) && currentOpen) {
+      e.preventDefault();
+      if (list.hasFocused()) handleSelect(list.getFocused(), e);
+    } else if (key === 'ArrowDown') {
+      e.preventDefault();
+
+      if (!currentOpen) {
+        toggle.open();
+        return;
+      }
+
+      list.focus(list.next());
+    } else if (key === 'ArrowUp') {
+      e.preventDefault();
+      if (altKey) return closeWithFocus();
+      list.focus(list.prev());
+    }
+  };
+
+  const handleKeyPress = e => {
+    if (readOnly || isDisabled) return;
+    (0, _WidgetHelpers.notify)(onKeyPress, [e]);
+    if (e.defaultPrevented || filter) return;
+    nextSearchChar(String.fromCharCode(e.which), word => {
+      if (!currentOpen) return;
+
+      let isValid = item => _Filter.presets.startsWith(accessors.text(item).toLowerCase(), word.toLowerCase());
+
+      const [items, focusedItem] = list.get();
+      const len = items.length;
+      const startIdx = items.indexOf(focusedItem) + 1;
+      const offset = startIdx >= len ? 0 : startIdx;
+      let idx = 0;
+      let pointer = offset;
+
+      while (idx < len) {
+        pointer = (idx + offset) % len;
+        let item = items[pointer];
+        if (isValid(list.toDataItem(item))) break;
+        idx++;
+      }
+
+      if (idx === len) return;
+      list.focus(items[pointer]);
+    });
+  };
+
+  const handleInputChange = e => {
+    // hitting space to open
+    if (!currentOpen && !e.target.value.trim()) {
+      e.preventDefault();
+    } else {
+      search(e.target.value, e, 'input');
+    }
+
+    toggle.open();
+  };
+
+  const handleAutofillChange = e => {
+    let filledValue = e.target.value.toLowerCase();
+    if (filledValue === '') return void change(null);
+
+    for (const item of rawData) {
+      if (String(accessors.value(item)).toLowerCase() === filledValue || accessors.text(item).toLowerCase() === filledValue) {
+        change(item, e);
+        break;
+      }
+    }
+  };
+
+  function change(nextValue, originalEvent, selected = false) {
+    if (!accessors.matches(nextValue, currentValue)) {
+      (0, _WidgetHelpers.notify)(handleChange, [nextValue, {
+        originalEvent,
+        source: selected ? 'listbox' : 'input',
+        lastValue: currentValue,
+        searchTerm: currentSearch
+      }]);
+      clearSearch(originalEvent);
+      toggle.close();
+    }
+  }
+
+  function focus() {
+    if (filter) filterRef.current.focus();else ref.current.focus();
+  }
+
+  function clearSearch(originalEvent) {
+    search('', originalEvent, 'clear');
+  }
+
+  function search(nextSearchTerm, originalEvent, action = 'input') {
+    if (currentSearch !== nextSearchTerm) handleSearch(nextSearchTerm, {
+      action,
+      originalEvent,
+      lastSearchTerm: currentSearch
+    });
+  }
+  /**
+   * Render
+   */
+
+
+  (0, _react.useImperativeHandle)(outerRef, () => ({
+    focus
+  }));
+  let valueItem = accessors.findOrSelf(data, currentValue);
+  let shouldRenderPopup = (0, _WidgetHelpers.useFirstFocusedRender)(focused, currentOpen);
+  const widgetProps = Object.assign({}, elementProps, {
+    role: 'combobox',
+    id: inputId,
+    //tab index when there is no filter input to take focus
+    tabIndex: filter ? -1 : tabIndex || 0,
+    // FIXME: only when item exists
+    'aria-owns': elementProps['aria-owns'] ? `${listId} ${elementProps['aria-owns']}` : listId,
+    'aria-controls': elementProps['aria-controls'] ? `${listId} ${elementProps['aria-controls']}` : listId,
+    'aria-expanded': !!currentOpen,
+    'aria-haspopup': 'listbox',
+    'aria-busy': !!busy,
+    'aria-live': currentOpen ? 'polite' : undefined,
+    'aria-autocomplete': 'list',
+    'aria-disabled': isDisabled,
+    'aria-readonly': isReadOnly
+  });
+  return /*#__PURE__*/_react.default.createElement(_FocusListContext.FocusListContext.Provider, {
+    value: list.context
+  }, /*#__PURE__*/_react.default.createElement(_Widget.default, _extends({}, widgetProps, {
+    open: !!currentOpen,
+    dropUp: !!dropUp,
+    focused: !!focused,
+    disabled: isDisabled,
+    readOnly: isReadOnly,
+    autofilling: autofilling
+  }, focusEvents, {
+    onKeyDown: handleKeyDown,
+    onKeyPress: handleKeyPress,
+    className: (0, _classnames.default)(className, 'rw-dropdown-list'),
+    ref: ref
+  }), /*#__PURE__*/_react.default.createElement(_WidgetPicker.default, {
+    onClick: handleClick,
+    tabIndex: filter ? -1 : 0,
+    className: (0, _classnames.default)(containerClassName, 'rw-widget-input')
+  }, /*#__PURE__*/_react.default.createElement(_DropdownListInput.default, _extends({}, inputProps, {
+    value: valueItem,
+    dataKeyAccessor: accessors.value,
+    textAccessor: accessors.text,
+    name: name,
+    readOnly: readOnly,
+    disabled: isDisabled,
+    allowSearch: !!filter,
+    searchTerm: currentSearch,
+    ref: filterRef,
+    autoComplete: autoComplete,
+    onSearch: handleInputChange,
+    onAutofill: setAutofilling,
+    onAutofillChange: handleAutofillChange,
+    placeholder: placeholder,
+    renderValue: renderValue
+  })), /*#__PURE__*/_react.default.createElement(_PickerCaret.default, {
+    visible: true,
+    busy: busy,
+    icon: selectIcon,
+    spinner: busySpinner
+  })), shouldRenderPopup && /*#__PURE__*/_react.default.createElement(Popup, _extends({}, popupProps, {
+    dropUp: dropUp,
+    open: currentOpen,
+    transition: popupTransition,
+    onEntered: focus,
+    onEntering: () => listRef.current.scrollIntoView()
+  }), /*#__PURE__*/_react.default.createElement(ListComponent, _extends({}, listProps, {
+    id: listId,
+    data: data,
+    tabIndex: -1,
+    disabled: disabled,
+    groupBy: groupBy,
+    searchTerm: currentSearch,
+    accessors: accessors,
+    renderItem: renderListItem,
+    renderGroup: renderListGroup,
+    optionComponent: optionComponent,
+    value: selectedItem,
+    onChange: (d, meta) => handleSelect(d, meta.originalEvent),
+    "aria-live": currentOpen ? 'polite' : undefined,
+    "aria-labelledby": inputId,
+    "aria-hidden": !currentOpen,
+    ref: listRef,
+    messages: {
+      emptyList: rawData.length ? localizer.messages.emptyFilter : localizer.messages.emptyList
+    }
+  })), showCreateOption && /*#__PURE__*/_react.default.createElement(_AddToListOption.default, {
+    onSelect: handleCreate
+  }, localizer.messages.createOption(currentValue, currentSearch || '')))));
+});
+
+DropdownListImpl.displayName = 'DropdownList';
+DropdownListImpl.propTypes = propTypes;
+var _default = DropdownListImpl;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/DropdownListInput.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/DropdownListInput.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const DropdownListInput = /*#__PURE__*/_react.default.forwardRef(function ({
+  name,
+  autoComplete,
+  value,
+  allowSearch,
+  placeholder,
+  textAccessor,
+  dataKeyAccessor,
+  searchTerm,
+  onSearch,
+  onAutofill,
+  onAutofillChange,
+  renderValue,
+  disabled,
+  readOnly
+}, ref) {
+  const [autofilling, setAutofilling] = (0, _react.useState)(false);
+  const searchRef = (0, _react.useRef)(null);
+
+  const handleAutofillDetect = ({
+    animationName
+  }) => {
+    let autofilling;
+    if (animationName === 'react-widgets-autofill-start') autofilling = true;else if (animationName === 'react-widgets-autofill-cancel') autofilling = false;else return;
+    setAutofilling(autofilling);
+    onAutofill(autofilling);
+  };
+
+  const handleAutofill = e => {
+    setAutofilling(false);
+    onAutofillChange(e);
+  };
+
+  let dataKey = dataKeyAccessor(value);
+  let text = value == null ? '' : textAccessor(value);
+  let strValue = String(dataKey != null ? dataKey : '');
+  if (strValue === String({})) strValue = '';
+  const inputValue = !value && placeholder ? /*#__PURE__*/_react.default.createElement("span", {
+    className: "rw-placeholder"
+  }, placeholder) : renderValue ? renderValue({
+    item: value,
+    dataKey,
+    text
+  }) : text;
+  (0, _react.useImperativeHandle)(ref, () => ({
+    focus() {
+      if (searchRef.current) searchRef.current.focus();
+    }
+
+  })); // There is some interaction between unmounting the search and value inputs
+  // that cancels autofilling in Chrome, it may be due to an input the browser
+  // was considering suddenly disappeared. hiding it seems to avoid the issue
+
+  const style = autofilling ? {
+    display: 'none'
+  } : undefined;
+  return /*#__PURE__*/_react.default.createElement("div", {
+    className: "rw-dropdown-list-input"
+  }, autoComplete !== 'off' && /*#__PURE__*/_react.default.createElement("input", {
+    name: name,
+    tabIndex: -1,
+    disabled: disabled,
+    readOnly: readOnly,
+    value: strValue == null ? '' : strValue,
+    autoComplete: autoComplete,
+    onChange: handleAutofill,
+    onAnimationStart: handleAutofillDetect,
+    "aria-hidden": !autofilling,
+    className: (0, _classnames.default)('rw-detect-autofill', !autofilling && 'rw-sr')
+  }), /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, allowSearch && /*#__PURE__*/_react.default.createElement("input", {
+    ref: searchRef,
+    disabled: disabled,
+    readOnly: readOnly,
+    style: style,
+    className: "rw-dropdownlist-search",
+    autoComplete: "off",
+    value: searchTerm || '',
+    size: (searchTerm || '').length + 2,
+    onChange: onSearch
+  }), !searchTerm && /*#__PURE__*/_react.default.createElement("span", {
+    className: "rw-dropdown-list-value",
+    style: style
+  }, inputValue)));
+});
+
+DropdownListInput.displayName = 'DropdownListInput';
+var _default = DropdownListInput;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Filter.js":
+/*!**************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Filter.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.presets = void 0;
+exports.useFilteredData = useFilteredData;
+
+var _Accessors = __webpack_require__(/*! ./Accessors */ "./node_modules/react-widgets/cjs/Accessors.js");
+
+var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+const presets = {
+  eq: (a, b) => a === b,
+  contains: (a, b) => a.indexOf(b) !== -1,
+  startsWith: (a, b) => a.lastIndexOf(b, 0) === 0
+};
+exports.presets = presets;
+
+function normalizeFilter(filter, textField) {
+  if (filter === false) return null;
+  if (typeof filter === 'function') return filter;
+  const filterPreset = presets[filter === true ? 'startsWith' : filter || 'eq'];
+  return (item, searchTerm) => {
+    let textValue = (0, _Accessors.dataText)(item, textField);
+    return filterPreset(textValue.toLowerCase(), searchTerm.toLowerCase());
+  };
+}
+
+function useFilteredData(data, filterer, searchTerm = '', textAccessor) {
+  return (0, _react.useMemo)(() => {
+    const filter = normalizeFilter(filterer, textAccessor);
+    if (!filter || !searchTerm.trim()) return data;
+    return data.filter((item, idx) => filter(item, searchTerm, idx));
+  }, [data, filterer, searchTerm, textAccessor]);
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/FocusListContext.js":
+/*!************************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/FocusListContext.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.useFocusList = exports.FocusListContext = void 0;
+exports.useListOption = useListOption;
+
+var _querySelectorAll = _interopRequireDefault(__webpack_require__(/*! dom-helpers/querySelectorAll */ "./node_modules/dom-helpers/esm/querySelectorAll.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/* eslint-disable react-hooks/exhaustive-deps */
+const FocusListContext = /*#__PURE__*/_react.default.createContext(null);
+
+exports.FocusListContext = FocusListContext;
+const defaultOpts = {
+  behavior: 'stop'
+};
+
+function useListOption(dataItem) {
+  const ctx = (0, _react.useContext)(FocusListContext);
+  const prevElement = (0, _react.useRef)(null); // this is a bit convoluted because we want to use a ref object, a callback ref
+  // causes an extra render which is fine except that it means the list hook for
+  // anchor items fires before elements are processed
+
+  const ref = (0, _react.useRef)(null);
+  (0, _react.useLayoutEffect)(() => () => {
+    ctx == null ? void 0 : ctx.map.delete(ref.current);
+  }, []);
+  (0, _react.useLayoutEffect)(() => {
+    if (prevElement.current !== ref.current) {
+      ctx == null ? void 0 : ctx.map.delete(prevElement.current);
+    }
+
+    prevElement.current = ref.current;
+
+    if (ref.current && (ctx == null ? void 0 : ctx.map.get(ref.current)) !== dataItem) {
+      ctx == null ? void 0 : ctx.map.set(ref.current, dataItem);
+    }
+  });
+  const focused = dataItem === (ctx == null ? void 0 : ctx.focusedItem);
+  return [ref, focused, focused ? ctx == null ? void 0 : ctx.activeId : undefined];
+}
+
+const useFocusList = ({
+  scope: listRef,
+  anchorItem,
+  focusFirstItem: _focusFirstItem = false,
+  scopeSelector: _scopeSelector = '',
+  activeId
+}) => {
+  const map = (0, _react.useMemo)(() => new WeakMap(), []);
+  const [focusedItem, setFocusedItem] = (0, _react.useState)();
+  const itemSelector = `${_scopeSelector} [data-rw-focusable]`.trim();
+
+  const get = () => {
+    const items = (0, _querySelectorAll.default)(listRef.current, itemSelector);
+    return [items, items.find(e => e.dataset.rwFocused === '')];
+  };
+
+  const list = (0, _react.useMemo)(() => {
+    return {
+      size() {
+        const [items] = get();
+        return items.length;
+      },
+
+      get,
+      toDataItem: el => map.get(el),
+
+      first() {
+        const [[first]] = get();
+        return first;
+      },
+
+      focus(el) {
+        if (!el || map.has(el)) setFocusedItem(el ? map.get(el) : undefined);
+      },
+
+      last() {
+        const [items] = get();
+        return items[items.length - 1];
+      },
+
+      next({
+        behavior
+      } = defaultOpts) {
+        const [items, focusedItem] = get();
+        let nextIdx = items.indexOf(focusedItem) + 1;
+
+        if (nextIdx >= items.length) {
+          if (behavior === 'loop') return items[0];
+          if (behavior === 'clear') return undefined;
+          return focusedItem;
+        }
+
+        return items[nextIdx];
+      },
+
+      prev({
+        behavior
+      } = defaultOpts) {
+        const [items, focusedItem] = get();
+        let nextIdx = Math.max(0, items.indexOf(focusedItem)) - 1;
+
+        if (nextIdx < 0) {
+          if (behavior === 'loop') return items[items.length - 1];
+          if (behavior === 'clear') return undefined;
+          return focusedItem;
+        }
+
+        return items[nextIdx];
+      }
+
+    };
+  }, []);
+  (0, _react.useLayoutEffect)(() => {
+    if (!anchorItem) {
+      list.focus(null);
+      return;
+    }
+
+    const element = get()[0].find(el => list.toDataItem(el) === anchorItem);
+    list.focus(element);
+  }, [anchorItem]);
+  (0, _react.useLayoutEffect)(() => {
+    if (!listRef.current) return;
+    const [, focusedElement] = get();
+    const hasItem = focusedElement != null;
+
+    if (!hasItem && _focusFirstItem || hasItem && !listRef.current.contains(focusedElement)) {
+      if (_focusFirstItem) list.focus(list.first());else list.focus(null);
+    }
+  });
+  const context = (0, _react.useMemo)(() => ({
+    map,
+    focusedItem,
+    activeId
+  }), [focusedItem, activeId]);
+  list.context = context;
+  list.getFocused = (0, _react.useCallback)(() => focusedItem, [focusedItem]);
+
+  list.hasFocused = () => focusedItem !== undefined;
+
+  return list;
+};
+
+exports.useFocusList = useFocusList;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Icon.js":
+/*!************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Icon.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.times = exports.clock = exports.clear = exports.chevronRight = exports.chevronLeft = exports.caretUp = exports.caretDown = exports.calendar = exports.Spinner = void 0;
+
+var React = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+/*!
+Font Awesome Free 5.2.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+*/
+const caretUp = /*#__PURE__*/React.createElement("svg", {
+  height: "1em",
+  fill: "currentcolor",
+  viewBox: "0 0 320 512",
+  xmlns: "http://www.w3.org/2000/svg"
+}, /*#__PURE__*/React.createElement("path", {
+  d: "M288.66 352H31.34c-17.82 0-26.74-21.54-14.14-34.14L145.86 189.2a20 20 0 0 1 28.28 0L302.8 317.86c12.6 12.6 3.68 34.14-14.14 34.14z"
+}));
+/*!
+Font Awesome Free 5.2.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+*/
+
+exports.caretUp = caretUp;
+const caretDown = /*#__PURE__*/React.createElement("svg", {
+  height: "1em",
+  fill: "currentcolor",
+  viewBox: "0 0 320 512",
+  "aria-hidden": "true",
+  xmlns: "http://www.w3.org/2000/svg"
+}, /*#__PURE__*/React.createElement("path", {
+  d: "M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"
+}));
+/*!
+Font Awesome Free 5.2.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+*/
+
+exports.caretDown = caretDown;
+const chevronRight = /*#__PURE__*/React.createElement("svg", {
+  height: "1em",
+  fill: "currentcolor",
+  viewBox: "0 0 320 512",
+  "aria-hidden": "true",
+  xmlns: "http://www.w3.org/2000/svg"
+}, /*#__PURE__*/React.createElement("path", {
+  d: "M285.48 272.97L91.13 467.31a24 24 0 0 1-33.94 0l-22.67-22.66a24 24 0 0 1-.04-33.9L188.5 256 34.48 101.25a24 24 0 0 1 .04-33.9L57.2 44.7a24 24 0 0 1 33.94 0l194.35 194.34a24 24 0 0 1 0 33.94z"
+}));
+exports.chevronRight = chevronRight;
+const chevronLeft = /*#__PURE__*/React.createElement("svg", {
+  height: "1em",
+  fill: "currentcolor",
+  viewBox: "0 0 320 512",
+  "aria-hidden": "true",
+  xmlns: "http://www.w3.org/2000/svg"
+}, /*#__PURE__*/React.createElement("path", {
+  d: "M34.52 239.03L228.87 44.69a24 24 0 0 1 33.94 0l22.67 22.67a24 24 0 0 1 .04 33.9L131.49 256l154.02 154.75a24 24 0 0 1-.04 33.9l-22.67 22.67a24 24 0 0 1-33.94 0L34.52 272.97a24 24 0 0 1 0-33.94z"
+}));
+/*!
+Font Awesome Free 5.2.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+*/
+
+exports.chevronLeft = chevronLeft;
+const calendar = /*#__PURE__*/React.createElement("svg", {
+  "aria-hidden": true,
+  height: "1em",
+  fill: "currentcolor",
+  viewBox: "0 0 448 512",
+  className: "rw-i-calendar",
+  xmlns: "http://www.w3.org/2000/svg"
+}, /*#__PURE__*/React.createElement("path", {
+  d: "M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"
+}));
+/*!
+Font Awesome Free 5.2.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+*/
+
+exports.calendar = calendar;
+const clock = /*#__PURE__*/React.createElement("svg", {
+  "aria-hidden": true,
+  height: "1em",
+  fill: "currentcolor",
+  viewBox: "0 0 512 512",
+  className: "rw-i-clock",
+  xmlns: "http://www.w3.org/2000/svg"
+}, /*#__PURE__*/React.createElement("path", {
+  d: "M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6a12 12 0 0 1 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"
+}));
+exports.clock = clock;
+const times = /*#__PURE__*/React.createElement("svg", {
+  height: ".8em",
+  fill: "currentcolor",
+  viewBox: "0 0 352 512",
+  "aria-hidden": "true",
+  xmlns: "http://www.w3.org/2000/svg"
+}, /*#__PURE__*/React.createElement("path", {
+  d: "M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
+}));
+/*!
+Font Awesome Free 5.2.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+*/
+
+exports.times = times;
+const clear = /*#__PURE__*/React.createElement("svg", {
+  "aria-hidden": true,
+  height: "1em",
+  fill: "currentColor",
+  xmlns: "http://www.w3.org/2000/svg",
+  viewBox: "0 0 512 512"
+}, /*#__PURE__*/React.createElement("path", {
+  d: "M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm101.8-262.2L295.6 256l62.2 62.2c4.7 4.7 4.7 12.3 0 17l-22.6 22.6c-4.7 4.7-12.3 4.7-17 0L256 295.6l-62.2 62.2c-4.7 4.7-12.3 4.7-17 0l-22.6-22.6c-4.7-4.7-4.7-12.3 0-17l62.2-62.2-62.2-62.2c-4.7-4.7-4.7-12.3 0-17l22.6-22.6c4.7-4.7 12.3-4.7 17 0l62.2 62.2 62.2-62.2c4.7-4.7 12.3-4.7 17 0l22.6 22.6c4.7 4.7 4.7 12.3 0 17z"
+})); // https://codepen.io/aurer/pen/jEGbA
+
+exports.clear = clear;
+const Spinner = /*#__PURE__*/React.createElement("svg", {
+  height: "1.4em",
+  viewBox: "0 0 50 50",
+  xmlSpace: "preserve",
+  "aria-hidden": "true",
+  xmlns: "http://www.w3.org/2000/svg"
+}, /*#__PURE__*/React.createElement("path", {
+  fill: "currentcolor",
+  d: "M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z"
+}, /*#__PURE__*/React.createElement("animateTransform", {
+  attributeType: "xml",
+  attributeName: "transform",
+  type: "rotate",
+  from: "0 25 25",
+  to: "360 25 25",
+  dur: "0.6s",
+  repeatCount: "indefinite"
+})));
+exports.Spinner = Spinner;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Input.js":
+/*!*************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Input.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+const _excluded = ["className", "disabled", "readOnly", "value", "tabIndex", "type", "component"];
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const Input = /*#__PURE__*/_react.default.forwardRef((_ref, ref) => {
+  let {
+    className,
+    disabled,
+    readOnly,
+    value,
+    tabIndex,
+    type = 'text',
+    component: Component = 'input'
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  return /*#__PURE__*/_react.default.createElement(Component, _extends({}, props, {
+    ref: ref,
+    type: type,
+    tabIndex: tabIndex || 0,
+    autoComplete: "off",
+    disabled: disabled,
+    readOnly: readOnly,
+    "aria-disabled": disabled,
+    "aria-readonly": readOnly,
+    value: value == null ? '' : value,
+    className: (0, _classnames.default)(className, 'rw-input')
+  }));
+});
+
+Input.displayName = 'Input';
+Input.propTypes = {
+  disabled: _propTypes.default.bool,
+  readOnly: _propTypes.default.bool,
+  value: _propTypes.default.string,
+  type: _propTypes.default.string,
+  tabIndex: _propTypes.default.number,
+  component: _propTypes.default.any
+};
+var _default = Input;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/InputAddon.js":
+/*!******************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/InputAddon.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _Button = _interopRequireDefault(__webpack_require__(/*! ./Button */ "./node_modules/react-widgets/cjs/Button.js"));
+
+const _excluded = ["className"];
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function InputAddon(_ref) {
+  let {
+    className
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  return /*#__PURE__*/_react.default.createElement(_Button.default, _extends({}, props, {
+    className: (0, _classnames.default)(className, 'rw-input-addon rw-picker-btn')
+  }));
+}
+
+var _default = InputAddon;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/IntlLocalizer.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/IntlLocalizer.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.NumberLocalizer = exports.DateLocalizer = void 0;
+
+var _dates = _interopRequireDefault(__webpack_require__(/*! ./dates */ "./node_modules/react-widgets/cjs/dates.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// assumes both are supported or none
+let supportStyles = false;
+new Intl.DateTimeFormat(undefined, {
+  // @ts-ignore
+  get dateStyle() {
+    supportStyles = true;
+  }
+
+});
+const dateShort = {
+  day: 'numeric',
+  month: 'numeric',
+  year: 'numeric'
+};
+const timeShort = {
+  hour: 'numeric',
+  minute: 'numeric'
+};
+
+const getFormatter = (culture, options) => Intl.DateTimeFormat(culture, options).format;
+/**
+ * A `react-widgets` Localizer using native `Intl` APIs.
+ *
+ */
+
+
+class IntlDateLocalizer {
+  constructor({
+    culture = undefined,
+    firstOfWeek = 0
+  } = {}) {
+    this.culture = culture;
+
+    this.firstOfWeek = () => firstOfWeek;
+
+    function normalizeFormat(date, format) {
+      return typeof format === 'function' ? format(date, culture) : date.toLocaleString(culture, format);
+    }
+
+    const formats = {
+      date: getFormatter(culture, // @ts-ignore
+      supportStyles ? {
+        dateStyle: 'short'
+      } : dateShort),
+      time: getFormatter(culture, // @ts-ignore
+      supportStyles ? {
+        timeStyle: 'short'
+      } : timeShort),
+      datetime: getFormatter(culture, // @ts-ignore
+      supportStyles ? {
+        dateStyle: 'short',
+        timeStyle: 'short'
+      } : Object.assign({}, dateShort, timeShort)),
+      header: getFormatter(culture, {
+        month: 'short',
+        year: 'numeric'
+      }),
+      weekday: getFormatter(culture, {
+        weekday: 'narrow'
+      }),
+      dayOfMonth: getFormatter(culture, {
+        day: '2-digit'
+      }),
+      month: getFormatter(culture, {
+        month: 'short'
+      }),
+      year: getFormatter(culture, {
+        year: 'numeric'
+      }),
+      decade: date => `${this.year(date)} - ${this.year(_dates.default.endOf(date, 'decade'))}`,
+      century: date => `${this.year(date)} - ${this.year(_dates.default.endOf(date, 'century'))}`
+    };
+    Object.keys(formats).forEach(key => {
+      this[key] = (date, format) => format ? normalizeFormat(date, format) : formats[key](date);
+    });
+  }
+
+  toFormattedParts(date, format = {
+    dateStyle: 'short',
+    timeStyle: 'short'
+  }) {
+    return Intl.DateTimeFormat(this.culture, format).formatToParts(date).filter(p => p.type !== 'timeZoneName');
+  }
+
+  parse(value) {
+    const date = new Date(value);
+    return isNaN(+date) ? null : date;
+  }
+
+}
+
+exports.DateLocalizer = IntlDateLocalizer;
+
+/**
+ * A number localization strategy based on `Intl.NumberFormat`.
+ */
+class IntlNumberLocalizer {
+  constructor({
+    culture = undefined
+  } = {}) {
+    var _$toLocaleString$m;
+
+    this.culture = culture;
+    const decimal = 'formatToParts' in Intl.NumberFormat(culture) ? Intl.NumberFormat(culture).formatToParts(1.1)[1].value : ((_$toLocaleString$m = 1.1.toLocaleString(culture).match(/[^\d]/)) == null ? void 0 : _$toLocaleString$m[0]) || '.';
+    const formatter = Intl.NumberFormat(culture).format;
+
+    this.decimalCharacter = () => decimal;
+
+    this.format = (num, format) => {
+      if (format) {
+        return typeof format === 'function' ? format(num, culture) : num.toLocaleString(culture, format);
+      }
+
+      return formatter(num);
+    };
+  }
+
+  parse(value) {
+    return parseFloat(value.replace(this.decimalCharacter(), '.'));
+  }
+
+}
+
+exports.NumberLocalizer = IntlNumberLocalizer;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/List.js":
+/*!************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/List.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+exports.useHandleSelect = useHandleSelect;
+exports.useScrollFocusedIntoView = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _ListOption = _interopRequireDefault(__webpack_require__(/*! ./ListOption */ "./node_modules/react-widgets/cjs/ListOption.js"));
+
+var _ListOptionGroup = _interopRequireDefault(__webpack_require__(/*! ./ListOptionGroup */ "./node_modules/react-widgets/cjs/ListOptionGroup.js"));
+
+var _messages = __webpack_require__(/*! ./messages */ "./node_modules/react-widgets/cjs/messages.js");
+
+var CustomPropTypes = _interopRequireWildcard(__webpack_require__(/*! ./PropTypes */ "./node_modules/react-widgets/cjs/PropTypes.js"));
+
+var _ = __webpack_require__(/*! ./_ */ "./node_modules/react-widgets/cjs/_.js");
+
+var _WidgetHelpers = __webpack_require__(/*! ./WidgetHelpers */ "./node_modules/react-widgets/cjs/WidgetHelpers.js");
+
+var _useMutationObserver = _interopRequireDefault(__webpack_require__(/*! @restart/hooks/useMutationObserver */ "./node_modules/@restart/hooks/esm/useMutationObserver.js"));
+
+var _useCallbackRef = _interopRequireDefault(__webpack_require__(/*! @restart/hooks/useCallbackRef */ "./node_modules/@restart/hooks/esm/useCallbackRef.js"));
+
+var _useMergedRefs = _interopRequireDefault(__webpack_require__(/*! @restart/hooks/useMergedRefs */ "./node_modules/@restart/hooks/esm/useMergedRefs.js"));
+
+const _excluded = ["multiple", "data", "value", "onChange", "accessors", "className", "messages", "disabled", "renderItem", "renderGroup", "searchTerm", "groupBy", "elementRef", "optionComponent", "renderList"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const whitelist = ['style', 'className', 'role', 'id', 'autocomplete', 'size', 'tabIndex', 'maxLength', 'name'];
+const whitelistRegex = [/^aria-/, /^data-/, /^on[A-Z]\w+/];
+
+function pickElementProps(props) {
+  const result = {};
+  Object.keys(props).forEach(key => {
+    if (whitelist.indexOf(key) !== -1 || whitelistRegex.some(r => !!key.match(r))) result[key] = props[key];
+  });
+  return result;
+}
+
+const propTypes = {
+  data: _propTypes.default.array,
+  dataKey: CustomPropTypes.accessor,
+  textField: CustomPropTypes.accessor,
+  onSelect: _propTypes.default.func,
+  onMove: _propTypes.default.func,
+  onHoverOption: _propTypes.default.func,
+  optionComponent: _propTypes.default.elementType,
+  renderItem: _propTypes.default.func,
+  renderGroup: _propTypes.default.func,
+  focusedItem: _propTypes.default.any,
+  selectedItem: _propTypes.default.any,
+  searchTerm: _propTypes.default.string,
+  disabled: CustomPropTypes.disabled.acceptsArray,
+  messages: _propTypes.default.shape({
+    emptyList: _propTypes.default.func.isRequired
+  })
+};
+
+const useScrollFocusedIntoView = (element, observeChanges = false) => {
+  const scrollIntoView = (0, _react.useCallback)(() => {
+    if (!element) return;
+    let selectedItem = element.querySelector('[data-rw-focused]');
+
+    if (selectedItem && selectedItem.scrollIntoView) {
+      selectedItem.scrollIntoView({
+        block: 'nearest',
+        inline: 'nearest'
+      });
+    }
+  }, [element]);
+  (0, _useMutationObserver.default)(observeChanges ? element : null, {
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['data-rw-focused']
+  }, scrollIntoView);
+  return scrollIntoView;
+};
+
+exports.useScrollFocusedIntoView = useScrollFocusedIntoView;
+
+function useHandleSelect(multiple, dataItems, onChange) {
+  return (dataItem, event) => {
+    if (multiple === false) {
+      onChange(dataItem, {
+        dataItem,
+        lastValue: dataItems[0],
+        originalEvent: event
+      });
+      return;
+    }
+
+    const checked = dataItems.includes(dataItem);
+    onChange(checked ? dataItems.filter(d => d !== dataItem) : [...dataItems, dataItem], {
+      dataItem,
+      lastValue: dataItems,
+      action: checked ? 'remove' : 'insert',
+      originalEvent: event
+    });
+  };
+}
+
+const List = /*#__PURE__*/_react.default.forwardRef(function List(_ref, outerRef) {
+  var _elementProps$role;
+
+  let {
+    multiple = false,
+    data = [],
+    value,
+    onChange,
+    accessors,
+    className,
+    messages,
+    disabled,
+    renderItem,
+    renderGroup,
+    searchTerm,
+    groupBy,
+    elementRef,
+    optionComponent: Option = _ListOption.default,
+    renderList
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  const id = (0, _WidgetHelpers.useInstanceId)();
+  const dataItems = (0, _.makeArray)(value, multiple);
+  const groupedData = (0, _react.useMemo)(() => groupBy ? (0, _.groupBySortedKeys)(groupBy, data) : undefined, [data, groupBy]);
+  const [element, ref] = (0, _useCallbackRef.default)();
+  const disabledItems = (0, _.toItemArray)(disabled);
+  const {
+    emptyList
+  } = (0, _messages.useMessagesWithDefaults)(messages);
+  const divRef = (0, _useMergedRefs.default)(ref, elementRef);
+  const handleSelect = useHandleSelect(multiple, dataItems, onChange);
+  const scrollIntoView = useScrollFocusedIntoView(element, true);
+  let elementProps = pickElementProps(props);
+  (0, _react.useImperativeHandle)(outerRef, () => ({
+    scrollIntoView
+  }), [scrollIntoView]);
+
+  function renderOption(item, idx) {
+    const textValue = accessors.text(item);
+    const itemIsDisabled = disabledItems.includes(item);
+    const itemIsSelected = dataItems.includes(item);
+    return /*#__PURE__*/_react.default.createElement(Option, {
+      dataItem: item,
+      key: `item_${idx}`,
+      searchTerm: searchTerm,
+      onSelect: handleSelect,
+      disabled: itemIsDisabled,
+      selected: itemIsSelected
+    }, renderItem ? renderItem({
+      item,
+      searchTerm,
+      index: idx,
+      text: textValue,
+      // TODO: probably remove
+      value: accessors.value(item),
+      disabled: itemIsDisabled
+    }) : textValue);
+  }
+
+  const items = groupedData ? groupedData.map(([group, items], idx) => /*#__PURE__*/_react.default.createElement("div", {
+    role: "group",
+    key: `group_${idx}`
+  }, /*#__PURE__*/_react.default.createElement(_ListOptionGroup.default, null, renderGroup ? renderGroup({
+    group
+  }) : group), items.map(renderOption))) : data.map(renderOption);
+  const rootProps = Object.assign({
+    id,
+    tabIndex: 0,
+    ref: divRef
+  }, elementProps, {
+    'aria-multiselectable': !!multiple,
+    className: (0, _classnames.default)(className, 'rw-list'),
+    role: (_elementProps$role = elementProps.role) != null ? _elementProps$role : 'listbox',
+    children: _react.default.Children.count(items) ? items : /*#__PURE__*/_react.default.createElement("div", {
+      className: "rw-list-empty"
+    }, emptyList())
+  });
+  return renderList ? renderList(rootProps) : /*#__PURE__*/_react.default.createElement("div", rootProps);
+});
+
+List.displayName = 'List';
+List.propTypes = propTypes;
+var _default = List;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/ListOption.js":
+/*!******************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/ListOption.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _FocusListContext = __webpack_require__(/*! ./FocusListContext */ "./node_modules/react-widgets/cjs/FocusListContext.js");
+
+const _excluded = ["className", "children", "dataItem", "selected", "disabled", "onSelect", "searchTerm"];
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const propTypes = {
+  activeId: _propTypes.default.string,
+  dataItem: _propTypes.default.any,
+  selected: _propTypes.default.bool.isRequired,
+  onSelect: _propTypes.default.func.isRequired,
+  component: _propTypes.default.any
+};
+
+function ListOption(_ref) {
+  let {
+    className,
+    children,
+    dataItem,
+    selected,
+    disabled,
+    onSelect
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  const [ref, focused, id] = (0, _FocusListContext.useListOption)(dataItem);
+
+  const handleSelect = event => {
+    if (onSelect && !disabled) onSelect(dataItem, event);
+  };
+
+  let classes = {
+    'rw-state-focus': focused,
+    'rw-state-selected': selected,
+    'rw-state-disabled': disabled
+  };
+  return /*#__PURE__*/_react.default.createElement("div", _extends({
+    id: id,
+    ref: ref,
+    role: "option",
+    "data-rw-option": "",
+    "data-rw-focused": focused ? '' : undefined,
+    "data-rw-focusable": !disabled ? '' : undefined,
+    tabIndex: -1,
+    "aria-selected": !!selected,
+    className: (0, _classnames.default)('rw-list-option', className, classes),
+    onClick: handleSelect
+  }, props), children);
+} // @ts-ignore
+
+
+ListOption.propTypes = propTypes;
+var _default = ListOption;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/ListOptionGroup.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/ListOptionGroup.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const propTypes = {
+  className: _propTypes.default.string,
+  component: _propTypes.default.string
+};
+
+function ListOptionGroup({
+  children,
+  className,
+  component = 'div'
+}) {
+  let Tag = component;
+  return /*#__PURE__*/_react.default.createElement(Tag, {
+    tabIndex: "-1",
+    role: "separator",
+    className: (0, _classnames.default)(className, 'rw-list-optgroup')
+  }, children);
+}
+
+ListOptionGroup.propTypes = propTypes;
+var _default = ListOptionGroup;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Listbox.js":
+/*!***************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Listbox.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _uncontrollable = __webpack_require__(/*! uncontrollable */ "./node_modules/uncontrollable/lib/esm/index.js");
+
+var _List = _interopRequireWildcard(__webpack_require__(/*! ./List */ "./node_modules/react-widgets/cjs/List.js"));
+
+var _FocusListContext = __webpack_require__(/*! ./FocusListContext */ "./node_modules/react-widgets/cjs/FocusListContext.js");
+
+var CustomPropTypes = _interopRequireWildcard(__webpack_require__(/*! ./PropTypes */ "./node_modules/react-widgets/cjs/PropTypes.js"));
+
+var _ = __webpack_require__(/*! ./_ */ "./node_modules/react-widgets/cjs/_.js");
+
+var _Accessors = __webpack_require__(/*! ./Accessors */ "./node_modules/react-widgets/cjs/Accessors.js");
+
+var _WidgetHelpers = __webpack_require__(/*! ./WidgetHelpers */ "./node_modules/react-widgets/cjs/WidgetHelpers.js");
+
+var _useFocusManager = _interopRequireDefault(__webpack_require__(/*! ./useFocusManager */ "./node_modules/react-widgets/cjs/useFocusManager.js"));
+
+var _Widget = __webpack_require__(/*! ./Widget */ "./node_modules/react-widgets/cjs/Widget.js");
+
+const _excluded = ["defaultValue", "value", "onChange", "textField", "dataKey", "data", "onKeyDown", "disabled", "readOnly", "onBlur", "onFocus", "multiple"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const propTypes = {
+  data: _propTypes.default.array,
+  dataKey: CustomPropTypes.accessor,
+  textField: CustomPropTypes.accessor,
+  onSelect: _propTypes.default.func,
+  onMove: _propTypes.default.func,
+  onHoverOption: _propTypes.default.func,
+  optionComponent: _propTypes.default.elementType,
+  renderItem: _propTypes.default.func,
+  renderGroup: _propTypes.default.func,
+  focusedItem: _propTypes.default.any,
+  selectedItem: _propTypes.default.any,
+  searchTerm: _propTypes.default.string,
+
+  /**
+   * @example false
+   */
+  disabled: CustomPropTypes.disabled.acceptsArray,
+  messages: _propTypes.default.shape({
+    emptyList: _propTypes.default.func.isRequired
+  })
+};
+
+const Listbox = /*#__PURE__*/_react.default.forwardRef(function Listbox(_ref, _outerRef) {
+  let {
+    defaultValue,
+    value: propsValue,
+    onChange: propsOnChange,
+    textField,
+    dataKey,
+    data,
+    onKeyDown,
+    disabled,
+    readOnly,
+    onBlur,
+    onFocus,
+    multiple
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  const [value, onChange] = (0, _uncontrollable.useUncontrolledProp)(propsValue, defaultValue, propsOnChange);
+  const accessors = (0, _Accessors.useAccessors)(textField, dataKey);
+  const dataItems = (0, _react.useMemo)(() => (0, _.makeArray)(value, multiple).map(item => accessors.findOrSelf(data, item)), [value, multiple, accessors, data]);
+  const ref = (0, _react.useRef)(null);
+  const lastItemRef = (0, _react.useRef)(dataItems[dataItems.length - 1]);
+  const list = (0, _FocusListContext.useFocusList)({
+    scope: ref,
+    anchorItem: lastItemRef.current
+  });
+  const isDisabled = disabled === true;
+
+  const handleChange = (dataItem, meta) => {
+    if (isDisabled || readOnly) return;
+    lastItemRef.current = meta.dataItem;
+    onChange(dataItem, meta);
+  };
+
+  const handleSelect = (0, _List.useHandleSelect)(!!multiple, dataItems, handleChange);
+  const [focusEvents, focused] = (0, _useFocusManager.default)(ref, {
+    disabled: isDisabled,
+    onBlur,
+    onFocus
+  }, {
+    didHandle(focused) {
+      if (!focused) {
+        list.focus(undefined);
+      } else {
+        focus({
+          preventScroll: true
+        });
+      }
+    }
+
+  });
+
+  function focus(opts) {
+    if (ref.current) ref.current.focus(opts);
+  }
+
+  const handleKeyDown = e => {
+    if (isDisabled || readOnly) return;
+    let {
+      key,
+      shiftKey
+    } = e;
+    (0, _WidgetHelpers.notify)(onKeyDown, [e]);
+    if (e.defaultPrevented) return;
+
+    if (key === 'End' && !shiftKey) {
+      e.preventDefault();
+      list.focus(list.last());
+    } else if (key === 'Home' && !shiftKey) {
+      e.preventDefault();
+      list.focus(list.first());
+    } else if (key === 'Enter' || key === ' ') {
+      e.preventDefault();
+      if (list.getFocused()) handleSelect(list.getFocused(), e);
+    } else if (key === 'ArrowDown') {
+      e.preventDefault();
+      list.focus(list.next());
+    } else if (key === 'ArrowUp') {
+      e.preventDefault();
+      list.focus(list.prev());
+    }
+  };
+
+  const widgetProps = (0, _Widget.useWidgetProps)({
+    focused,
+    readOnly,
+    disabled: isDisabled,
+    className: (0, _classnames.default)(props.className, 'rw-listbox rw-widget-input rw-widget')
+  });
+  return /*#__PURE__*/_react.default.createElement(_FocusListContext.FocusListContext.Provider, {
+    value: list.context
+  }, /*#__PURE__*/_react.default.createElement(_List.default, _extends({}, props, widgetProps, {
+    disabled: disabled,
+    tabIndex: isDisabled ? -1 : 0,
+    data: data,
+    elementRef: ref,
+    value: dataItems,
+    multiple: multiple,
+    accessors: accessors
+  }, focusEvents, {
+    onChange: handleChange,
+    onKeyDown: handleKeyDown
+  })));
+});
+
+Listbox.displayName = 'Listbox';
+Listbox.propTypes = propTypes;
+var _default = Listbox;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Localization.js":
+/*!********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Localization.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.useLocalizer = exports["default"] = void 0;
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var IntlLocalizers = _interopRequireWildcard(__webpack_require__(/*! ./IntlLocalizer */ "./node_modules/react-widgets/cjs/IntlLocalizer.js"));
+
+var _messages = __webpack_require__(/*! ./messages */ "./node_modules/react-widgets/cjs/messages.js");
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function mergeWithDefaults(date, number, messages, formatOverrides = {}) {
+  if (!date && !number) throw new Error('This component requires a Localizer but none was provided');
+  return {
+    formatOverrides,
+    messages: (0, _messages.getMessages)(messages),
+
+    formatDate(value, format, userFormat) {
+      return date[format](value, userFormat != null ? userFormat : this.formatOverrides[format]);
+    },
+
+    formatNumber(value, userFormat) {
+      return number.format(value, userFormat != null ? userFormat : this.formatOverrides.number);
+    },
+
+    parseDate: date.parse.bind(date),
+    parseNumber: number.parse.bind(number),
+    decimalCharacter: number.decimalCharacter.bind(number),
+    firstOfWeek: date.firstOfWeek.bind(date)
+  };
+}
+
+const LocalizerContext = /*#__PURE__*/_react.default.createContext(mergeWithDefaults(new IntlLocalizers.DateLocalizer(), new IntlLocalizers.NumberLocalizer()));
+
+const Localization = ({
+  date: _date = new IntlLocalizers.DateLocalizer(),
+  number: _number = new IntlLocalizers.NumberLocalizer(),
+  messages,
+  children
+}) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const localizer = (0, _react.useMemo)(() => mergeWithDefaults(_date, _number, messages), [_date, _number, // eslint-disable-next-line react-hooks/exhaustive-deps
+  JSON.stringify(messages)]);
+  return /*#__PURE__*/_react.default.createElement(LocalizerContext.Provider, {
+    value: localizer
+  }, children);
+};
+
+const useLocalizer = (messages, formats) => {
+  const localizer = (0, _react.useContext)(LocalizerContext);
+  return (0, _react.useMemo)(() => {
+    if (!messages && !formats) return localizer;
+    return Object.assign({}, localizer, {
+      messages: (0, _messages.getMessages)(Object.assign({}, localizer.messages, messages)),
+      formatOverrides: Object.assign({}, localizer.formatOverrides, formats)
+    });
+  }, [messages, formats, localizer]);
+};
+
+exports.useLocalizer = useLocalizer;
+Localization.useLocalizer = useLocalizer;
+var _default = Localization;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Month.js":
+/*!*************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Month.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _CalendarView = _interopRequireDefault(__webpack_require__(/*! ./CalendarView */ "./node_modules/react-widgets/cjs/CalendarView.js"));
+
+var _ = __webpack_require__(/*! ./_ */ "./node_modules/react-widgets/cjs/_.js");
+
+var _dates = _interopRequireDefault(__webpack_require__(/*! ./dates */ "./node_modules/react-widgets/cjs/dates.js"));
+
+const _excluded = ["className", "focusedItem", "disabled", "onChange", "value", "min", "max", "localizer", "renderDay"];
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function visibleDays(date, weekStart) {
+  let current = _dates.default.startOf(_dates.default.startOf(date, 'month'), 'week', weekStart);
+
+  let last = _dates.default.endOf(_dates.default.endOf(date, 'month'), 'week', weekStart);
+
+  let days = [];
+
+  while (_dates.default.lte(current, last, 'day')) {
+    days.push(current);
+    current = _dates.default.add(current, 1, 'day');
+  }
+
+  return days;
+}
+
+function MonthView(_ref) {
+  let {
+    className,
+    focusedItem,
+    disabled,
+    onChange,
+    value,
+    min,
+    max,
+    localizer,
+    renderDay
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  let month = visibleDays(focusedItem, localizer.firstOfWeek());
+  let rows = (0, _.chunk)(month, 7);
+  return /*#__PURE__*/_react.default.createElement(_CalendarView.default, _extends({}, props, {
+    focusedItem: focusedItem,
+    className: (0, _classnames.default)(className, 'rw-calendar-month')
+  }), /*#__PURE__*/_react.default.createElement("div", {
+    role: "rowgroup",
+    className: "rw-calendar-head"
+  }, /*#__PURE__*/_react.default.createElement(_CalendarView.default.Row, {
+    className: "rw-calendar-row"
+  }, rows[0].map((date, idx) => /*#__PURE__*/_react.default.createElement("div", {
+    role: "columnheader",
+    className: "rw-head-cell",
+    key: idx
+  }, localizer.formatDate(date, 'weekday'))))), /*#__PURE__*/_react.default.createElement(_CalendarView.default.Body, null, rows.map((row, rowIdx) => /*#__PURE__*/_react.default.createElement(_CalendarView.default.Row, {
+    key: rowIdx
+  }, row.map((date, colIdx) => {
+    let formattedDate = localizer.formatDate(date, 'dayOfMonth');
+    let label = localizer.formatDate(date, 'date');
+    return /*#__PURE__*/_react.default.createElement(_CalendarView.default.Cell, {
+      key: colIdx,
+      label: label,
+      date: date,
+      min: min,
+      max: max,
+      unit: "day",
+      viewUnit: "month",
+      onChange: onChange,
+      focusedItem: focusedItem,
+      selected: value,
+      disabled: disabled
+    }, renderDay ? renderDay({
+      date,
+      label: formattedDate
+    }) : formattedDate);
+  })))));
+}
+
+var _default = MonthView;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Multiselect.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Multiselect.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _closest = _interopRequireDefault(__webpack_require__(/*! dom-helpers/closest */ "./node_modules/dom-helpers/esm/closest.js"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _uncontrollable = __webpack_require__(/*! uncontrollable */ "./node_modules/uncontrollable/lib/esm/index.js");
+
+var _AddToListOption = _interopRequireWildcard(__webpack_require__(/*! ./AddToListOption */ "./node_modules/react-widgets/cjs/AddToListOption.js"));
+
+var _Icon = __webpack_require__(/*! ./Icon */ "./node_modules/react-widgets/cjs/Icon.js");
+
+var _List = _interopRequireDefault(__webpack_require__(/*! ./List */ "./node_modules/react-widgets/cjs/List.js"));
+
+var _FocusListContext = __webpack_require__(/*! ./FocusListContext */ "./node_modules/react-widgets/cjs/FocusListContext.js");
+
+var _MultiselectInput = _interopRequireDefault(__webpack_require__(/*! ./MultiselectInput */ "./node_modules/react-widgets/cjs/MultiselectInput.js"));
+
+var _MultiselectTagList = _interopRequireDefault(__webpack_require__(/*! ./MultiselectTagList */ "./node_modules/react-widgets/cjs/MultiselectTagList.js"));
+
+var _Popup = _interopRequireDefault(__webpack_require__(/*! ./Popup */ "./node_modules/react-widgets/cjs/Popup.js"));
+
+var _Widget = _interopRequireDefault(__webpack_require__(/*! ./Widget */ "./node_modules/react-widgets/cjs/Widget.js"));
+
+var _WidgetPicker = _interopRequireDefault(__webpack_require__(/*! ./WidgetPicker */ "./node_modules/react-widgets/cjs/WidgetPicker.js"));
+
+var _messages = __webpack_require__(/*! ./messages */ "./node_modules/react-widgets/cjs/messages.js");
+
+var _A11y = __webpack_require__(/*! ./A11y */ "./node_modules/react-widgets/cjs/A11y.js");
+
+var _Filter = __webpack_require__(/*! ./Filter */ "./node_modules/react-widgets/cjs/Filter.js");
+
+var CustomPropTypes = _interopRequireWildcard(__webpack_require__(/*! ./PropTypes */ "./node_modules/react-widgets/cjs/PropTypes.js"));
+
+var _canShowCreate = _interopRequireDefault(__webpack_require__(/*! ./canShowCreate */ "./node_modules/react-widgets/cjs/canShowCreate.js"));
+
+var _Accessors = __webpack_require__(/*! ./Accessors */ "./node_modules/react-widgets/cjs/Accessors.js");
+
+var _useDropdownToggle = _interopRequireDefault(__webpack_require__(/*! ./useDropdownToggle */ "./node_modules/react-widgets/cjs/useDropdownToggle.js"));
+
+var _useFocusManager = _interopRequireDefault(__webpack_require__(/*! ./useFocusManager */ "./node_modules/react-widgets/cjs/useFocusManager.js"));
+
+var _WidgetHelpers = __webpack_require__(/*! ./WidgetHelpers */ "./node_modules/react-widgets/cjs/WidgetHelpers.js");
+
+var _PickerCaret = _interopRequireDefault(__webpack_require__(/*! ./PickerCaret */ "./node_modules/react-widgets/cjs/PickerCaret.js"));
+
+const _excluded = ["dataKey", "textField", "autoFocus", "id", "value", "defaultValue", "onChange", "open", "defaultOpen", "onToggle", "focusFirstItem", "searchTerm", "defaultSearchTerm", "onSearch", "filter", "allowCreate", "className", "containerClassName", "placeholder", "busy", "disabled", "readOnly", "selectIcon", "clearTagIcon", "busySpinner", "dropUp", "tabIndex", "popupTransition", "showPlaceholderWithValues", "showSelectedItemsInList", "onSelect", "onCreate", "onKeyDown", "onBlur", "onFocus", "inputProps", "listProps", "popupProps", "renderListItem", "renderListGroup", "renderTagValue", "optionComponent", "tagOptionComponent", "groupBy", "listComponent", "popupComponent", "tagListComponent", "data", "messages"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const ENTER = 13;
+const INSERT = 'insert';
+const REMOVE = 'remove';
+let propTypes = {
+  data: _propTypes.default.array,
+  //-- controlled props --
+  value: _propTypes.default.array,
+
+  /**
+   * @type {function (
+   *  dataItems: ?any[],
+   *  metadata: {
+   *    dataItem: any,
+   *    action: 'insert' | 'remove',
+   *    originalEvent: SyntheticEvent,
+   *    lastValue: ?any[],
+   *    searchTerm: ?string
+   *  }
+   * ): void}
+   */
+  onChange: _propTypes.default.func,
+  searchTerm: _propTypes.default.string,
+
+  /**
+   * @type {function (
+   *  searchTerm: ?string,
+   *  metadata: {
+   *    action: 'clear' | 'input',
+   *    lastSearchTerm: ?string,
+   *    originalEvent: SyntheticEvent,
+   *  }
+   * ): void}
+   */
+  onSearch: _propTypes.default.func,
+  open: _propTypes.default.bool,
+  handleOpen: _propTypes.default.func,
+  //-------------------------------------------
+  dataKey: CustomPropTypes.accessor,
+  textField: CustomPropTypes.accessor,
+  renderTagValue: _propTypes.default.func,
+  renderListItem: _propTypes.default.func,
+  renderListGroup: _propTypes.default.func,
+  groupBy: CustomPropTypes.accessor,
+  allowCreate: _propTypes.default.oneOf([true, false, 'onFilter']),
+
+  /**
+   *
+   * @type { (dataItem: ?any, metadata: { originalEvent: SyntheticEvent }) => void }
+   */
+  onSelect: _propTypes.default.func,
+
+  /**
+   * @type { (searchTerm: string) => void }
+   */
+  onCreate: _propTypes.default.func,
+  busy: _propTypes.default.bool,
+
+  /** Specify the element used to render the select (down arrow) icon. */
+  selectIcon: _propTypes.default.node,
+
+  /** Specify the element used to render tag clear icons. */
+  clearTagIcon: _propTypes.default.node,
+
+  /** Specify the element used to render the busy indicator */
+  busySpinner: _propTypes.default.node,
+  dropUp: _propTypes.default.bool,
+  popupTransition: _propTypes.default.elementType,
+
+  /** Adds a css class to the input container element. */
+  containerClassName: _propTypes.default.string,
+  inputProps: _propTypes.default.object,
+  listProps: _propTypes.default.object,
+  autoFocus: _propTypes.default.bool,
+  placeholder: _propTypes.default.string,
+
+  /** Continue to show the input placeholder even if tags are selected */
+  showPlaceholderWithValues: _propTypes.default.bool,
+
+  /** Continue to show the selected items in the dropdown list */
+  showSelectedItemsInList: _propTypes.default.bool,
+  disabled: CustomPropTypes.disabled.acceptsArray,
+  readOnly: CustomPropTypes.disabled,
+  messages: _propTypes.default.shape({
+    open: CustomPropTypes.message,
+    emptyList: CustomPropTypes.message,
+    emptyFilter: CustomPropTypes.message,
+    createOption: CustomPropTypes.message,
+    tagsLabel: CustomPropTypes.message,
+    selectedItems: CustomPropTypes.message,
+    noneSelected: CustomPropTypes.message,
+    removeLabel: CustomPropTypes.message
+  })
+};
+const EMPTY_ARRAY = [];
+
+function useMultiselectData(value = EMPTY_ARRAY, data, accessors, filter, searchTerm, showSelectedItemsInList) {
+  data = (0, _react.useMemo)(() => showSelectedItemsInList ? data : data.filter(i => !value.some(v => accessors.matches(i, v))), [data, showSelectedItemsInList, value, accessors]);
+  return [(0, _Filter.useFilteredData)(data, filter || false, searchTerm, accessors.text), data.length];
+}
+
+/**
+ * ---
+ * shortcuts:
+ *   - { key: left arrow, label: move focus to previous tag }
+ *   - { key: right arrow, label: move focus to next tag }
+ *   - { key: delete, deselect focused tag }
+ *   - { key: backspace, deselect next tag }
+ *   - { key: alt + up arrow, label: close Multiselect }
+ *   - { key: down arrow, label: open Multiselect, and move focus to next item }
+ *   - { key: up arrow, label: move focus to previous item }
+ *   - { key: home, label: move focus to first item }
+ *   - { key: end, label: move focus to last item }
+ *   - { key: enter, label: select focused item }
+ *   - { key: ctrl + enter, label: create new tag from current searchTerm }
+ *   - { key: any key, label: search list for item starting with key }
+ * ---
+ *
+ * A select listbox alternative.
+ *
+ * @public
+ */
+const Multiselect = /*#__PURE__*/_react.default.forwardRef(function Multiselect(_ref, outerRef) {
+  let {
+    dataKey,
+    textField,
+    autoFocus,
+    id,
+    value,
+    defaultValue = [],
+    onChange,
+    open,
+    defaultOpen = false,
+    onToggle,
+    focusFirstItem = false,
+    searchTerm,
+    defaultSearchTerm = '',
+    onSearch,
+    filter = 'startsWith',
+    allowCreate = false,
+    className,
+    containerClassName,
+    placeholder,
+    busy,
+    disabled,
+    readOnly,
+    selectIcon,
+    clearTagIcon = _Icon.times,
+    busySpinner,
+    dropUp,
+    tabIndex,
+    popupTransition,
+    showPlaceholderWithValues = false,
+    showSelectedItemsInList = false,
+    onSelect,
+    onCreate,
+    onKeyDown,
+    onBlur,
+    onFocus,
+    inputProps,
+    listProps,
+    popupProps,
+    renderListItem,
+    renderListGroup,
+    renderTagValue,
+    optionComponent,
+    tagOptionComponent,
+    groupBy,
+    listComponent: ListComponent = _List.default,
+    popupComponent: Popup = _Popup.default,
+    tagListComponent: TagList = _MultiselectTagList.default,
+    data: rawData = [],
+    messages: userMessages
+  } = _ref,
+      elementProps = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  let [currentValue, handleChange] = (0, _uncontrollable.useUncontrolledProp)(value, defaultValue, onChange);
+  const [currentOpen, handleOpen] = (0, _uncontrollable.useUncontrolledProp)(open, defaultOpen, onToggle);
+  const [currentSearch, handleSearch] = (0, _uncontrollable.useUncontrolledProp)(searchTerm, defaultSearchTerm, onSearch);
+  const ref = (0, _react.useRef)(null);
+  const inputRef = (0, _react.useRef)(null);
+  const listRef = (0, _react.useRef)(null);
+  const inputId = (0, _WidgetHelpers.useInstanceId)(id, '_input');
+  const tagsId = (0, _WidgetHelpers.useInstanceId)(id, '_taglist');
+  const listId = (0, _WidgetHelpers.useInstanceId)(id, '_listbox');
+  const createId = (0, _WidgetHelpers.useInstanceId)(id, '_createlist_option');
+  const activeTagId = (0, _WidgetHelpers.useInstanceId)(id, '_taglist_active_tag');
+  const activeOptionId = (0, _WidgetHelpers.useInstanceId)(id, '_listbox_active_option');
+  const accessors = (0, _Accessors.useAccessors)(textField, dataKey);
+  const messages = (0, _messages.useMessagesWithDefaults)(userMessages);
+  const toggle = (0, _useDropdownToggle.default)(currentOpen, handleOpen);
+  const isDisabled = disabled === true;
+  const isReadOnly = !!readOnly;
+  const [focusEvents, focused] = (0, _useFocusManager.default)(ref, {
+    disabled: isDisabled,
+    onBlur,
+    onFocus
+  }, {
+    didHandle(focused, event) {
+      if (focused) return focus();
+      toggle.close();
+      clearSearch(event);
+      tagList.focus(null);
+    }
+
+  });
+  const dataItems = (0, _react.useMemo)(() => currentValue.map(item => accessors.findOrSelf(rawData, item)), [rawData, currentValue, accessors]);
+  const [data, lengthWithoutValues] = useMultiselectData(dataItems, rawData, accessors, currentOpen ? filter : false, currentSearch, showSelectedItemsInList);
+  const list = (0, _FocusListContext.useFocusList)({
+    scope: ref,
+    scopeSelector: '.rw-popup',
+    focusFirstItem,
+    activeId: activeOptionId,
+    anchorItem: currentOpen ? dataItems[dataItems.length - 1] : undefined
+  });
+  const tagList = (0, _FocusListContext.useFocusList)({
+    scope: ref,
+    scopeSelector: '.rw-multiselect-taglist',
+    activeId: activeTagId
+  });
+  const showCreateOption = (0, _canShowCreate.default)(allowCreate, {
+    searchTerm: currentSearch,
+    data,
+    dataItems,
+    accessors
+  });
+  /**
+   * Update aria when it changes on update
+   */
+
+  const focusedTag = tagList.getFocused();
+  (0, _react.useEffect)(() => {
+    if (currentOpen) return;
+    (0, _A11y.setActiveDescendant)(inputRef.current, focusedTag ? activeTagId : '');
+  }, [activeTagId, currentOpen, focusedTag]);
+  const focusedItem = list.getFocused();
+  (0, _react.useEffect)(() => {
+    if (!currentOpen) return; // if (focusedItem) tagList.focus(null)
+
+    (0, _A11y.setActiveDescendant)(inputRef.current, focusedItem ? activeOptionId : '');
+  }, [activeOptionId, currentOpen, focusedItem]);
+  /**
+   * Event Handlers
+   */
+
+  const handleDelete = (dataItem, event) => {
+    if (isDisabled || readOnly || tagList.size() === 0) return;
+    focus();
+    change(dataItem, event, REMOVE);
+  };
+
+  const deletingRef = (0, _react.useRef)(false);
+
+  const handleSearchKeyDown = e => {
+    if (e.key === 'Backspace' && e.currentTarget.value && !deletingRef.current) deletingRef.current = true;
+  };
+
+  const handleSearchKeyUp = e => {
+    if (e.key === 'Backspace' && deletingRef.current) {
+      deletingRef.current = false;
+    }
+  };
+
+  const handleInputChange = e => {
+    search(e.target.value, e, 'input');
+    toggle.open();
+  };
+
+  const handleClick = e => {
+    if (isDisabled || readOnly) return; // prevents double clicks when in a <label>
+
+    e.preventDefault();
+    focus();
+
+    if ((0, _closest.default)(e.target, '.rw-select') && currentOpen) {
+      toggle.close();
+    } else toggle.open();
+  };
+
+  const handleDoubleClick = () => {
+    if (isDisabled || !inputRef.current) return;
+    focus();
+    if (inputRef.current) inputRef.current.select();
+  };
+
+  const handleSelect = (dataItem, originalEvent) => {
+    if (dataItem === undefined) return;
+    originalEvent.preventDefault();
+
+    if (dataItem === _AddToListOption.CREATE_OPTION) {
+      handleCreate(originalEvent);
+      return;
+    }
+
+    (0, _WidgetHelpers.notify)(onSelect, [dataItem, {
+      originalEvent
+    }]);
+
+    if (!showSelectedItemsInList || !dataItems.includes(dataItem)) {
+      change(dataItem, originalEvent, INSERT);
+    } else {
+      change(dataItem, originalEvent, REMOVE);
+    }
+
+    focus();
+  };
+
+  const handleCreate = event => {
+    (0, _WidgetHelpers.notify)(onCreate, [currentSearch]);
+    clearSearch(event);
+    focus();
+  };
+
+  const handleKeyDown = event => {
+    if (readOnly) {
+      event.preventDefault();
+      return;
+    }
+
+    let {
+      key,
+      keyCode,
+      altKey,
+      ctrlKey
+    } = event;
+    (0, _WidgetHelpers.notify)(onKeyDown, [event]);
+    if (event.defaultPrevented) return;
+
+    if (key === 'ArrowDown') {
+      event.preventDefault();
+
+      if (!currentOpen) {
+        toggle.open();
+        return;
+      }
+
+      list.focus(list.next());
+      tagList.focus(null);
+    } else if (key === 'ArrowUp' && (currentOpen || altKey)) {
+      event.preventDefault();
+
+      if (altKey) {
+        toggle.close();
+        return;
+      }
+
+      list.focus(list.prev());
+      tagList.focus(null);
+    } else if (key === 'End') {
+      event.preventDefault();
+
+      if (currentOpen) {
+        list.focus(list.last());
+        tagList.focus(null);
+      } else {
+        tagList.focus(tagList.last());
+        list.focus(null);
+      }
+    } else if (key === 'Home') {
+      event.preventDefault();
+      if (currentOpen) list.focus(list.first());else list.focus(tagList.first());
+    } else if (currentOpen && keyCode === ENTER) {
+      // using keyCode to ignore enter for japanese IME
+      event.preventDefault();
+
+      if (ctrlKey && showCreateOption) {
+        return handleCreate(event);
+      }
+
+      handleSelect(list.getFocused(), event);
+    } else if (key === 'Escape') {
+      if (currentOpen) toggle.close();else tagList.focus(null); //
+    } else if (!currentSearch && !deletingRef.current) {
+      //
+      if (key === 'ArrowLeft') {
+        tagList.focus(tagList.prev({
+          behavior: 'loop'
+        }));
+      } else if (key === 'ArrowRight') {
+        tagList.focus(tagList.next({
+          behavior: 'loop'
+        })); //
+      } else if (key === 'Delete' && tagList.getFocused()) {
+        handleDelete(tagList.getFocused(), event); //
+      } else if (key === 'Backspace') {
+        handleDelete(tagList.toDataItem(tagList.last()), event);
+      } else if (key === ' ' && !currentOpen) {
+        event.preventDefault();
+        toggle.open();
+      }
+    }
+  };
+  /**
+   * Methods
+   */
+
+
+  function change(dataItem, originalEvent, action) {
+    let nextDataItems = dataItems;
+
+    switch (action) {
+      case INSERT:
+        nextDataItems = nextDataItems.concat(dataItem);
+        break;
+
+      case REMOVE:
+        nextDataItems = nextDataItems.filter(d => d !== dataItem);
+        break;
+    }
+
+    handleChange(nextDataItems, {
+      action,
+      dataItem,
+      originalEvent,
+      searchTerm: currentSearch,
+      lastValue: currentValue
+    });
+    clearSearch(originalEvent);
+  }
+
+  function clearSearch(originalEvent) {
+    search('', originalEvent, 'clear');
+  }
+
+  function search(nextSearchTerm, originalEvent, action = 'input') {
+    if (nextSearchTerm !== currentSearch) handleSearch(nextSearchTerm, {
+      action,
+      originalEvent,
+      lastSearchTerm: currentSearch
+    });
+  }
+
+  function focus() {
+    if (inputRef.current) inputRef.current.focus();
+  }
+  /**
+   * Render
+   */
+
+
+  (0, _react.useImperativeHandle)(outerRef, () => ({
+    focus
+  }));
+  let shouldRenderPopup = (0, _WidgetHelpers.useFirstFocusedRender)(focused, currentOpen);
+  let shouldRenderTags = !!dataItems.length;
+  let inputOwns = `${listId} ` + (shouldRenderTags ? tagsId : '') + (showCreateOption ? createId : '');
+  return /*#__PURE__*/_react.default.createElement(_Widget.default, _extends({}, elementProps, {
+    ref: ref,
+    open: currentOpen,
+    dropUp: dropUp,
+    focused: focused,
+    disabled: isDisabled,
+    readOnly: isReadOnly,
+    onKeyDown: handleKeyDown
+  }, focusEvents, {
+    className: (0, _classnames.default)(className, 'rw-multiselect')
+  }), /*#__PURE__*/_react.default.createElement(_WidgetPicker.default, {
+    onClick: handleClick,
+    onTouchEnd: handleClick,
+    onDoubleClick: handleDoubleClick,
+    className: (0, _classnames.default)(containerClassName, 'rw-widget-input')
+  }, /*#__PURE__*/_react.default.createElement(_FocusListContext.FocusListContext.Provider, {
+    value: tagList.context
+  }, /*#__PURE__*/_react.default.createElement(TagList, {
+    id: tagsId,
+    textAccessor: accessors.text,
+    clearTagIcon: clearTagIcon,
+    label: messages.tagsLabel(),
+    value: dataItems,
+    readOnly: isReadOnly,
+    disabled: disabled,
+    onDelete: handleDelete,
+    tagOptionComponent: tagOptionComponent,
+    renderTagValue: renderTagValue
+  }, /*#__PURE__*/_react.default.createElement(_MultiselectInput.default, _extends({}, inputProps, {
+    role: "combobox",
+    autoFocus: autoFocus,
+    tabIndex: tabIndex || 0,
+    "aria-expanded": !!currentOpen,
+    "aria-busy": !!busy,
+    "aria-owns": inputOwns,
+    "aria-controls": listId,
+    "aria-haspopup": "listbox",
+    "aria-autocomplete": "list",
+    value: currentSearch,
+    disabled: isDisabled,
+    readOnly: isReadOnly,
+    placeholder: (currentValue.length && !showPlaceholderWithValues ? '' : placeholder) || '',
+    onKeyDown: handleSearchKeyDown,
+    onKeyUp: handleSearchKeyUp,
+    onChange: handleInputChange,
+    ref: inputRef
+  })))), /*#__PURE__*/_react.default.createElement(_PickerCaret.default, {
+    busy: busy,
+    spinner: busySpinner,
+    icon: selectIcon,
+    visible: focused
+  })), /*#__PURE__*/_react.default.createElement(_FocusListContext.FocusListContext.Provider, {
+    value: list.context
+  }, shouldRenderPopup && /*#__PURE__*/_react.default.createElement(Popup, _extends({}, popupProps, {
+    dropUp: dropUp,
+    open: currentOpen,
+    transition: popupTransition,
+    onEntering: () => listRef.current.scrollIntoView()
+  }), /*#__PURE__*/_react.default.createElement(ListComponent, _extends({}, listProps, {
+    id: listId,
+    data: data,
+    tabIndex: -1,
+    disabled: disabled,
+    searchTerm: currentSearch,
+    accessors: accessors,
+    renderItem: renderListItem,
+    renderGroup: renderListGroup,
+    value: dataItems,
+    groupBy: groupBy,
+    optionComponent: optionComponent,
+    onChange: (d, meta) => handleSelect(d, meta.originalEvent),
+    "aria-live": "polite",
+    "aria-labelledby": inputId,
+    "aria-hidden": !currentOpen,
+    ref: listRef,
+    messages: {
+      emptyList: lengthWithoutValues ? messages.emptyFilter : messages.emptyList
+    }
+  })), showCreateOption && /*#__PURE__*/_react.default.createElement(_AddToListOption.default, {
+    onSelect: handleCreate
+  }, messages.createOption(currentValue, currentSearch)))));
+});
+
+Multiselect.displayName = 'Multiselect';
+Multiselect.propTypes = propTypes;
+var _default = Multiselect;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/MultiselectInput.js":
+/*!************************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/MultiselectInput.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var CustomPropTypes = _interopRequireWildcard(__webpack_require__(/*! ./PropTypes */ "./node_modules/react-widgets/cjs/PropTypes.js"));
+
+const _excluded = ["disabled", "readOnly"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const propTypes = {
+  value: _propTypes.default.string,
+  placeholder: _propTypes.default.string,
+  maxLength: _propTypes.default.number,
+  onChange: _propTypes.default.func.isRequired,
+  disabled: CustomPropTypes.disabled,
+  readOnly: CustomPropTypes.disabled
+};
+
+const MultiselectInput = /*#__PURE__*/_react.default.forwardRef((_ref, ref) => {
+  let {
+    disabled,
+    readOnly
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  let size = Math.max(String(props.value || props.placeholder || '').length, 1) + 1;
+  return /*#__PURE__*/_react.default.createElement("input", _extends({
+    spellCheck: "false",
+    autoCapitalize: "off"
+  }, props, {
+    size: size,
+    ref: ref,
+    autoComplete: "off",
+    className: "rw-multiselect-input",
+    "aria-disabled": disabled,
+    "aria-readonly": readOnly,
+    disabled: disabled,
+    readOnly: readOnly
+  }));
+});
+
+MultiselectInput.displayName = 'MultiselectInput';
+MultiselectInput.propTypes = propTypes;
+var _default = MultiselectInput;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/MultiselectTag.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/MultiselectTag.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _FocusListContext = __webpack_require__(/*! ./FocusListContext */ "./node_modules/react-widgets/cjs/FocusListContext.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function MultiselectTag({
+  className,
+  children,
+  style,
+  label,
+  disabled,
+  readOnly,
+  onRemove,
+  clearTagIcon,
+  dataItem
+}) {
+  const [ref, focused, id] = (0, _FocusListContext.useListOption)(dataItem);
+
+  const handleRemove = event => {
+    if (!disabled) onRemove(dataItem, event);
+  };
+
+  return /*#__PURE__*/_react.default.createElement("div", {
+    ref: ref,
+    role: "option",
+    id: id,
+    "data-rw-option": "",
+    "data-rw-focusable": disabled ? undefined : '',
+    "data-rw-focused": focused ? '' : undefined,
+    className: (0, _classnames.default)(className, 'rw-multiselect-tag', disabled && 'rw-state-disabled', focused && !disabled && 'rw-state-focus'),
+    style: style
+  }, /*#__PURE__*/_react.default.createElement("span", {
+    className: "rw-multiselect-tag-label"
+  }, children), /*#__PURE__*/_react.default.createElement("button", {
+    type: "button" // these should not be tabbable
+    ,
+    tabIndex: -1,
+    onClick: handleRemove,
+    onTouchEnd: handleRemove,
+    disabled: disabled || readOnly,
+    className: "rw-multiselect-tag-btn",
+    "aria-label": label || 'Remove item'
+  }, clearTagIcon));
+}
+
+var _default = MultiselectTag;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/MultiselectTagList.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/MultiselectTagList.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _MultiselectTag = _interopRequireDefault(__webpack_require__(/*! ./MultiselectTag */ "./node_modules/react-widgets/cjs/MultiselectTag.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function MultiselectTagList({
+  id,
+  value,
+  textAccessor,
+  label,
+  disabled,
+  readOnly,
+  onDelete,
+  children,
+  clearTagIcon,
+  renderTagValue,
+  tagOptionComponent: TagOption = _MultiselectTag.default
+}) {
+  return /*#__PURE__*/_react.default.createElement("div", {
+    id: id,
+    role: "listbox",
+    "aria-label": label,
+    "aria-multiselectable": "true",
+    "aria-orientation": "horizontal",
+    className: "rw-multiselect-taglist"
+  }, value.map((item, i) => {
+    const itemDisabled = Array.isArray(disabled) ? disabled.includes(item) : !!disabled;
+    return /*#__PURE__*/_react.default.createElement(TagOption, {
+      key: i,
+      dataItem: item,
+      onRemove: onDelete,
+      clearTagIcon: clearTagIcon,
+      disabled: itemDisabled,
+      readOnly: readOnly
+    }, renderTagValue ? renderTagValue({
+      item
+    }) : textAccessor(item));
+  }), children);
+}
+
+var _default = MultiselectTagList;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/NumberInput.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/NumberInput.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _activeElement = _interopRequireDefault(__webpack_require__(/*! dom-helpers/activeElement */ "./node_modules/dom-helpers/esm/activeElement.js"));
+
+var _canUseDOM = _interopRequireDefault(__webpack_require__(/*! dom-helpers/canUseDOM */ "./node_modules/dom-helpers/esm/canUseDOM.js"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _reactDom = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+
+var _Input = _interopRequireDefault(__webpack_require__(/*! ./Input */ "./node_modules/react-widgets/cjs/Input.js"));
+
+var CustomPropTypes = _interopRequireWildcard(__webpack_require__(/*! ./PropTypes */ "./node_modules/react-widgets/cjs/PropTypes.js"));
+
+const _excluded = ["disabled", "readOnly", "placeholder", "innerRef", "min", "max", "localizer", "editing"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+let isSign = val => (val || '').trim() === '-';
+
+function isPaddedZeros(str, localizer) {
+  let localeChar = localizer.decimalCharacter();
+  let [_, decimals] = str.split(localeChar);
+  return !!(decimals && decimals.match(/0+$/));
+}
+
+function isAtDelimiter(str, localizer) {
+  let localeChar = localizer.decimalCharacter();
+  let lastIndex = str.length - 1;
+  if (str.length < 1) return false;
+  let char = str[lastIndex];
+  return !!(char === localeChar && str.indexOf(char) === lastIndex);
+}
+
+class NumberPickerInput extends _react.default.Component {
+  constructor(...args) {
+    super(...args);
+    this.state = {};
+
+    this.handleBlur = event => {
+      let str = this.state.stringValue;
+      let number = this.parseNumber(str); // if number is below the min
+      // we need to flush low values and decimal stops, onBlur means i'm done inputing
+
+      if (this.isIntermediateValue(number, str)) {
+        if (isNaN(number)) {
+          number = null;
+        }
+
+        this.props.onChange(number, event);
+      }
+    };
+
+    this.handleChange = event => {
+      let {
+        value,
+        onChange
+      } = this.props;
+      let stringValue = event.target.value,
+          numberValue = this.parseNumber(stringValue);
+      let isIntermediate = this.isIntermediateValue(numberValue, stringValue);
+
+      if (stringValue == null || stringValue.trim() === '') {
+        this.setStringValue('');
+        onChange(null, event);
+        return;
+      } // order here matters a lot
+
+
+      if (isIntermediate) {
+        this.setStringValue(stringValue);
+      } else if (numberValue !== value) {
+        onChange(numberValue, event);
+      } else if (stringValue != this.state.stringValue) {
+        this.setStringValue(stringValue);
+      }
+    };
+  }
+
+  getSnapshotBeforeUpdate({
+    editing
+  }) {
+    return {
+      reselectText: !editing && this.props.editing && this.isSelectingAllText()
+    };
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    let {
+      value,
+      editing,
+      localizer
+    } = nextProps;
+    let decimal = localizer.decimalCharacter();
+    const stringValue = value == null || isNaN(value) ? '' : editing ? ('' + value).replace('.', decimal) : localizer.formatNumber(value
+    /*, 'default'*/
+    );
+    if (prevState.lastValueFromProps !== stringValue) return {
+      stringValue,
+      lastValueFromProps: stringValue
+    };
+    return null;
+  }
+
+  componentDidUpdate(_, __, {
+    reselectText
+  }) {
+    if (reselectText) (0, _reactDom.findDOMNode)(this).select();
+  } // this intermediate state is for when one runs into
+  // the decimal or are typing the number
+
+
+  setStringValue(stringValue) {
+    this.setState({
+      stringValue
+    });
+  }
+
+  isIntermediateValue(num, str) {
+    let {
+      localizer,
+      min
+    } = this.props;
+    return !!(num < min || isSign(str) || isAtDelimiter(str, localizer) || isPaddedZeros(str, localizer));
+  }
+
+  isSelectingAllText() {
+    const node = _canUseDOM.default && (0, _reactDom.findDOMNode)(this);
+    return _canUseDOM.default && (0, _activeElement.default)() === node && node.selectionStart === 0 && node.selectionEnd === node.value.length;
+  }
+
+  parseNumber(strVal) {
+    let {
+      localizer,
+      parse: userParse
+    } = this.props;
+    if (userParse) return userParse(strVal, localizer);
+    return localizer.parseNumber(strVal);
+  }
+
+  render() {
+    let _this$props = this.props,
+        {
+      disabled,
+      readOnly,
+      placeholder,
+      // eslint-disable-next-line react/prop-types
+      innerRef,
+      min,
+      max
+    } = _this$props,
+        props = _objectWithoutPropertiesLoose(_this$props, _excluded);
+
+    let value = this.state.stringValue;
+    return /*#__PURE__*/_react.default.createElement(_Input.default, _extends({}, props, {
+      ref: innerRef,
+      inputMode: "numeric",
+      className: "rw-widget-input",
+      onChange: this.handleChange,
+      onBlur: this.handleBlur,
+      "aria-valuenow": value
+      /*HACK*/
+      ,
+      "aria-valuemin": isFinite(min) ? min : undefined,
+      "aria-valuemax": isFinite(max) ? max : undefined,
+      disabled: disabled,
+      readOnly: readOnly,
+      placeholder: placeholder,
+      value: value
+    }));
+  }
+
+}
+
+NumberPickerInput.defaultProps = {
+  value: null,
+  editing: false
+};
+NumberPickerInput.propTypes = {
+  value: _propTypes.default.number,
+  editing: _propTypes.default.bool,
+  placeholder: _propTypes.default.string,
+  localizer: _propTypes.default.object.isRequired,
+  parse: _propTypes.default.func,
+  min: _propTypes.default.number,
+  max: _propTypes.default.number,
+  disabled: CustomPropTypes.disabled,
+  readOnly: CustomPropTypes.disabled,
+  onChange: _propTypes.default.func.isRequired
+};
+var _default = NumberPickerInput;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/NumberPicker.js":
+/*!********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/NumberPicker.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _uncontrollable = __webpack_require__(/*! uncontrollable */ "./node_modules/uncontrollable/lib/esm/index.js");
+
+var _Button = _interopRequireDefault(__webpack_require__(/*! ./Button */ "./node_modules/react-widgets/cjs/Button.js"));
+
+var _Icon = __webpack_require__(/*! ./Icon */ "./node_modules/react-widgets/cjs/Icon.js");
+
+var _Localization = __webpack_require__(/*! ./Localization */ "./node_modules/react-widgets/cjs/Localization.js");
+
+var _NumberInput = _interopRequireDefault(__webpack_require__(/*! ./NumberInput */ "./node_modules/react-widgets/cjs/NumberInput.js"));
+
+var _Widget = _interopRequireDefault(__webpack_require__(/*! ./Widget */ "./node_modules/react-widgets/cjs/Widget.js"));
+
+var _WidgetPicker = _interopRequireDefault(__webpack_require__(/*! ./WidgetPicker */ "./node_modules/react-widgets/cjs/WidgetPicker.js"));
+
+var CustomPropTypes = _interopRequireWildcard(__webpack_require__(/*! ./PropTypes */ "./node_modules/react-widgets/cjs/PropTypes.js"));
+
+var _useFocusManager = _interopRequireDefault(__webpack_require__(/*! ./useFocusManager */ "./node_modules/react-widgets/cjs/useFocusManager.js"));
+
+var _WidgetHelpers = __webpack_require__(/*! ./WidgetHelpers */ "./node_modules/react-widgets/cjs/WidgetHelpers.js");
+
+var _useEventCallback = _interopRequireDefault(__webpack_require__(/*! @restart/hooks/useEventCallback */ "./node_modules/@restart/hooks/esm/useEventCallback.js"));
+
+const _excluded = ["className", "containerClassName", "disabled", "readOnly", "value", "min", "max", "incrementIcon", "decrementIcon", "placeholder", "autoFocus", "tabIndex", "parse", "name", "onChange", "messages", "format", "onKeyDown", "onKeyPress", "onKeyUp", "inputProps", "precision", "step"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+// my tests in ie11/chrome/FF indicate that keyDown repeats
+// at about 35ms+/- 5ms after an initial 500ms delay. callback fires on the leading edge
+function createInterval(callback) {
+  let fn;
+  let id;
+
+  const cancel = () => clearTimeout(id);
+
+  id = window.setTimeout(fn = () => {
+    id = window.setTimeout(fn, 35);
+    callback(); //fire after everything in case the user cancels on the first call
+  }, 500);
+  return cancel;
+}
+
+function clamp(value, min, max) {
+  max = max == null ? Infinity : max;
+  min = min == null ? -Infinity : min;
+  if (value == null || value === '') return null;
+  return Math.max(Math.min(typeof value == 'string' ? parseInt(value) : value, max), min);
+}
+
+const propTypes = {
+  /**
+   * @example ['valuePicker', [ [1, null] ]]
+   */
+  value: _propTypes.default.number,
+
+  /**
+   * @example ['onChangePicker', [ [1, null] ]]
+   */
+  onChange: _propTypes.default.func,
+
+  /**
+   * The minimum number that the NumberPicker value.
+   * @example ['prop', ['min', 0]]
+   */
+  min: _propTypes.default.number,
+
+  /**
+   * The maximum number that the NumberPicker value.
+   *
+   * @example ['prop', ['max', 0]]
+   */
+  max: _propTypes.default.number,
+
+  /**
+   * Amount to increase or decrease value when using the spinner buttons.
+   *
+   * @example ['prop', ['step', 5]]
+   */
+  step: _propTypes.default.number,
+
+  /**
+   * Specify how precise the `value` should be when typing, incrementing, or decrementing the value.
+   * When empty, precision is parsed from the current `format` and culture.
+   */
+  precision: _propTypes.default.oneOfType([_propTypes.default.number, _propTypes.default.oneOf(['auto'])]),
+
+  /**
+   * A format string used to display the number value. Localizer dependent, read about [localization](localization) for more info.
+   *
+   * @example ['prop', { max: 1, min: -1 , defaultValue: 0.2585, format: "{ style: 'percent' }" }]
+   */
+  format: _propTypes.default.any,
+  parse: _propTypes.default.func,
+  incrementIcon: _propTypes.default.node,
+  decrementIcon: _propTypes.default.node,
+
+  /** @ignore */
+  tabIndex: _propTypes.default.any,
+  name: _propTypes.default.string,
+  placeholder: _propTypes.default.string,
+  onKeyDown: _propTypes.default.func,
+  onKeyPress: _propTypes.default.func,
+  onKeyUp: _propTypes.default.func,
+  autoFocus: _propTypes.default.bool,
+
+  /**
+   * @example ['disabled', ['1']]
+   */
+  disabled: CustomPropTypes.disabled,
+
+  /**
+   * @example ['readOnly', ['1.5']]
+   */
+  readOnly: CustomPropTypes.disabled,
+
+  /** Adds a css class to the input container element. */
+  containerClassName: _propTypes.default.string,
+  inputProps: _propTypes.default.object,
+  messages: _propTypes.default.shape({
+    increment: _propTypes.default.string,
+    decrement: _propTypes.default.string
+  }),
+
+  /** @ignore */
+  localizer: _propTypes.default.object
+};
+const defaultProps = {
+  incrementIcon: _Icon.caretUp,
+  decrementIcon: _Icon.caretDown,
+  min: -Infinity,
+  max: Infinity,
+  step: 1,
+  precision: 'auto'
+};
+
+/**
+ * ---
+ * localized: true
+ * shortcuts:
+ *   - { key: down arrow, label: decrement value }
+ *   - { key: up arrow, label: increment value }
+ *   - { key: home, label: set value to minimum value, if finite }
+ *   - { key: end, label: set value to maximum value, if finite }
+ * ---
+ *
+ * @public
+ */
+function NumberPicker(uncontrolledProps) {
+  const _useUncontrolled = (0, _uncontrollable.useUncontrolled)(uncontrolledProps, {
+    value: 'onChange'
+  }),
+        {
+    className,
+    containerClassName,
+    disabled,
+    readOnly,
+    value,
+    min,
+    max,
+    incrementIcon,
+    decrementIcon,
+    placeholder,
+    autoFocus,
+    tabIndex,
+    parse,
+    name,
+    onChange,
+    messages,
+    format,
+    onKeyDown,
+    onKeyPress,
+    onKeyUp,
+    inputProps,
+    precision,
+    step: pStep
+  } = _useUncontrolled,
+        elementProps = _objectWithoutPropertiesLoose(_useUncontrolled, _excluded);
+
+  const localizer = (0, _Localization.useLocalizer)(messages, {
+    number: format
+  });
+  const ref = (0, _react.useRef)(null);
+  const inputRef = (0, _react.useRef)(null);
+  const repeaterRef = (0, _react.useRef)(null);
+  const [focusEvents, focused] = (0, _useFocusManager.default)(ref, uncontrolledProps, {
+    willHandle(focused) {
+      if (focused) focus();
+    }
+
+  });
+  const handleMouseDown = (0, _useEventCallback.default)((direction, event) => {
+    if (event) event.persist();
+    let method = direction === 'UP' ? increment : decrement;
+    let value = method(event),
+        atTop = direction === 'UP' && value === max,
+        atBottom = direction === 'DOWN' && value === min;
+    if (atTop || atBottom) handleMouseUp();else if (!repeaterRef.current) {
+      repeaterRef.current = createInterval(() => {
+        handleMouseDown(direction, event);
+      });
+    }
+  });
+  const handleMouseUp = (0, _useEventCallback.default)(() => {
+    if (!repeaterRef.current) return;
+    repeaterRef.current();
+    repeaterRef.current = null;
+  });
+  const handleKeyDown = (0, _useEventCallback.default)(event => {
+    if (readOnly) return;
+    let key = event.key;
+    (0, _WidgetHelpers.notify)(onKeyDown, [event]);
+    if (event.defaultPrevented) return;
+    if (key === 'End' && isFinite(max)) handleChange(max, event);else if (key === 'Home' && isFinite(min)) handleChange(min, event);else if (key === 'ArrowDown') {
+      event.preventDefault();
+      decrement(event);
+    } else if (key === 'ArrowUp') {
+      event.preventDefault();
+      increment(event);
+    }
+  });
+
+  const handleChange = (rawValue, originalEvent = null) => {
+    let nextValue = clamp(rawValue, min, max);
+    if (value !== nextValue) (0, _WidgetHelpers.notify)(onChange, [nextValue, {
+      rawValue,
+      originalEvent,
+      lastValue: value
+    }]);
+  };
+
+  function focus() {
+    var _inputRef$current;
+
+    (_inputRef$current = inputRef.current) == null ? void 0 : _inputRef$current.focus();
+  }
+
+  function increment(event) {
+    return step(pStep, event);
+  }
+
+  function decrement(event) {
+    return step(-pStep, event);
+  }
+
+  function step(amount, event) {
+    const nextValue = (value || 0) + amount;
+    let p = precision === 'auto' ? Math.max(getPrecision(value || 0), getPrecision(amount)) : precision;
+    handleChange(p != null ? parseFloat(nextValue.toFixed(p)) : nextValue, event);
+    return nextValue;
+  }
+
+  const clampedValue = clamp(value, min, max);
+  return /*#__PURE__*/_react.default.createElement(_Widget.default, _extends({}, elementProps, {
+    focused: focused,
+    disabled: disabled,
+    readOnly: readOnly,
+    onKeyDown: handleKeyDown
+  }, focusEvents, {
+    ref: ref,
+    className: (0, _classnames.default)(className, 'rw-number-picker')
+  }), /*#__PURE__*/_react.default.createElement(_WidgetPicker.default, {
+    className: containerClassName
+  }, /*#__PURE__*/_react.default.createElement(_NumberInput.default, _extends({}, inputProps, {
+    role: "spinbutton",
+    tabIndex: tabIndex,
+    value: clampedValue,
+    placeholder: placeholder,
+    autoFocus: autoFocus,
+    editing: focused,
+    localizer: localizer,
+    parse: parse,
+    name: name,
+    min: min,
+    max: max,
+    disabled: disabled,
+    readOnly: readOnly,
+    onChange: handleChange,
+    onKeyPress: onKeyPress,
+    onKeyUp: onKeyUp,
+    innerRef: inputRef
+  })), /*#__PURE__*/_react.default.createElement("span", {
+    className: "rw-input-addon rw-number-picker-spinners"
+  }, /*#__PURE__*/_react.default.createElement(_Button.default, {
+    icon: incrementIcon,
+    className: "rw-picker-btn",
+    disabled: clampedValue === max || disabled || readOnly,
+    label: localizer.messages.increment({
+      value: clampedValue,
+      min,
+      max
+    }),
+    onMouseUp: () => handleMouseUp(),
+    onMouseDown: e => handleMouseDown('UP', e),
+    onMouseLeave: () => handleMouseUp()
+  }), /*#__PURE__*/_react.default.createElement(_Button.default, {
+    icon: decrementIcon,
+    className: "rw-picker-btn",
+    disabled: clampedValue === min || disabled || readOnly,
+    label: localizer.messages.decrement({
+      value: clampedValue,
+      min,
+      max
+    }),
+    onMouseUp: () => handleMouseUp(),
+    onMouseDown: e => handleMouseDown('DOWN', e),
+    onMouseLeave: () => handleMouseUp()
+  }))));
+}
+
+;
+NumberPicker.propTypes = propTypes;
+NumberPicker.defaultProps = defaultProps;
+var _default = NumberPicker;
+exports["default"] = _default;
+
+function getPrecision(a) {
+  if (!isFinite(a)) return 0;
+  let e = 1;
+  let p = 0;
+
+  while (Math.round(a * e) / e !== a) {
+    e *= 10;
+    p++;
+  }
+
+  return p;
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/PickerCaret.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/PickerCaret.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var React = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _Icon = __webpack_require__(/*! ./Icon */ "./node_modules/react-widgets/cjs/Icon.js");
+
+const _excluded = ["className", "busy", "visible", "icon", "spinner"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const DropdownCaret = _ref => {
+  let {
+    className,
+    busy,
+    visible,
+    icon = _Icon.caretDown,
+    spinner = _Icon.Spinner
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  return /*#__PURE__*/React.createElement("span", _extends({}, props, {
+    "aria-hidden": "true",
+    className: (0, _classnames.default)(className, 'rw-btn rw-picker-caret')
+  }), busy ? spinner : visible ? icon : null);
+};
+
+var _default = DropdownCaret;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Popup.js":
+/*!*************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Popup.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = exports.StaticContainer = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _SlideDownTransition = _interopRequireDefault(__webpack_require__(/*! ./SlideDownTransition */ "./node_modules/react-widgets/cjs/SlideDownTransition.js"));
+
+const _excluded = ["id", "role", "dropUp", "className", "children", "open", "transition"];
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const StaticContainer = /*#__PURE__*/_react.default.memo(({
+  children
+}) => children, (_, {
+  shouldUpdate
+}) => !shouldUpdate);
+
+exports.StaticContainer = StaticContainer;
+
+const Popup = /*#__PURE__*/_react.default.forwardRef((_ref, ref) => {
+  let {
+    id,
+    role,
+    dropUp,
+    className,
+    children,
+    open = false,
+    transition = _SlideDownTransition.default
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  const Transition = transition;
+  return /*#__PURE__*/_react.default.createElement(Transition, _extends({}, props, {
+    in: open,
+    dropUp: dropUp,
+    timeout: undefined
+    /**hack*/
+    ,
+    className: (0, _classnames.default)('rw-popup-container', className)
+  }), /*#__PURE__*/_react.default.createElement("div", {
+    id: id,
+    className: "rw-popup",
+    ref: ref,
+    role: role
+  }, /*#__PURE__*/_react.default.createElement(StaticContainer, {
+    shouldUpdate: open
+  }, children)));
+});
+
+Popup.displayName = 'Popup';
+var _default = Popup;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/PropTypes.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/PropTypes.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.message = exports.elementType = exports.disabled = exports.accessor = void 0;
+
+var PropTypes = _interopRequireWildcard(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+const elementType = PropTypes.elementType;
+exports.elementType = elementType;
+let disabled = Object.assign((...args) => PropTypes.bool(...args), {
+  acceptsArray: PropTypes.oneOfType([PropTypes.bool, PropTypes.array])
+});
+exports.disabled = disabled;
+const accessor = PropTypes.oneOfType([PropTypes.string, PropTypes.func]);
+exports.accessor = accessor;
+const message = PropTypes.oneOfType([PropTypes.node, PropTypes.string, PropTypes.func]);
+exports.message = message;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/SlideDownTransition.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/SlideDownTransition.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _css = _interopRequireDefault(__webpack_require__(/*! dom-helpers/css */ "./node_modules/dom-helpers/esm/css.js"));
+
+var _height = _interopRequireDefault(__webpack_require__(/*! dom-helpers/height */ "./node_modules/dom-helpers/esm/height.js"));
+
+var _transitionEnd = _interopRequireDefault(__webpack_require__(/*! dom-helpers/transitionEnd */ "./node_modules/dom-helpers/esm/transitionEnd.js"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _Transition = _interopRequireWildcard(__webpack_require__(/*! react-transition-group/Transition */ "./node_modules/react-transition-group/esm/Transition.js"));
+
+const _excluded = ["children", "className", "dropUp"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const transitionClasses = {
+  [_Transition.ENTERING]: 'rw-slide-transition-entering',
+  [_Transition.EXITING]: 'rw-slide-transition-exiting',
+  [_Transition.EXITED]: 'rw-slide-transition-exited'
+};
+
+class SlideDownTransition extends _react.default.Component {
+  constructor(...args) {
+    super(...args);
+
+    this.setContainerHeight = elem => {
+      elem.style.height = this.getHeight(elem) + 'px';
+    };
+
+    this.clearContainerHeight = elem => {
+      elem.style.height = '';
+    };
+
+    this.handleEntered = elem => {
+      this.clearContainerHeight(elem);
+      if (this.props.onEntered) this.props.onEntered();
+    };
+
+    this.handleEntering = () => {
+      if (this.props.onEntering) this.props.onEntering();
+    };
+
+    this.handleExit = elem => {
+      this.setContainerHeight(elem);
+      if (this.props.onExit) this.props.onExit();
+    };
+
+    this.handleExited = elem => {
+      this.clearContainerHeight(elem);
+      if (this.props.onExited) this.props.onExited();
+    };
+
+    this.handleTransitionEnd = (el, done) => {
+      (0, _transitionEnd.default)(el.firstChild, done);
+    };
+  }
+
+  getHeight(container) {
+    let content = container.firstChild;
+    let margin = parseInt((0, _css.default)(content, 'margin-top'), 10) + parseInt((0, _css.default)(content, 'margin-bottom'), 10);
+    let old = container.style.display;
+    let height;
+    container.style.display = 'block';
+    height = ((0, _height.default)(content) || 0) + (isNaN(margin) ? 0 : margin);
+    container.style.display = old;
+    return height;
+  }
+
+  render() {
+    const _this$props = this.props,
+          {
+      children,
+      className,
+      dropUp
+    } = _this$props,
+          props = _objectWithoutPropertiesLoose(_this$props, _excluded);
+
+    return /*#__PURE__*/_react.default.createElement(_Transition.default, _extends({}, props, {
+      appear: true,
+      in: this.props.in,
+      onEnter: this.setContainerHeight,
+      onEntering: this.handleEntering,
+      onEntered: this.handleEntered,
+      onExit: this.handleExit,
+      onExited: this.handleExited,
+      addEndListener: this.handleTransitionEnd,
+      timeout: undefined
+      /*hack*/
+
+    }), (status, innerProps) => /*#__PURE__*/_react.default.createElement("div", _extends({}, innerProps, {
+      className: (0, _classnames.default)(className, dropUp && 'rw-dropup', transitionClasses[status])
+    }), /*#__PURE__*/_react.default.cloneElement(children, {
+      className: (0, _classnames.default)('rw-slide-transition', children.props.className)
+    })));
+  }
+
+}
+
+SlideDownTransition.propTypes = {
+  in: _propTypes.default.bool.isRequired,
+  innerClassName: _propTypes.default.string,
+  dropUp: _propTypes.default.bool,
+  onExit: _propTypes.default.func,
+  onExited: _propTypes.default.func,
+  onEntering: _propTypes.default.func,
+  onEntered: _propTypes.default.func
+};
+var _default = SlideDownTransition;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/SlideTransitionGroup.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/SlideTransitionGroup.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _transitionEnd = _interopRequireDefault(__webpack_require__(/*! dom-helpers/transitionEnd */ "./node_modules/dom-helpers/esm/transitionEnd.js"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+const _excluded = ["direction", "children", "onTransitionEnd"];
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const DirectionPropType = _propTypes.default.oneOf(['left', 'right', 'top', 'bottom']);
+
+const prefix = 'rw-calendar-transition';
+const active = 'rw-calendar-transition-active';
+const next = 'rw-calendar-transition-next';
+const prev = 'rw-calendar-transition-prev';
+
+const clone = (el, cls) => el && /*#__PURE__*/_react.default.cloneElement(el, {
+  className: (0, _classnames.default)(el.props.className, prefix, cls)
+});
+
+class SlideTransitionGroup extends _react.default.Component {
+  constructor(args) {
+    super(args);
+
+    this.handleTransitionEnd = hadFocus => {
+      this.isTransitioning = false;
+      let current = this.container.current.lastChild;
+      if (this.props.onTransitionEnd) this.props.onTransitionEnd(current, hadFocus);
+    };
+
+    this.current = this.props.children;
+    this.container = /*#__PURE__*/_react.default.createRef();
+    this.state = {
+      prevClasses: '',
+      currentClasses: ''
+    };
+  }
+
+  componentDidUpdate() {
+    if (!this.flush || this.isTransitioning) return;
+    this.flush = false;
+    this.isTransitioning = true;
+    let previous = this.container.current.firstChild;
+    const hadFocus = document.activeElement && previous.contains(document.activeElement);
+    this.setState({
+      prevClasses: '',
+      currentClasses: next
+    }, () => {
+      let current = this.container.current.lastChild;
+      current.clientHeight; // eslint-disable-line
+
+      this.setState({
+        prevClasses: prev,
+        currentClasses: (0, _classnames.default)(next, active)
+      }, () => {
+        (0, _transitionEnd.default)(current, () => {
+          this.prev = null;
+
+          if (this.current.key !== this.props.children.key) {
+            this.current = this.props.children;
+          }
+
+          this.setState({
+            prevClasses: '',
+            currentClasses: ''
+          }, () => this.handleTransitionEnd(hadFocus));
+        });
+      });
+    });
+  }
+
+  render() {
+    let _this$props = this.props,
+        {
+      direction,
+      children
+    } = _this$props,
+        props = _objectWithoutPropertiesLoose(_this$props, _excluded);
+
+    if (!this.isTransitioning) {
+      if (this.current.key !== children.key) {
+        this.prev = this.current;
+        this.flush = true;
+      }
+
+      this.current = children;
+    }
+
+    let {
+      prevClasses,
+      currentClasses
+    } = this.state;
+    return /*#__PURE__*/_react.default.createElement("div", _extends({}, props, {
+      ref: this.container,
+      className: (0, _classnames.default)(`rw-calendar-transition-group`, direction === 'top' && 'rw-calendar-transition-top', direction === 'right' && 'rw-calendar-transition-right', direction === 'bottom' && 'rw-calendar-transition-bottom', direction === 'left' && 'rw-calendar-transition-left')
+    }), clone(this.prev, prevClasses), clone(this.current, currentClasses));
+  }
+
+}
+
+SlideTransitionGroup.defaultProps = {
+  direction: 'left'
+};
+SlideTransitionGroup.propTypes = {
+  direction: DirectionPropType,
+  onTransitionEnd: _propTypes.default.func
+};
+var _default = SlideTransitionGroup;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/TimeInput.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/TimeInput.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _querySelectorAll = _interopRequireDefault(__webpack_require__(/*! dom-helpers/querySelectorAll */ "./node_modules/dom-helpers/esm/querySelectorAll.js"));
+
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _uncontrollable = __webpack_require__(/*! uncontrollable */ "./node_modules/uncontrollable/lib/esm/index.js");
+
+var _Button = _interopRequireDefault(__webpack_require__(/*! ./Button */ "./node_modules/react-widgets/cjs/Button.js"));
+
+var _DateTimePartInput = _interopRequireDefault(__webpack_require__(/*! ./DateTimePartInput */ "./node_modules/react-widgets/cjs/DateTimePartInput.js"));
+
+var _Icon = __webpack_require__(/*! ./Icon */ "./node_modules/react-widgets/cjs/Icon.js");
+
+var _Widget = _interopRequireDefault(__webpack_require__(/*! ./Widget */ "./node_modules/react-widgets/cjs/Widget.js"));
+
+var _dates = _interopRequireDefault(__webpack_require__(/*! ./dates */ "./node_modules/react-widgets/cjs/dates.js"));
+
+var _useFocusManager = _interopRequireDefault(__webpack_require__(/*! ./useFocusManager */ "./node_modules/react-widgets/cjs/useFocusManager.js"));
+
+const _excluded = ["value", "use12HourClock", "padValues", "emptyCharacter", "precision", "noClearButton", "hoursAddon", "minutesAddon", "secondsAddon", "millisecondsAddon", "className", "disabled", "readOnly", "datePart", "onChange", "onBlur", "onFocus"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const selectTextRange = el => {
+  if (el instanceof HTMLInputElement) return el.select();
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  const selection = window.getSelection();
+
+  if (selection) {
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+}; // prettier-ignore
+
+
+const isEmptyValue = (p, precision) => p.hours == null && p.minutes == null && (precision != 'seconds' && precision !== 'milliseconds' || p.seconds == null) && (precision !== 'milliseconds' || p.milliseconds == null); // prettier-ignore
+
+
+const isPartialValue = (p, precision) => p.hours == null || p.minutes == null || (precision === 'seconds' || precision === 'milliseconds') && p.seconds == null || precision === 'milliseconds' && p.milliseconds == null;
+
+const getValueParts = (value, use12HourClock) => {
+  let hours, minutes, seconds, milliseconds;
+  let meridiem = 'AM';
+
+  if (value) {
+    hours = value.getHours();
+
+    if (use12HourClock) {
+      meridiem = hours < 12 ? 'AM' : 'PM';
+      hours = hours % 12 || 12;
+    }
+
+    minutes = value.getMinutes();
+    seconds = value.getSeconds();
+    milliseconds = value.getMilliseconds();
+  }
+
+  return {
+    hours,
+    minutes,
+    seconds,
+    milliseconds,
+    meridiem
+  };
+};
+
+const TEST_VALID = {
+  hours: /^([1]?[0-9]|2[0-3])$/,
+  hours12: /^(1[0-2]|0?[1-9])$/,
+  minutes: /^([0-5]?\d)$/,
+  seconds: /^([0-5]?\d)$/,
+  milliseconds: /^(\d{1,3})$/
+};
+const TEST_COMPLETE = {
+  hours: /^([3-9]|\d{2})$/,
+  hours12: /^(\d{2}|[2-9])$/,
+  minutes: /^(d{2}|[6-9])$/,
+  seconds: /^(d{2}|[6-9])$/,
+  milliseconds: /^(\d{3})$/
+};
+
+function testPart(value, part, use12HourClock, tests) {
+  const key = part === 'hours' && use12HourClock ? 'hours12' : part;
+  return tests[key].test(value);
+}
+
+const isValid = (value, part, use12HourClock) => testPart(value, part, use12HourClock, TEST_VALID);
+
+const isComplete = (value, part, use12HourClock) => testPart(value, part, use12HourClock, TEST_COMPLETE);
+
+const propTypes = {
+  /**
+   * @example ['valuePicker', [ ['new Date()'] ]]
+   */
+  value: _propTypes.default.instanceOf(Date),
+
+  /**
+   * @example ['onChangePicker', [ ['new Date()'] ]]
+   */
+  onChange: _propTypes.default.func,
+
+  /**
+   * The default date used to construct a new time when the `value` is empty
+   *
+   * @default new Date()
+   **/
+  datePart: _propTypes.default.instanceOf(Date),
+
+  /**
+   * Use a 12 hour clock (with AM/PM) instead of 24 hour one.
+   * The configured localizer may provide a default value .
+   **/
+  use12HourClock: _propTypes.default.bool,
+
+  /** Time part values will be padded by `0` */
+  padValues: _propTypes.default.bool,
+
+  /** The string character used to pad empty, or cleared values */
+  emptyCharacter: _propTypes.default.string,
+
+  /** Hide the input clear button */
+  noClearButton: _propTypes.default.bool,
+
+  /**
+   * @example ['disabled', ['new Date()']]
+   */
+  disabled: _propTypes.default.bool,
+
+  /**
+   * @example ['readOnly', ['new Date()']]
+   */
+  readOnly: _propTypes.default.bool,
+
+  /** Controls how precise of a time can be input **/
+  precision: _propTypes.default.oneOf(['minutes', 'seconds', 'milliseconds']).isRequired,
+
+  /**
+   * The seperator between hours and minutes
+   * @default ':'
+   */
+  hoursAddon: _propTypes.default.node,
+
+  /**
+   * The seperator between hours and minutes
+   * @default ':'
+   */
+  minutesAddon: _propTypes.default.node,
+
+  /**
+   * The seperator between hours and minutes
+   * @default ':'
+   */
+  secondsAddon: _propTypes.default.node,
+
+  /**
+   * The seperator between hours and minutes
+   * @default '.'
+   */
+  millisecondsAddon: _propTypes.default.node
+};
+const defaultProps = {
+  hoursAddon: ':',
+  padValues: true,
+  precision: 'minutes',
+  emptyCharacter: '-'
+};
+
+// let count = 0
+function useTimePartState(value, use12HourClock) {
+  const [state, setState] = (0, _react.useState)(() => ({
+    value,
+    use12HourClock,
+    timeParts: getValueParts(value, use12HourClock)
+  }));
+  const setTimeParts = (0, _react.useCallback)(timeParts => setState(s => Object.assign({}, s, {
+    timeParts
+  })), [setState]);
+
+  if (state.value !== value || state.use12HourClock !== use12HourClock) {
+    // count++
+    // if (count < 100)
+    setState({
+      value,
+      use12HourClock,
+      timeParts: getValueParts(value, use12HourClock)
+    });
+  }
+
+  return [state.timeParts, setTimeParts];
+}
+
+function TimeInput(uncontrolledProps) {
+  const _useUncontrolled = (0, _uncontrollable.useUncontrolled)(uncontrolledProps, {
+    value: 'onChange'
+  }),
+        {
+    value,
+    use12HourClock,
+    padValues: pad,
+    emptyCharacter,
+    precision,
+    noClearButton,
+    hoursAddon,
+    minutesAddon,
+    secondsAddon,
+    millisecondsAddon,
+    className,
+    disabled,
+    readOnly,
+    datePart,
+    onChange,
+    onBlur,
+    onFocus
+  } = _useUncontrolled,
+        props = _objectWithoutPropertiesLoose(_useUncontrolled, _excluded);
+
+  let minsAddon = minutesAddon !== undefined ? minutesAddon : precision === 'seconds' || precision === 'milliseconds' ? ':' : '';
+  let secsAddon = secondsAddon !== undefined ? secondsAddon : precision === 'milliseconds' ? ':' : '';
+  const ref = (0, _react.useRef)(null);
+  const hourRef = (0, _react.useRef)(null);
+  const [focusEvents, focused] = (0, _useFocusManager.default)(ref, {
+    disabled,
+    onBlur,
+    onFocus
+  }, {
+    didHandle: (focused, e) => {
+      var _hourRef$current;
+
+      if (!focused) return;
+      if (!e.target.dataset.focusable) (_hourRef$current = hourRef.current) == null ? void 0 : _hourRef$current.focus();else select(e.target);
+    }
+  });
+  const [timeParts, setTimeParts] = useTimePartState(value != null ? value : null, use12HourClock != null ? use12HourClock : false);
+
+  function getDatePart() {
+    return _dates.default.startOf(datePart || new Date(), 'day');
+  }
+
+  const getMin = part => part === 'hours' ? 1 : 0;
+
+  const getMax = part => {
+    if (part === 'hours') return use12HourClock ? 12 : 23;
+    if (part === 'milliseconds') return 999;
+    return 59;
+  };
+
+  function select(target = document.activeElement) {
+    window.Promise.resolve().then(() => {
+      if (focused) selectTextRange(target);
+    });
+  }
+  /**
+   * Handlers
+   */
+
+
+  const handleClear = () => {
+    var _hourRef$current2;
+
+    (_hourRef$current2 = hourRef.current) == null ? void 0 : _hourRef$current2.focus();
+    if (value) onChange(null);else setTimeParts(getValueParts(null));
+  };
+
+  const handleChange = (part, event) => {
+    const currentValue = timeParts[part];
+    const {
+      target
+    } = event;
+    const rawValue = target.value;
+    let strValue = `${currentValue || ''}${rawValue}`;
+    let numValue = +strValue;
+
+    if (isNaN(numValue) || strValue && !isValid(strValue, part, use12HourClock != null ? use12HourClock : false)) {
+      // the combined value is now past the max or invalid so try the single
+      // digit and "start over" filling the value
+      if (isValid(rawValue, part, use12HourClock != null ? use12HourClock : false) && !isNaN(+rawValue)) {
+        // change the effective current value
+        strValue = rawValue;
+        numValue = +rawValue;
+      } else {
+        return event.preventDefault();
+      }
+    }
+
+    const nextValue = target.value ? numValue : null;
+    notifyChange({
+      [part]: nextValue
+    });
+
+    if (nextValue != null && isComplete(strValue, part, use12HourClock != null ? use12HourClock : false)) {
+      focusNext(event.currentTarget, +1);
+    } else {
+      select(target);
+    }
+  };
+
+  const handleSelect = ({
+    target
+  }) => {
+    select(target);
+  };
+
+  const handleKeyDown = (part, event) => {
+    const {
+      key
+    } = event;
+    const input = event.currentTarget;
+    const {
+      selectionStart: start,
+      selectionEnd: end
+    } = input;
+    const isRTL = getComputedStyle(input).getPropertyValue('direction') === 'rtl';
+    const isMeridiem = part === 'meridiem';
+    const isNext = key === (isRTL ? 'ArrowLeft' : 'ArrowRight');
+    const isPrev = key === (isRTL ? 'ArrowRight' : 'ArrowLeft');
+
+    if (key === 'ArrowUp') {
+      event.preventDefault();
+      increment(part, 1);
+    }
+
+    if (key === 'ArrowDown') {
+      event.preventDefault();
+      increment(part, -1);
+    }
+
+    if (isPrev && (isMeridiem || start - 1 < 0)) {
+      event.preventDefault();
+      focusNext(input, -1);
+    }
+
+    if (isNext && (isMeridiem || input.value.length <= end + 1)) {
+      event.preventDefault();
+      focusNext(input, +1);
+    }
+
+    if (readOnly && key !== 'Tab') {
+      event.preventDefault();
+    }
+
+    if (isMeridiem) {
+      if (key === 'a' || key === 'A') notifyChange({
+        meridiem: 'AM'
+      });
+      if (key === 'p' || key === 'P') notifyChange({
+        meridiem: 'PM'
+      });
+    }
+  };
+
+  const increment = (part, inc) => {
+    let nextPart = timeParts[part];
+
+    if (part === 'meridiem') {
+      nextPart = nextPart === 'AM' ? 'PM' : 'AM';
+    } else {
+      nextPart = (nextPart || 0) + inc;
+      if (!isValid(String(nextPart), part, use12HourClock != null ? use12HourClock : false)) return;
+    }
+
+    notifyChange({
+      [part]: nextPart
+    });
+    select();
+  };
+
+  function notifyChange(updates) {
+    const nextTimeParts = Object.assign({}, timeParts, updates);
+
+    if (value && isEmptyValue(nextTimeParts, precision)) {
+      return onChange(null);
+    }
+
+    if (isPartialValue(nextTimeParts, precision)) return setTimeParts(nextTimeParts);
+    let {
+      hours,
+      minutes,
+      seconds,
+      milliseconds,
+      meridiem
+    } = nextTimeParts;
+    let nextDate = new Date(value || getDatePart());
+
+    if (use12HourClock) {
+      if (hours === 12) hours = 0;
+      hours += meridiem === 'PM' ? 12 : 0;
+    }
+
+    nextDate.setHours(hours);
+    nextDate.setMinutes(minutes);
+    if (seconds != null) nextDate.setSeconds(seconds);
+    if (milliseconds != null) nextDate.setMilliseconds(milliseconds);
+    onChange(nextDate, {
+      lastValue: value,
+      timeParts
+    });
+  }
+
+  function focusNext(input, delta) {
+    let nodes = (0, _querySelectorAll.default)(ref.current, '* [data-focusable]');
+    let next = nodes[nodes.indexOf(input) + delta];
+    next == null ? void 0 : next.focus();
+    select(next);
+  }
+
+  const {
+    hours,
+    minutes,
+    seconds,
+    milliseconds,
+    meridiem
+  } = timeParts;
+  const showClear = !isEmptyValue(timeParts, precision);
+  return /*#__PURE__*/_react.default.createElement(_Widget.default, _extends({}, props, {
+    role: "group",
+    ref: ref
+  }, focusEvents, {
+    focused: focused,
+    disabled: disabled,
+    readOnly: readOnly,
+    className: (0, _classnames.default)(className, 'rw-time-input rw-widget-input')
+  }), /*#__PURE__*/_react.default.createElement(_DateTimePartInput.default, {
+    size: 2,
+    pad: pad ? 2 : undefined,
+    value: hours,
+    disabled: disabled,
+    readOnly: readOnly,
+    "aria-label": "hours",
+    min: getMin('hours'),
+    max: getMax('hours'),
+    ref: hourRef,
+    emptyChar: emptyCharacter,
+    onSelect: handleSelect,
+    onChange: e => handleChange('hours', e),
+    onKeyDown: e => handleKeyDown('hours', e)
+  }), hoursAddon && /*#__PURE__*/_react.default.createElement("span", null, hoursAddon), /*#__PURE__*/_react.default.createElement(_DateTimePartInput.default, {
+    size: 2,
+    pad: pad ? 2 : undefined,
+    value: minutes,
+    disabled: disabled,
+    readOnly: readOnly,
+    "aria-label": "minutes",
+    min: getMin('minutes'),
+    max: getMax('minutes'),
+    emptyChar: emptyCharacter,
+    onSelect: handleSelect,
+    onChange: e => handleChange('minutes', e),
+    onKeyDown: e => handleKeyDown('minutes', e)
+  }), minsAddon && /*#__PURE__*/_react.default.createElement("span", null, minsAddon), (precision === 'seconds' || precision === 'milliseconds') && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_DateTimePartInput.default, {
+    size: 2,
+    pad: pad ? 2 : undefined,
+    value: seconds,
+    disabled: disabled,
+    readOnly: readOnly,
+    "aria-label": "seconds",
+    min: getMin('seconds'),
+    max: getMax('seconds'),
+    emptyChar: emptyCharacter,
+    onSelect: handleSelect,
+    onChange: e => handleChange('seconds', e),
+    onKeyDown: e => handleKeyDown('seconds', e)
+  }), secsAddon && /*#__PURE__*/_react.default.createElement("span", null, secsAddon)), precision === 'milliseconds' && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_DateTimePartInput.default, {
+    size: 3,
+    pad: pad ? 3 : undefined,
+    value: milliseconds,
+    disabled: disabled,
+    readOnly: readOnly,
+    "aria-label": "milliseconds",
+    min: getMin('milliseconds'),
+    max: getMax('milliseconds'),
+    emptyChar: emptyCharacter,
+    onSelect: handleSelect,
+    onChange: e => handleChange('milliseconds', e),
+    onKeyDown: e => handleKeyDown('milliseconds', e)
+  }), millisecondsAddon && /*#__PURE__*/_react.default.createElement("span", null, millisecondsAddon)), use12HourClock && /*#__PURE__*/_react.default.createElement("div", {
+    role: "listbox",
+    "aria-label": "AM/PM",
+    "aria-disabled": disabled,
+    "aria-readonly": readOnly,
+    className: "rw-time-part-meridiem"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    "data-focusable": true,
+    role: "option",
+    "aria-atomic": true,
+    "aria-selected": true,
+    "aria-setsize": 2,
+    "aria-live": "assertive",
+    "aria-disabled": disabled,
+    "aria-readonly": readOnly,
+    "aria-posinset": meridiem === 'AM' ? 1 : 2,
+    tabIndex: !disabled ? 0 : void 0,
+    onFocus: handleSelect,
+    onSelect: handleSelect,
+    onKeyDown: e => handleKeyDown('meridiem', e)
+  }, /*#__PURE__*/_react.default.createElement("abbr", null, meridiem))), !noClearButton && /*#__PURE__*/_react.default.createElement(_Button.default, {
+    label: 'clear input',
+    onClick: handleClear,
+    disabled: disabled || readOnly,
+    className: (0, _classnames.default)('rw-time-input-clear', showClear && 'rw-show')
+  }, _Icon.times));
+}
+
+TimeInput.propTypes = propTypes;
+TimeInput.defaultProps = defaultProps;
+var _default = TimeInput;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Widget.js":
+/*!**************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Widget.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+exports.useWidgetProps = useWidgetProps;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _useGlobalListener = _interopRequireDefault(__webpack_require__(/*! @restart/hooks/useGlobalListener */ "./node_modules/@restart/hooks/esm/useGlobalListener.js"));
+
+const _excluded = ["className", "tabIndex", "focused", "open", "dropUp", "disabled", "readOnly", "autofilling"];
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function useKeyboardNavigationCheck() {
+  const [isNavigatingViaKeyboard, setIsNavigatingViaKeyboard] = (0, _react.useState)(false);
+  (0, _useGlobalListener.default)('keydown', ({
+    key
+  }) => {
+    if (key == ' ' || key === 'Tab' || key == 'Enter' || key && key.indexOf('Arrow') !== -1) {
+      setIsNavigatingViaKeyboard(true);
+    }
+  }); // TODO: use pointerdown
+
+  (0, _useGlobalListener.default)('mousedown', () => {
+    setIsNavigatingViaKeyboard(false);
+  });
+  return isNavigatingViaKeyboard;
+}
+
+function useWidgetProps(props) {
+  const tabIndex = props.tabIndex != null ? props.tabIndex : -1;
+  const isKeyboardNavigating = useKeyboardNavigationCheck();
+  return {
+    tabIndex: tabIndex,
+    'data-intent': isKeyboardNavigating ? 'keyboard' : 'mouse',
+    className: (0, _classnames.default)(props.className, 'rw-widget', props.disabled && 'rw-state-disabled', props.readOnly && 'rw-state-readonly', props.focused && 'rw-state-focus', props.autofilling && 'rw-webkit-autofill', props.open && `rw-open${props.dropUp ? '-up' : ''}`)
+  };
+}
+
+const Widget = /*#__PURE__*/_react.default.forwardRef((_ref, ref) => {
+  let {
+    className,
+    tabIndex,
+    focused,
+    open,
+    dropUp,
+    disabled,
+    readOnly,
+    autofilling
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  const widgetProps = useWidgetProps({
+    className,
+    tabIndex,
+    focused,
+    open,
+    dropUp,
+    disabled,
+    readOnly,
+    autofilling
+  });
+  return /*#__PURE__*/_react.default.createElement("div", _extends({
+    ref: ref
+  }, props, widgetProps));
+});
+
+Widget.displayName = 'Widget';
+var _default = Widget;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/WidgetHelpers.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/WidgetHelpers.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.notify = notify;
+exports.useFirstFocusedRender = useFirstFocusedRender;
+exports.useInstanceId = void 0;
+
+var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+let idCount = 0;
+
+function uniqueId(prefix) {
+  return '' + ((prefix == null ? '' : prefix) + ++idCount);
+}
+
+function notify(handler, args) {
+  // eslint-disable-next-line prefer-spread
+  if (handler) handler.apply(null, args);
+}
+
+const useInstanceId = (otherId, suffix = '') => {
+  const id = (0, _react.useRef)();
+  if (!id.current) id.current = uniqueId('rw_');
+  return (otherId || id.current) + suffix;
+};
+/**
+ * Allows for defering popup rendering untill the widget is focused,
+ * or has been opened (in order to not remove it suddenly on close)
+ */
+
+
+exports.useInstanceId = useInstanceId;
+
+function useFirstFocusedRender(focused, open) {
+  const ref = (0, _react.useRef)(false);
+  return ref.current || (focused || !!open) && (ref.current = true);
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/WidgetPicker.js":
+/*!********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/WidgetPicker.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _classnames = _interopRequireDefault(__webpack_require__(/*! classnames */ "./node_modules/classnames/index.js"));
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+const _excluded = ["className"];
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+function WidgetPicker(_ref) {
+  let {
+    className
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  return /*#__PURE__*/_react.default.createElement("div", _extends({}, props, {
+    className: (0, _classnames.default)(className, 'rw-widget-picker', 'rw-widget-container')
+  }));
+}
+
+var _default = WidgetPicker;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/Year.js":
+/*!************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/Year.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var _CalendarView = _interopRequireDefault(__webpack_require__(/*! ./CalendarView */ "./node_modules/react-widgets/cjs/CalendarView.js"));
+
+var _ = __webpack_require__(/*! ./_ */ "./node_modules/react-widgets/cjs/_.js");
+
+var _dates = _interopRequireDefault(__webpack_require__(/*! ./dates */ "./node_modules/react-widgets/cjs/dates.js"));
+
+const _excluded = ["focusedItem", "disabled", "onChange", "value", "min", "localizer", "max"];
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const months = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+function monthsInYear(year) {
+  let date = new Date(year, 0, 1);
+  return months.map(i => _dates.default.month(date, i));
+}
+
+function YearView(_ref) {
+  let {
+    focusedItem,
+    disabled,
+    onChange,
+    value,
+    min,
+    localizer,
+    max
+  } = _ref,
+      props = _objectWithoutPropertiesLoose(_ref, _excluded);
+
+  let months = monthsInYear(_dates.default.year(focusedItem));
+  return /*#__PURE__*/_react.default.createElement(_CalendarView.default, _extends({}, props, {
+    focusedItem: focusedItem
+  }), /*#__PURE__*/_react.default.createElement(_CalendarView.default.Body, null, (0, _.chunk)(months, 4).map((row, rowIdx) => /*#__PURE__*/_react.default.createElement(_CalendarView.default.Row, {
+    key: rowIdx
+  }, row.map((date, colIdx) => {
+    let label = localizer.formatDate(date, 'header');
+    return /*#__PURE__*/_react.default.createElement(_CalendarView.default.Cell, {
+      key: colIdx,
+      label: label,
+      date: date,
+      min: min,
+      max: max,
+      unit: "month",
+      viewUnit: "year",
+      onChange: onChange,
+      focusedItem: focusedItem,
+      selected: value,
+      disabled: disabled
+    }, localizer.formatDate(date, 'month'));
+  })))));
+}
+
+var _default = YearView;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/_.js":
+/*!*********************************************!*\
+  !*** ./node_modules/react-widgets/cjs/_.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.chunk = chunk;
+exports.groupBySortedKeys = groupBySortedKeys;
+exports.makeArray = exports.has = void 0;
+exports.toItemArray = toItemArray;
+
+var _tinyWarning = _interopRequireDefault(__webpack_require__(/*! tiny-warning */ "./node_modules/tiny-warning/dist/tiny-warning.esm.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+function toItemArray(a) {
+  if (Array.isArray(a)) return a;
+  return [];
+}
+
+const makeArray = (obj, excludeNull = true) => {
+  const result = [];
+  return excludeNull ? obj == null ? result : result.concat(obj) : result.concat(obj);
+};
+
+exports.makeArray = makeArray;
+
+const has = (o, key) => o ? Object.prototype.hasOwnProperty.call(o, key) : false;
+
+exports.has = has;
+
+function chunk(array, chunkSize) {
+  let index = 0;
+  let length = array ? array.length : 0;
+  let result = [];
+  chunkSize = Math.max(+chunkSize || 1, 1);
+
+  while (index < length) result.push(array.slice(index, index += chunkSize));
+
+  return result;
+}
+
+function groupBySortedKeys(groupBy, data, _keys = []) {
+  const iter = typeof groupBy === 'function' ? groupBy : item => item[groupBy];
+  (0, _tinyWarning.default)(typeof groupBy !== 'string' || !data.length || has(data[0], groupBy), `[React Widgets] You seem to be trying to group this list by a ` + `property \`${groupBy}\` that doesn't exist in the dataset items, this may be a typo`);
+  const groups = new Map();
+  data.forEach(item => {
+    let group = iter(item);
+    if (groups.has(group)) groups.get(group).push(item);else groups.set(group, [item]);
+  });
+  return Array.from(groups);
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/canShowCreate.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/canShowCreate.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = canShowCreate;
+
+function canShowCreate(allowCreate, {
+  searchTerm = '',
+  data,
+  dataItems,
+  accessors
+}) {
+  const eq = v => accessors.text(v).toLowerCase() === searchTerm.toLowerCase(); // if there is an exact match on textFields:
+  // "john" => { name: "john" }, don't show
+
+
+  const hasExtactMatch = () => dataItems && dataItems.some(eq) || data.some(eq);
+
+  return !!((allowCreate === true || allowCreate === 'onFilter' && searchTerm) && !hasExtactMatch());
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/dates.js":
+/*!*************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/dates.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.isNullOrInvalid = exports["default"] = void 0;
+
+var dateMath = _interopRequireWildcard(__webpack_require__(/*! date-arithmetic */ "./node_modules/date-arithmetic/index.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+let isNullOrInvalid = dte => dte == null || isNaN(+dte);
+
+exports.isNullOrInvalid = isNullOrInvalid;
+let dates = Object.assign({}, dateMath, {
+  merge(date, time, defaultDate) {
+    if (isNullOrInvalid(time) && isNullOrInvalid(date) == null) return null;
+    if (isNullOrInvalid(time)) time = defaultDate || new Date();
+    if (isNullOrInvalid(date)) date = defaultDate || new Date();
+    date = dates.startOf(date, 'day');
+    date = dates.hours(date, dates.hours(time));
+    date = dates.minutes(date, dates.minutes(time));
+    date = dates.seconds(date, dates.seconds(time));
+    return dates.milliseconds(date, dates.milliseconds(time));
+  }
+
+});
+var _default = dates;
+exports["default"] = _default;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/index.js":
+/*!*************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/index.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _Calendar = _interopRequireDefault(__webpack_require__(/*! ./Calendar */ "./node_modules/react-widgets/cjs/Calendar.js"));
+
+exports.Calendar = _Calendar.default;
+
+var _Combobox = _interopRequireDefault(__webpack_require__(/*! ./Combobox */ "./node_modules/react-widgets/cjs/Combobox.js"));
+
+exports.Combobox = _Combobox.default;
+
+var _DatePicker = _interopRequireDefault(__webpack_require__(/*! ./DatePicker */ "./node_modules/react-widgets/cjs/DatePicker.js"));
+
+exports.DatePicker = _DatePicker.default;
+exports.DateTimePicker = _DatePicker.default;
+
+var _DropdownList = _interopRequireDefault(__webpack_require__(/*! ./DropdownList */ "./node_modules/react-widgets/cjs/DropdownList.js"));
+
+exports.DropdownList = _DropdownList.default;
+
+var _Listbox = _interopRequireDefault(__webpack_require__(/*! ./Listbox */ "./node_modules/react-widgets/cjs/Listbox.js"));
+
+exports.Listbox = _Listbox.default;
+
+var _Localization = _interopRequireDefault(__webpack_require__(/*! ./Localization */ "./node_modules/react-widgets/cjs/Localization.js"));
+
+exports.Localization = _Localization.default;
+
+var _Multiselect = _interopRequireDefault(__webpack_require__(/*! ./Multiselect */ "./node_modules/react-widgets/cjs/Multiselect.js"));
+
+exports.Multiselect = _Multiselect.default;
+
+var _NumberPicker = _interopRequireDefault(__webpack_require__(/*! ./NumberPicker */ "./node_modules/react-widgets/cjs/NumberPicker.js"));
+
+exports.NumberPicker = _NumberPicker.default;
+
+var _SlideDownTransition = _interopRequireDefault(__webpack_require__(/*! ./SlideDownTransition */ "./node_modules/react-widgets/cjs/SlideDownTransition.js"));
+
+exports.SlideDownTransition = _SlideDownTransition.default;
+
+var _SlideTransitionGroup = _interopRequireDefault(__webpack_require__(/*! ./SlideTransitionGroup */ "./node_modules/react-widgets/cjs/SlideTransitionGroup.js"));
+
+exports.SlideTransitionGroup = _SlideTransitionGroup.default;
+
+var _TimeInput = _interopRequireDefault(__webpack_require__(/*! ./TimeInput */ "./node_modules/react-widgets/cjs/TimeInput.js"));
+
+exports.TimeInput = _TimeInput.default;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/messages.js":
+/*!****************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/messages.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports.getMessages = getMessages;
+exports.useMessagesWithDefaults = void 0;
+
+var React = _interopRequireWildcard(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+const messages = {
+  moveToday: 'Today',
+  moveBack: 'Navigate back',
+  moveForward: 'Navigate forward',
+  dateButton: 'Select date',
+  openCombobox: 'open combobox',
+  emptyList: 'There are no items in this list',
+  emptyFilter: 'The filter returned no results',
+  createOption: (_value, searchTerm) => [' Create option', searchTerm && ' ', searchTerm && /*#__PURE__*/React.createElement("strong", {
+    key: "_"
+  }, `"${searchTerm}"`)],
+  tagsLabel: 'Selected items',
+  removeLabel: 'Remove selected item',
+  noneSelected: 'no selected items',
+  selectedItems: labels => `Selected items: ${labels.join(', ')}`,
+  // number
+  increment: 'Increment value',
+  decrement: 'Decrement value'
+};
+const DEFAULTS = {};
+
+function getMessages(defaults = DEFAULTS) {
+  let processed = {};
+  Object.keys(messages).forEach(message => {
+    let value = defaults[message];
+    if (value == null) value = messages[message];
+    processed[message] = typeof value === 'function' ? value : () => value;
+  });
+  return processed;
+}
+
+const useMessagesWithDefaults = defaults => (0, React.useMemo)(() => getMessages(defaults), [defaults]);
+
+exports.useMessagesWithDefaults = useMessagesWithDefaults;
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/useAutoFocus.js":
+/*!********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/useAutoFocus.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = useAutoFocus;
+
+var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+function useAutoFocus(autoFocus, ref) {
+  (0, _react.useEffect)(() => {
+    if (autoFocus && ref.current) ref.current.focus(); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/useDropdownToggle.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/useDropdownToggle.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = useDropdownToggle;
+
+var _WidgetHelpers = __webpack_require__(/*! ./WidgetHelpers */ "./node_modules/react-widgets/cjs/WidgetHelpers.js");
+
+function useDropdownToggle(isOpen, onToggle) {
+  function open() {
+    if (!isOpen) (0, _WidgetHelpers.notify)(onToggle, [true]);
+  }
+
+  function close() {
+    if (isOpen) (0, _WidgetHelpers.notify)(onToggle, [false]);
+  }
+
+  function toggle() {
+    if (isOpen) close();else open();
+  }
+
+  toggle.open = open;
+  toggle.close = close;
+  return toggle;
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/useFocusManager.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/useFocusManager.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = useFocusManager;
+
+var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+var _useFocusManager = _interopRequireDefault(__webpack_require__(/*! @restart/hooks/useFocusManager */ "./node_modules/@restart/hooks/esm/useFocusManager.js"));
+
+var _useEventCallback = _interopRequireDefault(__webpack_require__(/*! @restart/hooks/useEventCallback */ "./node_modules/@restart/hooks/esm/useEventCallback.js"));
+
+var _useMounted = _interopRequireDefault(__webpack_require__(/*! @restart/hooks/useMounted */ "./node_modules/@restart/hooks/esm/useMounted.js"));
+
+var _matches = _interopRequireDefault(__webpack_require__(/*! dom-helpers/matches */ "./node_modules/dom-helpers/esm/matches.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const isInDisabledFieldset = node => {
+  return !!node && (0, _matches.default)(node, 'fieldset[disabled] *');
+};
+
+function useFocusManager(ref, props = {}, opts = {}) {
+  const isMounted = (0, _useMounted.default)();
+  const [focused, setFocus] = (0, _react.useState)(false);
+  const isDisabled = (0, _useEventCallback.default)(() => props.disabled === true || isInDisabledFieldset(ref.current));
+  const events = (0, _useFocusManager.default)(Object.assign({}, opts, {
+    isDisabled,
+    onChange: focused => {
+      if (isMounted()) setFocus(focused);
+    },
+
+    didHandle(focused, event) {
+      let handler = props[focused ? 'onFocus' : 'onBlur'];
+      if (handler) handler(event); // @ts-ignore used by work
+
+      if (opts.didHandle && !event.isWidgetDefaultPrevented) opts.didHandle(focused, event);
+    }
+
+  }));
+  return [events, focused, setFocus];
+}
+
+/***/ }),
+
+/***/ "./node_modules/react-widgets/cjs/useTabTrap.js":
+/*!******************************************************!*\
+  !*** ./node_modules/react-widgets/cjs/useTabTrap.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = useTabTrap;
+
+var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+var _useEventListener = _interopRequireDefault(__webpack_require__(/*! @restart/hooks/useEventListener */ "./node_modules/@restart/hooks/esm/useEventListener.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const defaultSelector = ['input', 'textarea', 'select', 'button:not([tabindex="-1"])', '[tabindex="0"]'].join(',');
+
+const getDocument = () => document;
+
+function useTabTrap(ref, selector = defaultSelector) {
+  const startedRef = (0, _react.useRef)(false);
+  (0, _useEventListener.default)(getDocument, 'keydown', event => {
+    if (!startedRef.current || !ref.current || event.key !== 'Tab') {
+      return;
+    }
+
+    const tabbables = ref.current.querySelectorAll(selector);
+
+    if (event.shiftKey && event.target === tabbables[0]) {
+      tabbables[tabbables.length - 1].focus();
+      event.preventDefault();
+    } else if (!event.shiftKey && event.target === tabbables[tabbables.length - 1] || !ref.current.contains(event.target)) {
+      tabbables[0].focus();
+      event.preventDefault();
+    }
+  });
+  return (0, _react.useMemo)(() => ({
+    focus() {
+      const tabbables = ref.current.querySelectorAll(selector);
+      const first = tabbables[0];
+      if (first) first.focus();
+    },
+
+    start() {
+      startedRef.current = true;
+    },
+
+    stop() {
+      startedRef.current = false;
+    }
+
+  }), [ref, selector]);
+}
+
+/***/ }),
+
 /***/ "./node_modules/react/cjs/react.development.js":
 /*!*****************************************************!*\
   !*** ./node_modules/react/cjs/react.development.js ***!
@@ -93257,6 +103341,36 @@ var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMP
 
 /***/ }),
 
+/***/ "./node_modules/react-widgets/styles.css":
+/*!***********************************************!*\
+  !*** ./node_modules/react-widgets/styles.css ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _css_loader_dist_cjs_js_ruleSet_1_rules_7_oneOf_1_use_1_postcss_loader_dist_cjs_js_ruleSet_1_rules_7_oneOf_1_use_2_styles_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../css-loader/dist/cjs.js??ruleSet[1].rules[7].oneOf[1].use[1]!../postcss-loader/dist/cjs.js??ruleSet[1].rules[7].oneOf[1].use[2]!./styles.css */ "./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[7].oneOf[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[7].oneOf[1].use[2]!./node_modules/react-widgets/styles.css");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_ruleSet_1_rules_7_oneOf_1_use_1_postcss_loader_dist_cjs_js_ruleSet_1_rules_7_oneOf_1_use_2_styles_css__WEBPACK_IMPORTED_MODULE_1__["default"], options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_ruleSet_1_rules_7_oneOf_1_use_1_postcss_loader_dist_cjs_js_ruleSet_1_rules_7_oneOf_1_use_2_styles_css__WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js":
 /*!****************************************************************************!*\
   !*** ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js ***!
@@ -93533,6 +103647,401 @@ module.exports = function (list, options) {
     lastIdentifiers = newLastIdentifiers;
   };
 };
+
+/***/ }),
+
+/***/ "./node_modules/tiny-warning/dist/tiny-warning.esm.js":
+/*!************************************************************!*\
+  !*** ./node_modules/tiny-warning/dist/tiny-warning.esm.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+var isProduction = "development" === 'production';
+function warning(condition, message) {
+  if (!isProduction) {
+    if (condition) {
+      return;
+    }
+
+    var text = "Warning: " + message;
+
+    if (typeof console !== 'undefined') {
+      console.warn(text);
+    }
+
+    try {
+      throw Error(text);
+    } catch (x) {}
+  }
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (warning);
+
+
+/***/ }),
+
+/***/ "./node_modules/uncontrollable/lib/esm/hook.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/uncontrollable/lib/esm/hook.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ useUncontrolled),
+/* harmony export */   "useUncontrolledProp": () => (/* binding */ useUncontrolledProp)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/esm/extends */ "./node_modules/@babel/runtime/helpers/esm/extends.js");
+/* harmony import */ var _babel_runtime_helpers_esm_objectWithoutPropertiesLoose__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/esm/objectWithoutPropertiesLoose */ "./node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ "./node_modules/uncontrollable/lib/esm/utils.js");
+
+
+
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return typeof key === "symbol" ? key : String(key); }
+
+function _toPrimitive(input, hint) { if (typeof input !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (typeof res !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+
+
+
+
+function useUncontrolledProp(propValue, defaultValue, handler) {
+  var wasPropRef = (0,react__WEBPACK_IMPORTED_MODULE_2__.useRef)(propValue !== undefined);
+
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(defaultValue),
+      stateValue = _useState[0],
+      setState = _useState[1];
+
+  var isProp = propValue !== undefined;
+  var wasProp = wasPropRef.current;
+  wasPropRef.current = isProp;
+  /**
+   * If a prop switches from controlled to Uncontrolled
+   * reset its value to the defaultValue
+   */
+
+  if (!isProp && wasProp && stateValue !== defaultValue) {
+    setState(defaultValue);
+  }
+
+  return [isProp ? propValue : stateValue, (0,react__WEBPACK_IMPORTED_MODULE_2__.useCallback)(function (value) {
+    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    if (handler) handler.apply(void 0, [value].concat(args));
+    setState(value);
+  }, [handler])];
+}
+
+
+function useUncontrolled(props, config) {
+  return Object.keys(config).reduce(function (result, fieldName) {
+    var _extends2;
+
+    var _ref = result,
+        defaultValue = _ref[_utils__WEBPACK_IMPORTED_MODULE_3__.defaultKey(fieldName)],
+        propsValue = _ref[fieldName],
+        rest = (0,_babel_runtime_helpers_esm_objectWithoutPropertiesLoose__WEBPACK_IMPORTED_MODULE_1__["default"])(_ref, [_utils__WEBPACK_IMPORTED_MODULE_3__.defaultKey(fieldName), fieldName].map(_toPropertyKey));
+
+    var handlerName = config[fieldName];
+
+    var _useUncontrolledProp = useUncontrolledProp(propsValue, defaultValue, props[handlerName]),
+        value = _useUncontrolledProp[0],
+        handler = _useUncontrolledProp[1];
+
+    return (0,_babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, rest, (_extends2 = {}, _extends2[fieldName] = value, _extends2[handlerName] = handler, _extends2));
+  }, props);
+}
+
+/***/ }),
+
+/***/ "./node_modules/uncontrollable/lib/esm/index.js":
+/*!******************************************************!*\
+  !*** ./node_modules/uncontrollable/lib/esm/index.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "uncontrollable": () => (/* reexport safe */ _uncontrollable__WEBPACK_IMPORTED_MODULE_1__["default"]),
+/* harmony export */   "useUncontrolled": () => (/* reexport safe */ _hook__WEBPACK_IMPORTED_MODULE_0__["default"]),
+/* harmony export */   "useUncontrolledProp": () => (/* reexport safe */ _hook__WEBPACK_IMPORTED_MODULE_0__.useUncontrolledProp)
+/* harmony export */ });
+/* harmony import */ var _hook__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./hook */ "./node_modules/uncontrollable/lib/esm/hook.js");
+/* harmony import */ var _uncontrollable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./uncontrollable */ "./node_modules/uncontrollable/lib/esm/uncontrollable.js");
+
+
+
+/***/ }),
+
+/***/ "./node_modules/uncontrollable/lib/esm/uncontrollable.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/uncontrollable/lib/esm/uncontrollable.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ uncontrollable)
+/* harmony export */ });
+/* harmony import */ var _babel_runtime_helpers_esm_objectWithoutPropertiesLoose__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/esm/objectWithoutPropertiesLoose */ "./node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js");
+/* harmony import */ var _babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/esm/extends */ "./node_modules/@babel/runtime/helpers/esm/extends.js");
+/* harmony import */ var _babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/esm/inheritsLoose */ "./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react_lifecycles_compat__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-lifecycles-compat */ "./node_modules/react-lifecycles-compat/react-lifecycles-compat.es.js");
+/* harmony import */ var invariant__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! invariant */ "./node_modules/invariant/browser.js");
+/* harmony import */ var invariant__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(invariant__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils */ "./node_modules/uncontrollable/lib/esm/utils.js");
+
+
+
+var _jsxFileName = "/Users/jquense/src/uncontrollable/src/uncontrollable.js";
+
+
+
+
+function uncontrollable(Component, controlledValues, methods) {
+  if (methods === void 0) {
+    methods = [];
+  }
+
+  var displayName = Component.displayName || Component.name || 'Component';
+  var canAcceptRef = _utils__WEBPACK_IMPORTED_MODULE_6__.canAcceptRef(Component);
+  var controlledProps = Object.keys(controlledValues);
+  var PROPS_TO_OMIT = controlledProps.map(_utils__WEBPACK_IMPORTED_MODULE_6__.defaultKey);
+  !(canAcceptRef || !methods.length) ?  true ? invariant__WEBPACK_IMPORTED_MODULE_5___default()(false, '[uncontrollable] stateless function components cannot pass through methods ' + 'because they have no associated instances. Check component: ' + displayName + ', ' + 'attempting to pass through methods: ' + methods.join(', ')) : 0 : void 0;
+
+  var UncontrolledComponent =
+  /*#__PURE__*/
+  function (_React$Component) {
+    (0,_babel_runtime_helpers_esm_inheritsLoose__WEBPACK_IMPORTED_MODULE_2__["default"])(UncontrolledComponent, _React$Component);
+
+    function UncontrolledComponent() {
+      var _this;
+
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      _this = _React$Component.call.apply(_React$Component, [this].concat(args)) || this;
+      _this.handlers = Object.create(null);
+      controlledProps.forEach(function (propName) {
+        var handlerName = controlledValues[propName];
+
+        var handleChange = function handleChange(value) {
+          if (_this.props[handlerName]) {
+            var _this$props;
+
+            _this._notifying = true;
+
+            for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+              args[_key2 - 1] = arguments[_key2];
+            }
+
+            (_this$props = _this.props)[handlerName].apply(_this$props, [value].concat(args));
+
+            _this._notifying = false;
+          }
+
+          if (!_this.unmounted) _this.setState(function (_ref) {
+            var _extends2;
+
+            var values = _ref.values;
+            return {
+              values: (0,_babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_1__["default"])(Object.create(null), values, (_extends2 = {}, _extends2[propName] = value, _extends2))
+            };
+          });
+        };
+
+        _this.handlers[handlerName] = handleChange;
+      });
+      if (methods.length) _this.attachRef = function (ref) {
+        _this.inner = ref;
+      };
+      var values = Object.create(null);
+      controlledProps.forEach(function (key) {
+        values[key] = _this.props[_utils__WEBPACK_IMPORTED_MODULE_6__.defaultKey(key)];
+      });
+      _this.state = {
+        values: values,
+        prevProps: {}
+      };
+      return _this;
+    }
+
+    var _proto = UncontrolledComponent.prototype;
+
+    _proto.shouldComponentUpdate = function shouldComponentUpdate() {
+      //let setState trigger the update
+      return !this._notifying;
+    };
+
+    UncontrolledComponent.getDerivedStateFromProps = function getDerivedStateFromProps(props, _ref2) {
+      var values = _ref2.values,
+          prevProps = _ref2.prevProps;
+      var nextState = {
+        values: (0,_babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_1__["default"])(Object.create(null), values),
+        prevProps: {}
+      };
+      controlledProps.forEach(function (key) {
+        /**
+         * If a prop switches from controlled to Uncontrolled
+         * reset its value to the defaultValue
+         */
+        nextState.prevProps[key] = props[key];
+
+        if (!_utils__WEBPACK_IMPORTED_MODULE_6__.isProp(props, key) && _utils__WEBPACK_IMPORTED_MODULE_6__.isProp(prevProps, key)) {
+          nextState.values[key] = props[_utils__WEBPACK_IMPORTED_MODULE_6__.defaultKey(key)];
+        }
+      });
+      return nextState;
+    };
+
+    _proto.componentWillUnmount = function componentWillUnmount() {
+      this.unmounted = true;
+    };
+
+    _proto.render = function render() {
+      var _this2 = this;
+
+      var _this$props2 = this.props,
+          innerRef = _this$props2.innerRef,
+          props = (0,_babel_runtime_helpers_esm_objectWithoutPropertiesLoose__WEBPACK_IMPORTED_MODULE_0__["default"])(_this$props2, ["innerRef"]);
+
+      PROPS_TO_OMIT.forEach(function (prop) {
+        delete props[prop];
+      });
+      var newProps = {};
+      controlledProps.forEach(function (propName) {
+        var propValue = _this2.props[propName];
+        newProps[propName] = propValue !== undefined ? propValue : _this2.state.values[propName];
+      });
+      return react__WEBPACK_IMPORTED_MODULE_3__.createElement(Component, (0,_babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_1__["default"])({}, props, newProps, this.handlers, {
+        ref: innerRef || this.attachRef
+      }));
+    };
+
+    return UncontrolledComponent;
+  }(react__WEBPACK_IMPORTED_MODULE_3__.Component);
+
+  (0,react_lifecycles_compat__WEBPACK_IMPORTED_MODULE_4__.polyfill)(UncontrolledComponent);
+  UncontrolledComponent.displayName = "Uncontrolled(" + displayName + ")";
+  UncontrolledComponent.propTypes = (0,_babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_1__["default"])({
+    innerRef: function innerRef() {}
+  }, _utils__WEBPACK_IMPORTED_MODULE_6__.uncontrolledPropTypes(controlledValues, displayName));
+  methods.forEach(function (method) {
+    UncontrolledComponent.prototype[method] = function $proxiedMethod() {
+      var _this$inner;
+
+      return (_this$inner = this.inner)[method].apply(_this$inner, arguments);
+    };
+  });
+  var WrappedComponent = UncontrolledComponent;
+
+  if (react__WEBPACK_IMPORTED_MODULE_3__.forwardRef) {
+    WrappedComponent = react__WEBPACK_IMPORTED_MODULE_3__.forwardRef(function (props, ref) {
+      return react__WEBPACK_IMPORTED_MODULE_3__.createElement(UncontrolledComponent, (0,_babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_1__["default"])({}, props, {
+        innerRef: ref,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 128
+        },
+        __self: this
+      }));
+    });
+    WrappedComponent.propTypes = UncontrolledComponent.propTypes;
+  }
+
+  WrappedComponent.ControlledComponent = Component;
+  /**
+   * useful when wrapping a Component and you want to control
+   * everything
+   */
+
+  WrappedComponent.deferControlTo = function (newComponent, additions, nextMethods) {
+    if (additions === void 0) {
+      additions = {};
+    }
+
+    return uncontrollable(newComponent, (0,_babel_runtime_helpers_esm_extends__WEBPACK_IMPORTED_MODULE_1__["default"])({}, controlledValues, additions), nextMethods);
+  };
+
+  return WrappedComponent;
+}
+
+/***/ }),
+
+/***/ "./node_modules/uncontrollable/lib/esm/utils.js":
+/*!******************************************************!*\
+  !*** ./node_modules/uncontrollable/lib/esm/utils.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "canAcceptRef": () => (/* binding */ canAcceptRef),
+/* harmony export */   "defaultKey": () => (/* binding */ defaultKey),
+/* harmony export */   "isProp": () => (/* binding */ isProp),
+/* harmony export */   "uncontrolledPropTypes": () => (/* binding */ uncontrolledPropTypes)
+/* harmony export */ });
+/* harmony import */ var invariant__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! invariant */ "./node_modules/invariant/browser.js");
+/* harmony import */ var invariant__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(invariant__WEBPACK_IMPORTED_MODULE_0__);
+
+
+var noop = function noop() {};
+
+function readOnlyPropType(handler, name) {
+  return function (props, propName) {
+    if (props[propName] !== undefined) {
+      if (!props[handler]) {
+        return new Error("You have provided a `" + propName + "` prop to `" + name + "` " + ("without an `" + handler + "` handler prop. This will render a read-only field. ") + ("If the field should be mutable use `" + defaultKey(propName) + "`. ") + ("Otherwise, set `" + handler + "`."));
+      }
+    }
+  };
+}
+
+function uncontrolledPropTypes(controlledValues, displayName) {
+  var propTypes = {};
+  Object.keys(controlledValues).forEach(function (prop) {
+    // add default propTypes for folks that use runtime checks
+    propTypes[defaultKey(prop)] = noop;
+
+    if (true) {
+      var handler = controlledValues[prop];
+      !(typeof handler === 'string' && handler.trim().length) ?  true ? invariant__WEBPACK_IMPORTED_MODULE_0___default()(false, 'Uncontrollable - [%s]: the prop `%s` needs a valid handler key name in order to make it uncontrollable', displayName, prop) : 0 : void 0;
+      propTypes[prop] = readOnlyPropType(handler, displayName);
+    }
+  });
+  return propTypes;
+}
+function isProp(props, prop) {
+  return props[prop] !== undefined;
+}
+function defaultKey(key) {
+  return 'default' + key.charAt(0).toUpperCase() + key.substr(1);
+}
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+function canAcceptRef(component) {
+  return !!component && (typeof component !== 'function' || component.prototype && component.prototype.isReactComponent);
+}
 
 /***/ }),
 
@@ -98046,6 +108555,37 @@ if (false) {} else {
 
 /***/ }),
 
+/***/ "./node_modules/@babel/runtime/helpers/esm/extends.js":
+/*!************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/esm/extends.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ _extends)
+/* harmony export */ });
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+/***/ }),
+
 /***/ "./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js":
 /*!******************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js ***!
@@ -98063,6 +108603,34 @@ function _inheritsLoose(subClass, superClass) {
   subClass.prototype = Object.create(superClass.prototype);
   subClass.prototype.constructor = subClass;
   (0,_setPrototypeOf_js__WEBPACK_IMPORTED_MODULE_0__["default"])(subClass, superClass);
+}
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js":
+/*!*********************************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ _objectWithoutPropertiesLoose)
+/* harmony export */ });
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
 }
 
 /***/ }),
@@ -98086,6 +108654,105 @@ function _setPrototypeOf(o, p) {
 
   return _setPrototypeOf(o, p);
 }
+
+/***/ }),
+
+/***/ "./node_modules/dequal/dist/index.mjs":
+/*!********************************************!*\
+  !*** ./node_modules/dequal/dist/index.mjs ***!
+  \********************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "dequal": () => (/* binding */ dequal)
+/* harmony export */ });
+var has = Object.prototype.hasOwnProperty;
+
+function find(iter, tar, key) {
+	for (key of iter.keys()) {
+		if (dequal(key, tar)) return key;
+	}
+}
+
+function dequal(foo, bar) {
+	var ctor, len, tmp;
+	if (foo === bar) return true;
+
+	if (foo && bar && (ctor=foo.constructor) === bar.constructor) {
+		if (ctor === Date) return foo.getTime() === bar.getTime();
+		if (ctor === RegExp) return foo.toString() === bar.toString();
+
+		if (ctor === Array) {
+			if ((len=foo.length) === bar.length) {
+				while (len-- && dequal(foo[len], bar[len]));
+			}
+			return len === -1;
+		}
+
+		if (ctor === Set) {
+			if (foo.size !== bar.size) {
+				return false;
+			}
+			for (len of foo) {
+				tmp = len;
+				if (tmp && typeof tmp === 'object') {
+					tmp = find(bar, tmp);
+					if (!tmp) return false;
+				}
+				if (!bar.has(tmp)) return false;
+			}
+			return true;
+		}
+
+		if (ctor === Map) {
+			if (foo.size !== bar.size) {
+				return false;
+			}
+			for (len of foo) {
+				tmp = len[0];
+				if (tmp && typeof tmp === 'object') {
+					tmp = find(bar, tmp);
+					if (!tmp) return false;
+				}
+				if (!dequal(len[1], bar.get(tmp))) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		if (ctor === ArrayBuffer) {
+			foo = new Uint8Array(foo);
+			bar = new Uint8Array(bar);
+		} else if (ctor === DataView) {
+			if ((len=foo.byteLength) === bar.byteLength) {
+				while (len-- && foo.getInt8(len) === bar.getInt8(len));
+			}
+			return len === -1;
+		}
+
+		if (ArrayBuffer.isView(foo)) {
+			if ((len=foo.byteLength) === bar.byteLength) {
+				while (len-- && foo[len] === bar[len]);
+			}
+			return len === -1;
+		}
+
+		if (!ctor || typeof foo === 'object') {
+			len = 0;
+			for (ctor in foo) {
+				if (has.call(foo, ctor) && ++len && !has.call(bar, ctor)) return false;
+				if (!(ctor in bar) || !dequal(foo[ctor], bar[ctor])) return false;
+			}
+			return Object.keys(bar).length === len;
+		}
+	}
+
+	return foo !== foo && bar !== bar;
+}
+
 
 /***/ }),
 

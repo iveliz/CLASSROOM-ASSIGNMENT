@@ -15,4 +15,9 @@
   border-style: solid;
   border-color: #cccccc;
   box-sizing: border-box;
+  width: 8rem;
+  height: 2.5rem;
+}
+.rw-number-picker ,rw-widget,rw-widget-input ,rw-input{
+  width: 4.5rem;
 }
