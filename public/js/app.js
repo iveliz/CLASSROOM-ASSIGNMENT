@@ -15060,6 +15060,16 @@ var grupo = [{
   label: '3',
   value: '3'
 }];
+var tiporeserva = [{
+  label: 'Examen',
+  value: 'Examen'
+}, {
+  label: 'Clases',
+  value: 'Clases'
+}, {
+  label: 'Laboratorio',
+  value: 'Laboratorio'
+}];
 var materias = [{
   label: 'Introduccion a la Programación',
   value: 'Introduccion a la Programación'
@@ -15125,7 +15135,7 @@ function default_1() {
   }))), react_1["default"].createElement(SolicitarCard_1["default"], null, react_1["default"].createElement("h1", {
     className: "text-center"
   }, "Solicitar Aula"), react_1["default"].createElement("div", {
-    className: 'flex flex-col space-y-4'
+    className: "flex flex-col space-y-4"
   }, react_1["default"].createElement("div", null, react_1["default"].createElement("p", {
     className: "text-left"
   }, "Nombre(s) Docente(s)"), react_1["default"].createElement(react_select_1["default"], {
@@ -15156,9 +15166,9 @@ function default_1() {
   })), react_1["default"].createElement("div", {
     className: "grid grid-flow-col auto-cols-max"
   }, react_1["default"].createElement("div", {
-    className: 'mr-8'
+    className: "mr-8"
   }, react_1["default"].createElement("p", null, "Fecha Inicio"), react_1["default"].createElement(Calendar_1["default"], null)), react_1["default"].createElement("div", {
-    className: 'mr-8'
+    className: "mr-8"
   }, react_1["default"].createElement("p", null, "Hora de inicio"), react_1["default"].createElement(react_select_1["default"], {
     options: horarios,
     placeholder: "06:45",
@@ -15172,6 +15182,16 @@ function default_1() {
   })), react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Periodos"), react_1["default"].createElement(cjs_1.NumberPicker, {
     defaultValue: 1,
     min: 1
+  }))), react_1["default"].createElement("div", null, react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Tipo de Reserva"), react_1["default"].createElement(react_select_1["default"], {
+    options: tiporeserva,
+    placeholder: "Reserva",
+    isSearchable: false,
+    noOptionsMessage: function noOptionsMessage() {
+      return 'No hay opciones disponibles';
+    },
+    onChange: function onChange(opt) {
+      return console.log(opt.label, opt.value);
+    }
   })))))));
 }
 
