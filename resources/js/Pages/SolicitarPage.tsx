@@ -5,8 +5,7 @@ import AppLayout from '@/Layouts/AppLayoutTeacher';
 import SolicitarCard from '@/Jetstream/SolicitarCard';
 import Select from 'react-select';
 import Calendar from '@/Jetstream/Calendar';
-import JetInput from '@/Jetstream/Input';
-import JetLabel from '@/Jetstream/Label';
+import JetButton from '@/Jetstream/Button';
 import { NumberPicker } from 'react-widgets/cjs';
 import 'react-widgets/styles.css';
 const grupo = [
@@ -66,7 +65,7 @@ export default function () {
         </div>
         <SolicitarCard>
           <h1 className="text-center">Solicitar Aula</h1>
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-4 content-center">
             <div>
               <p className="text-left">Nombre(s) Docente(s)</p>
               <Select
@@ -133,8 +132,10 @@ export default function () {
                 <p>Cantidad de estudiantes</p>
                   <input className="label-cant" type="text"></input>
               </div>
-
             </div>
+      
+               <button type="button" className='btn text-white colorPrimary '>Solicitar</button>
+           
           </div>
         </SolicitarCard>
       </AppLayout>

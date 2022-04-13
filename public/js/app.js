@@ -13594,7 +13594,7 @@ function JetAuthenticationCard(_a) {
   return react_1["default"].createElement("div", {
     className: "min-h-screen flex flex-col sm:justify-center items-center bg-gray-100"
   }, react_1["default"].createElement("div", null), react_1["default"].createElement("div", {
-    className: "w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg"
+    className: "w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md  sm:rounded-lg"
   }, children));
 }
 
@@ -15140,7 +15140,7 @@ function default_1() {
   }))), react_1["default"].createElement(SolicitarCard_1["default"], null, react_1["default"].createElement("h1", {
     className: "text-center"
   }, "Solicitar Aula"), react_1["default"].createElement("div", {
-    className: "flex flex-col space-y-4"
+    className: "flex flex-col space-y-4 content-center"
   }, react_1["default"].createElement("div", null, react_1["default"].createElement("p", {
     className: "text-left"
   }, "Nombre(s) Docente(s)"), react_1["default"].createElement(react_select_1["default"], {
@@ -15204,7 +15204,10 @@ function default_1() {
   })), react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Cantidad de estudiantes"), react_1["default"].createElement("input", {
     className: "label-cant",
     type: "text"
-  })))))));
+  }))), react_1["default"].createElement("button", {
+    type: "button",
+    className: 'btn text-white colorPrimary '
+  }, "Solicitar")))));
 }
 
 exports["default"] = default_1;
