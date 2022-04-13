@@ -12800,7 +12800,7 @@ function JetAuthenticationCard(_a) {
   return react_1["default"].createElement("div", {
     className: "min-h-screen flex flex-col sm:justify-center items-center bg-gray-100"
   }, react_1["default"].createElement("div", null), react_1["default"].createElement("div", {
-    className: "w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg"
+    className: "w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md  sm:rounded-lg"
   }, children));
 }
 
@@ -14244,6 +14244,8 @@ Object.defineProperty(exports, "__esModule", ({
 
 var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
+var inertia_react_1 = __webpack_require__(/*! @inertiajs/inertia-react */ "./node_modules/@inertiajs/inertia-react/dist/index.js");
+
 var AppLayoutTeacher_1 = __importDefault(__webpack_require__(/*! @/Layouts/AppLayoutTeacher */ "./resources/js/Layouts/AppLayoutTeacher.tsx"));
 
 var SolicitarCard_1 = __importDefault(__webpack_require__(/*! @/Jetstream/SolicitarCard */ "./resources/js/Jetstream/SolicitarCard.tsx"));
@@ -14252,21 +14254,55 @@ var react_select_1 = __importDefault(__webpack_require__(/*! react-select */ "./
 
 var Calendar_1 = __importDefault(__webpack_require__(/*! @/Jetstream/Calendar */ "./resources/js/Jetstream/Calendar.tsx"));
 
+var cjs_1 = __webpack_require__(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-widgets/cjs'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+
+__webpack_require__(Object(function webpackMissingModule() { var e = new Error("Cannot find module 'react-widgets/styles.css'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+
+var grupo = [{
+  label: '1',
+  value: '1'
+}, {
+  label: '2',
+  value: '2'
+}, {
+  label: '3',
+  value: '3'
+}];
+var tiporeserva = [{
+  label: 'Examen',
+  value: 'Examen'
+}, {
+  label: 'Clases',
+  value: 'Clases'
+}, {
+  label: 'Laboratorio',
+  value: 'Laboratorio'
+}];
+var materias = [{
+  label: 'Introduccion a la Programación',
+  value: 'Introduccion a la Programación'
+}, {
+  label: 'Elementos de la Programación',
+  value: 'Elementos de la Programación'
+}, {
+  label: 'Programacion web',
+  value: 'Programacion web'
+}];
 var docentes = [{
   label: 'Leticia Blanco',
   value: 'Leticia Blanco'
 }, {
   label: 'Vladimir Costa',
-  value: 'Leticia Blanco'
+  value: 'Vladimir Costa'
 }, {
   label: 'Rosemary Torrico',
-  value: 'Leticia Blanco'
+  value: 'Rosemary Torrico'
 }, {
   label: 'Boris Calancha',
-  value: 'Leticia Blanco'
+  value: 'Boris Calancha'
 }, {
   label: 'Marcelo Flores',
-  value: 'Leticia Blanco'
+  value: 'Marcelo Flores'
 }];
 var horarios = [{
   label: '06:45',
@@ -14298,6 +14334,9 @@ var horarios = [{
 }];
 
 function default_1() {
+  var form = (0, inertia_react_1.useForm)({
+    numEstudiantes: ''
+  });
   return react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement(AppLayoutTeacher_1["default"], {
     title: "Informacion"
   }, react_1["default"].createElement("div", null, react_1["default"].createElement("div", {
@@ -14306,23 +14345,75 @@ function default_1() {
     className: "bg-white overflow-hidden shadow-xl sm:rounded-lg"
   }))), react_1["default"].createElement(SolicitarCard_1["default"], null, react_1["default"].createElement("h1", {
     className: "text-center"
-  }, "Solicitar Aula"), react_1["default"].createElement("div", null, react_1["default"].createElement("p", {
+  }, "Solicitar Aula"), react_1["default"].createElement("div", {
+    className: "flex flex-col space-y-4 content-center"
+  }, react_1["default"].createElement("div", null, react_1["default"].createElement("p", {
     className: "text-left"
   }, "Nombre(s) Docente(s)"), react_1["default"].createElement(react_select_1["default"], {
     options: docentes,
     isMulti: true,
+    noOptionsMessage: function noOptionsMessage() {
+      return 'No hay opciones disponibles';
+    },
     placeholder: "Selecciona o Busca Docentes"
+  })), react_1["default"].createElement("div", null, react_1["default"].createElement("p", {
+    className: "text-left"
+  }, "Materias"), react_1["default"].createElement(react_select_1["default"], {
+    options: materias,
+    noOptionsMessage: function noOptionsMessage() {
+      return 'No hay opciones disponibles';
+    },
+    placeholder: "Materia"
+  })), react_1["default"].createElement("div", null, react_1["default"].createElement("p", {
+    className: "text-left"
+  }, "Grupo(s)"), react_1["default"].createElement(react_select_1["default"], {
+    options: grupo,
+    isSearchable: false,
+    isMulti: true,
+    noOptionsMessage: function noOptionsMessage() {
+      return 'No hay opciones disponibles';
+    },
+    placeholder: "Grupo"
   })), react_1["default"].createElement("div", {
     className: "grid grid-flow-col auto-cols-max"
   }, react_1["default"].createElement("div", {
-    className: 'mr-3'
-  }, react_1["default"].createElement("p", null, "Fecha Inicio"), react_1["default"].createElement(Calendar_1["default"], null)), react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Hora de inicio"), react_1["default"].createElement(react_select_1["default"], {
+    className: "mr-8"
+  }, react_1["default"].createElement("p", null, "Fecha Inicio"), react_1["default"].createElement(Calendar_1["default"], null)), react_1["default"].createElement("div", {
+    className: "mr-8"
+  }, react_1["default"].createElement("p", null, "Hora de inicio"), react_1["default"].createElement(react_select_1["default"], {
     options: horarios,
     placeholder: "06:45",
+    isSearchable: false,
+    noOptionsMessage: function noOptionsMessage() {
+      return 'No hay opciones disponibles';
+    },
     onChange: function onChange(opt) {
       return console.log(opt.label, opt.value);
     }
-  }))))));
+  })), react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Periodos"), react_1["default"].createElement(cjs_1.NumberPicker, {
+    defaultValue: 1,
+    min: 1
+  }))), react_1["default"].createElement("div", {
+    className: "grid grid-flow-col auto-cols-max"
+  }, react_1["default"].createElement("div", {
+    className: 'mr-14'
+  }, react_1["default"].createElement("p", null, "Tipo de Reserva"), react_1["default"].createElement(react_select_1["default"], {
+    options: tiporeserva,
+    placeholder: "Reserva",
+    isSearchable: false,
+    noOptionsMessage: function noOptionsMessage() {
+      return 'No hay opciones disponibles';
+    },
+    onChange: function onChange(opt) {
+      return console.log(opt.label, opt.value);
+    }
+  })), react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Cantidad de estudiantes"), react_1["default"].createElement("input", {
+    className: "label-cant",
+    type: "text"
+  }))), react_1["default"].createElement("button", {
+    type: "button",
+    className: 'btn text-white colorPrimary '
+  }, "Solicitar")))));
 }
 
 exports["default"] = default_1;
