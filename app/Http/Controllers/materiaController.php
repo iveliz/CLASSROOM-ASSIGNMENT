@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\MateriaDocente;
+use App\Models\DocenteMateria;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 
@@ -49,7 +49,7 @@ class materiaController extends Controller
     public function show($idDocentes)
     {
     return Inertia::render('solicitar', [
-        'materiasIdDocente' => docente_materias:: find(idDocentes)->id_materia,//$comments = Post::find(1)->comments;
+        'materiasIdDocente' => DocenteMateria:: find($idDocentes)->id_materia,//$comments = Post::find(1)->comments;
     ]);
     }
              

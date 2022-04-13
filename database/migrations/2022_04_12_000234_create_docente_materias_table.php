@@ -19,6 +19,7 @@ class CreateDocenteMateriasTable extends Migration
             $table->bigInteger('id_materia')->nullable()->index('FK_PERTENECE_A');
             $table->timestamp('created_at')->nullable();
             $table->timestamp('update_at')->nullable();
+            $table->foreign('id_usuario')->reference('id')->on ('users')->onDelete('set null');
         });
     }
 
