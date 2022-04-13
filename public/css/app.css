@@ -867,11 +867,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   list-style-position: inside;
 }.list-disc{
   list-style-type: disc;
-}.auto-cols-max{
-  grid-auto-columns: -webkit-max-content;
-  grid-auto-columns: max-content;
-}.grid-flow-col{
-  grid-auto-flow: column;
 }.grid-cols-6{
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }.grid-cols-1{
