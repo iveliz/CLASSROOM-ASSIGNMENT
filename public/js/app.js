@@ -15038,6 +15038,8 @@ Object.defineProperty(exports, "__esModule", ({
 
 var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
+var inertia_react_1 = __webpack_require__(/*! @inertiajs/inertia-react */ "./node_modules/@inertiajs/inertia-react/dist/index.js");
+
 var AppLayoutTeacher_1 = __importDefault(__webpack_require__(/*! @/Layouts/AppLayoutTeacher */ "./resources/js/Layouts/AppLayoutTeacher.tsx"));
 
 var SolicitarCard_1 = __importDefault(__webpack_require__(/*! @/Jetstream/SolicitarCard */ "./resources/js/Jetstream/SolicitarCard.tsx"));
@@ -15126,6 +15128,9 @@ var horarios = [{
 }];
 
 function default_1() {
+  var form = (0, inertia_react_1.useForm)({
+    numEstudiantes: ''
+  });
   return react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement(AppLayoutTeacher_1["default"], {
     title: "Informacion"
   }, react_1["default"].createElement("div", null, react_1["default"].createElement("div", {
@@ -15182,7 +15187,11 @@ function default_1() {
   })), react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Periodos"), react_1["default"].createElement(cjs_1.NumberPicker, {
     defaultValue: 1,
     min: 1
-  }))), react_1["default"].createElement("div", null, react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Tipo de Reserva"), react_1["default"].createElement(react_select_1["default"], {
+  }))), react_1["default"].createElement("div", {
+    className: "grid grid-flow-col auto-cols-max"
+  }, react_1["default"].createElement("div", {
+    className: 'mr-14'
+  }, react_1["default"].createElement("p", null, "Tipo de Reserva"), react_1["default"].createElement(react_select_1["default"], {
     options: tiporeserva,
     placeholder: "Reserva",
     isSearchable: false,
@@ -15192,6 +15201,9 @@ function default_1() {
     onChange: function onChange(opt) {
       return console.log(opt.label, opt.value);
     }
+  })), react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Cantidad de estudiantes"), react_1["default"].createElement("input", {
+    className: "label-cant",
+    type: "text"
   })))))));
 }
 

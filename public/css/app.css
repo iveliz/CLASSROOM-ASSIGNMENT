@@ -757,12 +757,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-bottom: 1rem;
 }.-mt-px{
   margin-top: -1px;
-}.mr-5{
-  margin-right: 1.25rem;
-}.mr-6{
-  margin-right: 1.5rem;
 }.mr-8{
   margin-right: 2rem;
+}.mr-14{
+  margin-right: 3.5rem;
 }.block{
   display: block;
 }.inline-block{
@@ -10614,9 +10612,17 @@ select {
   border-color: #cccccc;
   box-sizing: border-box;
   width: 8rem;
-  height: 2.5rem;
+  height: 2.4rem;
 }.rw-number-picker ,rw-widget,rw-widget-input ,rw-input{
   width: 4.5rem;
+}.label-cant{
+  border-width: 1;
+  border-radius: 0.25rem;
+  border-style: solid;
+  border-color: #cccccc;
+  box-sizing: border-box;
+  height: 2.4rem;
+  width: 10rem;
 }.hover\:border-gray-300:hover{
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity));

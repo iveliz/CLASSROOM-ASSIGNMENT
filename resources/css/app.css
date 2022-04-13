@@ -16,8 +16,17 @@
   border-color: #cccccc;
   box-sizing: border-box;
   width: 8rem;
-  height: 2.5rem;
+  height: 2.4rem;
 }
 .rw-number-picker ,rw-widget,rw-widget-input ,rw-input{
   width: 4.5rem;
+}
+.label-cant{
+  border-width: 1;
+  border-radius: 0.25rem;
+  border-style: solid;
+  border-color: #cccccc;
+  box-sizing: border-box;
+  height: 2.4rem;
+  width: 10rem;
 }

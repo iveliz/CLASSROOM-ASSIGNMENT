@@ -1,9 +1,12 @@
 import React from 'react';
 import Welcome from '@/Jetstream/Welcome';
+import { InertiaLink, useForm, Head } from '@inertiajs/inertia-react';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
 import SolicitarCard from '@/Jetstream/SolicitarCard';
 import Select from 'react-select';
 import Calendar from '@/Jetstream/Calendar';
+import JetInput from '@/Jetstream/Input';
+import JetLabel from '@/Jetstream/Label';
 import { NumberPicker } from 'react-widgets/cjs';
 import 'react-widgets/styles.css';
 const grupo = [
@@ -50,6 +53,9 @@ const horarios = [
 ];
 
 export default function () {
+  const form = useForm({
+    numEstudiantes: '',
+  });
   return (
     <>
       <AppLayout title="Informacion">
@@ -110,10 +116,10 @@ export default function () {
                 <NumberPicker defaultValue={1} min={1}></NumberPicker>
               </div>
             </div>
-            <div>
-              <div>
-              <p>Tipo de Reserva</p>
-              <Select
+            <div  className="grid grid-flow-col auto-cols-max">
+              <div className='mr-14'>
+                <p>Tipo de Reserva</p>
+                <Select
                   options={tiporeserva}
                   placeholder="Reserva"
                   isSearchable={false}
@@ -122,6 +128,10 @@ export default function () {
                     console.log(opt.label, opt.value)
                   }
                 ></Select>
+              </div>
+              <div>
+                <p>Cantidad de estudiantes</p>
+                  <input className="label-cant" type="text"></input>
               </div>
 
             </div>
