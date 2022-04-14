@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUsuariosTable extends Migration
+class CreateReservasTable extends Migration
 {
   /**
    * Run the migrations.
@@ -13,13 +13,15 @@ class CreateUsuariosTable extends Migration
    */
   public function up()
   {
-    Schema::create('usuarios', function (Blueprint $table) {
-      $table->bigIncrements('id_usuario');
-      $table->string('nombre_usuario', 250);
-      $table->string('email_usuario', 250);
-      $table->string('contrasenia_usuario', 250);
-      $table->string('token_recordado_usuario', 250)->nullable();
-      $table->char('rol_usuario', 20);
+    Schema::create('reservas', function (Blueprint $table) {
+      $table->id('id_reserva');
+      $table
+        ->foreignid('id_reg_sct')
+        ->nullOnDelete()
+        ->constrained('registro_solicitudes');
+      $table->time('hora_inicio_reserva');
+      $table->time('hora_fin_reserva');
+      $table->date('fecha_reserva');
       $table->timestamp('created_at')->nullable();
       $table->timestamp('update_at')->nullable();
     });
@@ -32,6 +34,6 @@ class CreateUsuariosTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('usuarios');
+    Schema::dropIfExists('reservas');
   }
 }
