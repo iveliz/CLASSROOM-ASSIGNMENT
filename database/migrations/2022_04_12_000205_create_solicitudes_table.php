@@ -15,7 +15,7 @@ class CreateSolicitudesTable extends Migration
   {
     Schema::create('solicitudes', function (Blueprint $table) {
       $table->bigIncrements('id_solicitud');
-      $table->usignedBigInteger('id_usuario')->nullable();
+      $table->unsignedBigInteger('id_usuario')->nullable();
       $table
         ->foreign('id_usuario')
         ->references('id')
