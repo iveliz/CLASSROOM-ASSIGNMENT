@@ -19,11 +19,11 @@ class CreateRegistroCuentasTable extends Migration
         ->foreignid('id')
         ->nullOnDelete()
         ->constrained('users');
-      $table->unsignedBigInteger('id_sct_cnt');
+      $table->unsignedBigInteger('id_sct_cnt')->nullable();
       $table
         ->foreign('id_sct_cnt')
         ->references('id_sct_cnt')
-        ->on('solicitud_cuentas');
+        ->on('solicitud_cuentas')->onDelete('set null');
       $table->date('fecha_reg_cnt');
       $table->string('estado_reg_cnt', 250);
       $table->date('fecha_creacion_reg_cnt');

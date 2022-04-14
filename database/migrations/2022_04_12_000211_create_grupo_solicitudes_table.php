@@ -15,11 +15,11 @@ class CreateGrupoSolicitudesTable extends Migration
   {
     Schema::create('grupo_solicitudes', function (Blueprint $table) {
       $table->bigIncrements('id_grupo_sct');
-      $table->unsignedBigInteger('id_solicitud');
+      $table->unsignedBigInteger('id_solicitud')->nullable();
       $table
         ->foreign('id_solicitud')
         ->references('id_solicitud')
-        ->on('solicitudes');
+        ->on('solicitudes')->onDelete('set null');
       $table->string('codigo_grupo_sct', 10);
     });
   }
