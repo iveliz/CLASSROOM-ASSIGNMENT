@@ -6,27 +6,31 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateGruposTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('grupos', function (Blueprint $table) {
-            $table->bigIncrements('id_grupo');
-            $table->bigInteger('id_materia')->nullable()->index('FK_TIENE_GRUPOS');
-            $table->string('codigo_grupo', 10);
-        });
-    }
+  /**
+   * Run the migrations.
+   *
+   * @return void
+   */
+  public function up()
+  {
+    Schema::create('grupos', function (Blueprint $table) {
+      $table->bigIncrements('id_grupo');
+      $table->unsignedBigInteger('id_materia');
+      $table
+        ->foreign('id_materia')
+        ->references('id_materia')
+        ->on('materias');
+      $table->string('codigo_grupo', 10);
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('grupos');
-    }
+  /**
+   * Reverse the migrations.
+   *
+   * @return void
+   */
+  public function down()
+  {
+    Schema::dropIfExists('grupos');
+  }
 }

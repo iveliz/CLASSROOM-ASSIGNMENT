@@ -6,29 +6,37 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateAulasReservadasTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('aulas_reservadas', function (Blueprint $table) {
-            $table->bigIncrements('id_aula_res');
-            $table->bigInteger('id_reserva')->nullable()->index('FK_PUEDE_TENER');
-            $table->bigInteger('id_aula')->nullable()->index('FK_ES_PARTE_DE');
-            $table->timestamp('created_at')->nullable();
-            $table->timestamp('update_at')->nullable();
-        });
-    }
+  /**
+   * Run the migrations.
+   *
+   * @return void
+   */
+  public function up()
+  {
+    Schema::create('aulas_reservadas', function (Blueprint $table) {
+      $table->bigIncrements('id_aula_res');
+      $table->unsignedbigInteger('id_reserva')->nullable();
+      $table->unsignedbigInteger('id_aula')->nullable();
+      $table->timestamp('created_at')->nullable();
+      $table->timestamp('update_at')->nullable();
+      $table
+        ->foreign('id_reserva')
+        ->references('id_reserva')
+        ->on('reservas');
+      $table
+        ->foreign('id_aula')
+        ->references('id_aula')
+        ->on('aulas');
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('aulas_reservadas');
-    }
+  /**
+   * Reverse the migrations.
+   *
+   * @return void
+   */
+  public function down()
+  {
+    Schema::dropIfExists('aulas_reservadas');
+  }
 }

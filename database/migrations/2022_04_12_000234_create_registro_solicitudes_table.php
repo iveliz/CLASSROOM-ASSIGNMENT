@@ -6,32 +6,38 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateRegistroSolicitudesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('registro_solicitudes', function (Blueprint $table) {
-            $table->bigIncrements('id_reg_sct');
-            $table->bigInteger('id_solicitud')->nullable()->index('FK_ESTA_EN_UN');
-            $table->bigInteger('id_usuario')->nullable()->index('FK_ADMIN_MODIFICA');
-            $table->date('fecha_inicio_reg_sct');
-            $table->date('fecha_modificiacion_reg_sct');
-            $table->string('estado_solicitud_reg_sct', 250);
-            $table->timestamp('created_at')->nullable();
-            $table->timestamp('update_at')->nullable();
-        });
-    }
+  /**
+   * Run the migrations.
+   *
+   * @return void
+   */
+  public function up()
+  {
+    Schema::create('registro_solicitudes', function (Blueprint $table) {
+      $table->id('id_reg_sct');
+      $table
+        ->foreignid('id_solicitud')
+        ->nullOnDelete()
+        ->constrained('solicitudes');
+      $table
+        ->foreignid('id')
+        ->nullOnDelete()
+        ->constrained('users');
+      $table->date('fecha_inicio_reg_sct');
+      $table->date('fecha_modificiacion_reg_sct');
+      $table->string('estado_solicitud_reg_sct', 250);
+      $table->timestamp('created_at')->nullable();
+      $table->timestamp('update_at')->nullable();
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('registro_solicitudes');
-    }
+  /**
+   * Reverse the migrations.
+   *
+   * @return void
+   */
+  public function down()
+  {
+    Schema::dropIfExists('registro_solicitudes');
+  }
 }
