@@ -17,11 +17,6 @@ class CreateSolicitudCuentasTable extends Migration
       $table->id('id_sct_cnt');
       $table->string('nombre_sct_cnt', 250);
       $table->string('correo_sct_cnt', 250);
-      $table->unsignedBigInteger('id_mat_sct');
-      $table
-        ->foreign('id_mat_sct')
-        ->references('id_mat_sct')
-        ->on('materia_solicitadas');
       $table->timestamp('created_at')->nullable();
       $table->timestamp('update_at')->nullable();
     });
