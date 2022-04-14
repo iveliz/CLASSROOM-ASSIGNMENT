@@ -15,11 +15,10 @@ class CreateDocenteMateriasTable extends Migration
     {
         Schema::create('docente_materias', function (Blueprint $table) {
             $table->bigIncrements('id_doc_mat');
-            $table->bigInteger('id_usuario')->nullable()->index('FK_UN_DOCENTE');
             $table->bigInteger('id_materia')->nullable()->index('FK_PERTENECE_A');
             $table->timestamp('created_at')->nullable();
             $table->timestamp('update_at')->nullable();
-            $table->foreign('id_usuario')->reference('id')->on ('users')->onDelete('set null');
+            $table->foreign('id')->on('users')->onDelete('set null');
         });
     }
 
