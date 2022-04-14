@@ -15,14 +15,16 @@ class CreateRegistroSolicitudesTable extends Migration
   {
     Schema::create('registro_solicitudes', function (Blueprint $table) {
       $table->id('id_reg_sct');
+      $table->unsignedBigInteger('id_solicitud');
       $table
-        ->foreignid('id_solicitud')
-        ->nullOnDelete()
-        ->constrained('solicitudes');
+        ->foreign('id_solicitud')
+        ->references('id_solicitud')
+        ->on('solicitudes');
+      $table->unsignedBigInteger('id_usuario')->nullable();
       $table
-        ->foreignid('id')
-        ->nullOnDelete()
-        ->constrained('users');
+        ->foreign('id_usuario')
+        ->references('id')
+        ->on('users');
       $table->date('fecha_inicio_reg_sct');
       $table->date('fecha_modificiacion_reg_sct');
       $table->string('estado_solicitud_reg_sct', 250);

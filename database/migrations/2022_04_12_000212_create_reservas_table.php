@@ -15,10 +15,11 @@ class CreateReservasTable extends Migration
   {
     Schema::create('reservas', function (Blueprint $table) {
       $table->id('id_reserva');
+      $table->unsingnedBigInteger('id_reg_sct')->nullable();
       $table
-        ->foreignid('id_reg_sct')
-        ->nullOnDelete()
-        ->constrained('registro_solicitudes');
+        ->foreign('id_reg_sct')
+        ->references('id_reg_sct')
+        ->on('registro_solicitudes');
       $table->time('hora_inicio_reserva');
       $table->time('hora_fin_reserva');
       $table->date('fecha_reserva');
