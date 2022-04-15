@@ -22,11 +22,11 @@ class CreateAulasReservadasTable extends Migration
       $table
         ->foreign('id_reserva')
         ->references('id_reserva')
-        ->on('reservas');
+        ->on('reservas')->onDelete('set null');
       $table
         ->foreign('id_aula')
         ->references('id_aula')
-        ->on('aulas');
+        ->on('aulas')->onDelete('set null');
     });
   }
 

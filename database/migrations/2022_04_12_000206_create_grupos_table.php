@@ -15,11 +15,11 @@ class CreateGruposTable extends Migration
   {
     Schema::create('grupos', function (Blueprint $table) {
       $table->bigIncrements('id_grupo');
-      $table->unsignedBigInteger('id_materia');
+      $table->unsignedBigInteger('id_materia')->nullable();
       $table
         ->foreign('id_materia')
         ->references('id_materia')
-        ->on('materias');
+        ->on('materias')->onDelete('set null');
       $table->string('codigo_grupo', 10);
     });
   }

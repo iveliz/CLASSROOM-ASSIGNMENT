@@ -15,10 +15,11 @@ class CreateSolicitudesTable extends Migration
   {
     Schema::create('solicitudes', function (Blueprint $table) {
       $table->bigIncrements('id_solicitud');
+      $table->unsignedBigInteger('id_usuario')->nullable();
       $table
-        ->foreignid('id')
-        ->nullOnDelete()
-        ->constrained('users');
+        ->foreign('id_usuario')
+        ->references('id')
+        ->on('users');
       $table->string('materia_solicitud', 250);
       $table->integer('cantidad_estudiantes_solicitud');
       $table->string('motivo_reserva_solicitud', 250);

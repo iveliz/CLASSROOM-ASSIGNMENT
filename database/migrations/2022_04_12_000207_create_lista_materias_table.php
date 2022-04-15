@@ -15,16 +15,16 @@ class CreateListaMateriasTable extends Migration
   {
     Schema::create('lista_materias', function (Blueprint $table) {
       $table->id('id_lista_mat');
-      $table->unsignedBigInteger('id_materia');
+      $table->unsignedBigInteger('id_materia')->nullable();
       $table
         ->foreign('id_materia')
         ->references('id_materia')
-        ->on('materias');
-      $table->unsignedBigInteger('id_carrera');
+        ->on('materias')->onDelete('set null');
+      $table->unsignedBigInteger('id_carrera')->nullable();
       $table
         ->foreign('id_carrera')
         ->references('id_carrera')
-        ->on('carreras');
+        ->on('carreras')->onDelete('set null');
       $table->timestamp('created_at')->nullable();
       $table->timestamp('update_at')->nullable();
     });

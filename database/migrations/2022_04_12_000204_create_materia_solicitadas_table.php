@@ -15,11 +15,11 @@ class CreateMateriaSolicitadasTable extends Migration
   {
     Schema::create('materia_solicitadas', function (Blueprint $table) {
       $table->bigIncrements('id_mat_sct');
-      $table->unsignedBigInteger('id_sct_cnt');
+      $table->unsignedBigInteger('id_sct_cnt')->nullable();
       $table
         ->foreign('id_sct_cnt')
         ->references('id_sct_cnt')
-        ->on('solicitud_cuentas');
+        ->on('solicitud_cuentas')->onDelete('set null');
       $table->bigInteger('id_materia_solicitada');
       $table->bigInteger('id_grupo_solicitado');
     });
