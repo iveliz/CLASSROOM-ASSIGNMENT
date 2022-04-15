@@ -18,7 +18,7 @@ class CreateGruposTable extends Migration
       $table->unsignedBigInteger('id_materia')->nullable();
       $table
         ->foreign('id_materia')
-        ->references('id_materia')
+        ->references('id')
         ->on('materias')->onDelete('set null');
       $table->string('codigo_grupo', 10);
     });

@@ -3,7 +3,7 @@ import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
 import Sidebar from '@/Jetstream/Sidebar';
 
-export default function () {
+export default function (props:{materiasIdDocente:any;}) {
   return (
     <AppLayout title="Informacion">
       <div className='grid grid-cols-6 gap-4'>
