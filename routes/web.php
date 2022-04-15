@@ -47,3 +47,7 @@ Route::middleware([
         return Inertia::render('SolicitudesPage');
     })->name('solicitudes');
 });
+
+route::get('/prueba', 'App\Http\Controllers\GrupoController@prueba');
+route::get('/grupoDe/{id}', 'App\Http\Controllers\GrupoController@grupoDe');
+route::get('/grupoMateria/{materia}', 'App\Http\Controllers\GrupoController@grupoMateria');
