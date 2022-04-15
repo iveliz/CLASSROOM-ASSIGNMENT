@@ -19,10 +19,9 @@ class materiaController extends Controller
     {
         $ids= array(1,2);
       
-        $MateriaPorId = DocenteMateria::join("materias","'id_materia'","=","id_materia")
-        ->whereIn('id_usuario',$ids)
-        ->selectRaw("id_materia,count(*)as cuantos")
-        ->groupBY("id_materia")
+        $MateriaPorId = DocenteMateria::join("materias","id_materia","=","id_materia")
+        ->whereIn('docente_materias.id_usuario',$ids)
+        ->select('materias.nombre_materia','docente_materias.id_usuario')
         ->get();
         
         return Inertia::render('Materias', [
