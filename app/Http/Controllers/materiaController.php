@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DocenteMateria;
+use App\Models\Materia;
 use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
@@ -17,17 +18,31 @@ class materiaController extends Controller
      */
     public function index()
     {
-        $ids= array(1,2);
+        $ids= array(4,2);
+        $tamaño=count($ids);
       
-        $MateriaPorId = DocenteMateria::join("materias","id_materia","=","id_materia")
-        ->whereIn('docente_materias.id_usuario',$ids)
-        ->select('materias.nombre_materia','docente_materias.id_usuario')
+        $MateriaPorId = DocenteMateria::join("materias","id_materia","=","id")
+        ->whereIn('id_usuario',$ids)
+        ->groupBY("id_materia")
+        ->selectRaw("id_materia,count(*)as cuantos")
         ->get();
-        
+
+        $materiasComun=array();
+        foreach( $MateriaPorId as  $cuantasMaterias){
+              $cuanto= $cuantasMaterias->cuantos; 
+              if($cuanto==$tamaño){
+                $idMat= $cuantasMaterias->id_materia;
+                array_push($materiasComun,  $idMat);
+              }      
+        }
+               $MateriaPorIdComun =Materia::  
+                select('materias.nombre_materia')
+                ->whereIn('id',$materiasComun)
+                ->get();
         return Inertia::render('Materias', [
-            'materiasIdDocente' => $MateriaPorId
+        'materiasIdDocente' => $MateriaPorIdComun
         ]);
-       
+       //fun
     }
 
     /**
