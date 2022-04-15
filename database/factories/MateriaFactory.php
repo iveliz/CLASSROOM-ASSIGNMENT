@@ -14,7 +14,6 @@ class MateriaFactory extends Factory
     public function definition()
     {
         return [
-            'nombre_materia'=>$this->faker->randomElement(["intro","elementos","tis"])
             
         ];
     }

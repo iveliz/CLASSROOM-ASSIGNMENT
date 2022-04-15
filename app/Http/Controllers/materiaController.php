@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DocenteMateria;
+use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 
@@ -16,7 +17,18 @@ class materiaController extends Controller
      */
     public function index()
     {
-       //
+        $ids= array(1,2);
+      
+        $MateriaPorId = DocenteMateria::join("materias","'id_materia'","=","id_materia")
+        ->whereIn('id_usuario',$ids)
+        ->selectRaw("id_materia,count(*)as cuantos")
+        ->groupBY("id_materia")
+        ->get();
+        
+        return Inertia::render('Materias', [
+            'materiasIdDocente' => $MateriaPorId
+        ]);
+       
     }
 
     /**
@@ -48,9 +60,7 @@ class materiaController extends Controller
      */
     public function show($idDocentes)
     {
-    return Inertia::render('solicitar', [
-        'materiasIdDocente' => DocenteMateria:: find($idDocentes)->id_materia,//$comments = Post::find(1)->comments;
-    ]);
+    
     }
              
     

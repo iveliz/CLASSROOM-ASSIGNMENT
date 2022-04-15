@@ -3,7 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
+use App\Http\Controllers\materiaController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -47,3 +47,7 @@ Route::middleware([
         return Inertia::render('SolicitudesPage');
     })->name('solicitudes');
 });
+
+
+Route::resource('materias',materiaController::class)
+->middleware(['auth:sanctum','verified']);
