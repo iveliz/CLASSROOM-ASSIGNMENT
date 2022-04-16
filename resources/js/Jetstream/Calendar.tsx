@@ -6,7 +6,7 @@ import { registerLocale, setDefaultLocale } from 'react-datepicker';
 import es from 'date-fns/locale/es';
 import { addDays, subDays } from 'date-fns';
 registerLocale('es', es);
-export default function () {
+export default function (props:({funcion}:any)) {
   var hoy = new Date();
   var day1 = new Date('01/07/1970');
   var difference = Math.abs(hoy.getTime() - day1.getTime());
