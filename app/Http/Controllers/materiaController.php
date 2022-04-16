@@ -18,31 +18,30 @@ class materiaController extends Controller
      */
     public function index()
     {
-        $ids= array(4,2);
-        $tamaño=count($ids);
-      
-        $MateriaPorId = DocenteMateria::join("materias","id_materia","=","id")
-        ->whereIn('id_usuario',$ids)
-        ->groupBY("id_materia")
-        ->selectRaw("id_materia,count(*)as cuantos")
-        ->get();
+        $ids = array(1, 2);
+        $tamaño = count($ids);
 
-        $materiasComun=array();
-        foreach( $MateriaPorId as  $cuantasMaterias){
-              $cuanto= $cuantasMaterias->cuantos; 
-              if($cuanto==$tamaño){
-                $idMat= $cuantasMaterias->id_materia;
+        $MateriaPorId = DocenteMateria::join("materias", "materias.id_materia", "=", "docente_materias.id_materia")
+            ->whereIn('docente_materias.id_usuario', $ids)
+            ->groupBY("materias.id_materia")
+            ->selectRaw("materias.id_materia,count(*)as cuantos")
+            ->get();
+
+        $materiasComun = array();
+        foreach ($MateriaPorId as  $cuantasMaterias) {
+            $cuanto = $cuantasMaterias->cuantos;
+            if ($cuanto == $tamaño) {
+                $idMat = $cuantasMaterias->id_materia;
                 array_push($materiasComun,  $idMat);
-              }      
+            }
         }
-               $MateriaPorIdComun =Materia::  
-                select('materias.nombre_materia')
-                ->whereIn('id',$materiasComun)
-                ->get();
+        $MateriaPorIdComun = Materia::select('materias.nombre_materia')
+            ->whereIn('id_materia', $materiasComun)
+            ->get();
         return Inertia::render('Materias', [
-        'materiasIdDocente' => $MateriaPorIdComun
+            'materiasIdDocente' => $MateriaPorIdComun
         ]);
-       //fun
+        //fun
     }
 
     /**
@@ -74,10 +73,9 @@ class materiaController extends Controller
      */
     public function show($idDocentes)
     {
-    
     }
-             
-    
+
+
 
     /**
      * Show the form for editing the specified resource.
