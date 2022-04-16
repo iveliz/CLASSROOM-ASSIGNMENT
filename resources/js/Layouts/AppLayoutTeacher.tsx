@@ -87,12 +87,7 @@ export default function AppLayout({
                     Solicitudes
                   </JetNavLink>
 
-                  <JetNavLink
-                    href={route('materias.index')}
-                    active={route().current('materias.index')}
-                  >
-                    materias
-                  </JetNavLink>
+
 
                 </div>
 

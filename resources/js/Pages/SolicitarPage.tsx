@@ -15,7 +15,8 @@ import { InertiaLink } from '@inertiajs/inertia-react';
 import { useForm } from 'react-hook-form';
 import {forEach, forIn} from "lodash";
 import {Inertia} from "@inertiajs/inertia";
-
+import useRoute from '@/Hooks/useRoute';
+const route = useRoute();
 const grupo = [
     {label: '1', value: '1'},
     {label: '2', value: '2'},
@@ -62,23 +63,21 @@ const horarios = [
     {label: '20:15', value: '20:15'},
 ];
 
-export default function () {
-    const [selectedOptions, setSelectedDocentes] = useState([]);
+export default function (props:{materiasIdDocente:any;}) {
+    const [selectedOptions, setSelectedDocentes] = useState<any[]>([]);
     const [selecteMateria, setSelectedMateria] = useState();
 
     const handleChangeDocentes = (docentes : []) => {
         setSelectedDocentes(docentes);
-        getDocentes(docentes);
         console.log(docentes);
+       
     };
-    const handleChangeMateria = (materia : any) => {
+    const  handleChangeMateria = (materia : any) => {
         setSelectedMateria(materia);
         console.log(materia);
+
     };
 
-    function getDocentes(docentes:[]){
-        return docentes;
-    }
 
     return (
         <>
@@ -95,8 +94,10 @@ export default function () {
                         <div className="flex flex-col space-y-4 content-center">
                             <div>
                                 <p className="text-left">Nombre(s) Docente(s)</p>
-                              <InertiaLink href="" >
-                                  <Select
+                              <InertiaLink href={route("materias.show",selectedOptions)} >
+                        a
+                              </InertiaLink>
+                              <Select
                                       options={docentes}
                                       isMulti
                                       selectOption
@@ -104,8 +105,6 @@ export default function () {
                                       noOptionsMessage={() => 'No hay opciones disponibles'}
                                       placeholder="Selecciona o Busca Docentes"
                                   />
-                              </InertiaLink>
-
 
                             </div>
                             <div>

@@ -49,6 +49,8 @@ Route::middleware([
     })->name('solicitudes');
 });
 
-
 Route::resource('materias',materiaController::class)
 ->middleware(['auth:sanctum','verified']);
+
+Route::get('/solicitar/{selectedOptions}', [materiaController::class, 'show'])
+    ->name('materias.show');

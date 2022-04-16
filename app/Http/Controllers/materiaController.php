@@ -13,35 +13,13 @@ class materiaController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
+      $idDocentes
      * @return \Illuminate\Http\Response
      */
+    
     public function index()
     {
-        $ids= array(4,2);
-        $tamaño=count($ids);
-      
-        $MateriaPorId = DocenteMateria::join("materias","id_materia","=","id")
-        ->whereIn('id_usuario',$ids)
-        ->groupBY("id_materia")
-        ->selectRaw("id_materia,count(*)as cuantos")
-        ->get();
-
-        $materiasComun=array();
-        foreach( $MateriaPorId as  $cuantasMaterias){
-              $cuanto= $cuantasMaterias->cuantos; 
-              if($cuanto==$tamaño){
-                $idMat= $cuantasMaterias->id_materia;
-                array_push($materiasComun,  $idMat);
-              }      
-        }
-               $MateriaPorIdComun =Materia::  
-                select('materias.nombre_materia')
-                ->whereIn('id',$materiasComun)
-                ->get();
-        return Inertia::render('Materias', [
-        'materiasIdDocente' => $MateriaPorIdComun
-        ]);
+ 
        //fun
     }
 
@@ -69,12 +47,36 @@ class materiaController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  array  $idDocentes
      * @return \Illuminate\Http\Response
      */
     public function show($idDocentes)
     {
-    
+        $ids= $idDocentes;
+        $tamaño=count($ids);
+      
+        $MateriaPorId = DocenteMateria::join("materias","id_materia","=","id")
+        ->whereIn('id_usuario',$ids)
+        ->groupBY("id_materia")
+        ->selectRaw("id_materia,count(*)as cuantos")
+        ->get();
+
+        $materiasComun=array();
+        foreach( $MateriaPorId as  $cuantasMaterias){
+              $cuanto= $cuantasMaterias->cuantos; 
+              if($cuanto==$tamaño){
+                $idMat= $cuantasMaterias->id_materia;
+                array_push($materiasComun,  $idMat);
+              }      
+        }
+               $MateriaPorIdComun =Materia::  
+                select('materias.nombre_materia')
+                ->whereIn('id',$materiasComun)
+                ->get();
+                return Inertia::render('SolicitarPage', [
+                    'materiasIdDocente' => $MateriaPorIdComun
+                    ]);
+
     }
              
     
