@@ -62,10 +62,10 @@ class materiaController extends Controller
         $ids= $ides;
         $tamaño=count($ids);
       
-        $MateriaPorId = DocenteMateria::join("materias","id_materia","=","id_materia")
-        ->whereIn('id_usuario',$ids)
-        ->groupBY("id_materia")
-        ->selectRaw("id_materia,count(*)as cuantos")
+        $MateriaPorId = DocenteMateria::join("materias", "materias.id_materia", "=", "docente_materias.id_materia")
+        ->whereIn('docente_materias.id_usuario', $ids)
+        ->groupBY("materias.id_materia")
+        ->selectRaw("materias.id_materia,count(*)as cuantos")
         ->get();
 
         $materiasComun=array();
@@ -78,8 +78,12 @@ class materiaController extends Controller
         }
                $MateriaPorIdComun =Materia::  
                 select('materias.nombre_materia')
-                ->whereIn('id',$materiasComun)
+                ->whereIn('id_materia',$materiasComun)
                 ->get();
+                foreach($MateriaPorIdComun as $MateriaP){
+                    error_log( $MateriaP-> nombre_materia. "\n hola");
+               //imprimir
+                }
                 return Inertia::render('SolicitarPage', [
                     'materiasIdDocente' => $MateriaPorIdComun
                     ]);

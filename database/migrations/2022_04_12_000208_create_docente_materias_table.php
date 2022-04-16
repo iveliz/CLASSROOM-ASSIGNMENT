@@ -23,7 +23,7 @@ class CreateDocenteMateriasTable extends Migration
       $table->unsignedBigInteger('id_materia')->nullable();
       $table
         ->foreign('id_materia')
-        ->references('id')
+        ->references('id_materia')
         ->on('materias')->onDelete('set null');
       $table->timestamp('created_at')->nullable();
       $table->timestamp('update_at')->nullable();
