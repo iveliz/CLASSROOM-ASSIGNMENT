@@ -94,7 +94,7 @@ export default function (props:{materiasIdDocente:any;}) {
                         <div className="flex flex-col space-y-4 content-center">
                             <div>
                                 <p className="text-left">Nombre(s) Docente(s)</p>
-                              <InertiaLink href={route("materias.show",selectedOptions)} >
+                              <InertiaLink href={route("materias.show",[1,2,3])} >
                         a
                               </InertiaLink>
                               <Select
