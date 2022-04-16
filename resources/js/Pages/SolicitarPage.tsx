@@ -58,11 +58,16 @@ const horarios = [
 
 export default function () {
     const [selectedOptions, setSelectedDocentes] = useState([]);
-    const [selecteMateria, setSelectedMateria] = useState();
+    const [selecteMateria , setSelectedMateria] = useState();
+    const [selectedGroups, setSelectedGroups]=useState([]);
 
+    const handleChangeGrupos = (grupos : []) => {
+        setSelectedGroups(grupos);
+        console.log(grupos);
+    };
+    
     const handleChangeDocentes = (docentes : []) => {
         setSelectedDocentes(docentes);
-        getDocentes(docentes);
         console.log(docentes);
     };
     const handleChangeMateria = (materia : any) => {
@@ -70,9 +75,7 @@ export default function () {
         console.log(materia);
     };
 
-    function getDocentes(docentes:[]){
-        return docentes;
-    }
+
 
     return (
         <>
@@ -117,6 +120,7 @@ export default function () {
                                     options={grupo}
                                     isSearchable={false}
                                     isMulti
+                                    onChange={handleChangeGrupos}
                                     noOptionsMessage={() => 'No hay opciones disponibles'}
                                     placeholder="Grupo"
                                 />
