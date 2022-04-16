@@ -51,11 +51,18 @@ class materiaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($idDocentes)
-    {
-        $ids= $idDocentes;
+    { 
+        $ides=array();
+        if (is_array($idDocentes) || is_object($idDocentes)){
+        foreach( $idDocentes as  $idDoc){
+            $idDocen= $idDoc->id;
+           array_push($ides,$idDocen); 
+        }
+    }
+        $ids= $ides;
         $tamaño=count($ids);
       
-        $MateriaPorId = DocenteMateria::join("materias","id_materia","=","id")
+        $MateriaPorId = DocenteMateria::join("materias","id_materia","=","id_materia")
         ->whereIn('id_usuario',$ids)
         ->groupBY("id_materia")
         ->selectRaw("id_materia,count(*)as cuantos")
