@@ -78,7 +78,7 @@ export default function (props:{materiasIdDocente:any;}) {
 
     };
 
-
+    {console.log(props.materiasIdDocente)}
     return (
         <>
             <AppLayout title="Informacion">
