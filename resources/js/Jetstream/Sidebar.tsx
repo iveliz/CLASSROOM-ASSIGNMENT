@@ -6,6 +6,7 @@ import {Navigation} from 'react-minimal-side-navigation';
 import 'react-minimal-side-navigation/lib/ReactMinimalSideNavigation.css';
 import route from 'ziggy-js';
 import '../../css/app.css'
+import { Inertia } from '@inertiajs/inertia';
 export default function () {
     return (
       <>
@@ -13,12 +14,12 @@ export default function () {
             // you can use your own router's api to get pathname
             activeItemId="/management/members"
             onSelect={({itemId}) => {
-              // maybe push to the route
+             Inertia.visit(itemId);
             }}
             items={[
               {
                 title: 'Pendientes',
-                itemId: 'dashboard',
+                itemId: 'pendientes',
                  elemBefore: () => <Watch></Watch>,
                 // you can use your own custom Icon component as well
                 // icon is optional
@@ -26,13 +27,14 @@ export default function () {
               },
               {
                 title: 'Aceptados',
-                itemId: 'aceptados',
+                itemId: 'aceptadas',
                 elemBefore: () => <Check></Check>,
+              
                 
               },
               {
-                title: 'Rechazados',
-                itemId: 'another',
+                title: 'Rechazadas',
+                itemId: 'rechazadas',
                 elemBefore: () => <Xsquare></Xsquare>,
               },
             ]}
