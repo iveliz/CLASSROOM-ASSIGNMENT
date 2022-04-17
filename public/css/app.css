@@ -711,6 +711,9 @@ Ensure the default browser behavior of the `hidden` attribute.
 }.mx-auto{
   margin-left: auto;
   margin-right: auto;
+}.my-8{
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }.ml-3{
   margin-left: 0.75rem;
 }.-ml-px{
@@ -10935,6 +10938,9 @@ select {
   }.sm\:px-20{
     padding-left: 5rem;
     padding-right: 5rem;
+  }.sm\:px-4{
+    padding-left: 1rem;
+    padding-right: 1rem;
   }.sm\:pt-0{
     padding-top: 0px;
   }.sm\:pb-4{
