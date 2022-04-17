@@ -210,7 +210,6 @@ export default function () {
                 <p>Periodos</p>
                 <NumberPicker
                   defaultValue={1}
-                  value={1}
                   min={1}
                   max={3}
                   onChange={handleChangePeriodo}
