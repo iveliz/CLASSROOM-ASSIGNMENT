@@ -19,7 +19,7 @@ class CreateSolicitudesTable extends Migration
       $table
         ->foreign('id_usuario')
         ->references('id')
-        ->on('users');
+        ->on('users')->onDelete('set null');
       $table->string('materia_solicitud', 250);
       $table->integer('cantidad_estudiantes_solicitud');
       $table->string('motivo_reserva_solicitud', 250);
