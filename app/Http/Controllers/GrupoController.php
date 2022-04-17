@@ -106,6 +106,17 @@ class GrupoController extends Controller
         return $materias;
     }
 
+    public function gruposDeVarios()
+    {
+        $docentes = array(1, 2);
+        $materias = DB::table('grupos')->join('materias', 'grupos.id_materia', '=', 'materias.id_materia')
+            ->join('users', 'grupos.id_usuario', '=', 'users.id')
+            ->select('nombre_materia', 'codigo_grupo', 'name')
+            ->whereIn('users.id', $docentes)->get();
+        print_r(json_decode($materias, true));
+        return $materias;
+    }
+
     public function grupoMateria($materia)
     {
         $consulta = DB::table('grupos')->join('materias', 'grupos.id_materia', '=', 'materias.id_materia')
