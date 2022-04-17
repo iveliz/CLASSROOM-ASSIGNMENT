@@ -50,10 +50,10 @@ class materiaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show(array $docentes)
+    public function show(Request $request)
     { 
         $ides=array();
-        if (is_array($docentes) || is_object($docentes)){
+        if (is_array($request) || is_object($request)){
         foreach( $docentes as  $idDoc){
             $idDocen= $idDoc->id;
            array_push($ides,$idDocen); 
@@ -86,7 +86,7 @@ class materiaController extends Controller
                 }
                 
                 return Inertia::render('SolicitarPage', [
-                    'materiasIdDocente' =>$docentes
+                    'materiasIdDocente' =>$request
                     ]);
 
     }
