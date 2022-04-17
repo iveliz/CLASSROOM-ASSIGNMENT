@@ -44,9 +44,3 @@ Route::middleware([
 Route::resource('solicitar',materiaController::class)
 ->middleware(['auth:sanctum','verified']);
 
-
-   
-
-   
-    
-

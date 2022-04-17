@@ -87,6 +87,7 @@ class materiaController extends Controller
                 }
                 
                 */
+
                 return Inertia::render('SolicitarPage', [
                     'materiasIdDocente' =>$request
                     ]);

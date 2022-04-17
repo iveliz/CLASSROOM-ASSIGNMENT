@@ -83,10 +83,11 @@ export default function (props:{materiasIdDocente:[];}) {
                docentesId.push(id);
         }
 
-        let hola=JSON.stringify(docentesId);
-        Inertia.get('materias.show', {
+        Inertia.get('solicitar.show', {
             docentesId
-          })
+          },{
+              preserveState: true,
+             })
         console.log(docentesId);
     };
 
