@@ -64,7 +64,7 @@ export default function Dashboard() {
                     <p>
                     Vaya al apartado de Solicitar a continuación se mostrará el formulario a llenar y siga los siguientes pasos:
                     <li>Seleccione su nombre en el menú desplegable Nombre(s) docente(s)
-                       o también puede buscar en el mismo menú. dependiendo del caso de solicitud puede seleccionar a otros docentes relacionados.</li>
+                       o también puede buscar en el mismo menú, dependiendo del caso de solicitud puede seleccionar a otros docentes relacionados.</li>
                     <li>Si hay una equivocación podrá eliminar dirigiéndose al icono X en las etiquetas generadas de Nombre(s) docente(s)</li>
                     <li>Seleccione el nombre de la materia que corresponda a su solicitud en el menú desplegable Materia , 
                       si en el caso que añadiste a otro docente relacionado, también se mostrarán materias relacionadas.</li>

@@ -10681,7 +10681,7 @@ select {
   height: -webkit-max-content;
   height: -moz-max-content;
   height: max-content;
-}body {
+}/**/body {
   margin: 0;
 }.accordion-item-input:checked ~ .accordion-item-bd {
   max-height: 1000px;
