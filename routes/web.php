@@ -44,7 +44,27 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/solicitudes', function () {
+    Route::get('/solicitudes/pendientes', function () {
         return Inertia::render('SolicitudesPage');
     })->name('solicitudes');
+});
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+    Route::get('/solicitudes/aceptadas', function () {
+        return Inertia::render('Aceptados');
+    })->name('solicitudes/aceptadas');
+});
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+    Route::get('/solicitudes/rechazadas', function () {
+        return Inertia::render('Rechazados');
+    })->name('solicitudes/rechazadas');
 });

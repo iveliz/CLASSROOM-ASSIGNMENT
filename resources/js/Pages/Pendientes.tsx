@@ -13,7 +13,7 @@ export default function () {
       </div>
       <div className='col-span-5'>
         <div className='ml-5 mt-6 '>
-      {/*   <h1 className='font-bold'>Solicitudes Pendientes</h1> */}
+         <h1 className='font-bold'>Solicitudes Pendientes</h1> 
         </div>
   
       </div>
