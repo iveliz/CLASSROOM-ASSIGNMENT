@@ -17,7 +17,7 @@ class usuarioController extends Controller
    */
   public function index()
   {
-    $docentesComun = User::select('name')->get();
+    $docentesComun = User::select('id', 'name')->get();
     return $docentesComun;
   }
 
