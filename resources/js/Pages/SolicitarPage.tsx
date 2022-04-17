@@ -17,6 +17,7 @@ import {forEach, forIn} from "lodash";
 import { Link } from '@inertiajs/inertia-react'
 import useRoute from '@/Hooks/useRoute';
 import { Inertia } from '@inertiajs/inertia'
+import { RouteParam, QueryParams } from 'ziggy-js';
 const route = useRoute();
 const grupo = [
     {label: '1', value: '1'},
@@ -71,15 +72,24 @@ var materia = {
 };
 
 
-export default function (props:{materiasIdDocente:any;}) {
-    const [selectedOptions, setSelectedDocentes] = useState<any[]>([]);
+export default function (props:{materiasIdDocente:[];}) {
+    const [selectedOptions, setSelectedDocentes] = useState<any>([]);
     const [selecteMateria, setSelectedMateria] = useState();
-
-    const handleChangeDocentes = (docentes : []) => {
+    let docentesId = [""];
+    const handleChangeDocentes = (docentes: []) => {
         setSelectedDocentes(docentes);
-        console.log(docentes);
-       
+        docentesId=[];
+        for (let {id} of docentes) {
+               docentesId.push(id);
+        }
+
+        let hola=JSON.stringify(docentesId);
+        Inertia.get('materias.show', {
+            docentesId
+          })
+        console.log(docentesId);
     };
+
     const  handleChangeMateria = (materia : any) => {
         setSelectedMateria(materia);
         console.log(materia);
@@ -116,10 +126,11 @@ export default function (props:{materiasIdDocente:any;}) {
                                       placeholder="Selecciona o Busca Docentes"
                                   />
 
-                            <InertiaLink href={route("solicitar.show",docentes)} >
+                      {/* <InertiaLink href={route("solicitar.show",array)} >
 
                                 a
                             </InertiaLink>
+                      */}     
                             {console.log(props.materiasIdDocente)}
 
                             </div>

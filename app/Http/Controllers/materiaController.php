@@ -52,10 +52,10 @@ class materiaController extends Controller
      */
     public function show(Request $request)
     { 
-        $ides=array();
-        if (is_array($request) || is_object($request)){
+     /**    $ides=array();
+       if (is_array($request) || is_object($request)){
         foreach( $request as  $idDoc){
-            $idDocen= $idDoc->id;
+            $idDocen= $idDoc;
            array_push($ides,$idDocen); 
         }
         
@@ -86,8 +86,9 @@ class materiaController extends Controller
                //imprimir
                 }
                 
+                */
                 return Inertia::render('SolicitarPage', [
-                    'materiasIdDocente' =>$MateriaPorIdComun
+                    'materiasIdDocente' =>$request
                     ]);
 
     }
