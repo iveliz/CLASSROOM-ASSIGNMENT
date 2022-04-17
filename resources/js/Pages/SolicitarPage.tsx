@@ -3,15 +3,27 @@ import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
 import SolicitarCard from '@/Jetstream/SolicitarCard';
 import Select from 'react-select';
-import Calendar from '@/Jetstream/Calendar';
+
 import JetButton from '@/Jetstream/Button';
 import { NumberPicker } from 'react-widgets/cjs';
 import 'react-widgets/styles.css';
 import { useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { InertiaLink } from '@inertiajs/inertia-react';
 import { useForm } from 'react-hook-form';
 import { forEach, forIn } from 'lodash';
 import { Inertia } from '@inertiajs/inertia';
+import es from 'date-fns/locale/es';
+import { addDays, subDays } from 'date-fns';
+import { registerLocale, setDefaultLocale } from 'react-datepicker';
+
+registerLocale('es', es);
+
+var hoy = new Date();
+var day1 = new Date('01/07/1970');
+var difference = Math.abs(hoy.getTime() - day1.getTime());
+var days = difference / (1000 * 3600 * 24);
 
 const grupo = [
   { label: '1', value: '1' },
@@ -64,47 +76,68 @@ export default function () {
   const [selectedTipo, setSelectedTipo] = useState();
   const [selectedPeriodo, setSelectedPeriodo] = useState();
   const [selectedCantidad, setSelectedCantidad] = useState();
+  const [startDate, setStartDate] = useState(hoy);
 
-  let Tipo: String;
-  let Periodo : Number;
-  let Cantidad: Number;
+  let cantidadS : Number = 0;
+  let gruposS : []=[];
+  let docentesId : []=[];
+  let horarioS : any="";
+  let tipoS:String="";
+  let prioridad: String="";
+  let periodoS:Number=1;
+  let fecha : String="";
+
   const handleChangeGrupos = (grupos: []) => {
     setSelectedGroups(grupos);
-    console.log(grupos);
+    gruposS=grupos;
   };
 
   const handleChangeDocentes = (docentes: []) => {
     setSelectedDocentes(docentes);
-    console.log(docentes);
+    docentesId=[];
+    for (let {id} of docentes) {
+      docentesId.push(id);
+    }
   };
   const handleChangeMateria = (materia: any) => {
     setSelectedMateria(materia);
-    console.log(materia);
+   
   };
   const handleChangeHorario = (horario: any) => {
     setSelectedHorario(horario);
+    let {label,value}=horario;
+    horarioS= value;
+    console.log(horarioS)
 
-    console.log(horario);
   };
 
   const handleChangeTipo = (tipo: any) => {
     setSelectedTipo(tipo);
-    Tipo = tipo;
-    console.log(tipo);
+    let {label,value}=tipo;
+    tipoS=value;
+    console.log(tipoS);
+
   };
-  
+
   const handleChangePeriodo = (periodo: any) => {
     setSelectedPeriodo(periodo);
-    Periodo = periodo;
-    console.log(periodo);
+    periodoS=periodo;
+    console.log(periodoS)
   };
+
   const handleChangeCantidad = (cantidad: any) => {
-    setSelectedPeriodo(cantidad);
-    Cantidad = cantidad;
-    console.log(cantidad);
+    setSelectedCantidad(cantidad);
+    cantidadS=cantidad;
+    console.log(cantidadS);
   };
-
-
+  const handleChangeCalendario= (fecha : any)=>{
+    let formatted_date = fecha.getDate() + "-" + (fecha.getMonth() + 1) + "-" + fecha.getFullYear()
+    setStartDate(fecha);
+    console.log(formatted_date);
+  }
+  const solicitud=[
+    {id : docentesId,Materia:"",Grupos:[],Horario:"",Tipo:"",Periodo:"",Cantidad:"",Fecha:""}
+  ]
 
   return (
     <>
@@ -121,7 +154,6 @@ export default function () {
           <div className="flex flex-col space-y-4 content-center">
             <div>
               <p className="text-left">Nombre(s) Docente(s)</p>
-              <InertiaLink href="">
                 <Select
                   options={docentes}
                   isMulti
@@ -130,7 +162,6 @@ export default function () {
                   noOptionsMessage={() => 'No hay opciones disponibles'}
                   placeholder="Selecciona o Busca Docentes"
                 />
-              </InertiaLink>
             </div>
             <div>
               <p className="text-left">Materias</p>
@@ -155,7 +186,15 @@ export default function () {
             <div className="grid grid-flow-col auto-cols-max">
               <div className="mr-8">
                 <p>Fecha Inicio</p>
-                <Calendar />
+
+                <DatePicker
+                  locale="es"
+                  selected={startDate}
+                  excludeDateIntervals={[
+                    { start: subDays(new Date(), days), end: addDays(hoy, -1) },
+                  ]}
+                  onChange={handleChangeCalendario}
+                />
               </div>
               <div className="mr-8">
                 <p>Hora de inicio</p>
@@ -169,10 +208,17 @@ export default function () {
               </div>
               <div>
                 <p>Periodos</p>
-                <NumberPicker 
-                defaultValue={1} 
-                min={1} 
-                onChange={handleChangePeriodo}
+                <NumberPicker
+                  defaultValue={1}
+                  value={1}
+                  min={1}
+                  max={3}
+                  onChange={handleChangePeriodo}
+                  onKeyPress={(event) => {
+                    if (!/[0-9]/.test(event.key)) {
+                      event.preventDefault();
+                    }
+                  }}
                 />
               </div>
             </div>
@@ -189,7 +235,16 @@ export default function () {
               </div>
               <div>
                 <p>Cantidad de estudiantes</p>
-                <input className="label-cant" type="text" onChange={handleChangeCantidad}/>
+                <input
+                  className="label-cant"
+                  type="text"
+                  onKeyPress={(event) => {
+                    if (!/[0-9]/.test(event.key)) {
+                      event.preventDefault();
+                    }
+                  }}
+                  onChange={event=>handleChangeCantidad(event.target.value)}
+                />
               </div>
             </div>
 
