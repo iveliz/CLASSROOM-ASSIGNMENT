@@ -15,11 +15,11 @@ export default function () {
       <div className='col-span-5'>
         <div className='ml-5 mt-6 '>
        <h1 className='font-bold'>Solicitudes Pendientes</h1> 
-        {/*<div>
+        *<div>
          {solicitudes.map((card)=>(
            <Cardsolicitud{...card}/>
          ))}
-        </div>*/}
+        </div>
         </div>
   
       </div>
