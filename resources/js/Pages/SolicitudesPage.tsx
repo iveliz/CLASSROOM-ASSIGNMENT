@@ -2,7 +2,8 @@ import React from 'react';
 import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
 import Sidebar from '@/Jetstream/Sidebar';
-
+import { solicitudes } from '@/Const/solicitudes';
+import Cardsolicitud from '@/Jetstream/Cardsolicitud';
 export default function () {
   return (
     <AppLayout title="Informacion">
@@ -13,7 +14,12 @@ export default function () {
       </div>
       <div className='col-span-5'>
         <div className='ml-5 mt-6 '>
-       <h1 className='font-bold'>Solicitudes pendientes</h1> 
+       <h1 className='font-bold'>Solicitudes Pendientes</h1> 
+        {/*<div>
+         {solicitudes.map((card)=>(
+           <Cardsolicitud{...card}/>
+         ))}
+        </div>*/}
         </div>
   
       </div>
