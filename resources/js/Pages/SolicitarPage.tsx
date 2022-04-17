@@ -14,8 +14,9 @@ import {useState} from "react";
 import { InertiaLink } from '@inertiajs/inertia-react';
 //import { useForm } from 'react-hook-form';
 import {forEach, forIn} from "lodash";
-import {Inertia} from "@inertiajs/inertia";
+import { Link } from '@inertiajs/inertia-react'
 import useRoute from '@/Hooks/useRoute';
+import { Inertia } from '@inertiajs/inertia'
 const route = useRoute();
 const grupo = [
     {label: '1', value: '1'},
@@ -45,8 +46,8 @@ const materias = [
 ];
 
 const docentes = [
-    {label: 'Leticia Blanco', value: 'Leticia Blanco',id : 2},
     {label: 'Vladimir Costa', value: 'Vladimir Costa',id : 3},
+    {label: 'Leticia Blanco', value: 'Leticia Blanco',id : 2},
     {label: 'Rosemary Torrico', value: 'Rosemary Torrico',id : 5},
     {label: 'Corina ', value: 'Corina ',id : 4},
     {label: 'Patricia' , value: 'Patricia',id : 6},
@@ -63,6 +64,13 @@ const horarios = [
     {label: '20:15', value: '20:15'},
 ];
 
+var materia = {
+    make: 'Ford',
+    model: 'Mustang',
+    year: 1969
+};
+
+
 export default function (props:{materiasIdDocente:any;}) {
     const [selectedOptions, setSelectedDocentes] = useState<any[]>([]);
     const [selecteMateria, setSelectedMateria] = useState();
@@ -77,8 +85,9 @@ export default function (props:{materiasIdDocente:any;}) {
         console.log(materia);
 
     };
-
-    {console.log(props.materiasIdDocente)}
+   
+   
+    
     return (
         <>
             <AppLayout title="Informacion">
@@ -94,9 +103,10 @@ export default function (props:{materiasIdDocente:any;}) {
                         <div className="flex flex-col space-y-4 content-center">
                             <div>
                                 <p className="text-left">Nombre(s) Docente(s)</p>
-                              <InertiaLink href={route("materias.show",docentes)} >
-                        a
-                              </InertiaLink>
+                              
+                               
+                               
+                             
                               <Select
                                       options={docentes}
                                       isMulti
@@ -105,6 +115,12 @@ export default function (props:{materiasIdDocente:any;}) {
                                       noOptionsMessage={() => 'No hay opciones disponibles'}
                                       placeholder="Selecciona o Busca Docentes"
                                   />
+
+                            <InertiaLink href={route("solicitar.show",docentes)} >
+
+                                a
+                            </InertiaLink>
+                            {console.log(props.materiasIdDocente)}
 
                             </div>
                             <div>

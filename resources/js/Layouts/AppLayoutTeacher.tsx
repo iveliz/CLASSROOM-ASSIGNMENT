@@ -74,8 +74,8 @@ export default function AppLayout({
                   </JetNavLink>
 
                   <JetNavLink
-                    href={route('solicitar')}
-                    active={route().current('solicitar')}
+                    href={route('solicitar.index')}
+                    active={route().current('solicitar.index')}
                   >
                     Solicitar
                   </JetNavLink>
@@ -310,8 +310,8 @@ export default function AppLayout({
               </JetResponsiveNavLink>
 
               <JetResponsiveNavLink
-                href={route('solicitar')}
-                active={route().current('solicitar')}
+                href={route('solicitar.index')}
+                active={route().current('solicitar.index')}
               >
                 Solicitar
               </JetResponsiveNavLink>

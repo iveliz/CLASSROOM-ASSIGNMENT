@@ -29,15 +29,7 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-])->group(function () {
-    Route::get('/solicitar', function () {
-        return Inertia::render('SolicitarPage');
-    })->name('solicitar');
-});
+
 
 Route::middleware([
     'auth:sanctum',
@@ -49,9 +41,12 @@ Route::middleware([
     })->name('solicitudes');
 });
 
-//Route::resource('materias',materiaController::class)
-//->middleware(['auth:sanctum','verified']);
+Route::resource('solicitar',materiaController::class)
+->middleware(['auth:sanctum','verified']);
 
-Route::get('/solicitar/{selectedOptions}', [materiaController::class, 'show'])
-    ->name('materias.show');
+
+   
+
+   
+    
 

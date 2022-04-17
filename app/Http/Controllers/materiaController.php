@@ -20,7 +20,7 @@ class materiaController extends Controller
     public function index()
     {
  
-       //fun
+        return Inertia::render('SolicitarPage');
     }
 
     /**
@@ -47,14 +47,14 @@ class materiaController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  array  $idDocentes
+     *
      * @return \Illuminate\Http\Response
      */
-    public function show($idDocentes)
+    public function show(array $docentes)
     { 
         $ides=array();
-        if (is_array($idDocentes) || is_object($idDocentes)){
-        foreach( $idDocentes as  $idDoc){
+        if (is_array($docentes) || is_object($docentes)){
+        foreach( $docentes as  $idDoc){
             $idDocen= $idDoc->id;
            array_push($ides,$idDocen); 
         }
@@ -84,8 +84,9 @@ class materiaController extends Controller
                     error_log( $MateriaP-> nombre_materia. "\n hola");
                //imprimir
                 }
+                
                 return Inertia::render('SolicitarPage', [
-                    'materiasIdDocente' => $MateriaPorIdComun
+                    'materiasIdDocente' =>$docentes
                     ]);
 
     }
