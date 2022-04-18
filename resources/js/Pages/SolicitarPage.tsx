@@ -10,6 +10,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import es from 'date-fns/locale/es';
 import { addDays, subDays } from 'date-fns';
+import { Inertia } from '@inertiajs/inertia';
 import { registerLocale, setDefaultLocale } from 'react-datepicker';
 import { values } from 'lodash';
 
@@ -63,7 +64,7 @@ const horarios = [
   { label: '20:15', value: '20:15' },
 ];
 
-export default function () {
+export default function (props:{docentes: any}) {
   const [selectedOptions, setSelectedDocentes] = useState([]);
   const [selectedMateria, setSelectedMateria] = useState();
   const [selectedGroups, setSelectedGroups] = useState([]);
@@ -72,6 +73,12 @@ export default function () {
   const [selectedPeriodo, setSelectedPeriodo] = useState();
   const [selectedCantidad, setSelectedCantidad] = useState();
   const [startDate, setStartDate] = useState(hoy);
+  const recibirDocentes=[];
+
+  for(let {id,name}of props.docentes){
+     recibirDocentes.push({label :name,value:name,id:id});
+  }
+
 
   let cantidadS: Number = 0;
   let gruposS: [] = [];
@@ -94,6 +101,7 @@ export default function () {
 
   const handleChangeDocentes = (docentes: []) => {
     setSelectedDocentes(docentes);
+    let id=1;
     docentesId = [];
     docentesNombres = [];
     if (docentes != null) {
@@ -105,6 +113,14 @@ export default function () {
           docentesNombres.push(value);
         }
       } else {
+        for (let { value } of docentes) {
+             id=value
+        }
+        Inertia.get('solicitar.show', {
+          id
+        },{
+            preserveState: true,
+           })
       }
     }
 
@@ -183,7 +199,7 @@ export default function () {
             <div className="bg-white overflow-hidden shadow-xl sm:rounded-lg" />
           </div>
         </div>
-
+    
         <SolicitarCard>
           <h1 className="text-center">Solicitar aula</h1>
 
@@ -191,7 +207,7 @@ export default function () {
             <div>
               <p className="text-left">Nombre(s) Docente(s)</p>
               <Select
-                options={docentes}
+                options={recibirDocentes}
                 isMulti
                 selectOption
                 onChange={handleChangeDocentes}

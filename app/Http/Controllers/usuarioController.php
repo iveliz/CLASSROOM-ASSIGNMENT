@@ -19,7 +19,7 @@ class usuarioController extends Controller
   {
     $docentesComun = User::select('id', 'name')->get();
     return Inertia::render('SolicitarPage', [
-      'docentes' => $docentesComun,
+         'docentes' => $docentesComun
     ]);
   }
 
@@ -54,7 +54,7 @@ class usuarioController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  int  $id
+   * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\Response
    */
   public function show(Request $request)
@@ -81,7 +81,9 @@ class usuarioController extends Controller
     $docentesComun = User::select('name', 'id')
       ->whereIn('id', $docentesidMaterias)
       ->get();
-    return $docentesComun;
+      return Inertia::render('SolicitarPage', [
+        'docentes' => $request
+      ]);
   }
   /**
    * Display the specified resource.
