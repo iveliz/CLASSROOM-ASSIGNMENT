@@ -77,3 +77,7 @@ Route::resource('prueba_solicitudes', SolicitudesController::class)
 
     Route::resource('solicitar', usuarioController::class)
     ->middleware(['auth:sanctum','verified']);
+    
+    Route::resource('solicitar.materias', usuarioController::class)
+    ->middleware(['auth:sanctum','verified']);
+

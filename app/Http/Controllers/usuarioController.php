@@ -59,7 +59,7 @@ class usuarioController extends Controller
    */
   public function show(Request $request)
   {
-    $id = $request->Id;
+    $id = $request->idS;
     $materiasNomDocente = Grupo::join(
       'users',
       'grupos.id_usuario',
@@ -81,8 +81,11 @@ class usuarioController extends Controller
     $docentesComun = User::select('name', 'id')
       ->whereIn('id', $docentesidMaterias)
       ->get();
+
       return Inertia::render('SolicitarPage', [
-        'docentes' => $request
+        
+        'docentes' => $docentesComun
+
       ]);
   }
   /**

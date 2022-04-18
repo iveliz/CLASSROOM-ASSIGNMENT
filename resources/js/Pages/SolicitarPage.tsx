@@ -64,7 +64,7 @@ const horarios = [
   { label: '20:15', value: '20:15' },
 ];
 
-export default function (props:{docentes: any}) {
+export default function (props:{docentes: any,docentes2:any}) {
   const [selectedOptions, setSelectedDocentes] = useState([]);
   const [selectedMateria, setSelectedMateria] = useState();
   const [selectedGroups, setSelectedGroups] = useState([]);
@@ -73,7 +73,7 @@ export default function (props:{docentes: any}) {
   const [selectedPeriodo, setSelectedPeriodo] = useState();
   const [selectedCantidad, setSelectedCantidad] = useState();
   const [startDate, setStartDate] = useState(hoy);
-  const recibirDocentes=[];
+  let recibirDocentes=[];
 
   for(let {id,name}of props.docentes){
      recibirDocentes.push({label :name,value:name,id:id});
@@ -82,7 +82,7 @@ export default function (props:{docentes: any}) {
 
   let cantidadS: Number = 0;
   let gruposS: [] = [];
-  let docentesId: [] = [];
+  let docentesId: any[] = [];
   let docentesNombres: [] = [];
   let horarioS: any = '';
   let tipoS: String = '';
@@ -101,7 +101,8 @@ export default function (props:{docentes: any}) {
 
   const handleChangeDocentes = (docentes: []) => {
     setSelectedDocentes(docentes);
-    let id=1;
+    let idS=["hola xdxdxdxdxdxd"];
+    let prueba=["asdjasuifnsrfiluhsd ngsdrhuig"]
     docentesId = [];
     docentesNombres = [];
     if (docentes != null) {
@@ -113,18 +114,33 @@ export default function (props:{docentes: any}) {
           docentesNombres.push(value);
         }
       } else {
-        for (let { value } of docentes) {
-             id=value
+        for (let { id } of docentes) {
+             idS=id
+             console.log("entro aquis")
         }
-        Inertia.get('solicitar.show', {
-          id
+        Inertia.get('solicitar/{prueba}', {
+          idS
         },{
             preserveState: true,
+            onSuccess:()=>{
+              recibirDocentes=[];
+              for(let {id,name}of props.docentes){
+                recibirDocentes.push({label :name,value:name,id:id});
+              }
+               docentesId=[];
+               for (let {id} of props.docentes) {
+                docentesId.push(id);
+               }
+              
+            }
            })
+
+         
       }
     }
 
     console.log(docentesNombres);
+    console.log(docentesId);
   };
 
   const handleChangeMateria = (materia: any) => {
@@ -199,7 +215,7 @@ export default function (props:{docentes: any}) {
             <div className="bg-white overflow-hidden shadow-xl sm:rounded-lg" />
           </div>
         </div>
-    
+    {  console.log(props.docentes)}
         <SolicitarCard>
           <h1 className="text-center">Solicitar aula</h1>
 
