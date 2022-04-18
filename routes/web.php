@@ -67,3 +67,6 @@ Route::middleware([
         return Inertia::render('Rechazados');
     })->name('solicitudes/rechazadas');
 });
+
+Route::resource('prueba_solicitudes', SolicitudesController::class)
+    ->middleware(['auth:sanctum','verified']);
