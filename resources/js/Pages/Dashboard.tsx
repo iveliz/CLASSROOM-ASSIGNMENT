@@ -78,8 +78,10 @@ export default function Dashboard() {
                     <li>Ingrese en el campo Cantidad de estudiantes, debe tener en cuenta que no es válido dejar la cantidad con cantidad 0.</li>
                     <li>Haga clic en Solicitar</li>
                    </p></div>
-                   <h5 className="text-center">¿Tienes alguna duda? Contactanos! </h5>
-                   <h5 className="text-center">neolancersrl@gmail.com</h5>
+                   
+                   <h5 className="text-center">¿Tienes alguna duda? Contactanos! 
+                   <a className= "text-center ml-2" href="mailto:neolancersrl@gmail.com ?
+                   subject=Quiero más información con respecto a los servicios que ofrecen.&body=Hola equipo Neolancer! te contacto desde su website, quisiera más información de sus servicios."> neolancersrl@gmail.com </a></h5> 
                    
                 </div>    {/*div de preguntas frecuentes contenedor serif*/} 
                 </div>
