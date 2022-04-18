@@ -130,10 +130,10 @@ class GrupoController extends Controller
         return $consulta;
     }
 
-    public function metodo(String $request){
-        
+    public function metodo(Request $request){
+        $materia = $request->materia;
         $grupos = DB::table('grupos')->join('materias', 'grupos.id_materia', '=', 'materias.id_materia')
-            ->where('materias.nombre_materia', $request)->get();
+            ->where('materias.nombre_materia', $materia)->get();
 
         return $grupos;
     }
