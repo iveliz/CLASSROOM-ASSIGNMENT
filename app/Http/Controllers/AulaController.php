@@ -31,12 +31,15 @@ class AulaController extends Controller
       ->where('registro_solicitudes.id_solicitud', '=', $id)
       ->get();
     $Estado = 'Aceptada';
-    $AulaReserva = ['Aceptada'];
     if ($Estado == 'Aceptada') {
       $idSoli = 1;
-      $Reserva = Reserva::select('id_reserva')
+
+      $Reservas = Reserva::select('id_reserva')
         ->where('id_reg_sct', '=', $idSoli)
         ->get();
+      foreach ($Reservas as $reserva) {
+        $idres = $reserva->id_reserva;
+      }
       $AulaReserva = Aula::join(
         'aulas_reservadas',
         'aulas_reservadas.id_aula',
@@ -49,7 +52,7 @@ class AulaController extends Controller
           'aulas.capacidad_aula',
           'aulas.ubicacion_aula'
         )
-        ->where('aulas_reservadas.id_reserva', '=', $Reserva)
+        ->where('aulas_reservadas.id_reserva', '=', $idres)
         ->get();
     }
     if ($Estado == 'Rechazada') {
