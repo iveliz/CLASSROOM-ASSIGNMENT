@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\DocenteMateria;
+use App\Models\Grupo;
 class Materia extends Model
 {
   use HasFactory;
   protected $fillable = ['nombre_materia'];
 
-  public function docenteMaterias()
+  public function grupos()
   {
-    return $this->hasMany(DocenteMateria::class);
+    return $this->hasMany(Grupo::class);
   }
 }
