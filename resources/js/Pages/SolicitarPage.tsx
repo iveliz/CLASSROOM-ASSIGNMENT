@@ -1,25 +1,17 @@
-
-
-
 import React from 'react';
 import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
 import SolicitarCard from '@/Jetstream/SolicitarCard';
 import Select from 'react-select';
-
-import JetButton from '@/Jetstream/Button';
 import { NumberPicker } from 'react-widgets/cjs';
 import 'react-widgets/styles.css';
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { InertiaLink } from '@inertiajs/inertia-react';
-import { useForm } from 'react-hook-form';
-import { forEach, forIn } from 'lodash';
-import { Inertia } from '@inertiajs/inertia';
 import es from 'date-fns/locale/es';
 import { addDays, subDays } from 'date-fns';
 import { registerLocale, setDefaultLocale } from 'react-datepicker';
+import { values } from 'lodash';
 
 registerLocale('es', es);
 
@@ -33,9 +25,6 @@ const grupo = [
   { label: '2', value: '2' },
   { label: '3', value: '3' },
 ];
-
-
-
 
 const tiporeserva = [
   { label: 'Examen', value: 'Examen' },
@@ -84,66 +73,107 @@ export default function () {
   const [selectedCantidad, setSelectedCantidad] = useState();
   const [startDate, setStartDate] = useState(hoy);
 
-  let cantidadS : Number = 0;
-  let gruposS : []=[];
-  let docentesId : []=[];
-  let horarioS : any="";
-  let tipoS:String="";
-  let prioridad: String="";
-  let periodoS:Number=1;
-  let fecha : String="";
+  let cantidadS: Number = 0;
+  let gruposS: [] = [];
+  let docentesId: [] = [];
+  let docentesNombres: [] = [];
+  let horarioS: any = '';
+  let tipoS: String = '';
+  let prioridad: String = '';
+  let periodoS: Number = 1;
+  let fechaS: String = '';
+  let materiaS: String = '';
 
   const handleChangeGrupos = (grupos: []) => {
     setSelectedGroups(grupos);
-    gruposS=grupos;
+    for (let { value } of grupos) {
+      gruposS.push(value);
+    }
+    console.log(gruposS);
   };
 
   const handleChangeDocentes = (docentes: []) => {
     setSelectedDocentes(docentes);
-    docentesId=[];
-    for (let {id} of docentes) {
-      docentesId.push(id);
+    docentesId = [];
+    docentesNombres = [];
+    if (docentes != null) {
+      if (docentes.length > 1) {
+        for (let { id } of docentes) {
+          docentesId.push(id);
+        }
+        for (let { value } of docentes) {
+          docentesNombres.push(value);
+        }
+      } else {
+      }
     }
+
+    console.log(docentesNombres);
   };
+
   const handleChangeMateria = (materia: any) => {
     setSelectedMateria(materia);
-   
+    let { label, value } = materia;
+    materiaS = value;
+    console.log(materiaS);
   };
   const handleChangeHorario = (horario: any) => {
     setSelectedHorario(horario);
-    let {label,value}=horario;
-    horarioS= value;
-    console.log(horarioS)
-
+    let { label, value } = horario;
+    horarioS = value + ':00';
+    console.log(horarioS);
   };
 
   const handleChangeTipo = (tipo: any) => {
     setSelectedTipo(tipo);
-    let {label,value}=tipo;
-    tipoS=value;
+    let { label, value } = tipo;
+    tipoS = value;
     console.log(tipoS);
-
   };
 
   const handleChangePeriodo = (periodo: any) => {
     setSelectedPeriodo(periodo);
-    periodoS=periodo;
-    console.log(periodoS)
+    periodoS = periodo;
+    console.log(periodoS);
   };
 
   const handleChangeCantidad = (cantidad: any) => {
     setSelectedCantidad(cantidad);
-    cantidadS=cantidad;
+    cantidadS = cantidad;
     console.log(cantidadS);
   };
-  const handleChangeCalendario= (fecha : any)=>{
-    let formatted_date = fecha.getDate() + "-" + (fecha.getMonth() + 1) + "-" + fecha.getFullYear()
+  const handleChangeCalendario = (fecha: any) => {
+    let s = '';
+    if (fecha.getMonth() + 1 < 10) {
+      s = '0';
+    }
+    if (fecha.getDate() < 10) {
+      s = '0';
+    }
+    let formatted_date =
+      fecha.getFullYear() +
+      '-' +
+      s +
+      (fecha.getMonth() + 1) +
+      '-' +
+      s +
+      fecha.getDate();
     setStartDate(fecha);
-    console.log(formatted_date);
-  }
-  const solicitud=[
-    {id : docentesId,Materia:"",Grupos:[],Horario:"",Tipo:"",Periodo:"",Cantidad:"",Fecha:""}
-  ]
+    fechaS = formatted_date;
+    console.log(fechaS);
+  };
+  const solicitud = [
+    {
+      id: docentesNombres,
+      Materia: materiaS,
+      Grupos: [],
+      Horario: horarioS,
+      Tipo: tipoS,
+      Periodo: periodoS,
+      Cantidad: cantidadS,
+      Fecha: fechaS,
+    },
+  ];
 
   return (
     <>
@@ -160,14 +190,14 @@ export default function () {
           <div className="flex flex-col space-y-4 content-center">
             <div>
               <p className="text-left">Nombre(s) Docente(s)</p>
-                <Select
-                  options={docentes}
-                  isMulti
-                  selectOption
-                  onChange={handleChangeDocentes}
-                  noOptionsMessage={() => 'No hay opciones disponibles'}
-                  placeholder="Selecciona o Busca Docentes"
-                />
+              <Select
+                options={docentes}
+                isMulti
+                selectOption
+                onChange={handleChangeDocentes}
+                noOptionsMessage={() => 'No hay opciones disponibles'}
+                placeholder="Selecciona o Busca Docentes"
+              />
             </div>
             <div>
               <p className="text-left">Materias</p>
@@ -219,7 +249,7 @@ export default function () {
                   min={1}
                   max={3}
                   onChange={handleChangePeriodo}
-                  onKeyPress={(event) => {
+                  onKeyPress={event => {
                     if (!/[0-9]/.test(event.key)) {
                       event.preventDefault();
                     }
@@ -243,17 +273,21 @@ export default function () {
                 <input
                   className="label-cant"
                   type="text"
-                  onKeyPress={(event) => {
+                  onKeyPress={event => {
                     if (!/[0-9]/.test(event.key)) {
                       event.preventDefault();
                     }
                   }}
-                  onChange={event=>handleChangeCantidad(event.target.value)}
+                  onChange={event => handleChangeCantidad(event.target.value)}
                 />
               </div>
             </div>
-
-            <button type="submit" className="btn text-white colorPrimary ">
+            <button
+              type="button"
+              className="btn colorPrimary text-white"
+              data-toggle="modal"
+              data-target="#exampleModal"
+            >
               Solicitar
             </button>
           </div>
