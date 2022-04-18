@@ -69,3 +69,9 @@ Route::middleware([
         return Inertia::render('Rechazados');
     })->name('solicitudes/rechazadas');
 });
+
+route::get('/prueba', 'App\Http\Controllers\GrupoController@prueba');
+route::get('/grupoDe/{id}', 'App\Http\Controllers\GrupoController@grupoDe');
+route::get('/gruposDe/{id}', 'App\Http\Controllers\GrupoController@gruposDe');
+route::get('/gruposDeVarios', 'App\Http\Controllers\GrupoController@gruposDeVarios');
+route::get('/grupoMateria/{materia}', 'App\Http\Controllers\GrupoController@grupoMateria');
