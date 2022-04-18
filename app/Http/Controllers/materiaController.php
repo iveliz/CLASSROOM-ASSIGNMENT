@@ -13,35 +13,14 @@ class materiaController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
+      $idDocentes
      * @return \Illuminate\Http\Response
      */
+    
     public function index()
     {
-        $ids = array(1, 2);
-        $tamaño = count($ids);
-
-        $MateriaPorId = DocenteMateria::join("materias", "materias.id_materia", "=", "docente_materias.id_materia")
-            ->whereIn('docente_materias.id_usuario', $ids)
-            ->groupBY("materias.id_materia")
-            ->selectRaw("materias.id_materia,count(*)as cuantos")
-            ->get();
-
-        $materiasComun = array();
-        foreach ($MateriaPorId as  $cuantasMaterias) {
-            $cuanto = $cuantasMaterias->cuantos;
-            if ($cuanto == $tamaño) {
-                $idMat = $cuantasMaterias->id_materia;
-                array_push($materiasComun,  $idMat);
-            }
-        }
-        $MateriaPorIdComun = Materia::select('materias.nombre_materia')
-            ->whereIn('id_materia', $materiasComun)
-            ->get();
-        return Inertia::render('Materias', [
-            'materiasIdDocente' => $MateriaPorIdComun
-        ]);
-        //fun
+ 
+        return Inertia::render('SolicitarPage');
     }
 
     /**
@@ -68,14 +47,55 @@ class materiaController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     *
      * @return \Illuminate\Http\Response
      */
-    public function show($idDocentes)
+    public function show(Request $request)
     {
+      /*  
+        $ides=array();
+        if (is_array($request) || is_object($request)){
+        foreach( $docentes as  $idDoc){
+            $idDocen= $idDoc->id;
+           array_push($ides,$idDocen); 
+        }
     }
+    */
+        $ides=array();
+        $ides=$request->docentesId;
+        $ids= $ides;
+        $tamaño=count($ids);
+      
+        $MateriaPorId = DocenteMateria::join("materias", "materias.id_materia", "=", "docente_materias.id_materia")
+        ->whereIn('docente_materias.id_usuario', $ids)
+        ->groupBY("materias.id_materia")
+        ->selectRaw("materias.id_materia,count(*)as cuantos")
+        ->get();
 
+        $materiasComun=array();
+        foreach( $MateriaPorId as  $cuantasMaterias){
+              $cuanto= $cuantasMaterias->cuantos; 
+              if($cuanto==$tamaño){
+                $idMat= $cuantasMaterias->id_materia;
+                array_push($materiasComun,  $idMat);
+              }      
+        }
+               $MateriaPorIdComun =Materia::  
+                select('materias.nombre_materia')
+                ->whereIn('id_materia',$materiasComun)
+                ->get();
+                foreach($MateriaPorIdComun as $MateriaP){
+                    error_log( $MateriaP-> nombre_materia. "\n hola");
+               //imprimir
+                }
+                
+                return Inertia::render('SolicitarPage', [
+                    'materiasIdDocente' => $MateriaPorIdComun
+                    ]);
 
+    }
+             
+    
 
     /**
      * Show the form for editing the specified resource.
