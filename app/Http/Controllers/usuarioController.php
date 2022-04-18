@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use app\Models\User;
+use App\Models\User;
 use App\Models\Grupo;
-use app\Models\Materia;
+use App\Models\Materia;
 use Illuminate\Support\Facades\Redirect;
 class usuarioController extends Controller
 {
@@ -18,9 +18,7 @@ class usuarioController extends Controller
   public function index()
   {
     $docentesComun = User::select('id', 'name')->get();
-    return Inertia::render('SolicitarPage', [
-      'docentes' => $docentesComun,
-    ]);
+    return $docentesComun;
   }
 
   /**
@@ -57,9 +55,9 @@ class usuarioController extends Controller
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function show(Request $request)
+  public function show(int $request)
   {
-    $id = $request->Id;
+    $id = $request;
     $materiasNomDocente = Grupo::join(
       'users',
       'grupos.id_usuario',

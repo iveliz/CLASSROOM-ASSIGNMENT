@@ -37,11 +37,11 @@ class SolicitudesController extends Controller
             $soli->docentes=$docentes_solicitud;
         }
         /*echo "<script>console.log('Console: " . $grupos_solicitud . "' );</script>";*/
-        return Inertia::render('SolicitudesPage',['solicitudes'=>$solicitudes]);
+        return $solicitudes;
         /*printf('lista');*/
     }
 
-    private function filtrarSolicitudes($id_usuario, $estado){
+    public function filtrarSolicitudes(Request $id_usuario, $estado){
         $solicitudes = Solicitudes::join('registro_solicitudes','solicitudes.id_solicitud','=','registro_solicitudes.id_solicitud')
         ->select('solicitudes.id_solicitud','registro_solicitudes.fecha_inicio_reg_sct','registro_solicitudes.id_reg_sct','solicitudes.materia_solicitud','solicitudes.cantidad_estudiantes_solicitud','solicitudes.fecha_requerida_solicitud')
         ->where('solicitudes.id_usuario',$id_usaurio)
@@ -68,25 +68,50 @@ class SolicitudesController extends Controller
         return $solicitudes;
     }
 
-    public function listarPendientes($id_usuario)
+    public function listarPendientes(int $id_usuario)
     {
-        $solicitudes_pendientes = filtrarSolicitudes($id_usaurio, "pendiente");
-        return Inertia::render('SolicitudesPage',['solicitudes_pendientes'=>$solicitudes_pendientes]);
+        /*$solicitudes_pendientes = filtrarSolicitudes($id_usaurio, "pendiente");
+        return $solicitudes_pendientes;*/
+
+        $solicitudes = Solicitudes::join('registro_solicitudes','solicitudes.id_solicitud','=','registro_solicitudes.id_solicitud')
+        ->select('solicitudes.id_solicitud','registro_solicitudes.fecha_inicio_reg_sct','registro_solicitudes.id_reg_sct','solicitudes.materia_solicitud','solicitudes.cantidad_estudiantes_solicitud','solicitudes.fecha_requerida_solicitud')
+        ->where('solicitudes.id_usuario',$id_usuario)
+        ->where('solicitudes.estado_solicitud',"pendiente")
+        ->get();
+        
+        foreach ($solicitudes as $soli){
+            $consulta_grupos_solicitud = GrupoSolicitudes::getGruposDeSolicitud($soli['id_solicitud']);
+            $grupos_solicitud = array();
+            foreach ($consulta_grupos_solicitud as $grupo){
+                array_push($grupos_solicitud,$grupo->codigo_grupo_sct);
+            }
+            
+            $consulta_docentes_solicitud = DocenteSolicitudes::getNombreDeDocentes($soli['id_solicitud']);
+            $docentes_solicitud = array();
+            foreach ($consulta_docentes_solicitud as $docente){
+                array_push($docentes_solicitud,$docente->nombre_doc_std);
+            }
+
+            $soli->grupos=$grupos_solicitud;
+            $soli->docentes=$docentes_solicitud;
+        }
+
+        return $solicitudes;
     }
 
-    public function listarRechazados($id_usuario)
+    public function listarRechazados(Request $id_usuario)
     {
         $solicitudes_rechazadas = filtrarSolicitudes($id_usaurio, "rechazado");
-        return Inertia::render('SolicitudesPage',['solicitudes_rechazadas'=>$solicitudes_rechazadas]);
+        return $solicitudes_rechazadas;
     }
 
-    public function listarAceptados($id_usuario)
+    public function listarAceptados(Request $id_usuario)
     {
         $solicitudes_aceptadas = filtrarSolicitudes($id_usaurio, "aceptado");
-        return Inertia::render('SolicitudesPage',['solicitudes_aceptadas'=>$solicitudes_aceptadas]);
+        return $solicitudes_aceptadas;
     }
 
-    public function crearSolicitud($datos_solicitud){
+    public function crearSolicitud(Request $datos_solicitud){
         $id_nueva_solicitud = $datos_solicitud.id;
         $nueva_solicitud = new Solicitudes; 
         $nueva_solicitud = $datos_solicitud->input('Materia');

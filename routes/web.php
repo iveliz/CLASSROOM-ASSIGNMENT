@@ -73,3 +73,13 @@ Route::resource('solicitar',materiaController::class)
 
 Route::resource('prueba_solicitudes', SolicitudesController::class)
     ->middleware(['auth:sanctum','verified']);
+
+Route::get('/solicitudes', 'App\Http\Controllers\SolicitudesController@index');
+Route::get('/solicitudes/pendientes/{id}', 'App\Http\Controllers\SolicitudesController@listarPendientes');
+Route::get('/solicitudes/rechazadas/{id}', 'App\Http\Controllers\SolicitudesController@listarRechazados');
+Route::get('/solicitudes/aceptadas/{id}', 'App\Http\Controllers\SolicitudesController@listarAceptados');
+
+Route::get('/docentes', 'App\Http\Controllers\usuarioController@index');
+Route::post('/docentes/{data}', 'App\Http\Controllers\usuarioController@store');
+Route::get('/docentes/show/{id}', 'App\Http\Controllers\usuarioController@show');
+Route::get('/docentes/show-dos/{id}', 'App\Http\Controllers\usuarioController@show2');
