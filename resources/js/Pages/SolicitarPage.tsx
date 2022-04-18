@@ -185,7 +185,7 @@ export default function () {
         </div>
 
         <SolicitarCard>
-          <h1 className="text-center">Solicitar Aula</h1>
+          <h1 className="text-center">Solicitar aula</h1>
 
           <div className="flex flex-col space-y-4 content-center">
             <div>
