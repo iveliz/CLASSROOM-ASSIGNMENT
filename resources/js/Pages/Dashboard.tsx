@@ -12,13 +12,13 @@ export default function Dashboard() {
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
               <h1 className="text-center ">Información</h1>
             </div>                         
-            <section className="preguntas-frecuentes clearfix">	
-		          <div className="preguntas-frecuentes-contenedor serif"> 
+            <section className="preguntas-frecuentes clearfix ">	
+		          <div className="preguntas-frecuentes-contenedor serif "> 
 		  
               {/*<div className="preguntas-frecuentes-encabezado-linea-roja"></div> 
 	        	  	<h6 className="texto-h3">Preguntas frecuentes</h6>   ₍˄·͈༝·͈˄*₎◞ ̑̑*/}
       
-               <div className=" preguntas sm:px-6 lg:px-8 "> 
+               <div className=" preguntas min-h-max"> 
                <h5 className="text-left my-8">En esta sección encontrará información para poder usar el sistema apropiadamente. </h5>
                  <input className="accordion-item-input" type="checkbox" name="accordion" id="item1" />
                  <label htmlFor='item1' className="accordion-item-hd">¿Cómo restablezco mi contraseña?<span className="accordion-item-hd-cta">&#9650;</span> </label>
@@ -71,15 +71,17 @@ export default function Dashboard() {
                     <li>Si hay una equivocación podrá eliminar dirigiéndose al icono X en las etiquetas generadas de Materia</li>
                     <li>Seleccione el/los grupos correspondientes en el menú desplegable Grupo(s)</li>
                     <li>Si hay una equivocación podrá eliminar dirigiéndose al icono X en las etiquetas generadas de Grupo(s)</li>
-                    <li>Seleccione la fecha a solicitar el aula, podrá seleccionar dirigiéndose al icono de calendario </li>
+                    <li>Seleccione la fecha a solicitar el aula</li>
                     <li>Seleccione la hora que corresponda a su solicitud en el menú desplegable de Hora</li>
                     <li>Seleccione los períodos que corresponda a su solicitud</li>
                     <li>Seleccione el tipo de reserva que desea para su solicitud en el campo Tipo de solicitud, haga clic en el menú desplegable y seleccione el tipo.</li>
                     <li>Ingrese en el campo Cantidad de estudiantes, debe tener en cuenta que no es válido dejar la cantidad con cantidad 0.</li>
                     <li>Haga clic en Solicitar</li>
                    </p></div>
-                   <h5 className="text-center">¿Tienes alguna duda? Contactanos! </h5>
-                   <h5 className="text-center">neolancersrl@gmail.com</h5>
+                   
+                   <h5 className="text-center">¿Tienes alguna duda? Contactanos! 
+                   <a className= "text-center ml-2" href="mailto:neolancersrl@gmail.com ?
+                   subject=Quiero más información con respecto a los servicios que ofrecen.&body=Hola equipo Neolancer! te contacto desde su website, quisiera más información de sus servicios."> neolancersrl@gmail.com </a></h5> 
                    
                 </div>    {/*div de preguntas frecuentes contenedor serif*/} 
                 </div>
