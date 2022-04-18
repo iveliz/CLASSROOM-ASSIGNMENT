@@ -47,9 +47,9 @@ class GrupoController extends Controller
      * @param  \App\Models\Grupo  $grupo
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request)
+    public function show(string $request)
     {
-        $materia = $request->materia;
+        $materia = $request;
         $grupos = DB::table('grupos')->join('materias', 'grupos.id_materia', '=', 'materias.id_materia')
             ->where('materias.nombre_materia', $materia)->get();
 

@@ -72,7 +72,7 @@ route::get('/grupoMateria/{materia}', 'App\Http\Controllers\GrupoController@grup
 Route::controller(GrupoController::class)->group(function () {
   Route::get('/grupos','index');
   Route::get('/grupos/{materia}','grupoMateria');
-  Route::post('/grupo','metodo');
+  Route::post('/grupo/{materia}','show');
 });
 
 Route::controller(materiaController::class)->group(function () {
