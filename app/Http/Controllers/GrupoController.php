@@ -53,7 +53,7 @@ class GrupoController extends Controller
             ->where('materias.nombre_materia', $materia)->get();
 
         return Inertia::render('SolicitarPage', [
-            'materiasIdDocente' => $grupos
+            'gruposMateria' => $grupos
         ]);
     }
 
