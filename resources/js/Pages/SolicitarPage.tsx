@@ -118,21 +118,11 @@ export default function (props:{docentes: any,docentes2:any}) {
              idS=id
              console.log("entro aquis")
         }
-        Inertia.get('solicitar/{prueba}', {
+        Inertia.post('solicitar', {
           idS
         },{
             preserveState: true,
-            onSuccess:()=>{
-              recibirDocentes=[];
-              for(let {id,name}of props.docentes){
-                recibirDocentes.push({label :name,value:name,id:id});
-              }
-               docentesId=[];
-               for (let {id} of props.docentes) {
-                docentesId.push(id);
-               }
-              
-            }
+            replace: true
            })
 
          

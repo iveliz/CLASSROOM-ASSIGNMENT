@@ -41,24 +41,6 @@ class usuarioController extends Controller
    */
   public function store(Request $request)
   {
-    $request->validate([
-      'id_usuario' => 'require',
-      'nombre_usuario' => 'require',
-      'email_usuario' => 'require',
-      'contrasenia_usuario' => 'require',
-      'token_recordado_usuario' => 'require',
-      'rol_usuario' => 'require',
-    ]);
-  }
-
-  /**
-   * Display the specified resource.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
-  public function show(Request $request)
-  {
     $id = $request->idS;
     $materiasNomDocente = Grupo::join(
       'users',
@@ -87,6 +69,25 @@ class usuarioController extends Controller
         'docentes' => $docentesComun
 
       ]);
+    $request->validate([
+      'id_usuario' => 'require',
+      'nombre_usuario' => 'require',
+      'email_usuario' => 'require',
+      'contrasenia_usuario' => 'require',
+      'token_recordado_usuario' => 'require',
+      'rol_usuario' => 'require',
+    ]);
+  }
+
+  /**
+   * Display the specified resource.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\Response
+   */
+  public function show(Request $request)
+  {
+
   }
   /**
    * Display the specified resource.
