@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Grupo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class GrupoController extends Controller
 {
@@ -45,9 +46,15 @@ class GrupoController extends Controller
      * @param  \App\Models\Grupo  $grupo
      * @return \Illuminate\Http\Response
      */
-    public function show(Grupo $grupo)
+    public function show(Request $request)
     {
-        //
+        $materia = $request->materia;
+        $grupos = DB::table('grupos')->join('materias', 'grupos.id_materia', '=', 'materias.id_materia')
+            ->where('materias.nombre_materia', $materia)->get();
+
+        return Inertia::render('SolicitarPage', [
+            'materiasIdDocente' => $grupos
+        ]);
     }
 
     /**
