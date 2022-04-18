@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-Use App\Models\User;
 Use App\Models\Materia;
 class DocenteMateria extends Model
 {
