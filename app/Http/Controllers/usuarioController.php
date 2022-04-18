@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use app\Models\User;
-use App\Models\DocenteMateria;
+use App\Models\Grupo;
 use app\Models\Materia;
 use Illuminate\Support\Facades\Redirect;
 class usuarioController extends Controller
@@ -18,7 +18,9 @@ class usuarioController extends Controller
   public function index()
   {
     $docentesComun = User::select('id', 'name')->get();
-    return $docentesComun;
+    return Inertia::render('SolicitarPage', [
+      'docentes' => $docentesComun,
+    ]);
   }
 
   /**
@@ -52,27 +54,28 @@ class usuarioController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  string  $id
+   * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function show($id)
+  public function show(Request $request)
   {
-    $materiasNomDocente = DocenteMateria::join(
+    $id = $request->Id;
+    $materiasNomDocente = Grupo::join(
       'users',
-      'docente_materias.id_usuario',
+      'grupos.id_usuario',
       '=',
       'users.id'
     )
-      ->select('docente_materias.id_materia')
-      ->where('users.name', 'LIKE', $id)
+      ->select('grupos.id_materia')
+      ->where('users.id', $id)
       ->get();
-    $docentesidMaterias = DocenteMateria::join(
+    $docentesidMaterias = Grupo::join(
       'materias',
-      'docente_materias.id_materia',
+      'grupos.id_materia',
       '=',
       'materias.id_materia'
     )
-      ->select('docente_materias.id_usuario')
+      ->select('grupos.id_usuario')
       ->whereIn('materias.id_materia', $materiasNomDocente)
       ->get();
     $docentesComun = User::select('name', 'id')
@@ -83,27 +86,27 @@ class usuarioController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  int  $id
+   * @param  string  $id
    * @return \Illuminate\Http\Response
    */
   public function show2($id)
   {
-    $materiasNomDocente = DocenteMateria::join(
+    $materiasNomDocente = Grupo::join(
       'users',
-      'docente_materias.id_usuario',
+      'grupos.id_usuario',
       '=',
       'users.id'
     )
-      ->select('docente_materias.id_materia')
-      ->where('users.id', $id)
+      ->select('grupos.id_materia')
+      ->where('users.name', 'LIKE', $id)
       ->get();
-    $docentesidMaterias = DocenteMateria::join(
+    $docentesidMaterias = Grupo::join(
       'materias',
-      'docente_materias.id_materia',
+      'grupos.id_materia',
       '=',
       'materias.id_materia'
     )
-      ->select('docente_materias.id_usuario')
+      ->select('grupos.id_usuario')
       ->whereIn('materias.id_materia', $materiasNomDocente)
       ->get();
     $docentesComun = User::select('name', 'id')

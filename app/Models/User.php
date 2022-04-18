@@ -10,7 +10,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\DocenteMateria;
+use App\Models\Grupo;
 
 class User extends Authenticatable
 {
@@ -55,8 +55,8 @@ class User extends Authenticatable
    */
   protected $appends = ['profile_photo_url'];
 
-  public function docenteMaterias()
+  public function Grupos()
   {
-    return $this->hasMany(DocenteMateria::class);
+    return $this->hasMany(Grupo::class);
   }
 }
