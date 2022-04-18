@@ -804,6 +804,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   height: 5rem;
 }.min-h-screen{
   min-height: 100vh;
+}.min-h-max{
+  min-height: -webkit-max-content;
+  min-height: -moz-max-content;
+  min-height: max-content;
 }.w-5{
   width: 1.25rem;
 }.w-16{
@@ -10720,7 +10724,6 @@ select {
   position: absolute;
   left: -9999px;
 }/* 
-
 .preguntas-frecuentes {
 	position: relative;
 	width: 100%;
@@ -10744,6 +10747,7 @@ select {
 }.preguntas {
   padding-top:0%;
   max-height:0%;
+  top: 0px;
 }.preguntas label {
   background: #fff;
 	border-bottom: 1px solid #eee;
@@ -10802,25 +10806,21 @@ select {
     font-size: 1.59rem;
   }*/
 }@media (min-width: 768px) {
-  .preguntas {
-    padding-top: 5.21rem;
-  }
-  .preguntas label {
+  /*.preguntas {
+    padding-top: 5.21rem;*/
+  }.preguntas label {
     font-size: 1.3125rem;
     letter-spacing: -.01875rem;
     line-height: 1.33333;
     padding: 20px;
-  }
-  .respuesta p {
+  }.respuesta p {
     font-size: 1.21rem;
     letter-spacing: 0.021rem;
     line-height: 2.1;
     padding: 25px 50px;
-  }
-  /*.texto-h3 {
+  }/*.texto-h3 {
     font-size: 1.7rem;
-  }*/
-}@media (min-width: 1000px) {
+  }*/@media (min-width: 1000px) {
   .texto-h3 {
     font-size: 2.35rem;
   }
