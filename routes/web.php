@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GrupoController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\usuarioController;
@@ -67,6 +68,16 @@ route::get('/grupoDe/{id}', 'App\Http\Controllers\GrupoController@grupoDe');
 route::get('/gruposDe/{id}', 'App\Http\Controllers\GrupoController@gruposDe');
 route::get('/gruposDeVarios', 'App\Http\Controllers\GrupoController@gruposDeVarios');
 route::get('/grupoMateria/{materia}', 'App\Http\Controllers\GrupoController@grupoMateria');
+
+Route::controller(GrupoController::class)->group(function () {
+  Route::get('/grupos','index');
+  Route::get('/grupos/{materia}','grupoMateria');
+  Route::post('/grupo','metodo');
+});
+
+Route::controller(materiaController::class)->group(function () {
+  Route::post('/materias','show');
+});
 
 Route::resource('solicitar',materiaController::class)
 ->middleware(['auth:sanctum','verified']);

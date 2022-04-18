@@ -16,7 +16,8 @@ class GrupoController extends Controller
      */
     public function index()
     {
-        //
+        $grupos = Grupo::all();
+        return $grupos;
     }
 
     /**
@@ -52,9 +53,7 @@ class GrupoController extends Controller
         $grupos = DB::table('grupos')->join('materias', 'grupos.id_materia', '=', 'materias.id_materia')
             ->where('materias.nombre_materia', $materia)->get();
 
-        return Inertia::render('SolicitarPage', [
-            'materiasIdDocente' => $grupos
-        ]);
+        return $grupos;
     }
 
     /**
@@ -129,5 +128,13 @@ class GrupoController extends Controller
         $consulta = DB::table('grupos')->join('materias', 'grupos.id_materia', '=', 'materias.id_materia')
             ->where('materias.nombre_materia', $materia)->get();
         return $consulta;
+    }
+
+    public function metodo(String $request){
+        
+        $grupos = DB::table('grupos')->join('materias', 'grupos.id_materia', '=', 'materias.id_materia')
+            ->where('materias.nombre_materia', $request)->get();
+
+        return $grupos;
     }
 }
