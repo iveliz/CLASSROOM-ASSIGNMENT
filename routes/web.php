@@ -4,7 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\usuarioController;
 use Inertia\Inertia;
-
+use App\Http\Controllers\materiaController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -75,3 +75,6 @@ route::get('/grupoDe/{id}', 'App\Http\Controllers\GrupoController@grupoDe');
 route::get('/gruposDe/{id}', 'App\Http\Controllers\GrupoController@gruposDe');
 route::get('/gruposDeVarios', 'App\Http\Controllers\GrupoController@gruposDeVarios');
 route::get('/grupoMateria/{materia}', 'App\Http\Controllers\GrupoController@grupoMateria');
+
+Route::resource('materias',materiaController::class)
+->middleware(['auth:sanctum','verified']);

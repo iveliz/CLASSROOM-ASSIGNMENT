@@ -1,3 +1,6 @@
+
+
+
 import React from 'react';
 import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
@@ -30,6 +33,9 @@ const grupo = [
   { label: '2', value: '2' },
   { label: '3', value: '3' },
 ];
+
+
+
 
 const tiporeserva = [
   { label: 'Examen', value: 'Examen' },
