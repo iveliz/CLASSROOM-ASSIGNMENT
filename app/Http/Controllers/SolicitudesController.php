@@ -85,4 +85,39 @@ class SolicitudesController extends Controller
         $solicitudes_aceptadas = filtrarSolicitudes($id_usaurio, "aceptado");
         return Inertia::render('SolicitudesPage',['solicitudes_aceptadas'=>$solicitudes_aceptadas]);
     }
+
+    public function crearSolicitud($datos_solicitud){
+        $id_nueva_solicitud = $datos_solicitud.id;
+        $nueva_solicitud = new Solicitudes; 
+        $nueva_solicitud = $datos_solicitud->input('Materia');
+        $nueva_solicitud = $datos_solicitud->input('Cantidad');
+        $nueva_solicitud = $datos_solicitud->input('Tipo');
+        $nueva_solicitud = $datos_solicitud->input('Periodo');
+        $nueva_solicitud = $datos_solicitud->input('Fecha');
+        $nueva_solicitud = $datos_solicitud->input('Horario');
+        Solicitudes::insert($nueva_solicitud);
+        foreach ($datos_solicitud.grupos as $grupo){
+            GrupoSolicitudes::insert($id_nueva_solicitud,$grupo);
+        }
+        foreach ($datos_solicitud.docentes as $docente){
+            DocenteSolicitudes::insert($id_nueva_solicitud,$docente);
+        }
+        
+        //GrupoSolicitudes.add($datos_solicitud);
+        /** crear solicitud */
+        /** crear grupos en una solicitud*/
+        /** crear docentes en una solicitud */
+        /** crear registro solicitud */
+        /** retornar 1 si se guardo 0 si fallo*/
+    }
+
+    public function eliminarSolicitud($id_nueva_solicitud){
+        
+        /** eliminar grupos en una solicitud*/
+        /** eliminar docentes en una solicitud */
+        /** eliminar solicitud */
+
+        /** retornar 1 si se elimino 0 si fallo*/
+    }
+
 }

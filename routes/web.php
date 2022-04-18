@@ -70,3 +70,6 @@ route::get('/grupoMateria/{materia}', 'App\Http\Controllers\GrupoController@grup
 
 Route::resource('solicitar',materiaController::class)
 ->middleware(['auth:sanctum','verified']);
+
+Route::resource('prueba_solicitudes', SolicitudesController::class)
+    ->middleware(['auth:sanctum','verified']);
