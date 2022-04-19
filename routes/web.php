@@ -68,6 +68,10 @@ Route::middleware([
 Route::resource('solicitar',materiaController::class)
 ->middleware(['auth:sanctum','verified']);
 
+Route::resource('prueba_solicitudes', SolicitudesController::class)
+    ->middleware(['auth:sanctum','verified']);
+  
+
 Route::controller(GrupoController::class)->group(function () {
   Route::post('/grupos','gruposMateria');
 });

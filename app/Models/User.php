@@ -12,7 +12,6 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Grupo;
 
-
 class User extends Authenticatable
 {
   use HasApiTokens;
@@ -56,7 +55,7 @@ class User extends Authenticatable
    */
   protected $appends = ['profile_photo_url'];
 
-  public function grupos()
+  public function Grupos()
   {
     return $this->hasMany(Grupo::class);
   }

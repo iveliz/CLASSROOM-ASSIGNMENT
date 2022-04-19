@@ -10,7 +10,7 @@ class Materia extends Model
   use HasFactory;
   protected $fillable = ['nombre_materia'];
 
-  public function grupos()
+  public function Grupos()
   {
     return $this->hasMany(Grupo::class);
   }
