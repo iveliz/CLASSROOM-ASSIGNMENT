@@ -10,11 +10,18 @@ class Solicitudes extends Model
     protected $table = "solicitudes";
     protected $fillable = [
         'id_solicitud',
+        'id_usuario',
         'materia_solicitud',
         'cantidad_estudiantes_solicitud',
-        'motivo_reserva_solicitu',
+        'motivo_reserva_solicitud',
         'fecha_requerida_solicitud',
         'hora_requerida_solicitud',
         'periodos_solicitud'];
+    
     use HasFactory;
+
+    static function crearSolicitud(){
+        
+        return "hola";
+    }
 }
