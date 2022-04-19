@@ -104,7 +104,7 @@ export default function ({ Fecha, codigo, Materia }: Solicitud) {
                   <p className="font-bold ">Para fecha: </p>
                   <p className="font-bold "></p>
                   <div className="absolute right-0 bottom-0">
-                   {/* <button
+                   <button
                       type="button"
                       className="btn btn-danger text-white  mr-4 mb-2 "
                       onClick={openModal2}
@@ -141,7 +141,7 @@ export default function ({ Fecha, codigo, Materia }: Solicitud) {
                         </div>
                       </form>
                     </Modal>
-  */}
+  
                     <button
                       className="btn butonOK text-white  mr-4 mb-2"
                       onClick={closeModal}
