@@ -23,8 +23,7 @@ class CreateReservasTable extends Migration
       $table->time('hora_inicio_reserva');
       $table->time('hora_fin_reserva');
       $table->date('fecha_reserva');
-      $table->timestamp('created_at')->nullable();
-      $table->timestamp('update_at')->nullable();
+      $table->timestamps();
     });
   }
 

@@ -18,7 +18,7 @@ class CreateCarrerasTable extends Migration
       $table->string('nombre_carrera', 250);
       $table->string('facultad_carrera', 250);
       $table->timestamp('created_at')->nullable();
-      $table->timestamp('update_at')->nullable();
+      $table->timestamps();
     });
   }
 

@@ -17,16 +17,17 @@ class CreateAulasReservadasTable extends Migration
       $table->bigIncrements('id_aula_res');
       $table->unsignedbigInteger('id_reserva')->nullable();
       $table->unsignedbigInteger('id_aula')->nullable();
-      $table->timestamp('created_at')->nullable();
-      $table->timestamp('update_at')->nullable();
       $table
         ->foreign('id_reserva')
         ->references('id_reserva')
-        ->on('reservas')->onDelete('set null');
+        ->on('reservas')
+        ->onDelete('set null');
       $table
         ->foreign('id_aula')
         ->references('id_aula')
-        ->on('aulas')->onDelete('set null');
+        ->on('aulas')
+        ->onDelete('set null');
+      $table->timestamps();
     });
   }
 
