@@ -62,11 +62,11 @@ Route::middleware([
     })->name('solicitudes/rechazadas');
 });
 
-route::get('/prueba', 'App\Http\Controllers\GrupoController@prueba');
-route::get('/grupoDe/{id}', 'App\Http\Controllers\GrupoController@grupoDe');
-route::get('/gruposDe/{id}', 'App\Http\Controllers\GrupoController@gruposDe');
-route::get('/gruposDeVarios', 'App\Http\Controllers\GrupoController@gruposDeVarios');
-route::get('/grupoMateria/{materia}', 'App\Http\Controllers\GrupoController@grupoMateria');
+
 
 Route::resource('solicitar',materiaController::class)
 ->middleware(['auth:sanctum','verified']);
+
+Route::controller(GrupoController::class)->group(function () {
+  Route::post('/grupos','gruposMateria');
+});
