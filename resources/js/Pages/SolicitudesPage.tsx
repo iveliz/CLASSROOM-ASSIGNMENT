@@ -13,7 +13,7 @@ export default function () {
   },[])
 
   const getEstudiantes = async () => {
-      const res = await axios.get('http://localhost:8000/solicitudes')
+      const res = await axios.get('http://127.0.0.1:8000/solicitudes')
       setListaEstudiantes(res.data)
       console.log(res.data)
   }
