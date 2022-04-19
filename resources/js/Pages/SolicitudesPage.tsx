@@ -6,14 +6,25 @@ import { solicitudes } from '@/Const/solicitudes';
 import Cardsolicitud from '@/Jetstream/Cardsolicitud';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+
+const endpoint = 'http://127.0.0.1:8000'
 export default function () {
   const [listaEstudiantes, setListaEstudiantes] = useState([])
+  const [materia, setMateria] = useState('elementos')
+  const [grupos, setGrupos] = useState([])
   useEffect(()=>{
       getEstudiantes();
+      getGrupos();
   },[])
 
+  const getGrupos = async () => {
+    const grupos = await axios.post(`${endpoint}/grupo`,{materia:'elementos'})
+    setGrupos(grupos.data)
+    console.log(grupos.data)
+  }
+
   const getEstudiantes = async () => {
-      const res = await axios.get('http://127.0.0.1:8000/solicitudes')
+      const res = await axios.get(`${endpoint}/solicitudes`)
       setListaEstudiantes(res.data)
       console.log(res.data)
   }

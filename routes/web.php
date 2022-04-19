@@ -72,7 +72,7 @@ route::get('/grupoMateria/{materia}', 'App\Http\Controllers\GrupoController@grup
 Route::controller(GrupoController::class)->group(function () {
   Route::get('/grupos','index');
   Route::get('/grupos/{materia}','grupoMateria');
-  Route::post('/grupo/{materia}','show');
+  Route::post('/grupo','show');
 });
 
 Route::controller(materiaController::class)->group(function () {
@@ -84,11 +84,11 @@ Route::resource('solicitar',materiaController::class)
 
 Route::resource('prueba_solicitudes', SolicitudesController::class)
     ->middleware(['auth:sanctum','verified']);
-
+  
 Route::get('/solicitudes', 'App\Http\Controllers\SolicitudesController@index');
 Route::get('/solicitudes/pendientes/{id}', 'App\Http\Controllers\SolicitudesController@listarPendientes');
 Route::get('/solicitudes/rechazadas/{id}', 'App\Http\Controllers\SolicitudesController@listarRechazados');
-Route::get('/solicitudes/aceptadas/{id}', 'App\Http\Controllers\SolicitudesController@listarAceptados');
+Route::get('/solicitudes/aceptadas/{id}', 'App\Http\Controllers\SolicitudesController@listarAceptados');  
 
 Route::get('/docentes', 'App\Http\Controllers\usuarioController@index');
 Route::post('/docentes/{data}', 'App\Http\Controllers\usuarioController@store');
