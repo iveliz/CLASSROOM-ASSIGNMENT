@@ -3,18 +3,9 @@ import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
 import Sidebar from '@/Jetstream/Sidebar';
 
-import { useState, useEffect } from "react"
-import get from 'axios';
 
 export default function () {
 
-  const [data,setData] = useState();
-    const [error,setError] = useState();
- const endpoint = 'docentes';
-    useEffect(()=>{
-        get(`http://localhost:3050/${endpoint}`)
-        .then(({data}) => setData(data))
-    },[endpoint])
 
   return (
     <AppLayout title="Informacion">
