@@ -31,47 +31,50 @@ Route::middleware([
   })->name('dashboard');
 });
 
-
+Route::middleware([
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
+])->group(function () {
+  Route::get('/solicitudes/pendientes', function () {
+    return Inertia::render('SolicitudesPage');
+  })->name('solicitudes');
+});
 
 Route::middleware([
   'auth:sanctum',
   config('jetstream.auth_session'),
   'verified',
 ])->group(function () {
-    Route::get('/solicitudes/pendientes', function () {
-        return Inertia::render('SolicitudesPage');
-    })->name('solicitudes');
+  Route::get('/solicitudes/aceptadas', function () {
+    return Inertia::render('Aceptados');
+  })->name('solicitudes/aceptadas');
 });
 
 Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
 ])->group(function () {
-    Route::get('/solicitudes/aceptadas', function () {
-        return Inertia::render('Aceptados');
-    })->name('solicitudes/aceptadas');
+  Route::get('/solicitudes/rechazadas', function () {
+    return Inertia::render('Rechazados');
+  })->name('solicitudes/rechazadas');
 });
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-])->group(function () {
-    Route::get('/solicitudes/rechazadas', function () {
-        return Inertia::render('Rechazados');
-    })->name('solicitudes/rechazadas');
-});
+Route::resource('solicitar', materiaController::class)->middleware([
+  'auth:sanctum',
+  'verified',
+]);
 
-
-
-Route::resource('solicitar',materiaController::class)
-->middleware(['auth:sanctum','verified']);
-
-Route::resource('prueba_solicitudes', SolicitudesController::class)
-    ->middleware(['auth:sanctum','verified']);
-  
+Route::resource('prueba_solicitudes', SolicitudesController::class)->middleware(
+  ['auth:sanctum', 'verified']
+);
 
 Route::controller(GrupoController::class)->group(function () {
-  Route::post('/grupos','gruposMateria');
+  Route::post('/grupos', 'gruposMateria');
+});
+
+Route::controller(usuarioController::class)->group(function () {
+  Route::post('/docentes', 'ObtenerDocentes');
+  Route::post('/docentesid', 'ObtenerDocentesId');
 });
