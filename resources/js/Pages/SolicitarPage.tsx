@@ -13,7 +13,7 @@ import { addDays, subDays } from 'date-fns';
 import { Inertia } from '@inertiajs/inertia';
 import { registerLocale, setDefaultLocale } from 'react-datepicker';
 import { values } from 'lodash';
-
+import Modal from 'react-modal';
 registerLocale('es', es);
 
 var hoy = new Date();
@@ -63,8 +63,8 @@ const horarios = [
   { label: '18:45', value: '18:45' },
   { label: '20:15', value: '20:15' },
 ];
- 
-export default function (props:{docentes: any,materiaIdDocente:any}) {
+
+export default function (props: { docentes: any; materiaIdDocente: any }) {
   const [selectedOptions, setSelectedDocentes] = useState([]);
   const [selectedMateria, setSelectedMateria] = useState();
   const [selectedGroups, setSelectedGroups] = useState([]);
@@ -73,17 +73,16 @@ export default function (props:{docentes: any,materiaIdDocente:any}) {
   const [selectedPeriodo, setSelectedPeriodo] = useState();
   const [selectedCantidad, setSelectedCantidad] = useState();
   const [startDate, setStartDate] = useState(hoy);
-  const [stateNombres,setStateNombres] =useState(Boolean);
-  const [stateMateria,setStateMateria] =useState(true);
-  const [stateGrupo,setStateGrupo] =useState(true);
-  let recibirDocentes=[];
-  
+  const [stateNombres, setStateNombres] = useState(Boolean);
+  const [stateMateria, setStateMateria] = useState(true);
+  const [stateGrupo, setStateGrupo] = useState(true);
+  let recibirDocentes = [];
+  /*
   for(let {id,name}of props.docentes){
      recibirDocentes.push({label :name,value:name,id:id});
   }
-  
+  */
 
-  
   let cantidadS: Number = 0;
   let gruposS: [] = [];
   let docentesId: any[] = [];
@@ -95,6 +94,33 @@ export default function (props:{docentes: any,materiaIdDocente:any}) {
   let fechaS: String = '';
   let materiaS: String = '';
 
+  let subtitle: any;
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = '#f00';
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
   const handleChangeGrupos = (grupos: []) => {
     setSelectedGroups(grupos);
     for (let { value } of grupos) {
@@ -105,7 +131,7 @@ export default function (props:{docentes: any,materiaIdDocente:any}) {
 
   const handleChangeDocentes = (docentes: []) => {
     setSelectedDocentes(docentes);
-    let idS=[""];
+    let idS = [''];
     docentesId = [];
     docentesNombres = [];
     if (docentes != null) {
@@ -117,37 +143,41 @@ export default function (props:{docentes: any,materiaIdDocente:any}) {
           docentesNombres.push(value);
         }
       } else {
-
         for (let { id } of docentes) {
-             idS=id
-             console.log("entro aquis")
+          idS = id;
+          console.log('entro aquis');
         }
         setStateNombres(true);
-        Inertia.post('solicitar', {
-          idS
-        },{
+        Inertia.post(
+          'solicitar',
+          {
+            idS,
+          },
+          {
             preserveState: true,
             replace: true,
-            onSuccess:()=>{
+            onSuccess: () => {
               setStateNombres(false);
               setStateMateria(false);
-            }
-            
-           })
+            },
+          },
+        );
       }
-    }else{
+    } else {
       setStateMateria(true);
       setStateNombres(true);
-       Inertia.get("solicitar",{
-         idS
-       },{
-         preserveState:true,
-         onSuccess:()=>{
-          setStateNombres(false);
-         }
-         
-       })
-      
+      Inertia.get(
+        'solicitar',
+        {
+          idS,
+        },
+        {
+          preserveState: true,
+          onSuccess: () => {
+            setStateNombres(false);
+          },
+        },
+      );
     }
 
     console.log(docentes);
@@ -225,7 +255,7 @@ export default function (props:{docentes: any,materiaIdDocente:any}) {
             <div className="bg-white overflow-hidden shadow-xl sm:rounded-lg" />
           </div>
         </div>
-    {  console.log(props.docentes)}
+        {console.log(props.docentes)}
         <SolicitarCard>
           <h1 className="text-center">Solicitar aula</h1>
 
@@ -233,7 +263,7 @@ export default function (props:{docentes: any,materiaIdDocente:any}) {
             <div>
               <p className="text-left">Nombre(s) Docente(s)</p>
               <Select
-                options={recibirDocentes}
+                options={docentes}
                 isLoading={stateNombres}
                 isDisabled={stateNombres}
                 isMulti
@@ -258,7 +288,6 @@ export default function (props:{docentes: any,materiaIdDocente:any}) {
               <Select
                 options={grupo}
                 isSearchable={false}
-
                 isDisabled={stateGrupo}
                 isMulti
                 onChange={handleChangeGrupos}
@@ -332,11 +361,33 @@ export default function (props:{docentes: any,materiaIdDocente:any}) {
             <button
               type="button"
               className="btn colorPrimary text-white"
-              data-toggle="modal"
-              data-target="#exampleModal"
+              onClick={openModal}
             >
               Solicitar
             </button>
+            <Modal
+              isOpen={modalIsOpen}
+              onAfterOpen={afterOpenModal}
+              onRequestClose={closeModal}
+              style={customStyles}
+              contentLabel="Example Modal"
+            >
+              <div className="font-bold">
+                ¿Está seguro de solicitar un aula con esos datos?
+              </div>
+              <form className="d-flex justify-content-center space-x-4 mt-4">
+                <div>
+                  <button className="btn btn-danger text-white">
+                    Cancelar
+                  </button>
+                </div>
+                <div>
+                  <button className="btn colorPrimary text-white">
+                    Aceptar
+                  </button>
+                </div>
+              </form>
+            </Modal>
           </div>
         </SolicitarCard>
       </AppLayout>
