@@ -63,8 +63,8 @@ const horarios = [
   { label: '18:45', value: '18:45' },
   { label: '20:15', value: '20:15' },
 ];
-
-export default function (props:{docentes: any,docentes2:any}) {
+ 
+export default function (props:{docentes: any,materiaIdDocente:any}) {
   const [selectedOptions, setSelectedDocentes] = useState([]);
   const [selectedMateria, setSelectedMateria] = useState();
   const [selectedGroups, setSelectedGroups] = useState([]);
@@ -73,13 +73,17 @@ export default function (props:{docentes: any,docentes2:any}) {
   const [selectedPeriodo, setSelectedPeriodo] = useState();
   const [selectedCantidad, setSelectedCantidad] = useState();
   const [startDate, setStartDate] = useState(hoy);
+  const [stateNombres,setStateNombres] =useState(Boolean);
+  const [stateMateria,setStateMateria] =useState(true);
+  const [stateGrupo,setStateGrupo] =useState(true);
   let recibirDocentes=[];
-
+  
   for(let {id,name}of props.docentes){
      recibirDocentes.push({label :name,value:name,id:id});
   }
+  
 
-
+  
   let cantidadS: Number = 0;
   let gruposS: [] = [];
   let docentesId: any[] = [];
@@ -101,8 +105,7 @@ export default function (props:{docentes: any,docentes2:any}) {
 
   const handleChangeDocentes = (docentes: []) => {
     setSelectedDocentes(docentes);
-    let idS=["hola xdxdxdxdxdxd"];
-    let prueba=["asdjasuifnsrfiluhsd ngsdrhuig"]
+    let idS=[""];
     docentesId = [];
     docentesNombres = [];
     if (docentes != null) {
@@ -114,23 +117,40 @@ export default function (props:{docentes: any,docentes2:any}) {
           docentesNombres.push(value);
         }
       } else {
+
         for (let { id } of docentes) {
              idS=id
              console.log("entro aquis")
         }
+        setStateNombres(true);
         Inertia.post('solicitar', {
           idS
         },{
             preserveState: true,
-            replace: true
+            replace: true,
+            onSuccess:()=>{
+              setStateNombres(false);
+              setStateMateria(false);
+            }
+            
            })
-
-         
       }
+    }else{
+      setStateMateria(true);
+      setStateNombres(true);
+       Inertia.get("solicitar",{
+         idS
+       },{
+         preserveState:true,
+         onSuccess:()=>{
+          setStateNombres(false);
+         }
+         
+       })
+      
     }
 
-    console.log(docentesNombres);
-    console.log(docentesId);
+    console.log(docentes);
   };
 
   const handleChangeMateria = (materia: any) => {
@@ -214,6 +234,8 @@ export default function (props:{docentes: any,docentes2:any}) {
               <p className="text-left">Nombre(s) Docente(s)</p>
               <Select
                 options={recibirDocentes}
+                isLoading={stateNombres}
+                isDisabled={stateNombres}
                 isMulti
                 selectOption
                 onChange={handleChangeDocentes}
@@ -225,6 +247,7 @@ export default function (props:{docentes: any,docentes2:any}) {
               <p className="text-left">Materias</p>
               <Select
                 options={materias}
+                isDisabled={stateMateria}
                 onChange={handleChangeMateria}
                 noOptionsMessage={() => 'No hay opciones disponibles'}
                 placeholder="Materia"
@@ -235,6 +258,8 @@ export default function (props:{docentes: any,docentes2:any}) {
               <Select
                 options={grupo}
                 isSearchable={false}
+
+                isDisabled={stateGrupo}
                 isMulti
                 onChange={handleChangeGrupos}
                 noOptionsMessage={() => 'No hay opciones disponibles'}
