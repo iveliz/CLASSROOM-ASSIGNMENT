@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\usuarioController;
 use Inertia\Inertia;
 use App\Http\Controllers\materiaController;
+use App\Http\Controllers\GrupoController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
