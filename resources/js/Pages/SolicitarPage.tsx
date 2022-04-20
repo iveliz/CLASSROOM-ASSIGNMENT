@@ -1,26 +1,19 @@
-
-
-
 import React from 'react';
 import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
 import SolicitarCard from '@/Jetstream/SolicitarCard';
 import Select from 'react-select';
-
-import JetButton from '@/Jetstream/Button';
 import { NumberPicker } from 'react-widgets/cjs';
 import 'react-widgets/styles.css';
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { InertiaLink } from '@inertiajs/inertia-react';
-import { useForm } from 'react-hook-form';
-import { forEach, forIn } from 'lodash';
-import { Inertia } from '@inertiajs/inertia';
 import es from 'date-fns/locale/es';
 import { addDays, subDays } from 'date-fns';
+import { Inertia } from '@inertiajs/inertia';
 import { registerLocale, setDefaultLocale } from 'react-datepicker';
-
+import { values } from 'lodash';
+import Modal from 'react-modal';
 registerLocale('es', es);
 
 var hoy = new Date();
@@ -33,9 +26,6 @@ const grupo = [
   { label: '2', value: '2' },
   { label: '3', value: '3' },
 ];
-
-
-
 
 const tiporeserva = [
   { label: 'Examen', value: 'Examen' },
@@ -74,7 +64,7 @@ const horarios = [
   { label: '20:15', value: '20:15' },
 ];
 
-export default function () {
+export default function (props: { docentes: any; materiaIdDocente: any }) {
   const [selectedOptions, setSelectedDocentes] = useState([]);
   const [selectedMateria, setSelectedMateria] = useState();
   const [selectedGroups, setSelectedGroups] = useState([]);
@@ -83,67 +73,179 @@ export default function () {
   const [selectedPeriodo, setSelectedPeriodo] = useState();
   const [selectedCantidad, setSelectedCantidad] = useState();
   const [startDate, setStartDate] = useState(hoy);
+  const [stateNombres, setStateNombres] = useState(Boolean);
+  const [stateMateria, setStateMateria] = useState(true);
+  const [stateGrupo, setStateGrupo] = useState(true);
+  let recibirDocentes = [];
+  /*
+  for(let {id,name}of props.docentes){
+     recibirDocentes.push({label :name,value:name,id:id});
+  }
+  */
 
-  let cantidadS : Number = 0;
-  let gruposS : []=[];
-  let docentesId : []=[];
-  let horarioS : any="";
-  let tipoS:String="";
-  let prioridad: String="";
-  let periodoS:Number=1;
-  let fecha : String="";
+  let cantidadS: Number = 0;
+  let gruposS: [] = [];
+  let docentesId: any[] = [];
+  let docentesNombres: [] = [];
+  let horarioS: any = '';
+  let tipoS: String = '';
+  let prioridad: String = '';
+  let periodoS: Number = 1;
+  let fechaS: String = '';
+  let materiaS: String = '';
+
+  let subtitle: any;
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = '#f00';
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
 
   const handleChangeGrupos = (grupos: []) => {
     setSelectedGroups(grupos);
-    gruposS=grupos;
+    for (let { value } of grupos) {
+      gruposS.push(value);
+    }
+    console.log(gruposS);
   };
 
   const handleChangeDocentes = (docentes: []) => {
     setSelectedDocentes(docentes);
-    docentesId=[];
-    for (let {id} of docentes) {
-      docentesId.push(id);
+    let idS = [''];
+    docentesId = [];
+    docentesNombres = [];
+    if (docentes != null) {
+      if (docentes.length > 1) {
+        for (let { id } of docentes) {
+          docentesId.push(id);
+        }
+        for (let { value } of docentes) {
+          docentesNombres.push(value);
+        }
+      } else {
+        for (let { id } of docentes) {
+          idS = id;
+          console.log('entro aquis');
+        }
+        setStateNombres(true);
+        Inertia.post(
+          'solicitar',
+          {
+            idS,
+          },
+          {
+            preserveState: true,
+            replace: true,
+            onSuccess: () => {
+              setStateNombres(false);
+              setStateMateria(false);
+            },
+          },
+        );
+      }
+    } else {
+      setStateMateria(true);
+      setStateNombres(true);
+      Inertia.get(
+        'solicitar',
+        {
+          idS,
+        },
+        {
+          preserveState: true,
+          onSuccess: () => {
+            setStateNombres(false);
+          },
+        },
+      );
     }
+
+    console.log(docentes);
   };
+
   const handleChangeMateria = (materia: any) => {
     setSelectedMateria(materia);
-   
+    let { label, value } = materia;
+    materiaS = value;
+    console.log(materiaS);
   };
   const handleChangeHorario = (horario: any) => {
     setSelectedHorario(horario);
-    let {label,value}=horario;
-    horarioS= value;
-    console.log(horarioS)
-
+    let { label, value } = horario;
+    horarioS = value + ':00';
+    console.log(horarioS);
   };
 
   const handleChangeTipo = (tipo: any) => {
     setSelectedTipo(tipo);
-    let {label,value}=tipo;
-    tipoS=value;
+    let { label, value } = tipo;
+    tipoS = value;
     console.log(tipoS);
-
   };
 
   const handleChangePeriodo = (periodo: any) => {
     setSelectedPeriodo(periodo);
-    periodoS=periodo;
-    console.log(periodoS)
+    periodoS = periodo;
+    console.log(periodoS);
   };
 
   const handleChangeCantidad = (cantidad: any) => {
     setSelectedCantidad(cantidad);
-    cantidadS=cantidad;
+    cantidadS = cantidad;
     console.log(cantidadS);
   };
-  const handleChangeCalendario= (fecha : any)=>{
-    let formatted_date = fecha.getDate() + "-" + (fecha.getMonth() + 1) + "-" + fecha.getFullYear()
+  const handleChangeCalendario = (fecha: any) => {
+    let s = '';
+    if (fecha.getMonth() + 1 < 10) {
+      s = '0';
+    }
+    if (fecha.getDate() < 10) {
+      s = '0';
+    }
+    let formatted_date =
+      fecha.getFullYear() +
+      '-' +
+      s +
+      (fecha.getMonth() + 1) +
+      '-' +
+      s +
+      fecha.getDate();
     setStartDate(fecha);
-    console.log(formatted_date);
-  }
-  const solicitud=[
-    {id : docentesId,Materia:"",Grupos:[],Horario:"",Tipo:"",Periodo:"",Cantidad:"",Fecha:""}
-  ]
+    fechaS = formatted_date;
+    console.log(fechaS);
+  };
+  const solicitud = [
+    {
+      id: docentesNombres,
+      Materia: materiaS,
+      Grupos: [],
+      Horario: horarioS,
+      Tipo: tipoS,
+      Periodo: periodoS,
+      Cantidad: cantidadS,
+      Fecha: fechaS,
+    },
+  ];
 
   return (
     <>
@@ -153,26 +255,29 @@ export default function () {
             <div className="bg-white overflow-hidden shadow-xl sm:rounded-lg" />
           </div>
         </div>
-
+        {console.log(props.docentes)}
         <SolicitarCard>
-          <h1 className="text-center">Solicitar Aula</h1>
+          <h1 className="text-center">Solicitar aula</h1>
 
           <div className="flex flex-col space-y-4 content-center">
             <div>
               <p className="text-left">Nombre(s) Docente(s)</p>
-                <Select
-                  options={docentes}
-                  isMulti
-                  selectOption
-                  onChange={handleChangeDocentes}
-                  noOptionsMessage={() => 'No hay opciones disponibles'}
-                  placeholder="Selecciona o Busca Docentes"
-                />
+              <Select
+                options={docentes}
+                isLoading={stateNombres}
+                isDisabled={stateNombres}
+                isMulti
+                selectOption
+                onChange={handleChangeDocentes}
+                noOptionsMessage={() => 'No hay opciones disponibles'}
+                placeholder="Selecciona o Busca Docentes"
+              />
             </div>
             <div>
               <p className="text-left">Materias</p>
               <Select
                 options={materias}
+                isDisabled={stateMateria}
                 onChange={handleChangeMateria}
                 noOptionsMessage={() => 'No hay opciones disponibles'}
                 placeholder="Materia"
@@ -183,6 +288,7 @@ export default function () {
               <Select
                 options={grupo}
                 isSearchable={false}
+                isDisabled={stateGrupo}
                 isMulti
                 onChange={handleChangeGrupos}
                 noOptionsMessage={() => 'No hay opciones disponibles'}
@@ -219,7 +325,7 @@ export default function () {
                   min={1}
                   max={3}
                   onChange={handleChangePeriodo}
-                  onKeyPress={(event) => {
+                  onKeyPress={event => {
                     if (!/[0-9]/.test(event.key)) {
                       event.preventDefault();
                     }
@@ -243,19 +349,45 @@ export default function () {
                 <input
                   className="label-cant"
                   type="text"
-                  onKeyPress={(event) => {
+                  onKeyPress={event => {
                     if (!/[0-9]/.test(event.key)) {
                       event.preventDefault();
                     }
                   }}
-                  onChange={event=>handleChangeCantidad(event.target.value)}
+                  onChange={event => handleChangeCantidad(event.target.value)}
                 />
               </div>
             </div>
-
-            <button type="submit" className="btn text-white colorPrimary ">
+            <button
+              type="button"
+              className="btn colorPrimary text-white"
+              onClick={openModal}
+            >
               Solicitar
             </button>
+            <Modal
+              isOpen={modalIsOpen}
+              onAfterOpen={afterOpenModal}
+              onRequestClose={closeModal}
+              style={customStyles}
+              contentLabel="Example Modal"
+            >
+              <div className="font-bold">
+                ¿Está seguro de solicitar un aula con esos datos?
+              </div>
+              <form className="d-flex justify-content-center space-x-4 mt-4">
+                <div>
+                  <button className="btn btn-danger text-white">
+                    Cancelar
+                  </button>
+                </div>
+                <div>
+                  <button className="btn colorPrimary text-white">
+                    Aceptar
+                  </button>
+                </div>
+              </form>
+            </Modal>
           </div>
         </SolicitarCard>
       </AppLayout>

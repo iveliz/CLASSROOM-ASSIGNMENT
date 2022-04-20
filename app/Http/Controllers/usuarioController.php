@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use app\Models\User;
-use App\Models\DocenteMateria;
-use app\Models\Materia;
+use App\Models\User;
+use App\Models\Grupo;
+use App\Models\Materia;
 use Illuminate\Support\Facades\Redirect;
 class usuarioController extends Controller
 {
@@ -18,7 +18,9 @@ class usuarioController extends Controller
   public function index()
   {
     $docentesComun = User::select('id', 'name')->get();
-    return $docentesComun;
+    return Inertia::render('SolicitarPage', [
+      'docentes' => $docentesComun,
+    ]);
   }
 
   /**
@@ -52,66 +54,13 @@ class usuarioController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  string  $id
+   * @param  int  $id
    * @return \Illuminate\Http\Response
    */
   public function show($id)
   {
-    $materiasNomDocente = DocenteMateria::join(
-      'users',
-      'docente_materias.id_usuario',
-      '=',
-      'users.id'
-    )
-      ->select('docente_materias.id_materia')
-      ->where('users.name', 'LIKE', $id)
-      ->get();
-    $docentesidMaterias = DocenteMateria::join(
-      'materias',
-      'docente_materias.id_materia',
-      '=',
-      'materias.id_materia'
-    )
-      ->select('docente_materias.id_usuario')
-      ->whereIn('materias.id_materia', $materiasNomDocente)
-      ->get();
-    $docentesComun = User::select('name', 'id')
-      ->whereIn('id', $docentesidMaterias)
-      ->get();
-    return $docentesComun;
+    //
   }
-  /**
-   * Display the specified resource.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function show2($id)
-  {
-    $materiasNomDocente = DocenteMateria::join(
-      'users',
-      'docente_materias.id_usuario',
-      '=',
-      'users.id'
-    )
-      ->select('docente_materias.id_materia')
-      ->where('users.id', $id)
-      ->get();
-    $docentesidMaterias = DocenteMateria::join(
-      'materias',
-      'docente_materias.id_materia',
-      '=',
-      'materias.id_materia'
-    )
-      ->select('docente_materias.id_usuario')
-      ->whereIn('materias.id_materia', $materiasNomDocente)
-      ->get();
-    $docentesComun = User::select('name', 'id')
-      ->whereIn('id', $docentesidMaterias)
-      ->get();
-    return $docentesComun;
-  }
-
   /**
    * Show the form for editing the specified resource.
    *
@@ -144,5 +93,38 @@ class usuarioController extends Controller
   public function destroy($id)
   {
     //
+  }
+
+  public function ObtenerDocentes()
+  {
+    $docentesComun = User::select('id', 'name')->get();
+    return $docentesComun;
+  }
+
+  public function ObtenerDocentesId(Request $request)
+  {
+    $id = $request->Id;
+    $materiasNomDocente = Grupo::join(
+      'users',
+      'grupos.id_usuario',
+      '=',
+      'users.id'
+    )
+      ->select('grupos.id_materia')
+      ->where('users.id', $id)
+      ->get();
+    $docentesidMaterias = Grupo::join(
+      'materias',
+      'grupos.id_materia',
+      '=',
+      'materias.id_materia'
+    )
+      ->select('grupos.id_usuario')
+      ->whereIn('materias.id_materia', $materiasNomDocente)
+      ->get();
+    $docentesComun = User::select('name', 'id')
+      ->whereIn('id', $docentesidMaterias)
+      ->get();
+    return $docentesComun;
   }
 }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\DocenteMateria;
+use App\Models\Grupo;
 use App\Models\Materia;
 use App\Models\User;
 use Inertia\Inertia;
@@ -52,22 +52,14 @@ class materiaController extends Controller
      */
     public function show(Request $request)
     {
-      /*  
-        $ides=array();
-        if (is_array($request) || is_object($request)){
-        foreach( $docentes as  $idDoc){
-            $idDocen= $idDoc->id;
-           array_push($ides,$idDocen); 
-        }
-    }
-    */
+      
         $ides=array();
         $ides=$request->docentesId;
         $ids= $ides;
         $tamaño=count($ids);
       
-        $MateriaPorId = DocenteMateria::join("materias", "materias.id_materia", "=", "docente_materias.id_materia")
-        ->whereIn('docente_materias.id_usuario', $ids)
+        $MateriaPorId = Grupo::join("materias", "materias.id_materia", "=", "grupos.id_materia")
+        ->whereIn('grupos.id_usuario', $ids)
         ->groupBY("materias.id_materia")
         ->selectRaw("materias.id_materia,count(*)as cuantos")
         ->get();
@@ -84,19 +76,12 @@ class materiaController extends Controller
                 select('materias.nombre_materia')
                 ->whereIn('id_materia',$materiasComun)
                 ->get();
-                foreach($MateriaPorIdComun as $MateriaP){
-                    error_log( $MateriaP-> nombre_materia. "\n hola");
-               //imprimir
-                }
-                
+               
                 return Inertia::render('SolicitarPage', [
                     'materiasIdDocente' => $MateriaPorIdComun
                     ]);
-
     }
              
-    
-
     /**
      * Show the form for editing the specified resource.
      *

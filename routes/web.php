@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\usuarioController;
 use Inertia\Inertia;
 use App\Http\Controllers\materiaController;
+use App\Http\Controllers\GrupoController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -35,9 +36,9 @@ Route::middleware([
   config('jetstream.auth_session'),
   'verified',
 ])->group(function () {
-  Route::get('/solicitar', function () {
-    return Inertia::render('SolicitarPage');
-  })->name('solicitar');
+  Route::get('/solicitudes/pendientes', function () {
+    return Inertia::render('SolicitudesPage');
+  })->name('solicitudes');
 });
 
 Route::middleware([
@@ -45,36 +46,35 @@ Route::middleware([
   config('jetstream.auth_session'),
   'verified',
 ])->group(function () {
-    Route::get('/solicitudes/pendientes', function () {
-        return Inertia::render('SolicitudesPage');
-    })->name('solicitudes');
+  Route::get('/solicitudes/aceptadas', function () {
+    return Inertia::render('Aceptados');
+  })->name('solicitudes/aceptadas');
 });
 
 Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
 ])->group(function () {
-    Route::get('/solicitudes/aceptadas', function () {
-        return Inertia::render('Aceptados');
-    })->name('solicitudes/aceptadas');
+  Route::get('/solicitudes/rechazadas', function () {
+    return Inertia::render('Rechazados');
+  })->name('solicitudes/rechazadas');
 });
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-])->group(function () {
-    Route::get('/solicitudes/rechazadas', function () {
-        return Inertia::render('Rechazados');
-    })->name('solicitudes/rechazadas');
+Route::resource('solicitar', materiaController::class)->middleware([
+  'auth:sanctum',
+  'verified',
+]);
+
+Route::resource('prueba_solicitudes', SolicitudesController::class)->middleware(
+  ['auth:sanctum', 'verified']
+);
+
+Route::controller(GrupoController::class)->group(function () {
+  Route::post('/grupos', 'gruposMateria');
 });
 
-route::get('/prueba', 'App\Http\Controllers\GrupoController@prueba');
-route::get('/grupoDe/{id}', 'App\Http\Controllers\GrupoController@grupoDe');
-route::get('/gruposDe/{id}', 'App\Http\Controllers\GrupoController@gruposDe');
-route::get('/gruposDeVarios', 'App\Http\Controllers\GrupoController@gruposDeVarios');
-route::get('/grupoMateria/{materia}', 'App\Http\Controllers\GrupoController@grupoMateria');
-
-Route::resource('materias',materiaController::class)
-->middleware(['auth:sanctum','verified']);
+Route::controller(usuarioController::class)->group(function () {
+  Route::post('/docentes', 'ObtenerDocentes');
+  Route::post('/docentesid', 'ObtenerDocentesId');
+});
