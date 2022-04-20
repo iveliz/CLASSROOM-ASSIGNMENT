@@ -49,6 +49,7 @@ class GrupoController extends Controller
     public function show(Request $request)
     {
         $materia = $request->materia;
+        $ids = $request->idDocentes;
         $grupos = DB::table('grupos')->join('materias', 'grupos.id_materia', '=', 'materias.id_materia')
             ->where('materias.nombre_materia', $materia)->get();
 
@@ -121,8 +122,13 @@ class GrupoController extends Controller
     public function gruposMateria(Request $request)
     {
         $materia = $request->materia;
+        $ids = $request->idDocentes;
         $consulta = DB::table('grupos')->join('materias', 'grupos.id_materia', '=', 'materias.id_materia')
-            ->where('materias.nombre_materia', $materia)->select('codigo_grupo')->get();
+            ->where('materias.nombre_materia','=', $materia)
+            ->whereIn('grupos.id_usuario',$ids)
+            ->select('codigo_grupo')
+            ->orderBy('codigo_grupo')
+            ->get();
         return $consulta;
     }
 }
