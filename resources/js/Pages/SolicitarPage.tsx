@@ -64,6 +64,17 @@ const horarios = [
   { label: '20:15', value: '20:15' },
 ];
 
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
+
 export default function (props: { docentes: any; materiaIdDocente: any }) {
   const [selectedOptions, setSelectedDocentes] = useState([]);
   const [selectedMateria, setSelectedMateria] = useState();
@@ -71,7 +82,7 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
   const [selectedHorario, setSelectedHorario] = useState();
   const [selectedTipo, setSelectedTipo] = useState();
   const [selectedPeriodo, setSelectedPeriodo] = useState();
-  const [selectedCantidad, setSelectedCantidad] = useState();
+  const [selectedCantidad, setSelectedCantidad] = useState("");
   const [startDate, setStartDate] = useState(hoy);
   const [stateNombres, setStateNombres] = useState(Boolean);
   const [stateMateria, setStateMateria] = useState(true);
@@ -83,12 +94,12 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
   }
   */
 
-  let cantidadS: Number = 0;
+  let cantidadS: Number = -1;
   let gruposS: [] = [];
   let docentesId: any[] = [];
   let docentesNombres: [] = [];
-  let horarioS: any = '';
-  let tipoS: String = '';
+  let horarioS: any = '06:45';
+  let tipoS: String = "Clases";
   let prioridad: String = '';
   let periodoS: Number = 1;
   let fechaS: String = '';
@@ -97,24 +108,12 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
   let subtitle: any;
   const [modalIsOpen, setIsOpen] = useState(false);
 
-  const customStyles = {
-    content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      transform: 'translate(-50%, -50%)',
-    },
-  };
-
   function openModal() {
     setIsOpen(true);
   }
 
   function afterOpenModal() {
-    // references are now sync'd and can be accessed.
-    subtitle.style.color = '#f00';
+
   }
 
   function closeModal() {
@@ -247,6 +246,15 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
     },
   ];
 
+  const validarDatos =()=>{
+    console.log(selectedCantidad)
+    if(selectedCantidad===""){
+       alert("El campo de estudiantes no puede estar vacio");
+    }else{
+      openModal();
+    }
+  }
+
   return (
     <>
       <AppLayout title="Informacion">
@@ -314,6 +322,8 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
                   options={horarios}
                   placeholder="06:45"
                   isSearchable={false}
+
+                  defaultValue={ { label: '06:45', value: '06:45' }}
                   noOptionsMessage={() => 'No hay opciones disponibles'}
                   onChange={handleChangeHorario}
                 />
@@ -340,6 +350,7 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
                   options={tiporeserva}
                   placeholder="Reserva"
                   isSearchable={false}
+                  defaultValue={{ label: 'Examen', value: 'Examen' }}
                   noOptionsMessage={() => 'No hay opciones disponibles'}
                   onChange={handleChangeTipo}
                 />
@@ -347,7 +358,7 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
               <div>
                 <p>Cantidad de estudiantes</p>
                 <input
-                  className="label-cant"
+                  className="label-cant cantidadEstudiantes"
                   type="text"
                   onKeyPress={event => {
                     if (!/[0-9]/.test(event.key)) {
@@ -361,7 +372,7 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
             <button
               type="button"
               className="btn colorPrimary text-white"
-              onClick={openModal}
+              onClick={validarDatos}
             >
               Solicitar
             </button>
@@ -371,18 +382,19 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
               onRequestClose={closeModal}
               style={customStyles}
               contentLabel="Example Modal"
+              ariaHideApp={false}
             >
               <div className="font-bold">
                 ¿Está seguro de solicitar un aula con esos datos?
               </div>
               <form className="d-flex justify-content-center space-x-4 mt-4">
                 <div>
-                  <button className="btn btn-danger text-white">
+                  <button onClick={closeModal} type="button" className="btn btn-danger text-white">
                     Cancelar
                   </button>
                 </div>
                 <div>
-                  <button className="btn colorPrimary text-white">
+                  <button type="button" className="btn colorPrimary text-white">
                     Aceptar
                   </button>
                 </div>
