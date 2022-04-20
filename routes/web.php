@@ -91,9 +91,9 @@ Route::controller(SolicitudesController::class)->group(function () {
 });
 
 Route::controller(materiaController::class)->group(function () {
-  Route::post('/materias','show');
+  Route::post('/materias', 'show');
 });
 
 Route::controller(AulaController::class)->group(function () {
-  Route::post('/aulas','ObtenerAula');
+  Route::post('/aulas', 'AulaElegida');
 });

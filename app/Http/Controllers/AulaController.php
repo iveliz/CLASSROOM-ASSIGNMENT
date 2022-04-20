@@ -66,9 +66,9 @@ class AulaController extends Controller
    *
    * @return \Illuminate\Http\Response
    */
-  public function AulaElegida()
+  public function AulaElegida(Request $request)
   {
-    $id = 1;
+    $id = $request->id;
     $SolicitudEstado = Reserva::join(
       'registro_solicitudes',
       'registro_solicitudes.id_reg_sct',
@@ -76,40 +76,40 @@ class AulaController extends Controller
       'reservas.id_reg_sct'
     )
       ->select(
-        'registro_solicitudes.estado_reg_sct,registro_solicitudes.id_reg_sct'
+        'registro_solicitudes.id_reg_sct',
+        'registro_solicitudes.estado_solicitud_reg_sct'
       )
-      ->where(
-        'registro_solicitudes.id_solicitud',
+      ->where('registro_solicitudes.id_solicitud', '=', $id)
+      ->get();
+    $Estado = 'Aceptada';
+    if ($Estado == 'Aceptada') {
+      $idSoli = 1;
+
+      $Reservas = Reserva::select('id_reserva')
+        ->where('id_reg_sct', '=', $idSoli)
+        ->get();
+      foreach ($Reservas as $reserva) {
+        $idres = $reserva->id_reserva;
+      }
+      $AulaReserva = Aula::join(
+        'aulas_reservadas',
+        'aulas_reservadas.id_aula',
         '=',
-        'registro_solicitudes.id_solicitud'
-      );
-    if ($SolicitudEstado['registro_solicitudes.estado_reg_sct'] == 'Aceptada') {
-      $AulaReserva = AulaReserva::join(
-        'reservas',
-        'reservas.id_reserva',
-        '=',
-        'aulas_reservadas.id_reserva'
+        'aulas.id_aula'
       )
-        ->join('aulas', 'aulas.id_aula', '=', 'aulas_reservadas.id_aula')
         ->select(
           'aulas.numero_aula',
           'aulas.letra_aula',
           'aulas.capacidad_aula',
           'aulas.ubicacion_aula'
         )
-        ->where(
-          $SolicitudEstado['registro_solicitudes.id_reg_sct'],
-          '=',
-          'reservas.id_reg_sct'
-        )
-        ->where('aulas.id_aula', '=', 'aulas_reservadas.id_aula');
+        ->where('aulas_reservadas.id_reserva', '=', $idres)
+        ->get();
     }
-    if (
-      $SolicitudEstado['registro_solicitudes.estado_reg_sct'] == 'Rechazada'
-    ) {
+    if ($Estado == 'Rechazada') {
       $AulaReserva = 'Aula NO reservada, Solicitud Rechazada';
     }
-    return $SolicitudEstado;
+    return $AulaReserva;
   }
 
   /**
