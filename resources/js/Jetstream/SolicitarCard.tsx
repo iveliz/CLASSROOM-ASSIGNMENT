@@ -5,7 +5,7 @@ export default function JetAuthenticationCard({
   children,
 }: PropsWithChildren<Record<string, unknown>>) {
   return (
-    <div className="min-h-screen flex flex-col sm:justify-center items-center bg-gray-100">
+    <div className="min-h-max flex flex-col sm:justify-center items-center bg-gray-100">
       <div>
  
       </div>

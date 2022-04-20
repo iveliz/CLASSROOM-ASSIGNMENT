@@ -49,19 +49,17 @@ const docentes = [
   { label: 'Leticia Blanco', value: 'Leticia Blanco', id: 2 },
   { label: 'Vladimir Costa', value: 'Vladimir Costa', id: 3 },
   { label: 'Rosemary Torrico', value: 'Rosemary Torrico', id: 5 },
-  { label: 'Corina ', value: 'Corina ', id: 4 },
-  { label: 'Patricia', value: 'Patricia', id: 6 },
 ];
 const horarios = [
-  { label: '06:45', value: '06:45' },
-  { label: '08:15', value: '08:15' },
-  { label: '11:15', value: '11:15' },
-  { label: '12:45', value: '12:45' },
-  { label: '14:15', value: '14:15' },
-  { label: '15:45', value: '15:45' },
-  { label: '17:15', value: '17:15' },
-  { label: '18:45', value: '18:45' },
-  { label: '20:15', value: '20:15' },
+  { label: '06:45', value: '06:45:00' },
+  { label: '08:15', value: '08:15:00' },
+  { label: '11:15', value: '11:15:00' },
+  { label: '12:45', value: '12:45:00' },
+  { label: '14:15', value: '14:15:00' },
+  { label: '15:45', value: '15:45:00' },
+  { label: '17:15', value: '17:15:00' },
+  { label: '18:45', value: '18:45:00' },
+  { label: '20:15', value: '20:15:00' },
 ];
 
 const customStyles = {
@@ -191,7 +189,7 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
   const handleChangeHorario = (horario: any) => {
     setSelectedHorario(horario);
     let { label, value } = horario;
-    horarioS = value + ':00';
+    horarioS = value;
     console.log(horarioS);
   };
 
