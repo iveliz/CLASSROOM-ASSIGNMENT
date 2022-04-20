@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Solicitudes;
 use App\Models\GrupoSolicitudes;
 use App\Models\DocenteSolicitudes;
+use App\Models\RegistroSolicitudes;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -137,10 +138,10 @@ class SolicitudesController extends Controller
     public function crearSolicitud(Request $datos_solicitud){
         $res = 3;
         try {
-            $id_nueva_solicitud = 100;
+            
             $nueva_solicitud = new Solicitudes;
             $nueva_solicitud->id_usuario = $datos_solicitud->id_usuario;
-            $nueva_solicitud->id_solicitud =  $id_nueva_solicitud; 
+            //$nueva_solicitud->id_solicitud =  $id_nueva_solicitud; 
             $nueva_solicitud->materia_solicitud = $datos_solicitud->materia_solicitud;
             $nueva_solicitud->cantidad_estudiantes_solicitud = $datos_solicitud->cantidad_estudiantes_solicitud;
             $nueva_solicitud->motivo_reserva_solicitud = $datos_solicitud->motivo_reserva_solicitud;
@@ -149,6 +150,17 @@ class SolicitudesController extends Controller
             $nueva_solicitud->hora_requerida_solicitud = $datos_solicitud->hora_requerida_solicitud; /**/
             $nueva_solicitud->estado_solicitud = 'pendiente';
             $nueva_solicitud->save();
+
+            $id_nueva_solicitud = $nueva_solicitud->id_solicitud;
+
+            $nuevo_registro_solicitud = new RegistroSolicitudes;
+            $nuevo_registro_solicitud->id_solicitud = $id_nueva_solicitud;
+            $nuevo_registro_solicitud->id_usuario = $nueva_solicitud->id_usuario;
+            $nuevo_registro_solicitud->fecha_inicio_reg_sct = $nueva_solicitud->fecha_requerida_solicitud;
+            $nuevo_registro_solicitud->fecha_modificacion_reg_sct =  $nueva_solicitud->fecha_requerida_solicitud;
+            $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'pendiente';
+            $nuevo_registro_solicitud->motivo_reg_sct = '';
+            $nuevo_registro_solicitud->save();
         
             foreach ($datos_solicitud->grupos_solicitud as $grupo){
                 $nuevo_grupo = new GrupoSolicitudes;

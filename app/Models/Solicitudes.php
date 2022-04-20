@@ -12,7 +12,7 @@ class Solicitudes extends Model
         'id_solicitud',
         'materia_solicitud',
         'cantidad_estudiantes_solicitud',
-        'motivo_reserva_solicitu',
+        'motivo_reserva_solicitud',
         'fecha_requerida_solicitud',
         'hora_requerida_solicitud',
         'periodos_solicitud'];
