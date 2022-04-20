@@ -77,5 +77,5 @@ Route::controller(GrupoController::class)->group(function () {
 });
 
 Route::controller(MateriaController::class)->group(function () {
-  Route::get('/materia{ides}','show');
+  Route::post('/materias','show');
 });
