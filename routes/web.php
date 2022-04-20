@@ -36,6 +36,17 @@ Route::middleware([
   config('jetstream.auth_session'),
   'verified',
 ])->group(function () {
+  Route::get('/solicitar', function () {
+    return Inertia::render('SolicitarPage');
+  })->name('solicitar');
+});
+
+
+Route::middleware([
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
+])->group(function () {
   Route::get('/solicitudes/pendientes', function () {
     return Inertia::render('SolicitudesPage');
   })->name('solicitudes');
@@ -61,10 +72,6 @@ Route::middleware([
   })->name('solicitudes/rechazadas');
 });
 
-Route::resource('solicitar', materiaController::class)->middleware([
-  'auth:sanctum',
-  'verified',
-]);
 
 Route::resource('prueba_solicitudes', SolicitudesController::class)->middleware(
   ['auth:sanctum', 'verified']
@@ -73,6 +80,7 @@ Route::resource('prueba_solicitudes', SolicitudesController::class)->middleware(
 Route::controller(GrupoController::class)->group(function () {
   Route::post('/grupos', 'gruposMateria');
 });
+
 
 Route::controller(usuarioController::class)->group(function () {
   Route::post('/docentes', 'ObtenerDocentes');

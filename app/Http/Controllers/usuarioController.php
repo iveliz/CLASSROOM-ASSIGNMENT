@@ -18,9 +18,7 @@ class usuarioController extends Controller
   public function index()
   {
     $docentesComun = User::select('id', 'name')->get();
-    return Inertia::render('SolicitarPage', [
-      'docentes' => $docentesComun,
-    ]);
+    return $docentesComun;
   }
 
   /**

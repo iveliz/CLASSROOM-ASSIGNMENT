@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
 import SolicitarCard from '@/Jetstream/SolicitarCard';
@@ -14,6 +14,7 @@ import { Inertia } from '@inertiajs/inertia';
 import { registerLocale, setDefaultLocale } from 'react-datepicker';
 import { values } from 'lodash';
 import Modal from 'react-modal';
+import axios from 'axios';
 registerLocale('es', es);
 
 var hoy = new Date();
@@ -72,47 +73,74 @@ const customStyles = {
     transform: 'translate(-50%, -50%)',
   },
 };
+const endpoint = 'http://127.0.0.1:8000';
+let listaDocentesMostrar: { label: any; value: any; id: any }[] = [];
 
-export default function (props: { docentes: any; materiaIdDocente: any }) {
+
+
+export default function () {
   const [selectedOptions, setSelectedDocentes] = useState([]);
   const [selectedMateria, setSelectedMateria] = useState();
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [selectedHorario, setSelectedHorario] = useState();
   const [selectedTipo, setSelectedTipo] = useState();
   const [selectedPeriodo, setSelectedPeriodo] = useState();
-  const [selectedCantidad, setSelectedCantidad] = useState("");
+  const [selectedCantidad, setSelectedCantidad] = useState('');
   const [startDate, setStartDate] = useState(hoy);
-  const [stateNombres, setStateNombres] = useState(Boolean);
+  const [stateNombres, setStateNombres] = useState(true);
   const [stateMateria, setStateMateria] = useState(true);
   const [stateGrupo, setStateGrupo] = useState(true);
-  let recibirDocentes = [];
-  /*
-  for(let {id,name}of props.docentes){
-     recibirDocentes.push({label :name,value:name,id:id});
-  }
-  */
 
   let cantidadS: Number = -1;
   let gruposS: [] = [];
   let docentesId: any[] = [];
   let docentesNombres: [] = [];
   let horarioS: any = '06:45';
-  let tipoS: String = "Clases";
+  let tipoS: String = 'Clases';
   let prioridad: String = '';
   let periodoS: Number = 1;
   let fechaS: String = '';
   let materiaS: String = '';
 
+  useEffect(()=>{
+  getDocentes();
+  },[])
+
   let subtitle: any;
   const [modalIsOpen, setIsOpen] = useState(false);
+
+  
+  
+  const getDocentes = async () => {
+    await axios.post(`${endpoint}/docentes`).then((response)=>{
+      for(let {id,name}of response.data){
+        listaDocentesMostrar.push({label :name,value:name,id:id});
+      }
+      setStateNombres(false);
+      console.log(response.data)
+    })
+}
+  
+
+
+  const getDocentesRelacionados = async (Id: any) => {
+    await axios.post(`${endpoint}/docentesid`, { Id }).then((response) => {
+      listaDocentesMostrar= [];
+      for (let { id, name } of response.data) {
+        listaDocentesMostrar.push({ label: name, value: name, id: id });
+      }
+      console.log("lista"+listaDocentesMostrar);
+      setStateNombres(false);
+      console.log(response);
+
+    });
+  };
 
   function openModal() {
     setIsOpen(true);
   }
 
-  function afterOpenModal() {
-
-  }
+  function afterOpenModal() {}
 
   function closeModal() {
     setIsOpen(false);
@@ -145,36 +173,12 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
           console.log('entro aquis');
         }
         setStateNombres(true);
-        Inertia.post(
-          'solicitar',
-          {
-            idS,
-          },
-          {
-            preserveState: true,
-            replace: true,
-            onSuccess: () => {
-              setStateNombres(false);
-              setStateMateria(false);
-            },
-          },
-        );
+        getDocentesRelacionados(idS);
       }
     } else {
       setStateMateria(true);
       setStateNombres(true);
-      Inertia.get(
-        'solicitar',
-        {
-          idS,
-        },
-        {
-          preserveState: true,
-          onSuccess: () => {
-            setStateNombres(false);
-          },
-        },
-      );
+      getDocentes();
     }
 
     console.log(docentes);
@@ -244,14 +248,14 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
     },
   ];
 
-  const validarDatos =()=>{
-    console.log(selectedCantidad)
-    if(selectedCantidad===""){
-       alert("El campo de estudiantes no puede estar vacio");
-    }else{
+  const validarDatos = () => {
+    console.log(selectedCantidad);
+    if (selectedCantidad === '') {
+      alert('El campo de estudiantes no puede estar vacio');
+    } else {
       openModal();
     }
-  }
+  };
 
   return (
     <>
@@ -261,7 +265,7 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
             <div className="bg-white overflow-hidden shadow-xl sm:rounded-lg" />
           </div>
         </div>
-        {console.log(props.docentes)}
+
         <SolicitarCard>
           <h1 className="text-center">Solicitar aula</h1>
 
@@ -269,7 +273,7 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
             <div>
               <p className="text-left">Nombre(s) Docente(s)</p>
               <Select
-                options={docentes}
+                options={listaDocentesMostrar}
                 isLoading={stateNombres}
                 isDisabled={stateNombres}
                 isMulti
@@ -320,8 +324,7 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
                   options={horarios}
                   placeholder="06:45"
                   isSearchable={false}
-
-                  defaultValue={ { label: '06:45', value: '06:45' }}
+                  defaultValue={{ label: '06:45', value: '06:45' }}
                   noOptionsMessage={() => 'No hay opciones disponibles'}
                   onChange={handleChangeHorario}
                 />
@@ -387,7 +390,11 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
               </div>
               <form className="d-flex justify-content-center space-x-4 mt-4">
                 <div>
-                  <button onClick={closeModal} type="button" className="btn btn-danger text-white">
+                  <button
+                    onClick={closeModal}
+                    type="button"
+                    className="btn btn-danger text-white"
+                  >
                     Cancelar
                   </button>
                 </div>
@@ -404,3 +411,4 @@ export default function (props: { docentes: any; materiaIdDocente: any }) {
     </>
   );
 }
+
