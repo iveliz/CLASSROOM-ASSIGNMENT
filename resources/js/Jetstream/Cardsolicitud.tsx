@@ -48,7 +48,7 @@ export default function (
     })
   }
   
-/*
+
 
   const cancelarPendiente = async()=>{
     await axios.delete(`${endpoint}/api/solicitudes/eliminar/${id_solicitud}`).then((response)=>{
@@ -57,7 +57,6 @@ export default function (
     })
   }
 
-*/ 
 
 
 
