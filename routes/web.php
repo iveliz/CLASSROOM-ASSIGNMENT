@@ -75,3 +75,7 @@ Route::resource('prueba_solicitudes', SolicitudesController::class)
 Route::controller(GrupoController::class)->group(function () {
   Route::post('/grupos','gruposMateria');
 });
+
+Route::controller(MateriaController::class)->group(function () {
+  Route::get('/materia{ides}','show');
+});

@@ -77,9 +77,8 @@ class materiaController extends Controller
                 ->whereIn('id_materia',$materiasComun)
                 ->get();
                
-                return Inertia::render('SolicitarPage', [
-                    'materiasIdDocente' => $MateriaPorIdComun
-                    ]);
+    return  $MateriaPorIdComun;
+                    
     }
              
     /**
