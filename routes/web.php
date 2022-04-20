@@ -88,3 +88,7 @@ Route::controller(SolicitudesController::class)->group(function () {
   Route::get('/api/solicitudes/rechazadas/{id}', 'listarRechazados');
   Route::get('/api/solicitudes/aceptadas/{id}', 'listarAceptados');
 });
+
+Route::controller(MateriaController::class)->group(function () {
+  Route::post('/materias','show');
+});
