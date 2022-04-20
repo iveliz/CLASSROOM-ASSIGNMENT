@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\usuarioController;
 use Inertia\Inertia;
+use App\Http\Controllers\AulaController;
 use App\Http\Controllers\materiaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\SolicitudesController;
@@ -98,5 +99,9 @@ Route::controller(SolicitudesController::class)->group(function () {
 });
 
 Route::controller(materiaController::class)->group(function () {
-  Route::post('/materias','show');
+  Route::post('/materias', 'show');
+});
+
+Route::controller(AulaController::class)->group(function () {
+  Route::post('/aulas', 'AulaElegida');
 });
