@@ -11,7 +11,7 @@ export default function (props: { solicitudes: any }) {
   const [listaSoliState, SetlistaSoli] = useState([]);
   const getSolicitudes = async () => {
     await axios
-      .get(`${endpoint}/api/solicitudes/aceptados/1`)
+      .get(`${endpoint}/api/solicitudes/aceptadas/1`)
       .then(response => {
         SetlistaSoli(response.data);
       });

@@ -286,6 +286,12 @@ body {
   border-color: #2B629C !important;
 }
 
-.butonOK{
-  background-color: #1C9027;
+.aceptada{
+  color: #1C9027;
+}
+.pendiente{
+  color:#0066c3;
+}
+.rechazada{
+  color:#901C1C;
 }

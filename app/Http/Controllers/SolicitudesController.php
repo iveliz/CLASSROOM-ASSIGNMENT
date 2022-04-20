@@ -177,13 +177,14 @@ class SolicitudesController extends Controller
     public function destroy(int $id_solicitud){
         $res = 3;
         try {
+            DB::table('registro_solicitudes')->where("registro_solicitudes.id_solicitud",$id_solicitud)->delete();
             DocenteSolicitudes::destroy($id_solicitud);
             GrupoSolicitudes::destroy($id_solicitud);
             Solicitudes::where("solicitudes.id_solicitud",$id_solicitud)->delete();
             $res = 1;
         } catch (\Throwable $th) {
             //throw $th;
-            $res = 0;
+            $res = $th;
         }
 
         /** retornar 1 si se elimino 0 si fallo*/

@@ -2,7 +2,8 @@ import React from 'react';
 import image from '../../css/images/userImage.png';
 import Modal from 'react-modal';
 import { useState } from 'react';
-
+import axios from 'axios';
+const endpoint = 'http://127.0.0.1:8000'
 interface Solicitud {
   fecha_inicio_reg_sct: String;
   id_solicitud: number;
@@ -32,15 +33,57 @@ export default function (
 
   let subtitle2: any;
   const [modalIsOpen2, setIsOpen2] = useState(false);
+  const [stateAula,SetAula]= useState("");
+  
+
+
   console.log(estado_solicitud);
   let cadenaEstado =""
+  let aula="";
+
+  const [listaSoliState,SetlistaSoli] = useState([]);
+  const getSolicitudes=  async()=>{
+    await axios.get(`${endpoint}/api/solicitudes/pendientes/1`).then((response)=>{
+      SetlistaSoli(response.data);
+    })
+  }
+  
+/*
+
+  const cancelarPendiente = async()=>{
+    await axios.delete(`${endpoint}/api/solicitudes/eliminar/${id_solicitud}`).then((response)=>{
+      document.location.reload();
+      console.log(response.data)
+    })
+  }
+
+*/ 
+
+
+
+
+  const getAula= async () => {
+     await axios.post(`${endpoint}/aulas`,{id:id_solicitud}).then((response)=>{
+         for( let {numero_aula,letra_aula} of response.data){
+            SetAula(numero_aula+letra_aula);
+         }
+     })
+     
+  }
+   
+  let subtitulo="Aula Reservada: "
+  
 
   if(estado_solicitud==="pendiente"){
-     cadenaEstado="Aula NO reservada,solicitud pendiente"
+     subtitulo="Aula NO reservada,"
+     cadenaEstado="solicitud pendiente"
   }else if(estado_solicitud==="aceptada"){
-    cadenaEstado="Aula Reservada: "
+    getAula();
+    console.log(id_solicitud)
+    cadenaEstado=stateAula;
   }else{
-    cadenaEstado="Aula NO reservada,solicitud rechazada"
+    subtitulo="Aula NO reservada,solicitud rechazada"
+    cadenaEstado=""
   }
 
   const customStyles = {
@@ -121,7 +164,7 @@ export default function (
                 <h3 className="col-span-3"> Información de solicitud </h3>
               </div>
 
-              <form className=" space-x-4 mt-4 ml-12 text-left ">
+              <div className=" space-x-4 mt-4 ml-12 text-left ">
                 <div className="flex flex-col">
                   <p className="font-bold mr-4">
                     Nombre(s) de Docente(s): {docentes.toString()}
@@ -134,7 +177,7 @@ export default function (
                   <p className="font-bold ">
                     Para fecha: {fecha_requerida_solicitud}
                   </p>
-                  <p className="font-bold ">{cadenaEstado}</p>
+                  <p className="font-bold "><span {...(estado_solicitud==="pendiente"? {"className":"pendiente"}:(estado_solicitud==="aceptada"? {"className":"aceptada"}:{"className":"rechazada"} ) )}>{subtitulo}</span>{cadenaEstado}</p>
       
                   <div className="absolute right-0 bottom-0">
                     <button
@@ -155,7 +198,7 @@ export default function (
                       <div className="font-bold">
                         ¿Está seguro que desea cancelar?
                       </div>
-                      <form className="d-flex justify-content-center space-x-4 mt-4">
+                      <div className="d-flex justify-content-center space-x-4 mt-4">
                         <div>
                           <button
                             type="button"
@@ -166,14 +209,17 @@ export default function (
                           </button>
                         </div>
                         <div>
+                        {console.log(id_solicitud)}
                           <button
                             type="button"
+                         
+                            onClick={cancelarPendiente}
                             className="btn colorPrimary text-white"
                           >
                             Aceptar
                           </button>
                         </div>
-                      </form>
+                      </div>
                     </Modal>
 
                     <button
@@ -184,7 +230,7 @@ export default function (
                     </button>
                   </div>
                 </div>
-              </form>
+              </div>
             </Modal>
           </div>
         </div>
