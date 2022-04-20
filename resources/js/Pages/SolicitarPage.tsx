@@ -22,11 +22,7 @@ var day1 = new Date('01/07/1970');
 var difference = Math.abs(hoy.getTime() - day1.getTime());
 var days = difference / (1000 * 3600 * 24);
 
-const grupo = [
-  { label: '1', value: '1' },
-  { label: '2', value: '2' },
-  { label: '3', value: '3' },
-];
+
 
 const tiporeserva = [
   { label: 'Examen', value: 'Examen' },
@@ -76,12 +72,43 @@ const customStyles = {
 const endpoint = 'http://127.0.0.1:8000';
 let listaDocentesMostrar: { label: any; value: any; id: any }[] = [];
 let listaMateriasMostrar: {label:any;value:any}[]=[];
-
+let listaGruposMostrar : {label:any,value:any}[]=[];
 let docentesId: any[] = [];
+
+const fechaHoy = ()=>{
+  let fecha=new Date();
+  let s = '';
+    if (fecha.getMonth() + 1 < 10) {
+      s = '0';
+    }
+    if (fecha.getDay() < 10) {
+      s = '0';
+    }
+    let formatted_date =
+      fecha.getFullYear() +
+      '-' +
+      s +
+      (fecha.getMonth() + 1) +
+      '-' +
+      s +
+      fecha.getDay();
+    let fechaS = formatted_date;
+    return fechaS;
+}
+let cantidadS="";
+let gruposS: any[] = [];
+let docentesNombres: [] = [];
+let horarioS: any = '06:45:00';
+let tipoS: String = 'Clases';
+let prioridad: String = '';
+let periodoS: Number = 1;
+let fechaS: String = fechaHoy();
+let materiaS: String = '';
+
 export default function () {
   const [selectedOptions, setSelectedDocentes] = useState([]);
   const [selectedMateria, setSelectedMateria] = useState<{ label:any, value: any}>();
-  const [selectedGroups, setSelectedGroups] = useState([]);
+  const [selectedGroups, setSelectedGroups] = useState<{ label:any, value: any}>();
   const [selectedHorario, setSelectedHorario] = useState();
   const [selectedTipo, setSelectedTipo] = useState();
   const [selectedPeriodo, setSelectedPeriodo] = useState();
@@ -91,16 +118,8 @@ export default function () {
   const [stateMateria, setStateMateria] = useState(true);
   const [stateGrupo, setStateGrupo] = useState(true);
   const selectInputRef = useRef();
-  let cantidadS: Number = -1;
-  let gruposS: [] = [];
-  let docentesNombres: [] = [];
-  let horarioS: any = '06:45';
-  let tipoS: String = 'Clases';
-  let prioridad: String = '';
-  let periodoS: Number = 1;
-  let fechaS: String = '';
-  let materiaS: String = '';
 
+ 
   useEffect(()=>{
   getDocentes();
   },[])
@@ -110,6 +129,17 @@ export default function () {
   let subtitle: any;
   const [modalIsOpen, setIsOpen] = useState(false);
 
+  
+
+  const getGrupos = async () => {
+    await axios.post(`${endpoint}/grupos`,{materia :materiaS, idDocentes :docentesId}).then((response)=>{
+      for(let  {codigo_grupo} of response.data){
+        listaGruposMostrar.push({label :codigo_grupo,value:codigo_grupo});
+      }
+      setStateGrupo(false);
+      console.log(response.data)
+    })
+  }
   
   
   const getDocentes = async () => {
@@ -158,8 +188,9 @@ export default function () {
     setIsOpen(false);
   }
 
-  const handleChangeGrupos = (grupos: []) => {
+  const handleChangeGrupos = (grupos: any) => {
     setSelectedGroups(grupos);
+    gruposS=[];
     for (let { value } of grupos) {
       gruposS.push(value);
     }
@@ -191,6 +222,9 @@ export default function () {
           idS = id;
           docentesId.push(id);
         }
+        for (let { value } of docentes) {
+          docentesNombres.push(value);
+        }
         console.log(docentesId);
         setStateNombres(true);
         getDocentesRelacionados(idS);
@@ -211,6 +245,12 @@ export default function () {
     setSelectedMateria(materia);
     let { label, value } = materia;
     materiaS = value;
+    setStateGrupo(true);
+    console.log(docentesId);
+    console.log(materiaS);
+    setSelectedGroups({label: "",value:""});
+    getGrupos();
+
     console.log(materiaS);
   };
   const handleChangeHorario = (horario: any) => {
@@ -243,7 +283,7 @@ export default function () {
     if (fecha.getMonth() + 1 < 10) {
       s = '0';
     }
-    if (fecha.getDate() < 10) {
+    if (fecha.getDay() < 10) {
       s = '0';
     }
     let formatted_date =
@@ -253,23 +293,32 @@ export default function () {
       (fecha.getMonth() + 1) +
       '-' +
       s +
-      fecha.getDate();
+      fecha.getDay();
     setStartDate(fecha);
     fechaS = formatted_date;
     console.log(fechaS);
   };
-  const solicitud = [
+  
+  const solicitud = 
     {
-      id: docentesNombres,
-      Materia: materiaS,
-      Grupos: [],
-      Horario: horarioS,
-      Tipo: tipoS,
-      Periodo: periodoS,
-      Cantidad: cantidadS,
-      Fecha: fechaS,
-    },
-  ];
+      id_usuario:1,
+      materia_solicitud:materiaS,
+      nombres_docentes_solicitud: docentesNombres,
+      grupos_solicitud: gruposS,
+      hora_requerida_solicitud: horarioS,
+      motivo_reserva_solicitud: tipoS,
+      periodos_solicitud: periodoS,
+      cantidad_estudiantes_solicitud: parseInt(selectedCantidad),
+      fecha_requerida_solicitud: fechaS,
+    };
+
+  const sendSoli = async () => {
+    await axios.post(`${endpoint}/api/solicitudes/crear`, solicitud).then((response) => {
+      closeModal();
+      console.log(response.data);
+      (console.log("jijijijijijsijwef oerui"))
+    });
+  };
 
   const validarDatos = () => {
     console.log(selectedCantidad);
@@ -321,7 +370,7 @@ export default function () {
               <p className="text-left">Grupo(s)</p>
               <Select
                 ref={selectInputRef}
-                options={grupo}
+                options={listaGruposMostrar}
                 isSearchable={false}
                 isDisabled={stateGrupo}
                 isMulti
@@ -424,7 +473,8 @@ export default function () {
                   </button>
                 </div>
                 <div>
-                  <button type="button" className="btn colorPrimary text-white">
+                  {console.log(solicitud)}
+                  <button type="button" onClick={sendSoli} className="btn colorPrimary text-white">
                     Aceptar
                   </button>
                 </div>

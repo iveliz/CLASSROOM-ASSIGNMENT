@@ -137,7 +137,7 @@ class SolicitudesController extends Controller
     public function crearSolicitud(Request $datos_solicitud){
         $res = 3;
         try {
-            $id_nueva_solicitud = $datos_solicitud->id_solicitud;
+            $id_nueva_solicitud = 100;
             $nueva_solicitud = new Solicitudes;
             $nueva_solicitud->id_usuario = $datos_solicitud->id_usuario;
             $nueva_solicitud->id_solicitud =  $id_nueva_solicitud; 
