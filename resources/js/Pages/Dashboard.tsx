@@ -75,7 +75,7 @@ export default function Dashboard() {
                     <li>Seleccione la hora que corresponda a su solicitud en el menú desplegable de Hora</li>
                     <li>Seleccione los períodos que corresponda a su solicitud</li>
                     <li>Seleccione el tipo de reserva que desea para su solicitud en el campo Tipo de solicitud, haga clic en el menú desplegable y seleccione el tipo.</li>
-                    <li>Ingrese en el campo Cantidad de estudiantes, debe tener en cuenta que no es válido dejar la cantidad con cantidad 0.</li>
+                    <li>Ingrese en el campo Cantidad de estudiantes, debe tener en cuenta que no es válido dejar la cantidad vacía.</li>
                     <li>Haga clic en Solicitar</li>
                    </p></div>
 
