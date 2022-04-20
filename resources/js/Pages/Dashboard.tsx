@@ -19,7 +19,7 @@ export default function Dashboard() {
 	        	  	<h6 className="texto-h3">Preguntas frecuentes</h6>   ₍˄·͈༝·͈˄*₎◞ ̑̑*/}
       
                <div className=" preguntas sm:px-6 lg:px-8 "> 
-               <h5 className="text-left my-8">En esta sección encontrará información para poder usar el sistema apropiadamente. </h5>
+               {/*<h5 className="text-left my-8">En esta sección encontrará información para poder usar el sistema apropiadamente. </h5>
                  <input className="accordion-item-input" type="checkbox" name="accordion" id="item1" />
                  <label htmlFor='item1' className="accordion-item-hd">¿Cómo restablezco mi contraseña?<span className="accordion-item-hd-cta">&#9650;</span> </label>
                  <div className="accordion-item-bd respuesta">
@@ -32,21 +32,21 @@ export default function Dashboard() {
                     <li>En el siguiente paso deberá repetir la contraseña nueva para confirmar, en la entrada de Repita la contraseña nueva.</li>
                     <li> Haga clic en Confirmar.</li>
                   </p></div>
-        
-                <input className="accordion-item-input" type="checkbox" name="accordion" id="item2" />
+              */}
+                {/*<input className="accordion-item-input" type="checkbox" name="accordion" id="item2" />
                 <label htmlFor='item2' className="accordion-item-hd">¿Cómo puedo cancelar una reserva?<span className="accordion-item-hd-cta">&#9650;</span></label>
                 <div className="accordion-item-bd respuesta">
                   <p>
                   Vaya a Solicitudes después a pendientes y diríjase en la solicitud que quiere cancelar la reserva, 
                   luego haga clic en el botón Ver detalles y a continuación se mostrará la información correspondiente a la solicitud y diríjase al botón “cancelar reserva”.
                   </p></div>
-        
+               */}
                 <input className="accordion-item-input" type="checkbox" name="accordion" id="item3" />
                 <label htmlFor='item3' className="accordion-item-hd">¿Cómo puedo cancelar una solicitud?<span className="accordion-item-hd-cta">&#9650;</span></label>
                 <div className="accordion-item-bd respuesta">
                   <p>
-                  Vaya a Solicitudes después a Aceptados y diríjase en la solicitud que quiere cancelar la reserva, 
-                  luego haga clic en el botón Ver detalles y a continuación se mostrará la información correspondiente a la solicitud y diríjase al botón “cancelar solicitud”.
+                  Vaya a Solicitudes después a Pendientes y diríjase en la solicitud que quiere cancelar la reserva, 
+                  luego haga clic en el botón  Detalles y a continuación se mostrará la información correspondiente a la solicitud y diríjase al botón “cancelar solicitud”.
                 </p></div>
 
                 <input className="accordion-item-input" type="checkbox" name="accordion" id="item4" />
@@ -55,7 +55,7 @@ export default function Dashboard() {
                  <p>
                  <li>Vaya a Solicitudes y dependiendo el caso de la solicitud puede navegar en los siguientes apartados: Pendientes, Aceptados y Rechazados; 
                    luego haga clic en el botón Ver detalles y a continuación se mostrará la información correspondiente a la solicitud</li>
-                 <li>Diríjase al icono de la campana haga clic en el icono y se mostrarán sus solicitudes más recientes. </li>
+                  {/*<li>Diríjase al icono de la campana haga clic en el icono y se mostrarán sus solicitudes más recientes. </li>*/}
                  </p></div>
 
                 <input className="accordion-item-input" type="checkbox" name="accordion" id="item5" />
@@ -71,7 +71,7 @@ export default function Dashboard() {
                     <li>Si hay una equivocación podrá eliminar dirigiéndose al icono X en las etiquetas generadas de Materia</li>
                     <li>Seleccione el/los grupos correspondientes en el menú desplegable Grupo(s)</li>
                     <li>Si hay una equivocación podrá eliminar dirigiéndose al icono X en las etiquetas generadas de Grupo(s)</li>
-                    <li>Seleccione la fecha a solicitar el aula, podrá seleccionar dirigiéndose al icono de calendario </li>
+                    <li>Seleccione la fecha a solicitar el aula </li>
                     <li>Seleccione la hora que corresponda a su solicitud en el menú desplegable de Hora</li>
                     <li>Seleccione los períodos que corresponda a su solicitud</li>
                     <li>Seleccione el tipo de reserva que desea para su solicitud en el campo Tipo de solicitud, haga clic en el menú desplegable y seleccione el tipo.</li>
