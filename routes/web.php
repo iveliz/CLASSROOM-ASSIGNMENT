@@ -6,6 +6,7 @@ use App\Http\Controllers\usuarioController;
 use Inertia\Inertia;
 use App\Http\Controllers\materiaController;
 use App\Http\Controllers\GrupoController;
+use App\Http\Controllers\SolicitudesController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -77,4 +78,13 @@ Route::controller(GrupoController::class)->group(function () {
 Route::controller(usuarioController::class)->group(function () {
   Route::post('/docentes', 'ObtenerDocentes');
   Route::post('/docentesid', 'ObtenerDocentesId');
+});
+
+Route::controller(SolicitudesController::class)->group(function () {
+  Route::get('/api/solicitudes', 'index');
+  Route::delete('/api/solicitudes/eliminar/{id}', 'destroy');
+  Route::get('/api/solicitudes/pendientes/{id}', 'listarPendientes');
+  Route::post('/api/solicitudes/crear', 'crearSolicitud');
+  Route::get('/api/solicitudes/rechazadas/{id}', 'listarRechazados');
+  Route::get('/api/solicitudes/aceptadas/{id}', 'listarAceptados');
 });
