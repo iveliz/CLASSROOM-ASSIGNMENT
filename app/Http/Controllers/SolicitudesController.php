@@ -151,13 +151,13 @@ class SolicitudesController extends Controller
             $nueva_solicitud->estado_solicitud = 'pendiente';
             $nueva_solicitud->save();
 
-            $id_nueva_solicitud = $nueva_solicitud->id_solicitud;
+            $id_nueva_solicitud = $nueva_solicitud->id;
 
             $nuevo_registro_solicitud = new RegistroSolicitudes;
             $nuevo_registro_solicitud->id_solicitud = $id_nueva_solicitud;
             $nuevo_registro_solicitud->id_usuario = $nueva_solicitud->id_usuario;
             $nuevo_registro_solicitud->fecha_inicio_reg_sct = $nueva_solicitud->fecha_requerida_solicitud;
-            $nuevo_registro_solicitud->fecha_modificacion_reg_sct =  $nueva_solicitud->fecha_requerida_solicitud;
+            $nuevo_registro_solicitud->fecha_modificiacion_reg_sct =  $nueva_solicitud->fecha_requerida_solicitud;
             $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'pendiente';
             $nuevo_registro_solicitud->motivo_reg_sct = '';
             $nuevo_registro_solicitud->save();
@@ -178,7 +178,7 @@ class SolicitudesController extends Controller
             $res = 1;
         } catch (\Throwable $th) {
             //throw $th;
-            $res = 0;
+            $res = $th;
         }
         
 
