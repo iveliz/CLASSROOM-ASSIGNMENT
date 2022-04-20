@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
 import SolicitarCard from '@/Jetstream/SolicitarCard';
@@ -75,12 +75,12 @@ const customStyles = {
 };
 const endpoint = 'http://127.0.0.1:8000';
 let listaDocentesMostrar: { label: any; value: any; id: any }[] = [];
+let listaMateriasMostrar: {label:any;value:any}[]=[];
 
-
-
+let docentesId: any[] = [];
 export default function () {
   const [selectedOptions, setSelectedDocentes] = useState([]);
-  const [selectedMateria, setSelectedMateria] = useState();
+  const [selectedMateria, setSelectedMateria] = useState<{ label:any, value: any}>();
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [selectedHorario, setSelectedHorario] = useState();
   const [selectedTipo, setSelectedTipo] = useState();
@@ -90,10 +90,9 @@ export default function () {
   const [stateNombres, setStateNombres] = useState(true);
   const [stateMateria, setStateMateria] = useState(true);
   const [stateGrupo, setStateGrupo] = useState(true);
-
+  const selectInputRef = useRef();
   let cantidadS: Number = -1;
   let gruposS: [] = [];
-  let docentesId: any[] = [];
   let docentesNombres: [] = [];
   let horarioS: any = '06:45';
   let tipoS: String = 'Clases';
@@ -106,6 +105,8 @@ export default function () {
   getDocentes();
   },[])
 
+
+
   let subtitle: any;
   const [modalIsOpen, setIsOpen] = useState(false);
 
@@ -113,14 +114,26 @@ export default function () {
   
   const getDocentes = async () => {
     await axios.post(`${endpoint}/docentes`).then((response)=>{
-      for(let {id,name}of response.data){
+      for(let  {id,name} of response.data){
         listaDocentesMostrar.push({label :name,value:name,id:id});
       }
       setStateNombres(false);
       console.log(response.data)
     })
-}
+  }
   
+  const getMaterias = async ()=>{
+    console.log(docentesId)
+    await axios.post(`${endpoint}/materias`,{docentesId}).then((response)=>{
+
+      for(let {nombre_materia} of response.data){
+        listaMateriasMostrar.push({label :nombre_materia,value:nombre_materia});
+      }
+      setStateMateria(false);
+      console.log(response.data);
+      console.log(listaMateriasMostrar)
+    })
+  }
 
 
   const getDocentesRelacionados = async (Id: any) => {
@@ -129,9 +142,8 @@ export default function () {
       for (let { id, name } of response.data) {
         listaDocentesMostrar.push({ label: name, value: name, id: id });
       }
-      console.log("lista"+listaDocentesMostrar);
+      console.log(listaDocentesMostrar);
       setStateNombres(false);
-      console.log(response);
 
     });
   };
@@ -151,7 +163,7 @@ export default function () {
     for (let { value } of grupos) {
       gruposS.push(value);
     }
-    console.log(gruposS);
+
   };
 
   const handleChangeDocentes = (docentes: []) => {
@@ -167,13 +179,25 @@ export default function () {
         for (let { value } of docentes) {
           docentesNombres.push(value);
         }
+        
+        setStateMateria(true);
+        listaMateriasMostrar=[];
+        setSelectedMateria({label:'',value:""});
+
+        getMaterias();
+        
       } else {
         for (let { id } of docentes) {
           idS = id;
-          console.log('entro aquis');
+          docentesId.push(id);
         }
+        console.log(docentesId);
         setStateNombres(true);
         getDocentesRelacionados(idS);
+        listaMateriasMostrar=[];
+        setSelectedMateria({label:'',value:""});
+        setStateMateria(true);
+        getMaterias();
       }
     } else {
       setStateMateria(true);
@@ -181,7 +205,6 @@ export default function () {
       getDocentes();
     }
 
-    console.log(docentes);
   };
 
   const handleChangeMateria = (materia: any) => {
@@ -251,7 +274,7 @@ export default function () {
   const validarDatos = () => {
     console.log(selectedCantidad);
     if (selectedCantidad === '') {
-      alert('El campo de estudiantes no puede estar vacio');
+      alert('El campo de cantidad de estudiantes no puede estar vacio');
     } else {
       openModal();
     }
@@ -286,8 +309,9 @@ export default function () {
             <div>
               <p className="text-left">Materias</p>
               <Select
-                options={materias}
+                options={listaMateriasMostrar}
                 isDisabled={stateMateria}
+                value={selectedMateria || ''}
                 onChange={handleChangeMateria}
                 noOptionsMessage={() => 'No hay opciones disponibles'}
                 placeholder="Materia"
@@ -296,6 +320,7 @@ export default function () {
             <div>
               <p className="text-left">Grupo(s)</p>
               <Select
+                ref={selectInputRef}
                 options={grupo}
                 isSearchable={false}
                 isDisabled={stateGrupo}
