@@ -23,5 +23,10 @@ class GrupoSolicitudes extends Model
         $this->fill($grupo);
         $this->save();
     }
+
+    public static function destroy($id_solicitud){
+        GrupoSolicitudes::where("grupo_solicitudes.id_solicitud",$id_solicitud)->delete();
+    }
+
     use HasFactory;
 }
