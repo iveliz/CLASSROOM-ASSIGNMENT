@@ -19,7 +19,7 @@ class usuarioController extends Controller
   {
     $docentesComun = User::select('id', 'name')->get();
     return Inertia::render('SolicitarPage', [
-      'docentes' => $docentesComun,
+         'docentes' => $docentesComun
     ]);
   }
 
@@ -41,25 +41,7 @@ class usuarioController extends Controller
    */
   public function store(Request $request)
   {
-    $request->validate([
-      'id_usuario' => 'require',
-      'nombre_usuario' => 'require',
-      'email_usuario' => 'require',
-      'contrasenia_usuario' => 'require',
-      'token_recordado_usuario' => 'require',
-      'rol_usuario' => 'require',
-    ]);
-  }
-
-  /**
-   * Display the specified resource.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function show(Request $request)
-  {
-    $id = $request->Id;
+    $id = $request->idS;
     $materiasNomDocente = Grupo::join(
       'users',
       'grupos.id_usuario',
@@ -81,7 +63,31 @@ class usuarioController extends Controller
     $docentesComun = User::select('name', 'id')
       ->whereIn('id', $docentesidMaterias)
       ->get();
-    return $docentesComun;
+
+      return Inertia::render('SolicitarPage', [
+        
+        'docentes' => $docentesComun
+
+      ]);
+    $request->validate([
+      'id_usuario' => 'require',
+      'nombre_usuario' => 'require',
+      'email_usuario' => 'require',
+      'contrasenia_usuario' => 'require',
+      'token_recordado_usuario' => 'require',
+      'rol_usuario' => 'require',
+    ]);
+  }
+
+  /**
+   * Display the specified resource.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\Response
+   */
+  public function show(Request $request)
+  {
+
   }
   /**
    * Display the specified resource.

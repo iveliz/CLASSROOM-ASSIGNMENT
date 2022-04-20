@@ -19,8 +19,10 @@ class CreateGrupoSolicitudesTable extends Migration
       $table
         ->foreign('id_solicitud')
         ->references('id_solicitud')
-        ->on('solicitudes')->onDelete('set null');
+        ->on('solicitudes')
+        ->onDelete('set null');
       $table->string('codigo_grupo_sct', 10);
+      $table->timestamps();
     });
   }
 

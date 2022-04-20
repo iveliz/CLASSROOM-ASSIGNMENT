@@ -70,7 +70,7 @@ export default function AppLayout({
                     href={route('dashboard')}
                     active={route().current('dashboard')}
                   >
-                    Informacion
+                    Información
                   </JetNavLink>
 
                   <JetNavLink
@@ -302,7 +302,7 @@ export default function AppLayout({
                 href={route('dashboard')}
                 active={route().current('dashboard')}
               >
-                Informacion
+                Información
               </JetResponsiveNavLink>
 
               <JetResponsiveNavLink
