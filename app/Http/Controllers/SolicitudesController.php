@@ -47,7 +47,7 @@ class SolicitudesController extends Controller
     public function listarPendientes(int $id_usuario)
     {
         $solicitudes = Solicitudes::join('registro_solicitudes','solicitudes.id_solicitud','=','registro_solicitudes.id_solicitud')
-        ->select('solicitudes.id_solicitud','registro_solicitudes.fecha_inicio_reg_sct','registro_solicitudes.id_reg_sct','solicitudes.materia_solicitud','solicitudes.cantidad_estudiantes_solicitud','solicitudes.fecha_requerida_solicitud')
+        ->select('solicitudes.id_solicitud','registro_solicitudes.fecha_inicio_reg_sct','registro_solicitudes.id_reg_sct','solicitudes.materia_solicitud','solicitudes.cantidad_estudiantes_solicitud','solicitudes.fecha_requerida_solicitud','solicitudes.estado_solicitud')
         ->where('solicitudes.id_usuario',$id_usuario)
         ->where('solicitudes.estado_solicitud',"pendiente")
         ->get();
@@ -75,7 +75,7 @@ class SolicitudesController extends Controller
     public function listarRechazados(int $id_usuario)
     {
         $solicitudes = Solicitudes::join('registro_solicitudes','solicitudes.id_solicitud','=','registro_solicitudes.id_solicitud')
-        ->select('registro_solicitudes.motivo_reg_sct','solicitudes.id_solicitud','registro_solicitudes.fecha_inicio_reg_sct','registro_solicitudes.id_reg_sct','solicitudes.materia_solicitud','solicitudes.cantidad_estudiantes_solicitud','solicitudes.fecha_requerida_solicitud')
+        ->select('registro_solicitudes.motivo_reg_sct','solicitudes.id_solicitud','registro_solicitudes.fecha_inicio_reg_sct','registro_solicitudes.id_reg_sct','solicitudes.materia_solicitud','solicitudes.cantidad_estudiantes_solicitud','solicitudes.fecha_requerida_solicitud','solicitudes.estado_solicitud')
         ->where('solicitudes.id_usuario',$id_usuario)
         ->where('solicitudes.estado_solicitud',"rechazada")
         ->where('registro_solicitudes.estado_solicitud_reg_sct',"rechazada")
@@ -104,7 +104,7 @@ class SolicitudesController extends Controller
     public function listarAceptados(int $id_usuario)
     {
         $solicitudes = Solicitudes::join('registro_solicitudes','solicitudes.id_solicitud','=','registro_solicitudes.id_solicitud')
-        ->select('solicitudes.id_solicitud','registro_solicitudes.fecha_inicio_reg_sct','registro_solicitudes.id_reg_sct','solicitudes.materia_solicitud','solicitudes.cantidad_estudiantes_solicitud','solicitudes.fecha_requerida_solicitud')
+        ->select('solicitudes.id_solicitud','registro_solicitudes.fecha_inicio_reg_sct','registro_solicitudes.id_reg_sct','solicitudes.materia_solicitud','solicitudes.cantidad_estudiantes_solicitud','solicitudes.fecha_requerida_solicitud','solicitudes.estado_solicitud')
         ->where('solicitudes.id_usuario',$id_usuario)
         ->where('solicitudes.estado_solicitud',"aceptada")
         ->get();
