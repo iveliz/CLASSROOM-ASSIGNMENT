@@ -51,35 +51,36 @@ class materiaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Request $request)
-    {
-      
-        $ides=array();
+    {  
         $ides=$request->docentesId;
         $ids= $ides;
         $tamaño=count($ids);
-      
-        $MateriaPorId = Grupo::join("materias", "materias.id_materia", "=", "grupos.id_materia")
-        ->whereIn('grupos.id_usuario', $ids)
-        ->groupBY("materias.id_materia")
-        ->selectRaw("materias.id_materia,count(*)as cuantos")
-        ->get();
+        $mats1=collect();
+        $mats2=collect();
+        
+        
+        $bb=true;
+        for ($x = 0; $x < $tamaño; $x++) {
+           if($bb){
+            $mats1=collect(Grupo::join("materias", "materias.id_materia", "=", "grupos.id_materia")
+            ->select("materias.id_materia","nombre_materia")
+            ->where('grupos.id_usuario','=', $ids[$x])
+            ->groupBY("materias.id_materia")
+            ->get());
+            $bb=false;
+           }else{
+               $mats2=collect( Grupo::join("materias", "materias.id_materia", "=", "grupos.id_materia")
+               ->select("materias.id_materia","nombre_materia")
+               ->where('grupos.id_usuario','=', $ids[$x])
+               ->groupBY("materias.id_materia")
+               ->get());
+               $mats1=$mats1->intersect($mats2);
 
-        $materiasComun=array();
-        foreach( $MateriaPorId as  $cuantasMaterias){
-              $cuanto= $cuantasMaterias->cuantos; 
-              if($cuanto==$tamaño){
-                $idMat= $cuantasMaterias->id_materia;
-                array_push($materiasComun,  $idMat);
-              }      
+           }
         }
-               $MateriaPorIdComun =Materia::  
-                select('materias.nombre_materia')
-                ->whereIn('id_materia',$materiasComun)
-                ->get();
-               
-                return Inertia::render('SolicitarPage', [
-                    'materiasIdDocente' => $MateriaPorIdComun
-                    ]);
+            
+    return $mats1;
+                    
     }
              
     /**
