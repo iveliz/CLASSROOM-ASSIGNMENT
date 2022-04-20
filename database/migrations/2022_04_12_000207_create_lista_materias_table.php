@@ -19,14 +19,15 @@ class CreateListaMateriasTable extends Migration
       $table
         ->foreign('id_materia')
         ->references('id_materia')
-        ->on('materias')->onDelete('set null');
+        ->on('materias')
+        ->onDelete('set null');
       $table->unsignedBigInteger('id_carrera')->nullable();
       $table
         ->foreign('id_carrera')
         ->references('id_carrera')
-        ->on('carreras')->onDelete('set null');
-      $table->timestamp('created_at')->nullable();
-      $table->timestamp('update_at')->nullable();
+        ->on('carreras')
+        ->onDelete('set null');
+      $table->timestamps();
     });
   }
 

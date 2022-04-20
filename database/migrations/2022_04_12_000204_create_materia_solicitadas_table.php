@@ -19,9 +19,11 @@ class CreateMateriaSolicitadasTable extends Migration
       $table
         ->foreign('id_sct_cnt')
         ->references('id_sct_cnt')
-        ->on('solicitud_cuentas')->onDelete('set null');
+        ->on('solicitud_cuentas')
+        ->onDelete('set null');
       $table->bigInteger('id_materia_solicitada');
       $table->bigInteger('id_grupo_solicitado');
+      $table->timestamps();
     });
   }
 

@@ -23,8 +23,7 @@ class CreateAulasTable extends Migration
       $table->string('descripcion_aula', 250);
       $table->time('hora_apertura_aula');
       $table->time('hora_cierre_aula');
-      $table->timestamp('created_at')->nullable();
-      $table->timestamp('update_at')->nullable();
+      $table->timestamps();
     });
   }
 

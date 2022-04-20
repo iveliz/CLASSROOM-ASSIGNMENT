@@ -14,13 +14,15 @@ class CreateDocenteSolicitudesTable extends Migration
   public function up()
   {
     Schema::create('docente_solicitudes', function (Blueprint $table) {
-      $table->bigIncrements('id_doc_std');
+      $table->bigIncrements('id_doc_sct');
       $table->unsignedBigInteger('id_solicitud')->nullable();
       $table
         ->foreign('id_solicitud')
         ->references('id_solicitud')
-        ->on('solicitudes')->onDelete('set null');
-      $table->string('nombre_doc_std', 250);
+        ->on('solicitudes')
+        ->onDelete('set null');
+      $table->string('nombre_doc_sct', 250);
+      $table->timestamps();
     });
   }
 

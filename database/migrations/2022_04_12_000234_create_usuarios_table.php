@@ -20,8 +20,7 @@ class CreateUsuariosTable extends Migration
       $table->string('contrasenia_usuario', 250);
       $table->string('token_recordado_usuario', 250)->nullable();
       $table->char('rol_usuario', 20);
-      $table->timestamp('created_at')->nullable();
-      $table->timestamp('update_at')->nullable();
+      $table->timestamps();
     });
   }
 

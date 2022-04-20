@@ -19,7 +19,8 @@ class CreateSolicitudesTable extends Migration
       $table
         ->foreign('id_usuario')
         ->references('id')
-        ->on('users')->onDelete('set null');
+        ->on('users')
+        ->onDelete('set null');
       $table->string('materia_solicitud', 250);
       $table->integer('cantidad_estudiantes_solicitud');
       $table->string('motivo_reserva_solicitud', 250);
@@ -27,8 +28,7 @@ class CreateSolicitudesTable extends Migration
       $table->time('hora_requerida_solicitud');
       $table->integer('periodos_solicitud');
       $table->string('estado_solicitud', 250);
-      $table->timestamp('created_at')->nullable();
-      $table->timestamp('update_at')->nullable();
+      $table->timestamps();
     });
   }
 

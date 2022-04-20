@@ -1,30 +1,62 @@
 import React from 'react';
+import { useState } from 'react';
 import { solicitudes } from '@/Const/solicitudes';
 import Cardsolicitud from '@/Jetstream/Cardsolicitud';
+import Modal from 'react-modal';
 
 export default function (){
+  let subtitle: any;
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = '#f00';
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
   return(
     <div>
-    <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              Launch demo modal
-    </button> 
-            <div className="modal fade" id="exampleModal" tabIndex={0} aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div className="modal-dialog">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h5 className="modal-title" id="exampleModalLabel">Modal title</h5>
-                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div className="modal-body">
-                    ...
-                  </div>
-                  <div className="modal-footer">
-                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" className="btn btn-primary">Save changes</button>
-                  </div>
-                </div>
+      <Modal
+              isOpen={modalIsOpen}
+              onAfterOpen={afterOpenModal}
+              onRequestClose={closeModal}
+              style={customStyles}
+              contentLabel="Example Modal"
+            >
+              <div className="font-bold">
+                ¿Está seguro de solicitar un aula con esos datos?
               </div>
-            </div>
-            </div>
+              <form className="d-flex justify-content-center space-x-4 mt-4">
+                <div>
+                  <button className="btn btn-danger text-white">
+                    Cancelar
+                  </button>
+                </div>
+                <div>
+                  <button className="btn colorPrimary text-white">
+                    Aceptar
+                  </button>
+                </div>
+              </form>
+            </Modal>
+
+    </div>
   );
 }
