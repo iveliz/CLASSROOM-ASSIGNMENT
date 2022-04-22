@@ -196,10 +196,7 @@ export default function () {
       for (let { value } of grupos) {
         gruposS.push(value);
       }
-    }else{
-      setStateGrupo(true);
     }
-
   };
 
   const handleChangeDocentes = (docentes: []) => {
