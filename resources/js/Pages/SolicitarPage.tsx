@@ -1,8 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { Component, useEffect, useRef } from 'react';
 import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
 import SolicitarCard from '@/Jetstream/SolicitarCard';
-import Select from 'react-select';
 import { NumberPicker } from 'react-widgets/cjs';
 import 'react-widgets/styles.css';
 import { useState } from 'react';
@@ -15,6 +14,10 @@ import { registerLocale, setDefaultLocale } from 'react-datepicker';
 import { values } from 'lodash';
 import Modal from 'react-modal';
 import axios from 'axios';
+import Select, { components } from "react-select";
+import useTypedPage from '@/Hooks/useTypedPage';
+
+import { usePage } from '@inertiajs/inertia-react';
 registerLocale('es', es);
 
 var hoy = new Date();
@@ -30,23 +33,8 @@ const tiporeserva = [
   { label: 'Laboratorio', value: 'Laboratorio' },
 ];
 
-const materias = [
-  {
-    label: 'Introduccion a la Programación',
-    value: 'Introduccion a la Programación',
-  },
-  {
-    label: 'Elementos de la Programación',
-    value: 'Elementos de la Programación',
-  },
-  { label: 'Programacion web', value: 'Programacion web' },
-];
 
-const docentes = [
-  { label: 'Leticia Blanco', value: 'Leticia Blanco', id: 2 },
-  { label: 'Vladimir Costa', value: 'Vladimir Costa', id: 3 },
-  { label: 'Rosemary Torrico', value: 'Rosemary Torrico', id: 5 },
-];
+
 const horarios = [
   { label: '06:45', value: '06:45:00' },
   { label: '08:15', value: '08:15:00' },
@@ -59,22 +47,12 @@ const horarios = [
   { label: '20:15', value: '20:15:00' },
 ];
 
-const customStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-  },
-};
+
 const endpoint = 'http://127.0.0.1:8000';
 let listaDocentesMostrar: { label: any; value: any; id: any }[] = [];
 let listaMateriasMostrar: {label:any;value:any}[]=[];
 let listaGruposMostrar : {label:any,value:any}[]=[];
 let docentesId: any[] = [];
-
 const fechaHoy = ()=>{
   let fecha=new Date();
   let s = '';
@@ -95,17 +73,30 @@ const fechaHoy = ()=>{
     let fechaS = formatted_date;
     return fechaS;
 }
+
 let cantidadS="";
 let gruposS: any[] = [];
-let docentesNombres: [] = [];
+let docentesNombres: any[] = [];
 let horarioS: any = '06:45:00';
-let tipoS: String = 'Clases';
+let tipoS: String = 'Examen';
 let prioridad: String = '';
 let periodoS: Number = 1;
 let fechaS: String = fechaHoy();
 let materiaS: String = '';
 
 export default function () {
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
+
+
   const [selectedOptions, setSelectedDocentes] = useState([]);
   const [selectedMateria, setSelectedMateria] = useState<{ label:any, value: any}>();
   const [selectedGroups, setSelectedGroups] = useState<{ label:any, value: any}>();
@@ -118,21 +109,26 @@ export default function () {
   const [stateMateria, setStateMateria] = useState(true);
   const [stateGrupo, setStateGrupo] = useState(true);
   const selectInputRef = useRef();
+  const [maxOfNumber,setMaxOfNumber] = useState(6);
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [horaFin,setHoraFin]=useState("08:15");
 
- 
+  const {user} : any = usePage().props
+  let {id,name,email}=user;
+  console.log(id)
+  docentesNombres=[name];
   useEffect(()=>{
-  getDocentes();
+  getDocentesRelacionados([id]);
   },[])
 
 
 
-  let subtitle: any;
-  const [modalIsOpen, setIsOpen] = useState(false);
 
   
 
-  const getGrupos = async () => {
+  const getGrupos = async (materiaS: String,docentesId: any[]) => {
     await axios.post(`${endpoint}/grupos`,{materia :materiaS, idDocentes :docentesId}).then((response)=>{
+      listaGruposMostrar=[];
       for(let  {codigo_grupo} of response.data){
         listaGruposMostrar.push({label :codigo_grupo,value:codigo_grupo});
       }
@@ -140,22 +136,12 @@ export default function () {
       console.log(response.data)
     })
   }
+
   
-  
-  const getDocentes = async () => {
-    await axios.post(`${endpoint}/docentes`).then((response)=>{
-      for(let  {id,name} of response.data){
-        listaDocentesMostrar.push({label :name,value:name,id:id});
-      }
-      setStateNombres(false);
-      console.log(response.data)
-    })
-  }
-  
-  const getMaterias = async ()=>{
+  const getMaterias = async (docentesId: any[])=>{
     console.log(docentesId)
     await axios.post(`${endpoint}/materias`,{docentesId}).then((response)=>{
-
+      listaMateriasMostrar=[];
       for(let {nombre_materia} of response.data){
         listaMateriasMostrar.push({label :nombre_materia,value:nombre_materia});
       }
@@ -166,16 +152,31 @@ export default function () {
   }
 
 
-  const getDocentesRelacionados = async (Id: any) => {
-    await axios.post(`${endpoint}/docentesid`, { Id }).then((response) => {
-      listaDocentesMostrar= [];
-      for (let { id, name } of response.data) {
-        listaDocentesMostrar.push({ label: name, value: name, id: id });
-      }
-      console.log(listaDocentesMostrar);
-      setStateNombres(false);
+  const getDocentesRelacionados = async (Id:any[]) => {
+    console.log("entre aqui"+Id.length)
+    if(Id.length===1){
 
-    });
+      await axios.post(`${endpoint}/docentesid`, { Id }).then((response) => {
+        listaDocentesMostrar= [];
+        for (let { id, name } of response.data) {
+          listaDocentesMostrar.push({ label: name, value: name, id: id });
+        }
+        console.log(listaDocentesMostrar);
+        setStateNombres(false);
+        setStateMateria(true);
+        getMaterias(Id);
+      });
+    }else{
+      await axios.post(`${endpoint}/docentesid`, { Id }).then((response) => {
+        listaDocentesMostrar= [];
+        for (let { id, name } of response.data) {
+          listaDocentesMostrar.push({ label: name, value: name, id: id });
+        }
+        console.log(listaDocentesMostrar);
+        setStateNombres(false);
+      });
+    }
+
   };
 
   function openModal() {
@@ -191,15 +192,18 @@ export default function () {
   const handleChangeGrupos = (grupos: any) => {
     setSelectedGroups(grupos);
     gruposS=[];
-    for (let { value } of grupos) {
-      gruposS.push(value);
+    if(grupos!=null){
+      for (let { value } of grupos) {
+        gruposS.push(value);
+      }
+    }else{
+      setStateGrupo(true);
     }
 
   };
 
   const handleChangeDocentes = (docentes: []) => {
     setSelectedDocentes(docentes);
-    let idS = [''];
     docentesId = [];
     docentesNombres = [];
     if (docentes != null) {
@@ -214,29 +218,14 @@ export default function () {
         setStateMateria(true);
         listaMateriasMostrar=[];
         setSelectedMateria({label:'',value:""});
-
-        getMaterias();
-        
+        getMaterias(docentesId);
       } else {
-        for (let { id } of docentes) {
-          idS = id;
-          docentesId.push(id);
-        }
-        for (let { value } of docentes) {
-          docentesNombres.push(value);
-        }
-        console.log(docentesId);
-        setStateNombres(true);
-        getDocentesRelacionados(idS);
-        listaMateriasMostrar=[];
-        setSelectedMateria({label:'',value:""});
         setStateMateria(true);
-        getMaterias();
+        setStateNombres(true);
+        setStateGrupo(true);
+        getDocentesRelacionados([id]);
+        
       }
-    } else {
-      setStateMateria(true);
-      setStateNombres(true);
-      getDocentes();
     }
 
   };
@@ -249,9 +238,16 @@ export default function () {
     console.log(docentesId);
     console.log(materiaS);
     setSelectedGroups({label: "",value:""});
-    getGrupos();
-
+    
     console.log(materiaS);
+    if(docentesId.length>1){
+      getGrupos(materiaS,docentesId);
+
+    }else{
+      getGrupos(materiaS,[id]);
+
+    }
+
   };
   const handleChangeHorario = (horario: any) => {
     setSelectedHorario(horario);
@@ -280,11 +276,14 @@ export default function () {
   };
   const handleChangeCalendario = (fecha: any) => {
     let s = '';
+    let sD='';
+    console.log(fecha.getDate())
     if (fecha.getMonth() + 1 < 10) {
       s = '0';
     }
-    if (fecha.getDay() < 10) {
-      s = '0';
+    if (fecha.getDate() < 10) {
+
+      sD = '0';
     }
     let formatted_date =
       fecha.getFullYear() +
@@ -292,8 +291,8 @@ export default function () {
       s +
       (fecha.getMonth() + 1) +
       '-' +
-      s +
-      fecha.getDay();
+      sD +
+      fecha.getDate();
     setStartDate(fecha);
     fechaS = formatted_date;
     console.log(fechaS);
@@ -301,7 +300,7 @@ export default function () {
   
   const solicitud = 
     {
-      id_usuario:1,
+      id_usuario:id,
       materia_solicitud:materiaS,
       nombres_docentes_solicitud: docentesNombres,
       grupos_solicitud: gruposS,
@@ -316,19 +315,29 @@ export default function () {
     await axios.post(`${endpoint}/api/solicitudes/crear`, solicitud).then((response) => {
       closeModal();
       console.log(response.data);
-      (console.log("jijijijijijsijwef oerui"))
     });
   };
 
   const validarDatos = () => {
-    console.log(selectedCantidad);
-    if (selectedCantidad === '') {
+    console.log(gruposS.length+"tamaño xd")
+    if(materiaS===''){
+      alert('El campo de materias no puede estar vacio')
+    }else if(gruposS.length===0){
+      alert('El campo de grupos no puede estar vacio');
+    }else if (selectedCantidad === '') {
       alert('El campo de cantidad de estudiantes no puede estar vacio');
-    } else {
+    }else{
       openModal();
     }
   };
 
+  const MultiValueRemove = (props: any) => {
+    if (props.data.isFixed) {
+      return null;
+    }
+    return <components.MultiValueRemove {...props} />;
+  };
+  
   return (
     <>
       <AppLayout title="Informacion">
@@ -346,10 +355,13 @@ export default function () {
               <p className="text-left">Nombre(s) Docente(s)</p>
               <Select
                 options={listaDocentesMostrar}
+                defaultValue={{ label: name, value: name,id:id,isFixed: true }}
+                backspaceRemovesValue={false}
                 isLoading={stateNombres}
                 isDisabled={stateNombres}
                 isMulti
                 selectOption
+                components={{MultiValueRemove}}
                 onChange={handleChangeDocentes}
                 noOptionsMessage={() => 'No hay opciones disponibles'}
                 placeholder="Selecciona o Busca Docentes"
@@ -361,6 +373,7 @@ export default function () {
                 options={listaMateriasMostrar}
                 isDisabled={stateMateria}
                 value={selectedMateria || ''}
+                isClearable={false}
                 onChange={handleChangeMateria}
                 noOptionsMessage={() => 'No hay opciones disponibles'}
                 placeholder="Materia"
@@ -373,6 +386,7 @@ export default function () {
                 options={listaGruposMostrar}
                 isSearchable={false}
                 isDisabled={stateGrupo}
+                backspaceRemovesValue={false}
                 isMulti
                 onChange={handleChangeGrupos}
                 noOptionsMessage={() => 'No hay opciones disponibles'}
@@ -380,7 +394,7 @@ export default function () {
               />
             </div>
             <div className="grid grid-flow-col auto-cols-max">
-              <div className="mr-8">
+              <div className="mr-4">
                 <p>Fecha Inicio</p>
 
                 <DatePicker
@@ -392,7 +406,7 @@ export default function () {
                   onChange={handleChangeCalendario}
                 />
               </div>
-              <div className="mr-8">
+              <div className="mr-4">
                 <p>Hora de inicio</p>
                 <Select
                   options={horarios}
@@ -403,12 +417,12 @@ export default function () {
                   onChange={handleChangeHorario}
                 />
               </div>
-              <div>
+              <div className='mr-4'>
                 <p>Periodos</p>
                 <NumberPicker
                   defaultValue={1}
                   min={1}
-                  max={3}
+                  max={maxOfNumber}
                   onChange={handleChangePeriodo}
                   onKeyPress={event => {
                     if (!/[0-9]/.test(event.key)) {
@@ -416,6 +430,10 @@ export default function () {
                     }
                   }}
                 />
+              </div>
+              <div className='mr-4'>
+                <p>Hora fin</p>
+                <p className='align-middle'>{horaFin}</p>
               </div>
             </div>
             <div className="grid grid-flow-col auto-cols-max">
