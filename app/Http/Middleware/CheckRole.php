@@ -20,20 +20,20 @@ class CheckRole
     public function handle(Request $request, Closure $next, string $role)
     {
       
-        if ($role == 'administrador' &&  auth()->user()->role_id == 1) {
-            dd(auth()->user()->role_id );
+        if ($role == 'docente' &&  auth()->user()->id_role != 1) {
+            dd(auth()->user()->id_role );
             return redirect('adminView');
             // return $next($request);
         }else{
-            if ($role == 'docente' && auth()->user()->role_id != 1) {
-                dd(auth()->user()->role_id);
+            if ($role == 'docente' && auth()->user()->id_role != 1) {
+                dd(auth()->user()->id_role);
                 //return  route('adminView');
-               // return redirect()->route('adminView');
+              //  return redirect()->route('adminView');
     }
                 //return Inertia::render('adminView');
                 
         else{
-            dd(auth()->user()->email);
+            dd(auth()->user()->id_role);
             return redirect('solicitudes');
         }
        

@@ -2,11 +2,13 @@
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\usuarioController;
+use App\Http\Controllers\DocenteControllers\usuarioController;
 use Inertia\Inertia;
-use App\Http\Controllers\materiaController;
-use App\Http\Controllers\GrupoController;
-use App\Http\Controllers\SolicitudesController;
+use App\Http\Controllers\DocenteControllers\AulaController;
+
+use App\Http\Controllers\DocenteControllers\materiaController;
+use App\Http\Controllers\DocenteControllers\GrupoController;
+use App\Http\Controllers\DocenteControllers\SolicitudesController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,35 +25,43 @@ Route::get('/', function () {
 });
 
 Route::middleware([
+  'auth'
+ 
+
+])->group(function () {
+  Route::get('/solicitar', function () {
+    return Inertia::render('SolicitarPage');
+  })->name('solicitar');
+});
+
+Route::middleware([
   'auth',
-  'role:docente',
-  ])->group(function () {
+  'role:administrador'
+
+])->group(function () {
   Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
   })->name('dashboard');
 });
 
 
-  Route::get('/admin', function () {
-    return Inertia::render('adminView');
-  })->name('adminView');
 
-
-  
 
 
 Route::middleware([
-  'auth',
-  'role:docente',
+  'auth'
+
 ])->group(function () {
   Route::get('/solicitudes/pendientes', function () {
     return Inertia::render('SolicitudesPage');
   })->name('solicitudes');
 });
 
+
+
 Route::middleware([
-  'auth',
-  'role:docente',
+  'auth'
+ 
 ])->group(function () {
   Route::get('/solicitudes/aceptadas', function () {
     return Inertia::render('Aceptados');
@@ -59,8 +69,7 @@ Route::middleware([
 });
 
 Route::middleware([
-  'auth',
-  'role:docente',
+  'auth'
 ])->group(function () {
   Route::get('/solicitudes/rechazadas', function () {
     return Inertia::render('Rechazados');
@@ -71,39 +80,55 @@ Route::middleware([
 Route::resource('prueba_solicitudes', SolicitudesController::class)->middleware(
   ['auth:sanctum', 'verified']
 );
-
-Route::controller(GrupoController::class)->group(function () {
-  Route::post('/grupos', 'gruposMateria');
-});
-
-
-Route::controller(usuarioController::class)->group(function () {
-  Route::post('/docentes', 'ObtenerDocentes');
-  Route::post('/docentesid', 'ObtenerDocentesId');
-});
-
-Route::controller(SolicitudesController::class)->group(function () {
-  Route::get('/api/solicitudes', 'index');
-  Route::delete('/api/solicitudes/eliminar/{id}', 'destroy');
-  Route::get('/api/solicitudes/pendientes/{id}', 'listarPendientes');
-  Route::post('/api/solicitudes/crear', 'crearSolicitud');
-  Route::get('/api/solicitudes/rechazadas/{id}', 'listarRechazados');
-  Route::get('/api/solicitudes/aceptadas/{id}', 'listarAceptados');
-});
-
-Route::controller(materiaController::class)->group(function () {
-  Route::post('/materias','show');
-});
-
-
-
-
-
+/*
 Route::middleware([
-  'auth',
-  'role:docente',
+  'role:administrador'
 ])->group(function () {
-  Route::get('/solicitar', function () {
-    return Inertia::render('SolicitarPage');
-  })->name('solicitar');
+Route::get('/admin', function () {
+  return Inertia::render('adminView');
+});
+});
+*/
+
+
+
+
+Route::group(['middleware' => 'auth'], function() {
+  Route::group(['middleware' => 'role:docente'], function() {
+    Route::controller(GrupoController::class)->group(function () {
+      Route::post('/grupos', 'gruposMateria');
+    });
+    
+    
+    Route::controller(usuarioController::class)->group(function () {
+      Route::post('/docentes', 'ObtenerDocentes');
+      Route::post('/docentesid', 'ObtenerDocentesId');
+    });
+    
+    Route::controller(SolicitudesController::class)->group(function () {
+      Route::get('/api/solicitudes', 'index');
+      Route::delete('/api/solicitudes/eliminar/{id}', 'destroy');
+      Route::get('/api/solicitudes/pendientes/{id}', 'listarPendientes');
+      Route::post('/api/solicitudes/crear', 'crearSolicitud');
+      Route::get('/api/solicitudes/rechazadas/{id}', 'listarRechazados');
+      Route::get('/api/solicitudes/aceptadas/{id}', 'listarAceptados');
+    });
+    
+    Route::controller(materiaController::class)->group(function () {
+      Route::post('/materias', 'show');
+    });
+    
+    Route::controller(AulaController::class)->group(function () {
+      Route::post('/aulas', 'AulaElegida');
+    });
+
+  });
+ 
+  
+    Route::get('/admin', function () {
+      return Inertia::render('adminView');
+    })->name('adminView');
+
+
+  
 });
