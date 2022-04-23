@@ -15,5 +15,9 @@ class RegistroSolicitudes extends Model
         'fecha_modificacion_reg_sct',
         'estado_solicitud_reg_sct',
         'motivo_reg_sct'];
+
+    public static function destroy($id_solicitud){
+        RegistroSolicitudes::where("registro_solicitudes.id_solicitud",$id_solicitud)->delete();
+    }
     use HasFactory;
 }
