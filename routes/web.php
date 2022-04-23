@@ -4,7 +4,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\usuarioController;
 use Inertia\Inertia;
-use App\Http\Controllers\AulaController;
 use App\Http\Controllers\materiaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\SolicitudesController;
@@ -24,30 +23,26 @@ Route::get('/', function () {
 });
 
 Route::middleware([
-  'auth:sanctum',
-  config('jetstream.auth_session'),
-  'verified',
-])->group(function () {
+  'auth',
+  'role:docente',
+  ])->group(function () {
   Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
   })->name('dashboard');
 });
 
-Route::middleware([
-  'auth:sanctum',
-  config('jetstream.auth_session'),
-  'verified',
-])->group(function () {
-  Route::get('/solicitar', function () {
-    return Inertia::render('SolicitarPage');
-  })->name('solicitar');
-});
+
+  Route::get('/admin', function () {
+    return Inertia::render('adminView');
+  })->name('adminView');
+
+
+  
 
 
 Route::middleware([
-  'auth:sanctum',
-  config('jetstream.auth_session'),
-  'verified',
+  'auth',
+  'role:docente',
 ])->group(function () {
   Route::get('/solicitudes/pendientes', function () {
     return Inertia::render('SolicitudesPage');
@@ -55,9 +50,8 @@ Route::middleware([
 });
 
 Route::middleware([
-  'auth:sanctum',
-  config('jetstream.auth_session'),
-  'verified',
+  'auth',
+  'role:docente',
 ])->group(function () {
   Route::get('/solicitudes/aceptadas', function () {
     return Inertia::render('Aceptados');
@@ -65,9 +59,8 @@ Route::middleware([
 });
 
 Route::middleware([
-  'auth:sanctum',
-  config('jetstream.auth_session'),
-  'verified',
+  'auth',
+  'role:docente',
 ])->group(function () {
   Route::get('/solicitudes/rechazadas', function () {
     return Inertia::render('Rechazados');
@@ -99,9 +92,18 @@ Route::controller(SolicitudesController::class)->group(function () {
 });
 
 Route::controller(materiaController::class)->group(function () {
-  Route::post('/materias', 'show');
+  Route::post('/materias','show');
 });
 
-Route::controller(AulaController::class)->group(function () {
-  Route::post('/aulas', 'AulaElegida');
+
+
+
+
+Route::middleware([
+  'auth',
+  'role:docente',
+])->group(function () {
+  Route::get('/solicitar', function () {
+    return Inertia::render('SolicitarPage');
+  })->name('solicitar');
 });

@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
+
+class CheckRole
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+     */
+    public function handle(Request $request, Closure $next, string $role)
+    {
+      
+        if ($role == 'administrador' &&  auth()->user()->role_id == 1) {
+            dd(auth()->user()->role_id );
+            return redirect('adminView');
+            // return $next($request);
+        }else{
+            if ($role == 'docente' && auth()->user()->role_id != 1) {
+                dd(auth()->user()->role_id);
+                //return  route('adminView');
+               // return redirect()->route('adminView');
+    }
+                //return Inertia::render('adminView');
+                
+        else{
+            dd(auth()->user()->email);
+            return redirect('solicitudes');
+        }
+       
+    }
+}
+}
+
+

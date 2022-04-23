@@ -21,6 +21,11 @@ return new class extends Migration {
       $table->rememberToken();
       $table->foreignId('current_team_id')->nullable();
       $table->string('profile_photo_path', 2048)->nullable();
+      $table->unsignedBigInteger('id_role');
+      $table
+        ->foreign('id_role')
+        ->references('id_role')
+        ->on('roles');
       $table->timestamps();
     });
   }
