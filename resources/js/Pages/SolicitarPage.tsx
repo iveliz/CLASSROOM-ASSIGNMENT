@@ -95,7 +95,7 @@ export default function () {
   const [selectedGroups, setSelectedGroups] = useState<{
     label: any;
     value: any;
-  }>();
+  }[]>();
   const [selectedHorario, setSelectedHorario] = useState();
   const [selectedTipo, setSelectedTipo] = useState();
   const [selectedPeriodo, setSelectedPeriodo] = useState();
@@ -120,7 +120,7 @@ export default function () {
   }, []);
 
   const getGrupos = async (materiaS: String, docentesId: any[]) => {
-    await axios
+     axios
       .post(`${endpoint}/grupos`, { materia: materiaS, idDocentes: docentesId })
       .then(response => {
         listaGruposMostrar = [];
@@ -134,7 +134,7 @@ export default function () {
   };
 
   const getMaterias = async (docentesId: any[]) => {
-    await axios.post(`${endpoint}/materias`, { docentesId }).then(response => {
+   axios.post(`${endpoint}/materias`, { docentesId }).then(response => {
       listaMateriasMostrar = [];
       for (let { nombre_materia } of response.data) {
         listaMateriasMostrar.push({
@@ -163,7 +163,7 @@ export default function () {
         getMaterias(Id);
       });
     } else {
-      await axios.post(`${endpoint}/docentesid`, { Id }).then(response => {
+       axios.post(`${endpoint}/docentesid`, { Id }).then(response => {
         listaDocentesMostrar = [];
         for (let { id, name } of response.data) {
           listaDocentesMostrar.push({ label: name, value: name, id: id });
@@ -185,6 +185,7 @@ export default function () {
   }
 
   const handleChangeGrupos = (grupos: any) => {
+    console.log(grupos)
     setSelectedGroups(grupos);
     gruposS = [];
     if (grupos != null) {
@@ -207,11 +208,15 @@ export default function () {
         for (let { value } of docentes) {
           docentesNombres.push(value);
         }
+        setSelectedGroups([]);
+        setSelectedMateria({ label: '', value: '' });
+        setStateGrupo(true);
         setStateMateria(true);
         setStateMateriaCharge(true);
-        setSelectedMateria({ label: '', value: '' });
         getMaterias(docentesId);
       } else {
+        setSelectedGroups([]);
+        setSelectedMateria({ label: '', value: '' });
         setStateMateria(true);
         setStateNombres(true);
         setStateGrupo(true);
@@ -221,11 +226,13 @@ export default function () {
   };
 
   const handleChangeMateria = (materia: any) => {
+    console.log(selectedGroups+"estado")
     setSelectedMateria(materia);
     let { label, value } = materia;
     materiaS = value;
+    setSelectedGroups([]);
     setStateGrupo(true);
-    setSelectedGroups({ label: '', value: '' });
+    
     if (docentesId.length > 1) {
       setStateGrupoGharge(true);
       getGrupos(materiaS, docentesId);
@@ -379,6 +386,7 @@ export default function () {
                 ref={selectInputRef}
                 options={listaGruposMostrar}
                 isSearchable={false}
+                value={selectedGroups}
                 isDisabled={stateGrupo}
                 isLoading={stateGrupoCharge}
                 backspaceRemovesValue={false}
