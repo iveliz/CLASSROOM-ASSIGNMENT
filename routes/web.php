@@ -25,9 +25,8 @@ Route::get('/', function () {
 });
 
 Route::middleware([
-  'auth'
- 
-
+  'auth',
+  'role:docente'
 ])->group(function () {
   Route::get('/solicitar', function () {
     return Inertia::render('SolicitarPage');
@@ -36,8 +35,7 @@ Route::middleware([
 
 Route::middleware([
   'auth',
-  'role:administrador'
-
+  'role:docente'
 ])->group(function () {
   Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -45,12 +43,9 @@ Route::middleware([
 });
 
 
-
-
-
 Route::middleware([
-  'auth'
-
+  'auth',
+  'role:docente'
 ])->group(function () {
   Route::get('/solicitudes/pendientes', function () {
     return Inertia::render('SolicitudesPage');
@@ -58,10 +53,9 @@ Route::middleware([
 });
 
 
-
 Route::middleware([
-  'auth'
- 
+  'auth',
+  'role:docente'
 ])->group(function () {
   Route::get('/solicitudes/aceptadas', function () {
     return Inertia::render('Aceptados');
@@ -69,7 +63,8 @@ Route::middleware([
 });
 
 Route::middleware([
-  'auth'
+  'auth',
+  'role:docente'
 ])->group(function () {
   Route::get('/solicitudes/rechazadas', function () {
     return Inertia::render('Rechazados');
@@ -80,21 +75,18 @@ Route::middleware([
 Route::resource('prueba_solicitudes', SolicitudesController::class)->middleware(
   ['auth:sanctum', 'verified']
 );
-/*
+
+
 Route::middleware([
-  'role:administrador'
+  'auth'
 ])->group(function () {
 Route::get('/admin', function () {
   return Inertia::render('adminView');
+})->name('adminView');
 });
-});
-*/
 
 
-
-
-Route::group(['middleware' => 'auth'], function() {
-  Route::group(['middleware' => 'role:docente'], function() {
+  
     Route::controller(GrupoController::class)->group(function () {
       Route::post('/grupos', 'gruposMateria');
     });
@@ -122,13 +114,10 @@ Route::group(['middleware' => 'auth'], function() {
       Route::post('/aulas', 'AulaElegida');
     });
 
-  });
+  
  
   
-    Route::get('/admin', function () {
-      return Inertia::render('adminView');
-    })->name('adminView');
+  
 
 
   
-});

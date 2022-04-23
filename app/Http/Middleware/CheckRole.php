@@ -21,20 +21,15 @@ class CheckRole
     {
       
         if ($role == 'docente' &&  auth()->user()->id_role != 1) {
-            dd(auth()->user()->id_role );
-            return redirect('adminView');
-            // return $next($request);
+         
+             return $next($request);
         }else{
-            if ($role == 'docente' && auth()->user()->id_role != 1) {
-                dd(auth()->user()->id_role);
-                //return  route('adminView');
-              //  return redirect()->route('adminView');
-    }
-                //return Inertia::render('adminView');
-                
+            if ( auth()->user()->id_role == 1) {
+                return redirect()->route('adminView');
+    }        
         else{
             dd(auth()->user()->id_role);
-            return redirect('solicitudes');
+            
         }
        
     }
