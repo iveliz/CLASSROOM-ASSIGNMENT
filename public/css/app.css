@@ -802,6 +802,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   height: 5rem;
 }.min-h-screen{
   min-height: 100vh;
+}.min-h-max{
+  min-height: -webkit-max-content;
+  min-height: -moz-max-content;
+  min-height: max-content;
 }.w-5{
   width: 1.25rem;
 }.w-16{
