@@ -272,17 +272,10 @@ export default function () {
   };
 
   const handleChangePeriodo = (periodo: any) => {
-    console.log(periodo+" periodo")
-
+  
       setSelectedPeriodo(periodo);
       periodoS = periodo;
       console.log(periodoS);
-
-      setSelectedPeriodo(1);
-      periodoS = 1;
-      console.log(periodoS);
-    
-
   };
 
 
