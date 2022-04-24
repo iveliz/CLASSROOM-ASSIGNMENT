@@ -10,7 +10,7 @@ export default function Dashboard() {
     >
       <div className="py-12">
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-              <h1 className="text-center ">admin</h1>
+              <h1 className="text-center ">administrador jijij</h1>
             </div>                         
             <section className="preguntas-frecuentes clearfix ">	
 		          <div className="preguntas-frecuentes-contenedor serif "> 
