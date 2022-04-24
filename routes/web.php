@@ -34,8 +34,10 @@ Route::middleware([
 });
 
 Route::middleware([
-  'auth',
-  'role:docente'
+  'auth:sanctum',
+  'role:docente',
+  config('jetstream.auth_session'),
+  'verified',
 ])->group(function () {
   Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -44,7 +46,7 @@ Route::middleware([
 
 
 Route::middleware([
-  'auth',
+  'auth:sanctum',
   'role:docente'
 ])->group(function () {
   Route::get('/solicitudes/pendientes', function () {
@@ -78,7 +80,7 @@ Route::resource('prueba_solicitudes', SolicitudesController::class)->middleware(
 
 
 Route::middleware([
-  'auth'
+  'auth:sanctum',
 ])->group(function () {
 Route::get('/admin', function () {
   return Inertia::render('adminView');
