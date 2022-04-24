@@ -136,7 +136,7 @@ class SolicitudesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function crearSolicitud(Request $datos_solicitud){
-        $res = 3;
+        $res = "";
         try {
             
             $nueva_solicitud = new Solicitudes;
@@ -149,33 +149,45 @@ class SolicitudesController extends Controller
             $nueva_solicitud->fecha_requerida_solicitud = $datos_solicitud->fecha_requerida_solicitud;
             $nueva_solicitud->hora_requerida_solicitud = $datos_solicitud->hora_requerida_solicitud; /**/
             $nueva_solicitud->estado_solicitud = 'pendiente';
-            $nueva_solicitud->save();
-
-            $id_nueva_solicitud = $nueva_solicitud->id;
-
-            $nuevo_registro_solicitud = new RegistroSolicitudes;
-            $nuevo_registro_solicitud->id_solicitud = $id_nueva_solicitud;
-            $nuevo_registro_solicitud->id_usuario = $nueva_solicitud->id_usuario;
-            $nuevo_registro_solicitud->fecha_inicio_reg_sct = $nueva_solicitud->fecha_requerida_solicitud;
-            $nuevo_registro_solicitud->fecha_modificiacion_reg_sct =  $nueva_solicitud->fecha_requerida_solicitud;
-            $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'pendiente';
-            $nuevo_registro_solicitud->motivo_reg_sct = '';
-            $nuevo_registro_solicitud->save();
-        
-            foreach ($datos_solicitud->grupos_solicitud as $grupo){
-                $nuevo_grupo = new GrupoSolicitudes;
-                $nuevo_grupo->id_solicitud = $id_nueva_solicitud;
-                $nuevo_grupo->codigo_grupo_sct = $grupo;
-                $nuevo_grupo->save();
+            $solicitud_existente=Solicitudes::where('materia_solicitud',$nueva_solicitud->materia_solicitud)
+            ->where('id_usuario',$datos_solicitud->id_usuario)
+            ->where('cantidad_estudiantes_solicitud',$nueva_solicitud->cantidad_estudiantes_solicitud)
+            ->where('motivo_reserva_solicitud',$nueva_solicitud->motivo_reserva_solicitud)
+            ->where('periodos_solicitud',$nueva_solicitud->periodos_solicitud)
+            ->where('fecha_requerida_solicitud',$nueva_solicitud->fecha_requerida_solicitud)
+            ->where('hora_requerida_solicitud',$nueva_solicitud->hora_requerida_solicitud)
+            ->get();
+            
+            if(count($solicitud_existente)==0){
+                
+                $nueva_solicitud->save();
+                $id_nueva_solicitud = $nueva_solicitud->id;
+                $nuevo_registro_solicitud = new RegistroSolicitudes;
+                $nuevo_registro_solicitud->id_solicitud = $id_nueva_solicitud;
+                $nuevo_registro_solicitud->id_usuario = $nueva_solicitud->id_usuario;
+                $nuevo_registro_solicitud->fecha_inicio_reg_sct = $nueva_solicitud->fecha_requerida_solicitud;
+                $nuevo_registro_solicitud->fecha_modificacion_reg_sct =  $nueva_solicitud->fecha_requerida_solicitud;
+                $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'pendiente';
+                $nuevo_registro_solicitud->motivo_reg_sct = '';
+                $nuevo_registro_solicitud->save();
+                
+                foreach ($datos_solicitud->grupos_solicitud as $grupo){
+                    $nuevo_grupo = new GrupoSolicitudes;
+                    $nuevo_grupo->id_solicitud = $id_nueva_solicitud;
+                    $nuevo_grupo->codigo_grupo_sct = $grupo;
+                    $nuevo_grupo->save();
+                }
+                foreach ($datos_solicitud->nombres_docentes_solicitud as $docente){
+                    $nuevo_docente = new DocenteSolicitudes;
+                    $nuevo_docente->id_solicitud = $id_nueva_solicitud;
+                    $nuevo_docente->nombre_doc_sct = $docente;
+                    $nuevo_docente->save();
+                    
+                }
+                $res = 1;
+            }else{
+                $res = 0;
             }
-            foreach ($datos_solicitud->nombres_docentes_solicitud as $docente){
-                $nuevo_docente = new DocenteSolicitudes;
-                $nuevo_docente->id_solicitud = $id_nueva_solicitud;
-                $nuevo_docente->nombre_doc_sct = $docente;
-                $nuevo_docente->save();
-
-            }
-            $res = 1;
         } catch (\Throwable $th) {
             //throw $th;
             $res = $th;
@@ -192,6 +204,7 @@ class SolicitudesController extends Controller
             DB::table('registro_solicitudes')->where("registro_solicitudes.id_solicitud",$id_solicitud)->delete();
             DocenteSolicitudes::destroy($id_solicitud);
             GrupoSolicitudes::destroy($id_solicitud);
+            RegistroSolicitudes::destroy($id_solicitud);
             Solicitudes::where("solicitudes.id_solicitud",$id_solicitud)->delete();
             $res = 1;
         } catch (\Throwable $th) {
