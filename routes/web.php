@@ -28,6 +28,17 @@ Route::middleware([
   'auth',
   'role:docente'
 ])->group(function () {
+  Route::get('/dashboarda', function () {
+    return Inertia::render('DashboardAdmin');
+  })->name('dashboarda');
+});
+
+
+Route::middleware([
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
+])->group(function () {
   Route::get('/solicitar', function () {
     return Inertia::render('SolicitarPage');
   })->name('solicitar');
@@ -46,6 +57,27 @@ Route::middleware([
 Route::middleware([
   'auth',
   'role:docente'
+])->group(function () {
+  Route::get('/solicitudes/aulas', function () {
+    return Inertia::render('SolicitudesAdmin');
+  })->name('solicitudes/aulas');
+});
+
+
+Route::middleware([
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
+])->group(function () {
+  Route::get('/solicitudes/registros', function () {
+    return Inertia::render('SolicitudesAdminRegistro');
+  })->name('solicitudes/registros');
+});
+
+Route::middleware([
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
 ])->group(function () {
   Route::get('/solicitudes/pendientes', function () {
     return Inertia::render('SolicitudesPage');
