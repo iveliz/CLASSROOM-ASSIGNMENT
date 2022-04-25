@@ -696,6 +696,8 @@ Ensure the default browser behavior of the `hidden` attribute.
   right: 0px;
 }.top-0{
   top: 0px;
+}.bottom-0{
+  bottom: 0px;
 }.z-0{
   z-index: 0;
 }.z-50{
@@ -706,6 +708,8 @@ Ensure the default browser behavior of the `hidden` attribute.
   z-index: 10;
 }.col-span-6{
   grid-column: span 6 / span 6;
+}.col-span-3{
+  grid-column: span 3 / span 3;
 }.col-span-5{
   grid-column: span 5 / span 5;
 }.mx-auto{
@@ -762,10 +766,14 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-bottom: 1rem;
 }.-mt-px{
   margin-top: -1px;
-}.ml-5{
-  margin-left: 1.25rem;
 }.mr-8{
   margin-right: 2rem;
+}.mr-4{
+  margin-right: 1rem;
+}.mb-2{
+  margin-bottom: 0.5rem;
+}.ml-5{
+  margin-left: 1.25rem;
 }.mr-14{
   margin-right: 3.5rem;
 }.block{
@@ -915,6 +923,8 @@ Ensure the default browser behavior of the `hidden` attribute.
   gap: 1rem;
 }.gap-1{
   gap: 0.25rem;
+}.gap-3{
+  gap: 0.75rem;
 }.space-x-8 > :not([hidden]) ~ :not([hidden]){
   --tw-space-x-reverse: 0;
   margin-right: calc(2rem * var(--tw-space-x-reverse));
@@ -927,6 +937,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-space-y-reverse: 0;
   margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
+}.space-x-4 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-x-reverse: 0;
+  margin-right: calc(1rem * var(--tw-space-x-reverse));
+  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
 }.space-y-4 > :not([hidden]) ~ :not([hidden]){
   --tw-space-y-reverse: 0;
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
@@ -1096,6 +1110,9 @@ Ensure the default browser behavior of the `hidden` attribute.
 }.py-10{
   padding-top: 2.5rem;
   padding-bottom: 2.5rem;
+}.px-48{
+  padding-left: 12rem;
+  padding-right: 12rem;
 }.pt-6{
   padding-top: 1.5rem;
 }.pt-5{
@@ -10685,7 +10702,7 @@ select {
   height: -webkit-max-content;
   height: -moz-max-content;
   height: max-content;
-}/**/body {
+}/*(=･ω･=) css of information*/body {
   margin: 0;
 }.accordion-item-input:checked ~ .accordion-item-bd {
   max-height: 1000px;
@@ -10720,7 +10737,6 @@ select {
   position: absolute;
   left: -9999px;
 }/* 
-
 .preguntas-frecuentes {
 	position: relative;
 	width: 100%;
@@ -10744,6 +10760,7 @@ select {
 }.preguntas {
   padding-top:0%;
   max-height:0%;
+  top: 0px;
 }.preguntas label {
   background: #fff;
 	border-bottom: 1px solid #eee;
@@ -10802,28 +10819,35 @@ select {
     font-size: 1.59rem;
   }*/
 }@media (min-width: 768px) {
-  .preguntas {
-    padding-top: 5.21rem;
-  }
-  .preguntas label {
+  /*.preguntas {
+    padding-top: 5.21rem;*/
+  }.preguntas label {
     font-size: 1.3125rem;
     letter-spacing: -.01875rem;
     line-height: 1.33333;
     padding: 20px;
-  }
-  .respuesta p {
+  }.respuesta p {
     font-size: 1.21rem;
     letter-spacing: 0.021rem;
     line-height: 2.1;
     padding: 25px 50px;
-  }
-  /*.texto-h3 {
+  }/*.texto-h3 {
     font-size: 1.7rem;
-  }*/
-}@media (min-width: 1000px) {
+  }*/@media (min-width: 1000px) {
   .texto-h3 {
     font-size: 2.35rem;
   }
+}/*(*✧×✧*) termina seccion de css informacion*//*Ocultar boton de usuario*/.inline-flex 
+.rounded-md{
+  color : #2B629C;
+  background-color: #2B629C !important;
+  border-color: #2B629C !important;
+}.aceptada{
+  color: #1C9027;
+}.pendiente{
+  color:#0066c3;
+}.rechazada{
+  color:#901C1C;
 }.hover\:border-gray-300:hover{
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity));
@@ -11128,3 +11152,4 @@ select {
     padding-right: 2rem;
   }
 }
+
