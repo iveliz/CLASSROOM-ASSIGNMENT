@@ -68,7 +68,7 @@ export default function AppLayoutAdmin({
                 <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                   <JetNavLink
                     href={route('dashboarda')}
-                    active={route().current('dashboard')}
+                    active={route().current('dashboarda')}
                   >
                     Información
                   </JetNavLink>
@@ -293,7 +293,7 @@ export default function AppLayoutAdmin({
             <div className="pt-2 pb-3 space-y-1">
               <JetResponsiveNavLink
                 href={route('dashboarda')}
-                active={route().current('dashboard')}
+                active={route().current('dashboarda')}
               >
                 Información
               </JetResponsiveNavLink>
