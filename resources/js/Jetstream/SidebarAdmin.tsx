@@ -17,21 +17,21 @@ export default function () {
              Inertia.visit(itemId);
             }}
             items={[
-              {
+            /*   {
                 title: 'Aulas',
                 itemId: 'aulas',
                  elemBefore: () => <List></List>,
                 // you can use your own custom Icon component as well
                 // icon is optional
                 
-              },
-            /* {
+              },*/
+            {
                 title: 'Registros',
                 itemId: 'registros',
                 elemBefore: () => <Check></Check>,
               
                 
-              }, */
+              }, 
             ]}
           />
       </>
