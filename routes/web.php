@@ -2,12 +2,13 @@
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\usuarioController;
+use App\Http\Controllers\DocenteControllers\usuarioController;
 use Inertia\Inertia;
-use App\Http\Controllers\AulaController;
-use App\Http\Controllers\materiaController;
-use App\Http\Controllers\GrupoController;
-use App\Http\Controllers\SolicitudesController;
+use App\Http\Controllers\DocenteControllers\AulaController;
+
+use App\Http\Controllers\DocenteControllers\materiaController;
+use App\Http\Controllers\DocenteControllers\GrupoController;
+use App\Http\Controllers\DocenteControllers\SolicitudesController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,21 +25,13 @@ Route::get('/', function () {
 });
 
 Route::middleware([
+  'auth',
   'auth:sanctum',
   config('jetstream.auth_session'),
   'verified',
+  'checkRoleAdmin'
 ])->group(function () {
-  Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-  })->name('dashboard');
-});
-
-Route::middleware([
-  'auth:sanctum',
-  config('jetstream.auth_session'),
-  'verified',
-])->group(function () {
-  Route::get('/dashboarda', function () {
+  Route::get('/Informacion_administrador', function () {
     return Inertia::render('DashboardAdmin');
   })->name('dashboarda');
 });
@@ -48,17 +41,27 @@ Route::middleware([
   'auth:sanctum',
   config('jetstream.auth_session'),
   'verified',
+  'checkRoleDocente'
 ])->group(function () {
   Route::get('/solicitar', function () {
     return Inertia::render('SolicitarPage');
   })->name('solicitar');
 });
 
+Route::middleware([
+  'auth',
+  'role:docente',
+  'checkRoleDocente'
+])->group(function () {
+  Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+  })->name('dashboard');
+});
+
 
 Route::middleware([
-  'auth:sanctum',
-  config('jetstream.auth_session'),
-  'verified',
+  'auth',
+  'checkRoleAdmin'
 ])->group(function () {
   Route::get('/solicitudes/aulas', function () {
     return Inertia::render('SolicitudesAdmin');
@@ -70,6 +73,7 @@ Route::middleware([
   'auth:sanctum',
   config('jetstream.auth_session'),
   'verified',
+  'checkRoleAdmin'
 ])->group(function () {
   Route::get('/solicitudes/registros', function () {
     return Inertia::render('SolicitudesAdminRegistro');
@@ -80,6 +84,7 @@ Route::middleware([
   'auth:sanctum',
   config('jetstream.auth_session'),
   'verified',
+  'checkRoleDocente'
 ])->group(function () {
   Route::get('/solicitudes/pendientes', function () {
     return Inertia::render('SolicitudesPage');
@@ -88,9 +93,8 @@ Route::middleware([
 
 
 Route::middleware([
-  'auth:sanctum',
-  config('jetstream.auth_session'),
-  'verified',
+  'auth',
+  'checkRoleDocente'
 ])->group(function () {
   Route::get('/solicitudes/aceptadas', function () {
     return Inertia::render('Aceptados');
@@ -98,9 +102,8 @@ Route::middleware([
 });
 
 Route::middleware([
-  'auth:sanctum',
-  config('jetstream.auth_session'),
-  'verified',
+  'auth',
+  'checkRoleDocente'
 ])->group(function () {
   Route::get('/solicitudes/rechazadas', function () {
     return Inertia::render('Rechazados');
@@ -112,29 +115,43 @@ Route::resource('prueba_solicitudes', SolicitudesController::class)->middleware(
   ['auth:sanctum', 'verified']
 );
 
-Route::controller(GrupoController::class)->group(function () {
-  Route::post('/grupos', 'gruposMateria');
+
+Route::middleware([
+  'auth'
+])->group(function () {
+Route::get('/admin', function () {
+  return Inertia::render('adminView');
+})->name('adminView');
 });
 
 
-Route::controller(usuarioController::class)->group(function () {
-  Route::post('/docentes', 'ObtenerDocentes');
-  Route::post('/docentesid', 'ObtenerDocentesId');
-});
+  
+    Route::controller(GrupoController::class)->group(function () {
+      Route::post('/grupos', 'gruposMateria');
+    });
+    
+    
+    Route::controller(usuarioController::class)->group(function () {
+      Route::post('/docentes', 'ObtenerDocentes');
+      Route::post('/docentesid', 'ObtenerDocentesId');
+    });
+    
+    Route::controller(SolicitudesController::class)->group(function () {
+      Route::get('/api/solicitudes', 'index');
+      Route::delete('/api/solicitudes/eliminar/{id}', 'destroy');
+      Route::get('/api/solicitudes/pendientes/{id}', 'listarPendientes');
+      Route::post('/api/solicitudes/crear', 'crearSolicitud');
+      Route::get('/api/solicitudes/rechazadas/{id}', 'listarRechazados');
+      Route::get('/api/solicitudes/aceptadas/{id}', 'listarAceptados');
+    });
+    
+    Route::controller(materiaController::class)->group(function () {
+      Route::post('/materias', 'show');
+    });
+    
+    Route::controller(AulaController::class)->group(function () {
+      Route::post('/aulas', 'AulaElegida');
+    });
 
-Route::controller(SolicitudesController::class)->group(function () {
-  Route::get('/api/solicitudes', 'index');
-  Route::delete('/api/solicitudes/eliminar/{id}', 'destroy');
-  Route::get('/api/solicitudes/pendientes/{id}', 'listarPendientes');
-  Route::post('/api/solicitudes/crear', 'crearSolicitud');
-  Route::get('/api/solicitudes/rechazadas/{id}', 'listarRechazados');
-  Route::get('/api/solicitudes/aceptadas/{id}', 'listarAceptados');
-});
-
-Route::controller(materiaController::class)->group(function () {
-  Route::post('/materias', 'show');
-});
-
-Route::controller(AulaController::class)->group(function () {
-  Route::post('/aulas', 'AulaElegida');
-});
+  
+ 
