@@ -26,9 +26,12 @@ Route::get('/', function () {
 
 Route::middleware([
   'auth',
-  'role:docente'
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
+  'checkRoleAdmin'
 ])->group(function () {
-  Route::get('/dashboarda', function () {
+  Route::get('/Informacion_administrador', function () {
     return Inertia::render('DashboardAdmin');
   })->name('dashboarda');
 });
@@ -38,6 +41,7 @@ Route::middleware([
   'auth:sanctum',
   config('jetstream.auth_session'),
   'verified',
+  'checkRoleDocente'
 ])->group(function () {
   Route::get('/solicitar', function () {
     return Inertia::render('SolicitarPage');
@@ -46,7 +50,8 @@ Route::middleware([
 
 Route::middleware([
   'auth',
-  'role:docente'
+  'role:docente',
+  'checkRoleDocente'
 ])->group(function () {
   Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -56,7 +61,7 @@ Route::middleware([
 
 Route::middleware([
   'auth',
-  'role:docente'
+  'checkRoleAdmin'
 ])->group(function () {
   Route::get('/solicitudes/aulas', function () {
     return Inertia::render('SolicitudesAdmin');
@@ -68,6 +73,7 @@ Route::middleware([
   'auth:sanctum',
   config('jetstream.auth_session'),
   'verified',
+  'checkRoleAdmin'
 ])->group(function () {
   Route::get('/solicitudes/registros', function () {
     return Inertia::render('SolicitudesAdminRegistro');
@@ -78,6 +84,7 @@ Route::middleware([
   'auth:sanctum',
   config('jetstream.auth_session'),
   'verified',
+  'checkRoleDocente'
 ])->group(function () {
   Route::get('/solicitudes/pendientes', function () {
     return Inertia::render('SolicitudesPage');
@@ -87,7 +94,7 @@ Route::middleware([
 
 Route::middleware([
   'auth',
-  'role:docente'
+  'checkRoleDocente'
 ])->group(function () {
   Route::get('/solicitudes/aceptadas', function () {
     return Inertia::render('Aceptados');
@@ -96,7 +103,7 @@ Route::middleware([
 
 Route::middleware([
   'auth',
-  'role:docente'
+  'checkRoleDocente'
 ])->group(function () {
   Route::get('/solicitudes/rechazadas', function () {
     return Inertia::render('Rechazados');

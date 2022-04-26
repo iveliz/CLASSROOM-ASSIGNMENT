@@ -24,7 +24,7 @@ class CheckRole
              return $next($request);
         }else{
             if ( auth()->user()->id_role == 1) {
-                return redirect()->route('adminView');
+                return redirect()->route('dashboarda');
     }        
         else{
             dd(auth()->user()->id_role);
