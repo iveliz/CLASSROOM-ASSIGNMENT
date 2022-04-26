@@ -34,8 +34,8 @@ export default function Login({ canResetPassword, status }: Props) {
       <Head title="login" />
 
       <JetValidationErrors className="mb-4" />
-      <div className='text-center font-bold'>
-      <h2 className='font-bold'>Iniciar Sesión</h2>
+      <div className="text-center font-bold">
+        <h2 className="font-bold">Iniciar Sesión</h2>
       </div>
       {status && (
         <div className="mb-4 font-medium text-sm text-green-600">{status}</div>
@@ -81,8 +81,8 @@ export default function Login({ canResetPassword, status }: Props) {
           </label>
         </div>
 
-        <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0 mt-4">
-         {/* {canResetPassword && (
+        {/* <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0 mt-4">*/}
+          {/* {canResetPassword && (
             <div>
               <InertiaLink
                 href={route('password.request')}
@@ -93,22 +93,25 @@ export default function Login({ canResetPassword, status }: Props) {
             </div>
           )}*/}
 
-          <div className="flex items-center justify-end">
-           {/* <InertiaLink
+          <div className="sm:justify-center items-center flex flex-col">
+            {/* <InertiaLink
               href={route('register')}
               className="underline text-sm text-gray-600 hover:text-gray-900"
             >
               Need an account?
             </InertiaLink>*/}
-
-            <JetButton
-              className={classNames('ml-4', { 'opacity-25': form.processing })}
-              disabled={form.processing}
-            >
-              Entrar
-            </JetButton>
+           
+              <JetButton
+                className={classNames( 'colorPrimary', {
+                  'opacity-25': form.processing,
+                })}
+                disabled={form.processing}
+              >
+                Entrar
+              </JetButton>
+            
           </div>
-        </div>
+        {/*  </div>*/}
       </form>
     </JetAuthenticationCard>
   );
