@@ -43,7 +43,7 @@ export default function Login({ canResetPassword, status }: Props) {
 
       <form onSubmit={onSubmit}>
         <div>
-          <JetLabel htmlFor="email">Email</JetLabel>
+          <JetLabel htmlFor="email">Correo Electrónico</JetLabel>
           <JetInput
             id="email"
             type="email"
@@ -56,7 +56,7 @@ export default function Login({ canResetPassword, status }: Props) {
         </div>
 
         <div className="mt-4">
-          <JetLabel htmlFor="password">Password</JetLabel>
+          <JetLabel htmlFor="password">Contraseña</JetLabel>
           <JetInput
             id="password"
             type="password"
@@ -77,12 +77,12 @@ export default function Login({ canResetPassword, status }: Props) {
                 form.setData('remember', e.currentTarget.checked ? 'on' : '')
               }
             />
-            <span className="ml-2 text-sm text-gray-600">Remember me</span>
+            <span className="ml-2 text-sm text-gray-600">Recuerdame</span>
           </label>
         </div>
 
         <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0 mt-4">
-          {canResetPassword && (
+         {/* {canResetPassword && (
             <div>
               <InertiaLink
                 href={route('password.request')}
@@ -91,21 +91,21 @@ export default function Login({ canResetPassword, status }: Props) {
                 Forgot your password?
               </InertiaLink>
             </div>
-          )}
+          )}*/}
 
           <div className="flex items-center justify-end">
-            <InertiaLink
+           {/* <InertiaLink
               href={route('register')}
               className="underline text-sm text-gray-600 hover:text-gray-900"
             >
               Need an account?
-            </InertiaLink>
+            </InertiaLink>*/}
 
             <JetButton
               className={classNames('ml-4', { 'opacity-25': form.processing })}
               disabled={form.processing}
             >
-              Log in
+              Entrar
             </JetButton>
           </div>
         </div>
