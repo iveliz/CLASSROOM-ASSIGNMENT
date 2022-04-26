@@ -34,7 +34,9 @@ export default function Login({ canResetPassword, status }: Props) {
       <Head title="login" />
 
       <JetValidationErrors className="mb-4" />
-
+      <div className='text-center font-bold'>
+      <h2 className='font-bold'>Iniciar Sesión</h2>
+      </div>
       {status && (
         <div className="mb-4 font-medium text-sm text-green-600">{status}</div>
       )}
