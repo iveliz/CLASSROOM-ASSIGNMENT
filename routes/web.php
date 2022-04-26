@@ -8,6 +8,7 @@ use App\Http\Controllers\AulaController;
 use App\Http\Controllers\materiaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\SolicitudesController;
+use App\Http\Controllers\SolicitudCuentaController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,7 +44,6 @@ Route::middleware([
   })->name('dashboarda');
 });
 
-
 Route::middleware([
   'auth:sanctum',
   config('jetstream.auth_session'),
@@ -54,7 +54,6 @@ Route::middleware([
   })->name('solicitar');
 });
 
-
 Route::middleware([
   'auth:sanctum',
   config('jetstream.auth_session'),
@@ -64,7 +63,6 @@ Route::middleware([
     return Inertia::render('SolicitudesAdmin');
   })->name('solicitudes/aulas');
 });
-
 
 Route::middleware([
   'auth:sanctum',
@@ -86,7 +84,6 @@ Route::middleware([
   })->name('solicitudes');
 });
 
-
 Route::middleware([
   'auth:sanctum',
   config('jetstream.auth_session'),
@@ -107,7 +104,6 @@ Route::middleware([
   })->name('solicitudes/rechazadas');
 });
 
-
 Route::resource('prueba_solicitudes', SolicitudesController::class)->middleware(
   ['auth:sanctum', 'verified']
 );
@@ -115,7 +111,6 @@ Route::resource('prueba_solicitudes', SolicitudesController::class)->middleware(
 Route::controller(GrupoController::class)->group(function () {
   Route::post('/grupos', 'gruposMateria');
 });
-
 
 Route::controller(usuarioController::class)->group(function () {
   Route::post('/docentes', 'ObtenerDocentes');
@@ -137,4 +132,8 @@ Route::controller(materiaController::class)->group(function () {
 
 Route::controller(AulaController::class)->group(function () {
   Route::post('/aulas', 'AulaElegida');
+});
+
+Route::controller(SolicitudCuentaController::class)->group(function () {
+  Route::post('/SolicitudCuenta', 'verSolicitud');
 });
