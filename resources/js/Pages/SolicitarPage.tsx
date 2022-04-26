@@ -40,7 +40,7 @@ const horarios = [
   { label: '20:15', value: '20:15:00',pos:10 },
 ];
 
-let horariosFinales=["7:30","8:15","9:00","9:45","10:30","11:15","12:00","12:45","13:30","14:15","15:00","15:45","16:30","17:15","18:00",
+let horariosFinales=["06:45","07:30","08:15","09:00","09:45","10:30","11:15","12:00","12:45","13:30","14:15","15:00","15:45","16:30","17:15","18:00",
 "18:45","19:30","20:15","21:00","21:45"
 ]
 
@@ -82,7 +82,7 @@ let prioridad: String = '';
 let periodoS: Number = 1;
 let fechaS: String = fechaHoy();
 let materiaS: String = '';
-
+let horarioL:any="06:45";
 export default function () {
   const customStyles = {
     content: {
@@ -261,6 +261,17 @@ export default function () {
     }
     horarioS = value;
     horariosx=pos;
+    horarioL=label;
+    setSelectedPeriodo(1);
+    let noEncontrado=true;
+    let i=0;
+    while(noEncontrado){
+      if(horariosFinales[i]===horarioL){
+         setHoraFin(horariosFinales[i+1])
+         noEncontrado=false;
+      }
+      i+=1;
+    }
     console.log(horarioS);
   };
 
@@ -272,9 +283,17 @@ export default function () {
   };
 
   const handleChangePeriodo = (periodo: any) => {
-  
       setSelectedPeriodo(periodo);
       periodoS = periodo;
+      let noEncontrado=true;
+      let i=0;
+      while(noEncontrado){
+        if(horariosFinales[i]===horarioL){
+           setHoraFin(horariosFinales[i+periodo])
+           noEncontrado=false;
+        }
+        i+=1;
+      }
       console.log(periodoS);
   };
 
@@ -442,8 +461,9 @@ export default function () {
               </div>
               <div className="mr-4">
                 <p>Periodos</p>
-                <NumberPicker
-                  defaultValue={selectedPeriodo}
+                <NumberPicker 
+                  value={selectedPeriodo}
+                  defaultValue={1}
                   min={1}
                   max={maxOfNumber}
                   onChange={handleChangePeriodo}
@@ -453,9 +473,9 @@ export default function () {
                   }}
                 />
               </div>
-              <div className="mr-4">
+              <div className="items-center flex flex-column ">
                 <p>Hora fin</p>
-                <p>{horaFin}</p>
+                <p className='text-sky-400 font-bold'>{horaFin}</p>
               </div>
             </div>
             <div className="grid grid-flow-col auto-cols-max">

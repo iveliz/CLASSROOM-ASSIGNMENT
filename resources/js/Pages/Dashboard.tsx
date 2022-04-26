@@ -1,5 +1,4 @@
 import React from 'react';
-import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
 
 
