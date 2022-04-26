@@ -17,12 +17,12 @@ export default function JetValidationErrors({
   return (
     <div className={className}>
       <div className="font-medium text-red-600">
-        Whoops! Something went wrong.
+     
       </div>
 
-      <ul className="mt-3 list-disc list-inside text-sm text-red-600">
+      <ul className="mt-3 list-disc list-inside text-sm text-red-600 text-center">
         {Object.keys(errors).map(key => (
-          <li key={key}>{errors[key]}</li>
+          <p key={key}>{errors[key]}</p>
         ))}
       </ul>
     </div>
