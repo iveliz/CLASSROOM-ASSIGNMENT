@@ -2,13 +2,13 @@
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DocenteControllers\usuarioController;
+use App\Http\Controllers\usuarioController;
 use Inertia\Inertia;
-use App\Http\Controllers\DocenteControllers\AulaController;
+use App\Http\Controllers\AulaController;
 
-use App\Http\Controllers\DocenteControllers\materiaController;
-use App\Http\Controllers\DocenteControllers\GrupoController;
-use App\Http\Controllers\DocenteControllers\SolicitudesController;
+use App\Http\Controllers\materiaController;
+use App\Http\Controllers\GrupoController;
+use App\Http\Controllers\SolicitudesController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
