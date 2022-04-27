@@ -7,7 +7,7 @@ import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import es from 'date-fns/locale/es';
-import { addDays, subDays } from 'date-fns';
+import { addDays, subDays, addYears } from 'date-fns';
 import { registerLocale } from 'react-datepicker';
 import Modal from 'react-modal';
 import axios from 'axios';
@@ -17,6 +17,10 @@ import { usePage } from '@inertiajs/inertia-react';
 registerLocale('es', es);
 
 var hoy = new Date();
+let ultimoDia = new Date();
+ultimoDia.setMonth(11);
+ultimoDia.setDate(31);
+console.log(ultimoDia);
 var day1 = new Date('01/07/1970');
 var difference = Math.abs(hoy.getTime() - day1.getTime());
 var days = difference / (1000 * 3600 * 24);
@@ -28,23 +32,41 @@ const tiporeserva = [
 ];
 
 const horarios = [
-  { label: '06:45', value: '06:45:00',pos:1 },
-  { label: '08:15', value: '08:15:00',pos:2 },
-  { label: '09:45', value: '08:15:00',pos:3 },
-  { label: '11:15', value: '11:15:00',pos:4 },
-  { label: '12:45', value: '12:45:00',pos:5 },
-  { label: '14:15', value: '14:15:00',pos:6 },
-  { label: '15:45', value: '15:45:00',pos:7 },
-  { label: '17:15', value: '17:15:00',pos:8 },
-  { label: '18:45', value: '18:45:00',pos:9 },
-  { label: '20:15', value: '20:15:00',pos:10 },
+  { label: '06:45', value: '06:45:00', pos: 1 },
+  { label: '08:15', value: '08:15:00', pos: 2 },
+  { label: '09:45', value: '08:15:00', pos: 3 },
+  { label: '11:15', value: '11:15:00', pos: 4 },
+  { label: '12:45', value: '12:45:00', pos: 5 },
+  { label: '14:15', value: '14:15:00', pos: 6 },
+  { label: '15:45', value: '15:45:00', pos: 7 },
+  { label: '17:15', value: '17:15:00', pos: 8 },
+  { label: '18:45', value: '18:45:00', pos: 9 },
+  { label: '20:15', value: '20:15:00', pos: 10 },
 ];
 
-let horariosFinales=["06:45","07:30","08:15","09:00","09:45","10:30","11:15","12:00","12:45","13:30","14:15","15:00","15:45","16:30","17:15","18:00",
-"18:45","19:30","20:15","21:00","21:45"
-]
-
-
+let horariosFinales = [
+  '06:45',
+  '07:30',
+  '08:15',
+  '09:00',
+  '09:45',
+  '10:30',
+  '11:15',
+  '12:00',
+  '12:45',
+  '13:30',
+  '14:15',
+  '15:00',
+  '15:45',
+  '16:30',
+  '17:15',
+  '18:00',
+  '18:45',
+  '19:30',
+  '20:15',
+  '21:00',
+  '21:45',
+];
 
 const endpoint = 'http://127.0.0.1:8000';
 let listaDocentesMostrar: { label: any; value: any; id: any }[] = [];
@@ -82,7 +104,7 @@ let prioridad: String = '';
 let periodoS: Number = 1;
 let fechaS: String = fechaHoy();
 let materiaS: String = '';
-let horarioL:any="06:45";
+let horarioL: any = '06:45';
 export default function () {
   const customStyles = {
     content: {
@@ -100,11 +122,17 @@ export default function () {
     label: any;
     value: any;
   }>();
-  const [selectedGroups, setSelectedGroups] = useState<{
+  const [selectedGroups, setSelectedGroups] = useState<
+    {
+      label: any;
+      value: any;
+    }[]
+  >();
+  const [selectedHorario, setSelectedHorario] = useState<{
     label: any;
     value: any;
-  }[]>();
-  const [selectedHorario, setSelectedHorario] = useState<{label:any, value:any, pos: any}>();
+    pos: any;
+  }>();
   const [selectedTipo, setSelectedTipo] = useState();
   const [selectedPeriodo, setSelectedPeriodo] = useState(1);
   const [selectedCantidad, setSelectedCantidad] = useState('');
@@ -117,7 +145,7 @@ export default function () {
   const selectInputRef = useRef();
   const [maxOfNumber, setMaxOfNumber] = useState(6);
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [horaFin, setHoraFin] = useState("7:30");
+  const [horaFin, setHoraFin] = useState('7:30');
 
   const { user }: any = usePage().props;
   let { id, name, email } = user;
@@ -128,7 +156,7 @@ export default function () {
   }, []);
 
   const getGrupos = async (materiaS: String, docentesId: any[]) => {
-     axios
+    axios
       .post(`${endpoint}/grupos`, { materia: materiaS, idDocentes: docentesId })
       .then(response => {
         listaGruposMostrar = [];
@@ -142,7 +170,7 @@ export default function () {
   };
 
   const getMaterias = async (docentesId: any[]) => {
-   axios.post(`${endpoint}/materias`, { docentesId }).then(response => {
+    axios.post(`${endpoint}/materias`, { docentesId }).then(response => {
       listaMateriasMostrar = [];
       for (let { nombre_materia } of response.data) {
         listaMateriasMostrar.push({
@@ -159,7 +187,7 @@ export default function () {
 
   const getDocentesRelacionados = async (Id: any[]) => {
     if (Id.length === 1) {
-       axios.post(`${endpoint}/docentesid`, { Id }).then(response => {
+      axios.post(`${endpoint}/docentesid`, { Id }).then(response => {
         listaDocentesMostrar = [];
         for (let { id, name } of response.data) {
           listaDocentesMostrar.push({ label: name, value: name, id: id });
@@ -171,7 +199,7 @@ export default function () {
         getMaterias(Id);
       });
     } else {
-       axios.post(`${endpoint}/docentesid`, { Id }).then(response => {
+      axios.post(`${endpoint}/docentesid`, { Id }).then(response => {
         listaDocentesMostrar = [];
         for (let { id, name } of response.data) {
           listaDocentesMostrar.push({ label: name, value: name, id: id });
@@ -193,7 +221,7 @@ export default function () {
   }
 
   const handleChangeGrupos = (grupos: any) => {
-    console.log(grupos)
+    console.log(grupos);
     setSelectedGroups(grupos);
     gruposS = [];
     if (grupos != null) {
@@ -202,7 +230,6 @@ export default function () {
       }
     }
   };
-
 
   const handleChangeDocentes = (docentes: []) => {
     setSelectedDocentes(docentes);
@@ -234,13 +261,13 @@ export default function () {
   };
 
   const handleChangeMateria = (materia: any) => {
-    console.log(selectedGroups+"estado")
+    console.log(selectedGroups + 'estado');
     setSelectedMateria(materia);
     let { label, value } = materia;
     materiaS = value;
     setSelectedGroups([]);
     setStateGrupo(true);
-    
+
     if (docentesId.length > 1) {
       setStateGrupoGharge(true);
       getGrupos(materiaS, docentesId);
@@ -251,26 +278,26 @@ export default function () {
   };
   const handleChangeHorario = (horario: any) => {
     setSelectedHorario(horario);
-    (console.log(horario))
-    let { label, value,pos } = horario;
+    console.log(horario);
+    let { label, value, pos } = horario;
     setMaxOfNumber(6);
-    let numero=22-(pos*2)
-    if(numero<6){
-      (console.log(numero))
+    let numero = 22 - pos * 2;
+    if (numero < 6) {
+      console.log(numero);
       setMaxOfNumber(numero);
     }
     horarioS = value;
-    horariosx=pos;
-    horarioL=label;
+    horariosx = pos;
+    horarioL = label;
     setSelectedPeriodo(1);
-    let noEncontrado=true;
-    let i=0;
-    while(noEncontrado){
-      if(horariosFinales[i]===horarioL){
-         setHoraFin(horariosFinales[i+1])
-         noEncontrado=false;
+    let noEncontrado = true;
+    let i = 0;
+    while (noEncontrado) {
+      if (horariosFinales[i] === horarioL) {
+        setHoraFin(horariosFinales[i + 1]);
+        noEncontrado = false;
       }
-      i+=1;
+      i += 1;
     }
     console.log(horarioS);
   };
@@ -283,20 +310,19 @@ export default function () {
   };
 
   const handleChangePeriodo = (periodo: any) => {
-      setSelectedPeriodo(periodo);
-      periodoS = periodo;
-      let noEncontrado=true;
-      let i=0;
-      while(noEncontrado){
-        if(horariosFinales[i]===horarioL){
-           setHoraFin(horariosFinales[i+periodo])
-           noEncontrado=false;
-        }
-        i+=1;
+    setSelectedPeriodo(periodo);
+    periodoS = periodo;
+    let noEncontrado = true;
+    let i = 0;
+    while (noEncontrado) {
+      if (horariosFinales[i] === horarioL) {
+        setHoraFin(horariosFinales[i + periodo]);
+        noEncontrado = false;
       }
-      console.log(periodoS);
+      i += 1;
+    }
+    console.log(periodoS);
   };
-
 
   const handleChangeCantidad = (cantidad: any) => {
     setSelectedCantidad(cantidad);
@@ -441,11 +467,16 @@ export default function () {
                 <DatePicker
                   locale="es"
                   selected={startDate}
-                  excludeDateIntervals={[
-                    { start: subDays(new Date(), days), end: addDays(hoy, -1) },
-                    //limitar fecha año y que no se escriba
+                  includeDateIntervals={[
+                    { start: hoy, end: ultimoDia },
                   ]}
                   onChange={handleChangeCalendario}
+                  disabledKeyboardNavigation
+                  customInput={
+                    <button className="btn colorPrimary text-white">
+                      {fechaS}
+                    </button>
+                  }
                 />
               </div>
               <div className="mr-4">
@@ -461,21 +492,22 @@ export default function () {
               </div>
               <div className="mr-4">
                 <p>Periodos</p>
-                <NumberPicker 
+                <NumberPicker
                   value={selectedPeriodo}
                   defaultValue={1}
                   min={1}
                   max={maxOfNumber}
                   onChange={handleChangePeriodo}
-                  onKeyPress={event => {
-                      event.preventDefault();
-                      //que no se pueda escribir
+                  onKeyDown={event => {
+                    event.preventDefault();
                   }}
                 />
               </div>
               <div className="items-center flex flex-column ">
                 <p>Hora fin</p>
-                <p className='text-sky-400 font-bold'>{horaFin}</p>
+                <p className="text-sky-400 font-bold">
+                  {horaFin}
+                </p>
               </div>
             </div>
             <div className="grid grid-flow-col auto-cols-max">
@@ -533,7 +565,6 @@ export default function () {
                   </button>
                 </div>
                 <div>
-   
                   <button
                     type="button"
                     onClick={sendSoli}
