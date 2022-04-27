@@ -7,7 +7,7 @@ import Cardsolicitud from '@/Jetstream/Cardsolicitud';
 import axios from 'axios';
 import { useEffect } from "react";
 import { nanoid } from 'nanoid'
-const endpoint = 'http://127.0.0.1:8000'
+const endpoint = 'http://3.80.89.2'
 
 
 export default function (props:{user:any}) {
