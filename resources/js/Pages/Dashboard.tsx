@@ -90,6 +90,7 @@ export default function Dashboard() {
                         </h6>
                       </AccordionDetails>
                     </Accordion>
+                    <div> </div>
                     <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
                       <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
                         <h5>¿Cómo puedo cancelar una solicitud?</h5>
@@ -101,6 +102,7 @@ export default function Dashboard() {
                         </h6>
                       </AccordionDetails>
                     </Accordion>
+                    <div></div>
                     <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
                       <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
                         <h5>¿Cómo puedo cancelar una reserva?</h5>
@@ -112,6 +114,7 @@ export default function Dashboard() {
                         </h6>
                       </AccordionDetails>
                     </Accordion>
+                    <div></div>
                     <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
                       <AccordionSummary aria-controls="panel4d-content" id="panel4d-header">
                         <h5>¿Cómo puedo saber el estado de mi solicitud?</h5>
@@ -123,7 +126,12 @@ export default function Dashboard() {
                         </h6>
                       </AccordionDetails>
                     </Accordion>
-           </div>  
+            </div>  
+            <div className="  absolute inset-x-0 bottom-0 h-16 my-8">
+              <h5 className="text-center my-8">¿Tienes alguna duda? Contactanos! 
+              <a className= "text-center ml-2" href="mailto:neolancersrl@gmail.com ?
+              subject=Quiero más información con respecto a los servicios que ofrecen.&body=Hola equipo Neolancer! te contacto desde su website, quisiera más información de sus servicios."> neolancersrl@gmail.com </a></h5> 
+            </div>
      </div>
   </AppLayout>    
   );
