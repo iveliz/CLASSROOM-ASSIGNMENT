@@ -685,17 +685,25 @@ Ensure the default browser behavior of the `hidden` attribute.
   position: absolute;
 }.relative{
   position: relative;
+}.sticky{
+  position: -webkit-sticky;
+  position: sticky;
 }.inset-0{
   top: 0px;
   right: 0px;
   bottom: 0px;
   left: 0px;
+}.inset-x-0{
+  left: 0px;
+  right: 0px;
 }.left-0{
   left: 0px;
 }.right-0{
   right: 0px;
 }.top-0{
   top: 0px;
+}.bottom-0{
+  bottom: 0px;
 }.z-0{
   z-index: 0;
 }.z-50{
