@@ -66,7 +66,7 @@ export default function Dashboard() {
                <div className=" preguntas min-h-max"> 
                  <h5 className="text-left my-8">En esta sección encontrará información para usar el sistema apropiadamente. </h5>
                </div>
-               {/*
+               
                     <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
                       <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
                         <h5>¿Qué es la sección de solicitudes de registro?</h5>
@@ -85,13 +85,14 @@ export default function Dashboard() {
                       </AccordionSummary>
                       <AccordionDetails>
                         <h6>
-                          La sección de <b>solicitudes de registro</b> es un espacio de trabajo donde nos llegarán las solicitudes de registro de los docentes 
-                          para tener usuario, en cual verificaremos los datos de los docentes en dicha solicitud.
+                          La sección de <b>solicitudes de aula</b> es un espacio de trabajo donde nos llegarán las solicitudes de aula requeridos por los docentes 
+                          , en cual verificaremos los datos de la solitud.
                         </h6>
                       </AccordionDetails>
                     </Accordion>
                     
             </div>  
+            {/* 
             <div className="  absolute inset-x-0 bottom-0 h-16 my-8">
               <h5 className="text-center my-8">¿Tienes alguna duda? Contactanos! 
               <a className= "text-center ml-2" href="mailto:neolancersrl@gmail.com ?
@@ -99,7 +100,7 @@ export default function Dashboard() {
             </div>
             */}
      </div>
-     </div>
+     
   </AppLayout>    
   );
 }
