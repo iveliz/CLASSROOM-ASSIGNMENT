@@ -92,13 +92,13 @@ export default function Dashboard() {
                     </Accordion>
                     
             </div>  
-            {/* 
+            
             <div className="  absolute inset-x-0 bottom-0 h-16 my-8">
               <h5 className="text-center my-8">¿Tienes alguna duda? Contactanos! 
               <a className= "text-center ml-2" href="mailto:neolancersrl@gmail.com ?
               subject=Quiero más información con respecto a los servicios que ofrecen.&body=Hola equipo Neolancer! te contacto desde su website, quisiera más información de sus servicios."> neolancersrl@gmail.com </a></h5> 
             </div>
-            */}
+            
      </div>
      
   </AppLayout>    
