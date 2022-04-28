@@ -16,14 +16,14 @@ import Select, { components } from 'react-select';
 import { usePage } from '@inertiajs/inertia-react';
 registerLocale('es', es);
 
-var hoy = new Date();
+let hoy = new Date();
 let ultimoDia = new Date();
 ultimoDia.setMonth(11);
 ultimoDia.setDate(31);
 console.log(ultimoDia);
-var day1 = new Date('01/07/1970');
-var difference = Math.abs(hoy.getTime() - day1.getTime());
-var days = difference / (1000 * 3600 * 24);
+let day1 = new Date('01/07/1970');
+let difference = Math.abs(hoy.getTime() - day1.getTime());
+let days = difference / (1000 * 3600 * 24);
 
 const tiporeserva = [
   { label: 'Examen', value: 'Examen' },
@@ -155,9 +155,9 @@ export default function () {
     getDocentesRelacionados([id]);
   }, []);
 
-  const getGrupos = async (materiaS: String, docentesId: any[]) => {
+  const getGrupos = (materiaS: String, docentesId: any[]) => {
     axios
-      .post(`${endpoint}/grupos`, { materia: materiaS, idDocentes: docentesId })
+    .post(`${endpoint}/grupos`, { materia: materiaS, idDocentes: docentesId })
       .then(response => {
         listaGruposMostrar = [];
         for (let { codigo_grupo } of response.data) {
@@ -169,9 +169,9 @@ export default function () {
       });
   };
 
-  const getMaterias = async (docentesId: any[]) => {
+  const getMaterias = (docentesId: any[]) => {
+    listaMateriasMostrar = [];
     axios.post(`${endpoint}/materias`, { docentesId }).then(response => {
-      listaMateriasMostrar = [];
       for (let { nombre_materia } of response.data) {
         listaMateriasMostrar.push({
           label: nombre_materia,
@@ -185,7 +185,7 @@ export default function () {
     });
   };
 
-  const getDocentesRelacionados = async (Id: any[]) => {
+  const getDocentesRelacionados =  (Id: any[]) => {
     if (Id.length === 1) {
       axios.post(`${endpoint}/docentesid`, { Id }).then(response => {
         listaDocentesMostrar = [];
@@ -235,7 +235,6 @@ export default function () {
     setSelectedDocentes(docentes);
     docentesId = [];
     docentesNombres = [];
-    if (docentes != null) {
       if (docentes.length > 1) {
         for (let { id } of docentes) {
           docentesId.push(id);
@@ -257,7 +256,7 @@ export default function () {
         setStateGrupo(true);
         getDocentesRelacionados([id]);
       }
-    }
+    
   };
 
   const handleChangeMateria = (materia: any) => {
