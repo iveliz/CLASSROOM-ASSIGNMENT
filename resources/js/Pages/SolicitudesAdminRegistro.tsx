@@ -6,11 +6,24 @@ import { solicitudes } from '@/Const/solicitudes';
 import Cardsolicitud from '@/Jetstream/Cardsolicitud';
 import axios from 'axios';
 import { useEffect } from "react";
-import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid';
+import CardSolicitudCuenta from './componentes/CardSolicitudCuenta';
+const endpoint = 'http://127.0.0.1:8000'
 
 
 export default function () {
 
+  const [listaRegistro,setListaRegistro] = useState([]);
+  const getSolicitudes=  async()=>{
+    await axios.get(`${endpoint}/SolicitudCuenta`).then((response)=>{
+      setListaRegistro(response.data);
+      console.log(response.data)
+    })
+  }
+
+  useEffect(()=>{
+    getSolicitudes()
+   },[])
 
   return (
     <AppLayout title="Informacion">
@@ -22,6 +35,12 @@ export default function () {
         <div className="col-span-5">
           <div className="ml-5 mt-6 ">
             <h1 className="font-bold">Solicitudes de Registros</h1>
+            <div>
+              {(listaRegistro.map((registro) => {
+                
+                return <CardSolicitudCuenta{...registro} key={nanoid(4)} />
+              }))}
+            </div>
           </div>
 
 

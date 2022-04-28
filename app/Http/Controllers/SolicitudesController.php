@@ -7,6 +7,8 @@ use App\Models\Solicitudes;
 use App\Models\GrupoSolicitudes;
 use App\Models\DocenteSolicitudes;
 use App\Models\RegistroSolicitudes;
+use App\Models\Reserva;
+use App\Models\Aula;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -123,11 +125,23 @@ class SolicitudesController extends Controller
                 array_push($docentes_solicitud,$docente->nombre_doc_sct);
             }
 
+            $id_aulas_reservadas = Reserva::join('aulas_reservadas','reservas.id_reserva','=','aulas_reservadas.id_reserva')
+            -> select('aulas_reservadas.id_aula')->where('reservas.id_reg_sct',$soli['id_reg_sct'])->get();
+            $aulas_reservadas = array();
+            foreach ($id_aulas_reservadas as $id_aula){
+                $aula = Aula::select('numero_aula','letra_aula')->where('id_aula',$id_aula['id_aula'])->get();
+                $numero_aula=(string)$aula[0]['numero_aula'];
+                $letra_aula=$aula[0]['letra_aula'];
+                $aula_reservada = "$numero_aula $letra_aula";
+                array_push($aulas_reservadas,$aula_reservada);
+            }
+
             $soli->grupos=$grupos_solicitud;
             $soli->docentes=$docentes_solicitud;
+            $soli->aulas=$aulas_reservadas;
         }
 
-        return $solicitudes;
+        return $soli;
     }
     /**
      * Store a newly created resource in storage.

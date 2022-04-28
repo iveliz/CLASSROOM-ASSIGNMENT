@@ -106,10 +106,11 @@ class AulaController extends Controller
         ->where('aulas_reservadas.id_reserva', '=', $idres)
         ->get();
     }
-    if ($Estado == 'Rechazada') {
+    /*if ($Estado == 'Rechazada') {
       $AulaReserva = 'Aula NO reservada, Solicitud Rechazada';
     }
-    return $AulaReserva;
+    return $AulaReserva;*/
+    return $SolicitudEstado;
   }
 
   /**
