@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Welcome from '@/Jetstream/Welcome';
-import AppLayout from '@/Layouts/AppLayoutTeacher';
+import AppLayout from '@/Layouts/AppLayoutAdmin';
+import Sidebar from '@/Jetstream/SidebarAdmin';
 import { styled } from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
