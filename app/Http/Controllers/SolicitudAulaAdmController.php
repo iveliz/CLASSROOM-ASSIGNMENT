@@ -30,11 +30,54 @@ class SolicitudAulaAdmController extends Controller
         
         $solicitudesHoy = Solicitudes::where("fecha_requerida_solicitud",date('Y/m/d'))
             ->whereNotIn("id_solicitud",$solicitudesReg)
+            ->orderBy("hora_requerida_solicitud")
             ->get();
         
-        $solicitudes = Solicitudes::whereNotIn("id_solicitud",$solicitudesReg)->get();
+        $solicitudes = Solicitudes::whereNotIn("id_solicitud",$solicitudesReg)
+            ->orderBy("created_at")
+            ->get();
 
-        return $solicitudes;
+        $solicitudesHoy = json_decode($solicitudesHoy,true);
+        $solicitudes = json_decode($solicitudes,true);
+        
+        $n = count($solicitudesHoy);
+        $m = count($solicitudes);
+        $i = 0;
+        $j = 0;
+        $res = array();
+        while($i<$n || $j<$m){
+            if($i<$n && $j<$m){
+                if($solicitudesHoy[$i]->fecha_requerida_solicitud < $solicitudes[$j]->fecha_requerida_solicitud){
+                    if(!in_array($solicitudesHoy[$i],$res)){
+                        array_push($res,$solicitudesHoy[$i++]);
+                    }else{
+                        $i++;
+                    }
+                }else{
+                    if(!in_array($solicitudes[$j],$res)){
+                        array_push($res,$solicitudes[$j++]);
+                    }else{
+                        $j++;
+                    }
+                }
+            }else{
+                if($i<$n){
+                    if(!in_array($solicitudesHoy[$i],$res)){
+                        array_push($res,$solicitudesHoy[$i++]);
+                    }else{
+                        $i++;
+                    }
+                }else if($j<$m){
+                    if(!in_array($solicitudes[$j],$res)){
+                        array_push($res,$solicitudes[$j++]);
+                    }else{
+                        $j++;
+                    }
+                }
+            }
+        }
+
+        return $res;
     }
 
     /**
