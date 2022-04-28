@@ -11,7 +11,7 @@ class RegistroSolicitud extends Model
   use HasFactory;
   protected $fillable = [
     'fecha_inicio_reg_sct',
-    'fecha_modificiacion_reg_sct',
+    'fecha_modificacion_reg_sct',
     'estado_solicitud_reg_sct',
   ];
   public function RegistroSolicitud()

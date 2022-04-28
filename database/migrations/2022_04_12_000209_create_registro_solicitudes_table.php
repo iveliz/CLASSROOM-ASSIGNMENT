@@ -26,7 +26,7 @@ class CreateRegistroSolicitudesTable extends Migration
         ->references('id')
         ->on('users');
       $table->date('fecha_inicio_reg_sct');
-      $table->date('fecha_modificiacion_reg_sct');
+      $table->date('fecha_modificacion_reg_sct');
       $table->string('estado_solicitud_reg_sct', 250);
       $table->timestamps();
     });
