@@ -8,6 +8,7 @@ use App\Http\Controllers\AulaController;
 
 use App\Http\Controllers\materiaController;
 use App\Http\Controllers\GrupoController;
+use App\Http\Controllers\SolicitudAulaAdmController;
 use App\Http\Controllers\SolicitudesController;
 
 use App\Http\Controllers\SolicitudCuentaController;
@@ -123,6 +124,10 @@ Route::controller(SolicitudesController::class)->group(function () {
   Route::post('/api/solicitudes/crear', 'crearSolicitud');
   Route::get('/api/solicitudes/rechazadas/{id}', 'listarRechazados');
   Route::get('/api/solicitudes/aceptadas/{id}', 'listarAceptados');
+});
+
+Route::controller(SolicitudAulaAdmController::class)->group(function () {
+  Route::get('/solicitudesAula', 'index');
 });
 
 Route::controller(materiaController::class)->group(function () {
