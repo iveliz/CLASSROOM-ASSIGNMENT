@@ -42,7 +42,7 @@ class usuarioController extends Controller
     $request->validate([
       'id_usuario' => 'require',
       'nombre_usuario' => 'require',
-      'email_usuario' => 'require',
+     // 'email_usuario' => 'require',
       'contrasenia_usuario' => 'require',
       'token_recordado_usuario' => 'require',
       'rol_usuario' => 'require',
