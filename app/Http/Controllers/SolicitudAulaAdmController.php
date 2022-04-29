@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Solicitudes;
+use App\Models\RegistroSolicitudes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -24,60 +25,96 @@ class SolicitudAulaAdmController extends Controller
         $solicitudesRegJson = DB::table('registro_solicitudes')->select("id_solicitud")->get();
         $solicitudesRegJson = json_decode($solicitudesRegJson, true);
         $solicitudesReg = array();
-        foreach($solicitudesRegJson as $soli){
-            array_push($solicitudesReg,$soli['id_solicitud']);
+        foreach ($solicitudesRegJson as $soli) {
+            array_push($solicitudesReg, $soli['id_solicitud']);
         }
-        
-        $solicitudesHoy = Solicitudes::where("fecha_requerida_solicitud",date('Y/m/d'))
-            ->whereNotIn("id_solicitud",$solicitudesReg)
-            ->orderBy("hora_requerida_solicitud")
-            ->get();
-        
-        $solicitudes = Solicitudes::whereNotIn("id_solicitud",$solicitudesReg)
+
+        date_default_timezone_set("Etc/GMT+4");
+
+        //solicitudes de hoy, mañana y mañana pasado
+        $solicitudesCercanas = Solicitudes::where("fecha_requerida_solicitud", date('Y-m-d'))
+        ->orWhere("fecha_requerida_solicitud", date('Y-m-d', strtotime('+1 day')))
+        ->orWhere("fecha_requerida_solicitud", date('Y-m-d', strtotime('+2 day')))
+        ->whereNotIn("id_solicitud", $solicitudesReg)
+            ->orderBy("fecha_requerida_solicitud")
             ->orderBy("created_at")
             ->get();
 
-        $solicitudesHoy = json_decode($solicitudesHoy,true);
-        $solicitudes = json_decode($solicitudes,true);
-        
-        $n = count($solicitudesHoy);
+        $solicitudes = Solicitudes::whereNotIn("id_solicitud", $solicitudesReg)
+            ->orderBy("created_at")
+            ->get();
+
+        $solicitudesCercanas = json_decode($solicitudesCercanas, true);
+        $solicitudes = json_decode($solicitudes, true);
+
+        $n = count($solicitudesCercanas);
         $m = count($solicitudes);
         $i = 0;
         $j = 0;
         $res = array();
-        while($i<$n || $j<$m){
-            if($i<$n && $j<$m){
-                if($solicitudesHoy[$i]->fecha_requerida_solicitud < $solicitudes[$j]->fecha_requerida_solicitud){
-                    if(!in_array($solicitudesHoy[$i],$res)){
-                        array_push($res,$solicitudesHoy[$i++]);
-                    }else{
-                        $i++;
-                    }
-                }else{
-                    if(!in_array($solicitudes[$j],$res)){
-                        array_push($res,$solicitudes[$j++]);
-                    }else{
-                        $j++;
+        $cont = 0; //contador de solicitudes cercanas para ponerles prioridad
+        while ($i < $n || $j < $m) {
+            if ($i < $n && $j < $m) {
+                if (($solicitudes[$j]["fecha_requerida_solicitud"] == date('Y-m-d') && $solicitudesCercanas[$i]["hora_requerida_solicitud"] < date("H:i:s")) || $solicitudes[$j]["fecha_requerida_solicitud"] < date('Y-m-d')) {
+                    $this->rechazarSoliVencida($solicitudes[$j]);
+                    $j++;
+                } else {
+                    if ($solicitudesCercanas[$i]["fecha_requerida_solicitud"] < $solicitudes[$j]["fecha_requerida_solicitud"]) {
+                        if (!in_array($solicitudesCercanas[$i], $res)) {
+                            //$solicitudesCercanas[$i]["prioridad"] = "alta";
+                            array_push($res, $solicitudesCercanas[$i]);
+                            $i++;
+                            $cont++;
+                        } else {
+                            $i++;
+                        }
+                    } else {
+                        if (!in_array($solicitudes[$j], $res)) {
+                            array_push($res, $solicitudes[$j++]);
+                        } else {
+                            $j++;
+                        }
                     }
                 }
-            }else{
-                if($i<$n){
-                    if(!in_array($solicitudesHoy[$i],$res)){
-                        array_push($res,$solicitudesHoy[$i++]);
-                    }else{
+            } else {
+                if ($i < $n) {
+                    if (!in_array($solicitudesCercanas[$i], $res)) {
+                        array_push($res, $solicitudesCercanas[$i++]);
+                        $cont++;
+                    } else {
                         $i++;
                     }
-                }else if($j<$m){
-                    if(!in_array($solicitudes[$j],$res)){
-                        array_push($res,$solicitudes[$j++]);
-                    }else{
+                } else if ($j < $m) {
+                    if (($solicitudes[$j]["fecha_requerida_solicitud"] == date('Y-m-d') && $solicitudesCercanas[$i]["hora_requerida_solicitud"] < date("H:i:s")) || $solicitudes[$j]["fecha_requerida_solicitud"] < date('Y-m-d')) {
+                        $this->rechazarSoliVencida($solicitudes[$j]);
                         $j++;
+                    } else {
+                        if (!in_array($solicitudes[$j], $res)) {
+                            array_push($res, $solicitudes[$j++]);
+                        } else {
+                            $j++;
+                        }
                     }
                 }
             }
         }
 
+        for($i = 0; $i<$cont; $i++){
+            $res[$i]["prioridad"] = "alta";
+        }
+
         return $res;
+    }
+
+    public function rechazarSoliVencida($s){
+        $nuevo_registro_solicitud = new RegistroSolicitudes;
+        $nuevo_registro_solicitud->id_solicitud = $s["id_solicitud"];
+        $nuevo_registro_solicitud->id_usuario = $s["id_usuario"];
+        $nuevo_registro_solicitud->fecha_inicio_reg_sct = $s["fecha_requerida_solicitud"];
+        $nuevo_registro_solicitud->fecha_modificacion_reg_sct =  date('Y-m-d');
+        $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'rechazado';
+        $nuevo_registro_solicitud->motivo_reg_sct = 'La fecha solicitada de reserva esta vencida';
+        $nuevo_registro_solicitud->save();
     }
 
     /**
