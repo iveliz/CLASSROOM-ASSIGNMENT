@@ -16,32 +16,32 @@ import Select, { components } from 'react-select';
 import { usePage } from '@inertiajs/inertia-react';
 registerLocale('es', es);
 
+const horarios = [
+  { label: '06:45', value: '06:45:00', pos: 1, hora: 6, minun: 45 },
+  { label: '08:15', value: '08:15:00', pos: 2, hora: 8, minun: 15 },
+  { label: '09:45', value: '08:15:00', pos: 3, hora: 9, minun: 45 },
+  { label: '11:15', value: '11:15:00', pos: 4, hora: 11, minun: 15 },
+  { label: '12:45', value: '12:45:00', pos: 5, hora: 12, minun: 45 },
+  { label: '14:15', value: '14:15:00', pos: 6, hora: 14, minun: 15 },
+  { label: '15:45', value: '15:45:00', pos: 7, hora: 15, minun: 45 },
+  { label: '17:15', value: '17:15:00', pos: 8, hora: 17, minun: 15 },
+  { label: '18:45', value: '18:45:00', pos: 9, hora: 18, minun: 45 },
+  { label: '20:15', value: '20:15:00', pos: 10, hora: 20, minun: 15 },
+];
+const horariosMostrar: { label: string; value: string; }[] = [];
+
 let hoy = new Date();
+console.log(hoy);
 let ultimoDia = new Date();
 ultimoDia.setMonth(11);
 ultimoDia.setDate(31);
-console.log(ultimoDia);
-let day1 = new Date('01/07/1970');
-let difference = Math.abs(hoy.getTime() - day1.getTime());
-let days = difference / (1000 * 3600 * 24);
+let horaActual = hoy.getHours();
+let minutoActual = hoy.getMinutes();
 
 const tiporeserva = [
   { label: 'Examen', value: 'Examen' },
   { label: 'Clases', value: 'Clases' },
   { label: 'Laboratorio', value: 'Laboratorio' },
-];
-
-const horarios = [
-  { label: '06:45', value: '06:45:00', pos: 1 },
-  { label: '08:15', value: '08:15:00', pos: 2 },
-  { label: '09:45', value: '08:15:00', pos: 3 },
-  { label: '11:15', value: '11:15:00', pos: 4 },
-  { label: '12:45', value: '12:45:00', pos: 5 },
-  { label: '14:15', value: '14:15:00', pos: 6 },
-  { label: '15:45', value: '15:45:00', pos: 7 },
-  { label: '17:15', value: '17:15:00', pos: 8 },
-  { label: '18:45', value: '18:45:00', pos: 9 },
-  { label: '20:15', value: '20:15:00', pos: 10 },
 ];
 
 let horariosFinales = [
@@ -73,25 +73,27 @@ let listaDocentesMostrar: { label: any; value: any; id: any }[] = [];
 let listaMateriasMostrar: { label: any; value: any }[] = [];
 let listaGruposMostrar: { label: any; value: any }[] = [];
 let docentesId: any[] = [];
+
 const fechaHoy = () => {
   let fecha = new Date();
-  let s = '';
+  let sM = '';
+  let sD = '';
   if (fecha.getMonth() + 1 < 10) {
-    s = '0';
+    sM = '0';
   }
-  if (fecha.getDay() < 10) {
-    s = '0';
+  if (fecha.getDate() < 10) {
+    sD = '0';
   }
   let formatted_date =
     fecha.getFullYear() +
     '-' +
-    s +
+    sM +
     (fecha.getMonth() + 1) +
     '-' +
-    s +
-    fecha.getDay();
-  let fechaS = formatted_date;
-  return fechaS;
+    sD +
+    fecha.getDate();
+
+  return formatted_date;
 };
 
 let cantidadS = '';
@@ -136,7 +138,7 @@ export default function () {
   const [selectedTipo, setSelectedTipo] = useState();
   const [selectedPeriodo, setSelectedPeriodo] = useState(1);
   const [selectedCantidad, setSelectedCantidad] = useState('');
-  const [startDate, setStartDate] = useState(hoy);
+  const [startDate, setStartDate] = useState(new Date());
   const [stateNombres, setStateNombres] = useState(true);
   const [stateMateria, setStateMateria] = useState(true);
   const [stateGrupo, setStateGrupo] = useState(true);
@@ -147,17 +149,31 @@ export default function () {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [horaFin, setHoraFin] = useState('7:30');
 
+  const horaHoy = () => {
+    for (let { hora, minun, label, value } of horarios) {
+      if (startDate === new Date()) {
+        if (horaActual < hora) {
+          if (minutoActual < minun) {
+            horariosMostrar.push({ label: label, value: value });
+          }
+        }
+      }
+    }
+    console.log(horariosMostrar)
+  };
+
   const { user }: any = usePage().props;
   let { id, name, email } = user;
   console.log(id);
 
   useEffect(() => {
     getDocentesRelacionados([id]);
-  }, []);
+    horaHoy();
+  });
 
   const getGrupos = (materiaS: String, docentesId: any[]) => {
     axios
-    .post(`${endpoint}/grupos`, { materia: materiaS, idDocentes: docentesId })
+      .post(`${endpoint}/grupos`, { materia: materiaS, idDocentes: docentesId })
       .then(response => {
         listaGruposMostrar = [];
         for (let { codigo_grupo } of response.data) {
@@ -185,7 +201,7 @@ export default function () {
     });
   };
 
-  const getDocentesRelacionados =  (Id: any[]) => {
+  const getDocentesRelacionados = (Id: any[]) => {
     if (Id.length === 1) {
       axios.post(`${endpoint}/docentesid`, { Id }).then(response => {
         listaDocentesMostrar = [];
@@ -235,28 +251,27 @@ export default function () {
     setSelectedDocentes(docentes);
     docentesId = [];
     docentesNombres = [];
-      if (docentes.length > 1) {
-        for (let { id } of docentes) {
-          docentesId.push(id);
-        }
-        for (let { value } of docentes) {
-          docentesNombres.push(value);
-        }
-        setSelectedGroups([]);
-        setSelectedMateria({ label: '', value: '' });
-        setStateGrupo(true);
-        setStateMateria(true);
-        setStateMateriaCharge(true);
-        getMaterias(docentesId);
-      } else {
-        setSelectedGroups([]);
-        setSelectedMateria({ label: '', value: '' });
-        setStateMateria(true);
-        setStateNombres(true);
-        setStateGrupo(true);
-        getDocentesRelacionados([id]);
+    if (docentes.length > 1) {
+      for (let { id } of docentes) {
+        docentesId.push(id);
       }
-    
+      for (let { value } of docentes) {
+        docentesNombres.push(value);
+      }
+      setSelectedGroups([]);
+      setSelectedMateria({ label: '', value: '' });
+      setStateGrupo(true);
+      setStateMateria(true);
+      setStateMateriaCharge(true);
+      getMaterias(docentesId);
+    } else {
+      setSelectedGroups([]);
+      setSelectedMateria({ label: '', value: '' });
+      setStateMateria(true);
+      setStateNombres(true);
+      setStateGrupo(true);
+      getDocentesRelacionados([id]);
+    }
   };
 
   const handleChangeMateria = (materia: any) => {
@@ -467,7 +482,7 @@ export default function () {
                   locale="es"
                   selected={startDate}
                   includeDateIntervals={[
-                    { start: hoy, end: ultimoDia },
+                    { start: addDays(hoy, -1), end: ultimoDia },
                   ]}
                   onChange={handleChangeCalendario}
                   disabledKeyboardNavigation
@@ -504,9 +519,7 @@ export default function () {
               </div>
               <div className="items-center flex flex-column ">
                 <p>Hora fin</p>
-                <p className="text-sky-400 font-bold">
-                  {horaFin}
-                </p>
+                <p className="text-sky-400 font-bold">{horaFin}</p>
               </div>
             </div>
             <div className="grid grid-flow-col auto-cols-max">
