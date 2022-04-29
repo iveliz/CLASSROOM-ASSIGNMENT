@@ -6,7 +6,7 @@ import axios from 'axios';
 import Cardsolicitud from '@/Jetstream/Cardsolicitud';
 import { useEffect } from "react";
 import { nanoid } from 'nanoid'
-const endpoint = 'http://3.80.89.2'
+const endpoint = 'http://3.238.9.78'
 export default function (props: { solicitudes: any }) {
   const [listaSoliState, SetlistaSoli] = useState([]);
   const getSolicitudes = async () => {

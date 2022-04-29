@@ -46,7 +46,7 @@ let horariosFinales=["06:45","07:30","08:15","09:00","09:45","10:30","11:15","12
 
 
 
-const endpoint = 'http://3.80.89.2';
+const endpoint = 'http://3.238.9.78';
 let listaDocentesMostrar: { label: any; value: any; id: any }[] = [];
 let listaMateriasMostrar: { label: any; value: any }[] = [];
 let listaGruposMostrar: { label: any; value: any }[] = [];

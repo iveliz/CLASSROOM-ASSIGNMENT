@@ -8,7 +8,7 @@ import axios from 'axios';
 import { useEffect } from "react";
 import { nanoid } from 'nanoid';
 import CardSolicitudCuenta from './componentes/CardSolicitudCuenta';
-const endpoint = 'http://127.0.0.1:8000'
+const endpoint = 'http://3.238.9.78'
 
 
 export default function () {
