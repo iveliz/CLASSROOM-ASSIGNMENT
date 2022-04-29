@@ -78,8 +78,13 @@ class materiaController extends Controller
 
            }
         }
+
+        $res = array();
+        foreach($mats1 as $value){
+            array_push($res,$value);
+        }
             
-    return $mats1;
+    return $res;
                     
     }
              

@@ -9,6 +9,8 @@ use App\Http\Controllers\AulaController;
 use App\Http\Controllers\materiaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\SolicitudesController;
+
+use App\Http\Controllers\SolicitudCuentaController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -132,5 +134,5 @@ Route::controller(AulaController::class)->group(function () {
 });
 
 Route::controller(SolicitudCuentaController::class)->group(function () {
-  Route::post('/SolicitudCuenta', 'verSolicitud');
+  Route::get('/SolicitudCuenta', 'verSolicitud');
 });

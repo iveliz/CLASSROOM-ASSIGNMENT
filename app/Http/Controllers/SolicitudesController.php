@@ -7,6 +7,8 @@ use App\Models\Solicitudes;
 use App\Models\GrupoSolicitudes;
 use App\Models\DocenteSolicitudes;
 use App\Models\RegistroSolicitudes;
+use App\Models\Reserva;
+use App\Models\Aula;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -47,8 +49,8 @@ class SolicitudesController extends Controller
     
     public function listarPendientes(int $id_usuario)
     {
-        $solicitudes = Solicitudes::join('registro_solicitudes','solicitudes.id_solicitud','=','registro_solicitudes.id_solicitud')
-        ->select('solicitudes.id_solicitud','registro_solicitudes.fecha_inicio_reg_sct','registro_solicitudes.id_reg_sct','solicitudes.materia_solicitud','solicitudes.cantidad_estudiantes_solicitud','solicitudes.fecha_requerida_solicitud','solicitudes.estado_solicitud')
+        $solicitudes = Solicitudes::
+        select('solicitudes.id_solicitud','solicitudes.id_solicitud','solicitudes.created_at','solicitudes.materia_solicitud','solicitudes.cantidad_estudiantes_solicitud','solicitudes.fecha_requerida_solicitud','solicitudes.estado_solicitud')
         ->where('solicitudes.id_usuario',$id_usuario)
         ->where('solicitudes.estado_solicitud',"pendiente")
         ->get();
@@ -123,11 +125,23 @@ class SolicitudesController extends Controller
                 array_push($docentes_solicitud,$docente->nombre_doc_sct);
             }
 
+            $id_aulas_reservadas = Reserva::join('aulas_reservadas','reservas.id_reserva','=','aulas_reservadas.id_reserva')
+            -> select('aulas_reservadas.id_aula')->where('reservas.id_reg_sct',$soli['id_reg_sct'])->get();
+            $aulas_reservadas = array();
+            foreach ($id_aulas_reservadas as $id_aula){
+                $aula = Aula::select('numero_aula','letra_aula')->where('id_aula',$id_aula['id_aula'])->get();
+                $numero_aula=(string)$aula[0]['numero_aula'];
+                $letra_aula=$aula[0]['letra_aula'];
+                $aula_reservada = "$numero_aula $letra_aula";
+                array_push($aulas_reservadas,$aula_reservada);
+            }
+
             $soli->grupos=$grupos_solicitud;
             $soli->docentes=$docentes_solicitud;
+            $soli->aulas=$aulas_reservadas;
         }
 
-        return $solicitudes;
+        return $soli;
     }
     /**
      * Store a newly created resource in storage.
@@ -162,14 +176,14 @@ class SolicitudesController extends Controller
                 
                 $nueva_solicitud->save();
                 $id_nueva_solicitud = $nueva_solicitud->id;
-                $nuevo_registro_solicitud = new RegistroSolicitudes;
+                /*$nuevo_registro_solicitud = new RegistroSolicitudes;
                 $nuevo_registro_solicitud->id_solicitud = $id_nueva_solicitud;
                 $nuevo_registro_solicitud->id_usuario = $nueva_solicitud->id_usuario;
                 $nuevo_registro_solicitud->fecha_inicio_reg_sct = $nueva_solicitud->fecha_requerida_solicitud;
                 $nuevo_registro_solicitud->fecha_modificacion_reg_sct =  $nueva_solicitud->fecha_requerida_solicitud;
                 $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'pendiente';
                 $nuevo_registro_solicitud->motivo_reg_sct = '';
-                $nuevo_registro_solicitud->save();
+                $nuevo_registro_solicitud->save();*/
                 
                 foreach ($datos_solicitud->grupos_solicitud as $grupo){
                     $nuevo_grupo = new GrupoSolicitudes;
