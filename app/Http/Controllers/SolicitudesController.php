@@ -49,8 +49,8 @@ class SolicitudesController extends Controller
     
     public function listarPendientes(int $id_usuario)
     {
-        $solicitudes = Solicitudes::join('registro_solicitudes','solicitudes.id_solicitud','=','registro_solicitudes.id_solicitud')
-        ->select('solicitudes.id_solicitud','registro_solicitudes.fecha_inicio_reg_sct','registro_solicitudes.id_reg_sct','solicitudes.materia_solicitud','solicitudes.cantidad_estudiantes_solicitud','solicitudes.fecha_requerida_solicitud','solicitudes.estado_solicitud')
+        $solicitudes = Solicitudes::
+        select('solicitudes.id_solicitud','solicitudes.id_solicitud','solicitudes.created_at','solicitudes.materia_solicitud','solicitudes.cantidad_estudiantes_solicitud','solicitudes.fecha_requerida_solicitud','solicitudes.estado_solicitud')
         ->where('solicitudes.id_usuario',$id_usuario)
         ->where('solicitudes.estado_solicitud',"pendiente")
         ->get();
@@ -176,14 +176,14 @@ class SolicitudesController extends Controller
                 
                 $nueva_solicitud->save();
                 $id_nueva_solicitud = $nueva_solicitud->id;
-                $nuevo_registro_solicitud = new RegistroSolicitudes;
+                /*$nuevo_registro_solicitud = new RegistroSolicitudes;
                 $nuevo_registro_solicitud->id_solicitud = $id_nueva_solicitud;
                 $nuevo_registro_solicitud->id_usuario = $nueva_solicitud->id_usuario;
                 $nuevo_registro_solicitud->fecha_inicio_reg_sct = $nueva_solicitud->fecha_requerida_solicitud;
                 $nuevo_registro_solicitud->fecha_modificacion_reg_sct =  $nueva_solicitud->fecha_requerida_solicitud;
                 $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'pendiente';
                 $nuevo_registro_solicitud->motivo_reg_sct = '';
-                $nuevo_registro_solicitud->save();
+                $nuevo_registro_solicitud->save();*/
                 
                 foreach ($datos_solicitud->grupos_solicitud as $grupo){
                     $nuevo_grupo = new GrupoSolicitudes;
