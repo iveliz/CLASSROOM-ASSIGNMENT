@@ -6,11 +6,24 @@ import { solicitudes } from '@/Const/solicitudes';
 import Cardsolicitud from '@/Jetstream/Cardsolicitud';
 import axios from 'axios';
 import { useEffect } from "react";
-import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid';
+import CardSolicitudAula from './componentes/CardSolicitudAula';
+const endpoint = 'http://127.0.0.1:8000'
 
 
 export default function () {
 
+  const [listaSolicitudAula,setListaSolicitudAula] = useState([]);
+  const getSolicitudes=  async()=>{
+    await axios.get(`${endpoint}/SolicitudAula`).then((response)=>{
+      setListaSolicitudAula(response.data);
+      console.log(response.data)
+    })
+  }
+
+  useEffect(()=>{
+    getSolicitudes()
+   },[])
 
   return (
     <AppLayout title="Informacion">
@@ -22,6 +35,12 @@ export default function () {
         <div className="col-span-5">
           <div className="ml-5 mt-6 ">
             <h1 className="font-bold">Solicitudes de Aulas</h1>
+            <div>
+              {(listaSolicitudAula.map((solicitudAula) => {
+                
+                return <CardSolicitudAula{...solicitudAula} key={nanoid(4)} />
+              }))}
+            </div>
           </div>
 
 
