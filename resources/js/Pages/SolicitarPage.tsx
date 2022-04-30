@@ -16,7 +16,7 @@ import Select, { components } from 'react-select';
 import { usePage } from '@inertiajs/inertia-react';
 import { add, min } from 'lodash';
 registerLocale('es', es);
-
+let esHoy:Date=new Date();
 
 let horarios = [
   { label: '06:45', value: '06:45:00', pos: 1, hora: 6, minun: 45 },
@@ -40,28 +40,7 @@ let horarios = [
   { label: '20:15', value: '20:15:00', pos: 19, hora: 20, minun: 15 },
   { label: '21:00', value: '21:00:00', pos: 20, hora: 21, minun: 0 },
 ];
-let horariosMostrar = [
-  { label: '06:45', value: '06:45:00', pos: 1, hora: 6, minun: 45 },
-  { label: '07:30', value: '07:30:00', pos: 2, hora: 7, minun: 30 },
-  { label: '08:15', value: '08:15:00', pos: 3, hora: 8, minun: 15 },
-  { label: '09:00', value: '09:00:00', pos: 4, hora: 9, minun: 0 },
-  { label: '09:45', value: '08:15:00', pos: 5, hora: 9, minun: 45 },
-  { label: '10:30', value: '10:30:00', pos: 6, hora: 10, minun: 30 },
-  { label: '11:15', value: '11:15:00', pos: 7, hora: 11, minun: 15 },
-  { label: '12:00', value: '12:00:00', pos: 8, hora: 12, minun: 0 },
-  { label: '12:45', value: '12:45:00', pos: 9, hora: 12, minun: 45 },
-  { label: '13:30', value: '13:30:00', pos: 10, hora: 13, minun: 30 },
-  { label: '14:15', value: '14:15:00', pos: 11, hora: 14, minun: 15 },
-  { label: '15:00', value: '15:00:00', pos: 12, hora: 15, minun: 0 },
-  { label: '15:45', value: '15:45:00', pos: 13, hora: 15, minun: 45 },
-  { label: '16:30', value: '16:30:00', pos: 14, hora: 16, minun: 30 },
-  { label: '17:15', value: '17:15:00', pos: 15, hora: 17, minun: 15 },
-  { label: '18:00', value: '18:00:00', pos: 16, hora: 18, minun: 0 },
-  { label: '18:45', value: '18:45:00', pos: 17, hora: 18, minun: 45 },
-  { label: '19:30', value: '19:30:00', pos: 18, hora: 19, minun: 30 },
-  { label: '20:15', value: '20:15:00', pos: 19, hora: 20, minun: 15 },
-  { label: '21:00', value: '21:00:00', pos: 20, hora: 21, minun: 0 },
-];
+let horariosMostrar: any[]=[];
 
 let hoy = new Date();
 console.log(hoy);
@@ -70,15 +49,21 @@ ultimoDia.setMonth(11);
 ultimoDia.setDate(31);
 let horaActual = hoy.getHours();
 let minutoActual = hoy.getMinutes();
-console.log(horaActual);
-console.log(minutoActual);
+let diaActual=hoy.getDate();
+let mesActual=hoy.getMonth()+1;
 if (horaActual > 20) {
   hoy = addDays(hoy, 1);
+  diaActual=hoy.getDate();
+  mesActual=hoy.getMonth()+1;
 } else if (horaActual === 20) {
   if (minutoActual > 15) {
     hoy = addDays(hoy, 1);
+    diaActual=hoy.getDate();
+    mesActual=hoy.getMonth()+1;
   }
 }
+
+
 
 const tiporeserva = [
   { label: 'Examen', value: 'Examen' },
@@ -147,6 +132,7 @@ let tipoS: String = 'Examen';
 let prioridad: String = '';
 let periodoS: Number = 1;
 let fechaS: String = fechaHoy();
+
 let materiaS: String = '';
 let horarioL: any = '06:45';
 export default function () {
@@ -160,6 +146,41 @@ export default function () {
       transform: 'translate(-50%, -50%)',
     },
   };
+  useEffect(() => {
+    getDocentesRelacionados([id]);
+    horaHoy();
+  }, []);
+
+  function  horaHoy () {
+    console.log("hola")
+    let today:Date=esHoy;
+    let dayToday=today.getDate();
+    let monthToday=today.getMonth()+1;
+     horariosMostrar = [];
+    if (dayToday===diaActual&&monthToday===mesActual) {
+      console.log("marciana")
+    for (let { hora, minun, label, value,pos } of horarios) {
+      
+        if (horaActual === hora) {
+          if (minutoActual < minun) {
+            horariosMostrar.push({ label: label, value: value,pos:pos,hora:hora,minun:minun });
+          }
+        }else if(hora>horaActual){
+          horariosMostrar.push({ label: label, value: value,pos:pos,hora:hora,minun:minun });
+        }
+      }
+    }else{
+      horariosMostrar=horarios;
+    }
+    let {label,value,pos} =horariosMostrar[0];
+    setSelectedHorario({label:label,value:value,pos:pos});
+
+    {let {label}=horariosMostrar[1];
+
+    setHoraFin(label);}
+
+  };
+  
 
   const [selectedOptions, setSelectedDocentes] = useState([]);
   const [selectedMateria, setSelectedMateria] = useState<{
@@ -189,30 +210,15 @@ export default function () {
   const selectInputRef = useRef();
   const [maxOfNumber, setMaxOfNumber] = useState(6);
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [horaFin, setHoraFin] = useState('7:30');
+  const [horaFin, setHoraFin] = useState<String>();
+  const [horaInicio, setHoraInicio] = useState<any>();
 
-  const horaHoy = () => {
-    for (let { hora, minun, label, value,pos } of horarios) {
-      if (startDate === new Date()) {
-        horariosMostrar = [];
-        if (horaActual < hora) {
-          if (minutoActual < minun) {
-            horariosMostrar.push({ label: label, value: value,pos:pos,hora:hora,minun:minun });
-          }
-        }
-      }
-    }
-    console.log(horariosMostrar);
-  };
+
 
   const { user }: any = usePage().props;
   let { id, name, email } = user;
-  console.log(id);
+ {console.log(horaInicio)}
 
-  useEffect(() => {
-    getDocentesRelacionados([id]);
-    horaHoy();
-  }, []);
 
   const getGrupos = (materiaS: String, docentesId: any[]) => {
     axios
@@ -335,6 +341,7 @@ export default function () {
   };
   const handleChangeHorario = (horario: any) => {
     setSelectedHorario(horario);
+  
     console.log(horario);
     let { label, value, pos } = horario;
     setMaxOfNumber(6);
@@ -405,7 +412,10 @@ export default function () {
       sD +
       fecha.getDate();
     setStartDate(fecha);
+    esHoy=fecha;
+    horaHoy();
     fechaS = formatted_date;
+
     console.log(fechaS);
   };
 
@@ -540,9 +550,8 @@ export default function () {
                 <p>Hora de inicio</p>
                 <Select
                   options={horariosMostrar}
-                  placeholder="06:45"
                   isSearchable={false}
-                  defaultValue={{ label: '06:45', value: '06:45' }}
+                  value={selectedHorario}
                   noOptionsMessage={() => 'No hay opciones disponibles'}
                   onChange={handleChangeHorario}
                 />
