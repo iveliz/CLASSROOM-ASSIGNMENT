@@ -32,10 +32,10 @@ class SolicitudAulaAdmController extends Controller
         date_default_timezone_set("Etc/GMT+4");
 
         //solicitudes de hoy, mañana y mañana pasado
-        $solicitudesCercanas = Solicitudes::where("fecha_requerida_solicitud", date('Y-m-d'))
-        ->orWhere("fecha_requerida_solicitud", date('Y-m-d', strtotime('+1 day')))
-        ->orWhere("fecha_requerida_solicitud", date('Y-m-d', strtotime('+2 day')))
-        ->whereNotIn("id_solicitud", $solicitudesReg)
+        $solicitudesCercanas = Solicitudes::whereNotIn("id_solicitud", $solicitudesReg)
+            ->where("fecha_requerida_solicitud", date('Y-m-d'))
+            ->orWhere("fecha_requerida_solicitud", date('Y-m-d', strtotime('+1 day')))
+            ->orWhere("fecha_requerida_solicitud", date('Y-m-d', strtotime('+2 day')))
             ->orderBy("fecha_requerida_solicitud")
             ->orderBy("created_at")
             ->get();
@@ -55,7 +55,7 @@ class SolicitudAulaAdmController extends Controller
         $cont = 0; //contador de solicitudes cercanas para ponerles prioridad
         while ($i < $n || $j < $m) {
             if ($i < $n && $j < $m) {
-                if (($solicitudes[$j]["fecha_requerida_solicitud"] == date('Y-m-d') && $solicitudesCercanas[$i]["hora_requerida_solicitud"] < date("H:i:s")) || $solicitudes[$j]["fecha_requerida_solicitud"] < date('Y-m-d')) {
+                if (($solicitudes[$j]["fecha_requerida_solicitud"] == date('Y-m-d') && $solicitudes[$j]["hora_requerida_solicitud"] < date("H:i:s")) || $solicitudes[$j]["fecha_requerida_solicitud"] < date('Y-m-d')) {
                     $this->rechazarSoliVencida($solicitudes[$j]);
                     $j++;
                 } else {
@@ -85,7 +85,7 @@ class SolicitudAulaAdmController extends Controller
                         $i++;
                     }
                 } else if ($j < $m) {
-                    if (($solicitudes[$j]["fecha_requerida_solicitud"] == date('Y-m-d') && $solicitudesCercanas[$i]["hora_requerida_solicitud"] < date("H:i:s")) || $solicitudes[$j]["fecha_requerida_solicitud"] < date('Y-m-d')) {
+                    if (($solicitudes[$j]["fecha_requerida_solicitud"] == date('Y-m-d') && $solicitudes[$j]["hora_requerida_solicitud"] < date("H:i:s")) || $solicitudes[$j]["fecha_requerida_solicitud"] < date('Y-m-d')) {
                         $this->rechazarSoliVencida($solicitudes[$j]);
                         $j++;
                     } else {
