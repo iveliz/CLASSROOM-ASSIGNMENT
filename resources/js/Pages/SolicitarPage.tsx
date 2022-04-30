@@ -182,6 +182,11 @@ export default function () {
     
     let { pos,label } = horariosMostrar[0];
     horarioL=label;
+    horarioS=label;
+    let num=21-pos;
+    if(num<6){
+      setMaxOfNumber(num);
+    }
     console.log("posicion"+pos)
     setHoraFin(horariosFinales[pos]);
   }
@@ -229,6 +234,7 @@ export default function () {
           listaGruposMostrar.push({ label: codigo_grupo, value: codigo_grupo });
         }
         setStateGrupo(false);
+        setStateNombres(false);
         setStateGrupoGharge(false);
         console.log(response.data);
       });
@@ -245,6 +251,7 @@ export default function () {
       }
       setStateMateria(false);
       setStateMateriaCharge(false);
+
       console.log(response.data);
       console.log(listaMateriasMostrar);
     });
@@ -330,7 +337,7 @@ export default function () {
     materiaS = value;
     setSelectedGroups([]);
     setStateGrupo(true);
-
+    setStateNombres(true);
     if (docentesId.length > 1) {
       setStateGrupoGharge(true);
       getGrupos(materiaS, docentesId);
@@ -591,14 +598,17 @@ export default function () {
                 <p>Cantidad de estudiantes</p>
                 <input
                   className="label-cant cantidadEstudiantes"
-                  type="text"
-                  onKeyPress={event => {
+                  type="number"
+                  min={1}
+                  max={999}
+                  onKeyDown={event => {
                     if (!/[0-9]/.test(event.key)) {
                       event.preventDefault();
                     }
                   }}
                   onChange={event => handleChangeCantidad(event.target.value)}
                 />
+                
               </div>
             </div>
             <button
