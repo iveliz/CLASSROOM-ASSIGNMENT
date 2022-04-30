@@ -126,7 +126,7 @@ let periodoS: Number = 1;
 let fechaS: String = fechaHoy();
 
 let materiaS: String = '';
-let horarioL: any = '06:45';
+let horarioL: any ;
 export default function () {
   const customStyles = {
     content: {
@@ -179,10 +179,11 @@ export default function () {
     }
 
     setSelectedHorario(horariosMostrar[0]);
-
-    let { pos } = horariosMostrar[0];
+    
+    let { pos,label } = horariosMostrar[0];
+    horarioL=label;
     console.log("posicion"+pos)
-    setHoraFin(horariosFinales[pos+1]);
+    setHoraFin(horariosFinales[pos]);
   }
 
   const [selectedOptions, setSelectedDocentes] = useState([]);
@@ -357,7 +358,7 @@ export default function () {
     let i = 0;
     while (noEncontrado) {
       if (horariosFinales[i] === horarioL) {
-        setHoraFin(horariosFinales[i + 1]);
+        setHoraFin(horariosFinales[i+1]);
         noEncontrado = false;
       }
       i += 1;
@@ -379,6 +380,7 @@ export default function () {
     let i = 0;
     while (noEncontrado) {
       if (horariosFinales[i] === horarioL) {
+        console.log("posicion"+horariosFinales[i])
         setHoraFin(horariosFinales[i + periodo]);
         noEncontrado = false;
       }
