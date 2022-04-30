@@ -16,7 +16,7 @@ import Select, { components } from 'react-select';
 import { usePage } from '@inertiajs/inertia-react';
 import { add, min } from 'lodash';
 registerLocale('es', es);
-let esHoy:Date=new Date();
+let esHoy: Date = new Date();
 
 let horarios = [
   { label: '06:45', value: '06:45:00', pos: 1, hora: 6, minun: 45 },
@@ -40,7 +40,7 @@ let horarios = [
   { label: '20:15', value: '20:15:00', pos: 19, hora: 20, minun: 15 },
   { label: '21:00', value: '21:00:00', pos: 20, hora: 21, minun: 0 },
 ];
-let horariosMostrar: any[]=[];
+let horariosMostrar: any[] = [];
 
 let hoy = new Date();
 console.log(hoy);
@@ -49,21 +49,13 @@ ultimoDia.setMonth(11);
 ultimoDia.setDate(31);
 let horaActual = hoy.getHours();
 let minutoActual = hoy.getMinutes();
-let diaActual=hoy.getDate();
-let mesActual=hoy.getMonth()+1;
+let diaActual = hoy.getDate();
+let mesActual = hoy.getMonth() + 1;
 if (horaActual > 20) {
   hoy = addDays(hoy, 1);
-  diaActual=hoy.getDate();
-  mesActual=hoy.getMonth()+1;
-} else if (horaActual === 20) {
-  if (minutoActual > 15) {
-    hoy = addDays(hoy, 1);
-    diaActual=hoy.getDate();
-    mesActual=hoy.getMonth()+1;
-  }
+  diaActual = hoy.getDate();
+  mesActual = hoy.getMonth() + 1;
 }
-
-
 
 const tiporeserva = [
   { label: 'Examen', value: 'Examen' },
@@ -146,41 +138,52 @@ export default function () {
       transform: 'translate(-50%, -50%)',
     },
   };
+
   useEffect(() => {
     getDocentesRelacionados([id]);
     horaHoy();
   }, []);
 
-  function  horaHoy () {
-    console.log("hola")
-    let today:Date=esHoy;
-    let dayToday=today.getDate();
-    let monthToday=today.getMonth()+1;
-     horariosMostrar = [];
-    if (dayToday===diaActual&&monthToday===mesActual) {
-      console.log("marciana")
-    for (let { hora, minun, label, value,pos } of horarios) {
-      
+  function horaHoy() {
+    console.log('hola');
+    let today: Date = esHoy;
+    let dayToday = today.getDate();
+    let monthToday = today.getMonth() + 1;
+    horariosMostrar = [];
+    if (dayToday === diaActual && monthToday === mesActual) {
+      console.log('marciana');
+      for (let { hora, minun, label, value, pos } of horarios) {
         if (horaActual === hora) {
           if (minutoActual < minun) {
-            horariosMostrar.push({ label: label, value: value,pos:pos,hora:hora,minun:minun });
+            horariosMostrar.push({
+              label: label,
+              value: value,
+              pos: pos,
+              hora: hora,
+              minun: minun,
+            });
           }
-        }else if(hora>horaActual){
-          horariosMostrar.push({ label: label, value: value,pos:pos,hora:hora,minun:minun });
+        } else if (hora > horaActual) {
+          horariosMostrar.push({
+            label: label,
+            value: value,
+            pos: pos,
+            hora: hora,
+            minun: minun,
+          });
         }
       }
-    }else{
-      horariosMostrar=horarios;
+    } else {
+      console.log('rexd');
+      horariosMostrar = horarios;
     }
-    let {label,value,pos} =horariosMostrar[0];
-    setSelectedHorario({label:label,value:value,pos:pos});
 
-    {let {label}=horariosMostrar[1];
+    setSelectedHorario(horariosMostrar[0]);
 
-    setHoraFin(label);}
-
-  };
-  
+    let { pos } = horariosMostrar[0];
+    console.log("posicion"+pos)
+    setHoraFin(horariosFinales[pos+1]);
+  }
 
   const [selectedOptions, setSelectedDocentes] = useState([]);
   const [selectedMateria, setSelectedMateria] = useState<{
@@ -213,12 +216,8 @@ export default function () {
   const [horaFin, setHoraFin] = useState<String>();
   const [horaInicio, setHoraInicio] = useState<any>();
 
-
-
   const { user }: any = usePage().props;
   let { id, name, email } = user;
- {console.log(horaInicio)}
-
 
   const getGrupos = (materiaS: String, docentesId: any[]) => {
     axios
@@ -341,13 +340,13 @@ export default function () {
   };
   const handleChangeHorario = (horario: any) => {
     setSelectedHorario(horario);
-  
+
     console.log(horario);
     let { label, value, pos } = horario;
     setMaxOfNumber(6);
     let numero = 21 - pos;
     if (numero < 6) {
-      console.log(numero+"entreaquis");
+      console.log(numero + 'entreaquis');
       setMaxOfNumber(numero);
     }
     horarioS = value;
@@ -412,7 +411,7 @@ export default function () {
       sD +
       fecha.getDate();
     setStartDate(fecha);
-    esHoy=fecha;
+    esHoy = fecha;
     horaHoy();
     fechaS = formatted_date;
 
