@@ -13,6 +13,7 @@ interface Solicitud {
   docentes:[];
   cantidad_estudiantes_solicitud: Number;
   estado_solicitud:String;
+  motivo_reg_sct:any;
   aulas:any;
 }
 
@@ -26,7 +27,8 @@ export default function (
     cantidad_estudiantes_solicitud,
     docentes,
     estado_solicitud,
-    aulas
+    aulas,
+    motivo_reg_sct
   }: Solicitud,
 
 ) {
@@ -41,7 +43,7 @@ export default function (
   let aula="";
   
   let subtitulo="Aula NO reservada"
-  let mensaje=",solicitud pendiente"
+  let mensaje=",solicitud rechazada"
   
 
 
@@ -77,9 +79,6 @@ export default function (
           <div className="hstack gap-3 items-end ">
             {' '}
             {/*items-end*/}
-            <div>
-              <input type="checkbox"></input>
-            </div>
             <div className="mr-3">{fecha_inicio_reg_sct}</div>
             <div className="mr-4">Código: {id_solicitud}</div>
             <div>Materia: {materia_solicitud}</div>
@@ -119,8 +118,8 @@ export default function (
                   <p className="font-bold ">
                     Para fecha: {fecha_requerida_solicitud}
                   </p>
-                  <p className="font-bold"><span className='pendiente'>{subtitulo}</span>{mensaje}</p>
-      
+                  <p className="font-bold"><span className='rechazada'>{subtitulo}</span>{mensaje}</p>
+                  <p className='font-bold'>Motivo:{motivo_reg_sct}</p>
                   <div className="absolute right-0 bottom-0">
 
                     <button

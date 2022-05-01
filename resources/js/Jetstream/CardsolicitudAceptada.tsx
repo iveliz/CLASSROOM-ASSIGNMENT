@@ -13,7 +13,7 @@ interface Solicitud {
   docentes:[];
   cantidad_estudiantes_solicitud: Number;
   estado_solicitud:String;
-  aulas:any;
+  aulas:[];
 }
 
 export default function (
@@ -40,11 +40,8 @@ export default function (
   let cadenaEstado =""
   let aula="";
   
-  let subtitulo="Aula NO reservada"
-  let mensaje=",solicitud pendiente"
-  
-
-
+  let subtitulo="Aula Reservadas: "
+  let mensaje=aulas.toString();
 
   const customStyles = {
     content: {
@@ -119,7 +116,7 @@ export default function (
                   <p className="font-bold ">
                     Para fecha: {fecha_requerida_solicitud}
                   </p>
-                  <p className="font-bold"><span className='pendiente'>{subtitulo}</span>{mensaje}</p>
+                  <p className="font-bold"><span className='aceptada'>{subtitulo}</span>{mensaje}</p>
       
                   <div className="absolute right-0 bottom-0">
 
