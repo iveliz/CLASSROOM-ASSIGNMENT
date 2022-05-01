@@ -77,6 +77,9 @@ export default function (
           <div className="hstack gap-3 items-end ">
             {' '}
             {/*items-end*/}
+            <div>
+              <input type="checkbox"></input>
+            </div>
             <div className="mr-3">{fecha_inicio_reg_sct}</div>
             <div className="mr-4">Código: {id_solicitud}</div>
             <div>Materia: {materia_solicitud}</div>
