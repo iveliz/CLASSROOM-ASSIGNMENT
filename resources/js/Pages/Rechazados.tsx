@@ -3,7 +3,7 @@ import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
 import Sidebar from '@/Jetstream/Sidebar';
 import axios from 'axios';
-import Cardsolicitud from '@/Jetstream/Cardsolicitud';
+import Cardsolicitud from '@/Jetstream/CardsolicitudPendiente';
 import { useEffect } from "react";
 import { nanoid } from 'nanoid'
 const endpoint = 'http://127.0.0.1:8000'

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { solicitudes } from '@/Const/solicitudes';
-import Cardsolicitud from '@/Jetstream/Cardsolicitud';
+import Cardsolicitud from '@/Jetstream/CardsolicitudPendiente';
 import Modal from 'react-modal';
 
 export default function (){
