@@ -4,26 +4,28 @@ import AppLayout from '@/Layouts/AppLayoutTeacher';
 import Sidebar from '@/Jetstream/Sidebar';
 import axios from 'axios';
 import Cardsolicitud from '@/Jetstream/CardsolicitudAceptada';
-import { useEffect } from "react";
-import { nanoid } from 'nanoid'
+import { useEffect } from 'react';
+import { nanoid } from 'nanoid';
 import { usePage } from '@inertiajs/inertia-react';
-const endpoint = 'http://127.0.0.1:8000'
-export default function (props: { solicitudes: any }) {
+const endpoint = 'http://127.0.0.1:8000';
+export default function () {
   const [listaSoliState, SetlistaSoli] = useState([]);
+  const [listaSeleccion, SetListaSeleccion] = useState<any[]>([]);
+  //const [todos,SetTodos]=useState<any>(0);
   const { user }: any = usePage().props;
   let { id, name, email } = user;
   const getSolicitudes = () => {
-    axios
-      .get(`${endpoint}/api/solicitudes/aceptadas/${id}`)
-      .then(response => {
-        console.log(response.data);
-        SetlistaSoli(response.data);
-      });
+    axios.get(`${endpoint}/api/solicitudes/aceptadas/${id}`).then(response => {
+      console.log(response.data);
+      SetlistaSoli(response.data);
+    });
   };
-  useEffect(()=>{
-    getSolicitudes()
-   },[])
- 
+
+
+  useEffect(() => {
+    getSolicitudes();
+  }, []);
+
   return (
     <AppLayout title="Informacion">
       <div className="grid grid-cols-6 gap-4">
@@ -42,17 +44,17 @@ export default function (props: { solicitudes: any }) {
                   <p className="text-white ">Seleccionar todas</p>
                 </div>
                 <div className="flex mt-2 position-absolute end-0  mr-10">
-                  <button type="button" className="btn fondoBarra text-white">
+                  <button type="button"  className="btn fondoBarra text-white">
                     Cancelar
                   </button>
                 </div>
               </div>
             </div>
           </div>
-          {listaSoliState.map(card => (
-            <Cardsolicitud {...card} key={nanoid(4)} />
-          ))}
-          {console.log(listaSoliState)}
+          {listaSoliState.map(card => {
+           return <Cardsolicitud {...card} key={nanoid(4)} lista={SetListaSeleccion}/>;
+          })}
+          
         </div>
       </div>
     </AppLayout>

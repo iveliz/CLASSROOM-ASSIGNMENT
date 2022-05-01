@@ -2,46 +2,39 @@ import React from 'react';
 import image from '../../css/images/userImage.png';
 import Modal from 'react-modal';
 import { useState } from 'react';
-import axios from 'axios';
-const endpoint = 'http://127.0.0.1:8000'
+
 interface Solicitud {
   fecha_inicio_reg_sct: String;
   id_solicitud: number;
   materia_solicitud: String;
   fecha_requerida_solicitud: String;
   grupos: [];
-  docentes:[];
+  docentes: [];
   cantidad_estudiantes_solicitud: Number;
-  estado_solicitud:String;
-  aulas:[];
+  estado_solicitud: String;
+  aulas: [];
+  lista: any;
+
 }
 
-export default function (
-  {
-    fecha_inicio_reg_sct,
-    id_solicitud,
-    materia_solicitud,
-    fecha_requerida_solicitud,
-    grupos,
-    cantidad_estudiantes_solicitud,
-    docentes,
-    estado_solicitud,
-    aulas
-  }: Solicitud,
-
-) {
-  let subtitle: any;
+export default function ({
+  fecha_inicio_reg_sct,
+  id_solicitud,
+  materia_solicitud,
+  fecha_requerida_solicitud,
+  grupos,
+  cantidad_estudiantes_solicitud,
+  docentes,
+  estado_solicitud,
+  aulas,
+  lista,
+}: Solicitud) {
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [stateAula,SetAula]= useState(aulas);
+  const [isCheck, SetIsCheck] = useState<boolean>();
   
-
-
-  console.log(estado_solicitud);
-  let cadenaEstado =""
-  let aula="";
-  
-  let subtitulo="Aula Reservadas: "
-  let mensaje=aulas.toString();
+  console.log(isCheck);
+  let subtitulo = 'Aula Reservadas: ';
+  let mensaje = aulas.toString();
 
   const customStyles = {
     content: {
@@ -75,7 +68,19 @@ export default function (
             {' '}
             {/*items-end*/}
             <div>
-              <input type="checkbox"></input>
+              <input type="checkbox" onChange={event => {
+                
+                 lista((listaSeleccion:any[])=>{
+                    if(!listaSeleccion.includes(id_solicitud)&&event.target.checked){
+                      listaSeleccion.push(id_solicitud);
+                    }else if(listaSeleccion.includes(id_solicitud)&&!event.target.checked){
+                        listaSeleccion=listaSeleccion.filter((value)=>value!=id_solicitud)
+                    }
+                    console.log(listaSeleccion)
+                  return listaSeleccion;
+                })
+              }} 
+              ></input>
             </div>
             <div className="mr-3">{fecha_inicio_reg_sct}</div>
             <div className="mr-4">Código: {id_solicitud}</div>
@@ -116,15 +121,17 @@ export default function (
                   <p className="font-bold ">
                     Para fecha: {fecha_requerida_solicitud}
                   </p>
-                  <p className="font-bold"><span className='aceptada'>{subtitulo}</span>{mensaje}</p>
-      
-                  <div className="absolute right-0 bottom-0">
+                  <p className="font-bold">
+                    <span className="aceptada">{subtitulo}</span>
+                    {mensaje}
+                  </p>
 
+                  <div className="absolute right-0 bottom-0">
                     <button
                       className="btn colorPrimary text-white  mr-4 mb-2"
                       onClick={closeModal}
                     >
-                     Cerrar
+                      Cerrar
                     </button>
                   </div>
                 </div>
