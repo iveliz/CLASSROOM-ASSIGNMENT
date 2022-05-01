@@ -141,7 +141,12 @@ class SolicitudesController extends Controller
             $soli->aulas=$aulas_reservadas;
         }
 
-        return $soli;
+        $res = array();
+        foreach ($solicitudes as $soli){
+            array_push($res,$soli);
+        }
+
+        return $res;
     }
     /**
      * Store a newly created resource in storage.
