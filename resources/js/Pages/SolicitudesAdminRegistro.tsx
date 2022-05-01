@@ -3,7 +3,7 @@ import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutAdmin';
 import Sidebar from '@/Jetstream/SidebarAdmin';
 import { solicitudes } from '@/Const/solicitudes';
-import Cardsolicitud from '@/Jetstream/Cardsolicitud';
+import Cardsolicitud from '@/Jetstream/CardsolicitudPendiente';
 import axios from 'axios';
 import { useEffect } from "react";
 import { nanoid } from 'nanoid';
