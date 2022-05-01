@@ -5,22 +5,22 @@ import Sidebar from '@/Jetstream/Sidebar';
 import { solicitudes } from '@/Const/solicitudes';
 import Cardsolicitud from '@/Jetstream/CardsolicitudPendiente';
 import axios from 'axios';
-import Xsquare from '../Icons/X-square';
 import { useEffect } from 'react';
 import { nanoid } from 'nanoid';
-
+import { usePage } from '@inertiajs/inertia-react';
 const endpoint = 'http://127.0.0.1:8000';
 
 export default function (props: { user: any }) {
+  const { user }: any = usePage().props;
+  let { id, name, email } = user;
   const [listaSoliState, SetlistaSoli] = useState([]);
-  const getSolicitudes = async () => {
-    await axios
-      .get(`${endpoint}/api/solicitudes/pendientes/1`)
+  const getSolicitudes =  () => {
+     axios
+      .get(`${endpoint}/api/solicitudes/pendientes/${id}`)
       .then(response => {
         SetlistaSoli(response.data);
       });
   };
-
   useEffect(() => {
     getSolicitudes();
   }, []);
@@ -31,26 +31,9 @@ export default function (props: { user: any }) {
         <div className=" colorPrimary mt-6 drop-shadow-lg ">
           <Sidebar></Sidebar>
         </div>
-
         <div className="col-span-5">
           <div className="ml-5 mt-6 ">
             <h1 className="font-bold">Solicitudes Pendientes</h1>
-            <div className="fondoBarra  mr-8 ">
-              <div className="flex">
-                <div className="mt-3 ml-4">
-                  <input type="checkbox"></input>
-                </div>
-                <div className="mt-3 ml-6">
-                  <p className="text-white ">Seleccionar todas</p>
-                </div>
-                <div className="flex mt-2 position-absolute end-0  mr-10">
-                  <button type="button" className="btn fondoBarra text-white">
-                    Cancelar
-                  </button>
-                </div>
-              </div>
-            </div>
-
             <div>
               {listaSoliState.map(card => (
                 <Cardsolicitud {...card} key={nanoid(4)} />

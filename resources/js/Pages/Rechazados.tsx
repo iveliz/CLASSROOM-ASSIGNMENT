@@ -3,15 +3,18 @@ import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
 import Sidebar from '@/Jetstream/Sidebar';
 import axios from 'axios';
-import Cardsolicitud from '@/Jetstream/CardsolicitudPendiente';
+import Cardsolicitud from '@/Jetstream/CardsolicitudRechazo';
 import { useEffect } from "react";
 import { nanoid } from 'nanoid'
+import { usePage } from '@inertiajs/inertia-react';
 const endpoint = 'http://127.0.0.1:8000'
 export default function () {
   const [listaSoliState, SetlistaSoli] = useState([]);
-  const getSolicitudes = async () => {
-    await axios
-      .get(`${endpoint}/api/solicitudes/rechazadas/1`)
+  const { user }: any = usePage().props;
+  let { id, name, email } = user;
+  const getSolicitudes = () => {
+    axios
+      .get(`${endpoint}/api/solicitudes/rechazadas/${id}`)
       .then(response => {
         SetlistaSoli(response.data);
       });
