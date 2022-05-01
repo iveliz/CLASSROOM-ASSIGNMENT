@@ -217,7 +217,7 @@ class SolicitudesController extends Controller
         return $res;
     }
 
-    public function destroy(int $id_solicitud){
+    public function cancelarSolicitud(int $id_solicitud){
         $res = 3;
         try {
             DB::table('registro_solicitudes')->where("registro_solicitudes.id_solicitud",$id_solicitud)->delete();
@@ -226,6 +226,32 @@ class SolicitudesController extends Controller
             RegistroSolicitudes::destroy($id_solicitud);
             Solicitudes::where("solicitudes.id_solicitud",$id_solicitud)->delete();
             $res = 1;
+        } catch (\Throwable $th) {
+            //throw $th;
+            $res = $th;
+        }
+
+        /** retornar 1 si se elimino 0 si fallo*/
+        return $res;
+    }
+
+    public function cancelarSolicitudPorArreglo(Request $ids_solicitud){
+        $ids_para_eliminar = $ids_solicitud->ids_selecionados;
+        $res = 3;
+        try {
+            if(count($ids_para_eliminar)!=0){
+                foreach ($ids_para_eliminar as $id) { 
+                    DB::table('registro_solicitudes')->where("registro_solicitudes.id_solicitud",$id)->delete();
+                    DocenteSolicitudes::destroy($id);
+                    GrupoSolicitudes::destroy($id);
+                    RegistroSolicitudes::destroy($id);
+                    Solicitudes::where("solicitudes.id_solicitud",$id)->delete();
+                }
+                $res = 1;
+            }else {
+                $res = 0;
+            }
+            
         } catch (\Throwable $th) {
             //throw $th;
             $res = $th;

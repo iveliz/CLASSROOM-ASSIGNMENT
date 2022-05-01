@@ -119,11 +119,12 @@ Route::controller(usuarioController::class)->group(function () {
 
 Route::controller(SolicitudesController::class)->group(function () {
   Route::get('/api/solicitudes', 'index');
-  Route::delete('/api/solicitudes/eliminar/{id}', 'destroy');
+  Route::delete('/api/solicitudes/cancelar/{id}', 'cancelarSolicitud');
   Route::get('/api/solicitudes/pendientes/{id}', 'listarPendientes');
   Route::post('/api/solicitudes/crear', 'crearSolicitud');
   Route::get('/api/solicitudes/rechazadas/{id}', 'listarRechazados');
   Route::get('/api/solicitudes/aceptadas/{id}', 'listarAceptados');
+  Route::post('/api/solicitudes/cancelarPorArreglo', 'cancelarSolicitudPorArreglo');
 });
 
 Route::controller(SolicitudAulaAdmController::class)->group(function () {
