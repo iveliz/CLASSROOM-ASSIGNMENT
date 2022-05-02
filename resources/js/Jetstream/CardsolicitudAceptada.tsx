@@ -13,7 +13,8 @@ interface Solicitud {
   cantidad_estudiantes_solicitud: Number;
   estado_solicitud: String;
   aulas: [];
-  lista: any;
+
+  seleccionados:any;
 
 }
 
@@ -27,15 +28,15 @@ export default function ({
   docentes,
   estado_solicitud,
   aulas,
-  lista,
+  seleccionados
 }: Solicitud) {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [isCheck, SetIsCheck] = useState<boolean>();
   
-  console.log(isCheck);
+  console.log(seleccionados);
   let subtitulo = 'Aula Reservadas: ';
   let mensaje = aulas.toString();
-
+  let cambio=true;
   const customStyles = {
     content: {
       top: '50%',
@@ -68,19 +69,9 @@ export default function ({
             {' '}
             {/*items-end*/}
             <div>
-              <input type="checkbox" onChange={event => {
-                
-                 lista((listaSeleccion:any[])=>{
-                    if(!listaSeleccion.includes(id_solicitud)&&event.target.checked){
-                      listaSeleccion.push(id_solicitud);
-                    }else if(listaSeleccion.includes(id_solicitud)&&!event.target.checked){
-                        listaSeleccion=listaSeleccion.filter((value)=>value!=id_solicitud)
-                    }
-                    console.log(listaSeleccion)
-                  return listaSeleccion;
-                })
-              }} 
-              ></input>
+
+              
+
             </div>
             <div className="mr-3">{fecha_inicio_reg_sct}</div>
             <div className="mr-4">Código: {id_solicitud}</div>

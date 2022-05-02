@@ -4,22 +4,45 @@ import AppLayout from '@/Layouts/AppLayoutTeacher';
 import Sidebar from '@/Jetstream/Sidebar';
 import axios from 'axios';
 import Cardsolicitud from '@/Jetstream/CardsolicitudAceptada';
-import { useEffect } from 'react';
+import { useEffect,useRef } from 'react';
 import { nanoid } from 'nanoid';
 import { usePage } from '@inertiajs/inertia-react';
+import { elementAcceptingRef } from '@mui/utils';
 const endpoint = 'http://127.0.0.1:8000';
 export default function () {
   const [listaSoliState, SetlistaSoli] = useState([]);
-  const [listaSeleccion, SetListaSeleccion] = useState<any[]>([]);
-  //const [todos,SetTodos]=useState<any>(0);
+  let listaSeleccion:any[]=[];
+  const [todos,SetTodos]=useState<any>(2);
+  const referencia=useRef<any>();
+  const [valor,SetValor]=useState(false);
   const { user }: any = usePage().props;
   let { id, name, email } = user;
+
   const getSolicitudes = () => {
     axios.get(`${endpoint}/api/solicitudes/aceptadas/${id}`).then(response => {
       console.log(response.data);
       SetlistaSoli(response.data);
     });
   };
+
+  const agregar=(event:React.ChangeEvent<HTMLInputElement>)=>{
+
+
+    let name=event.target.name;
+    if (
+      !listaSeleccion.includes(name)
+    ) {
+      listaSeleccion.push(name);
+    } else if (
+   
+      listaSeleccion.includes(name)
+    ) {
+      listaSeleccion = listaSeleccion.filter(
+        value => value != name,
+      );
+    }
+    console.log(listaSeleccion)
+  }
 
 
   useEffect(() => {
@@ -38,23 +61,46 @@ export default function () {
             <div className="fondoBarra  mr-8 ">
               <div className="flex">
                 <div className="mt-3 ml-4">
-                  <input type="checkbox"></input>
+                <input type="checkbox" onChange={event=>{
+                    if(event.target.checked){
+                    
+                      referencia.current.checked=true;
+                    }else{
+                      
+                      referencia.current.checked=false;
+                    }
+                  }}
+                  ></input>
                 </div>
                 <div className="mt-3 ml-6">
                   <p className="text-white ">Seleccionar todas</p>
                 </div>
                 <div className="flex mt-2 position-absolute end-0  mr-10">
-                  <button type="button"  className="btn fondoBarra text-white">
-                    Cancelar
+                  <button type="button" className="btn botonBarra text-white">
+                    Cancelar Seleccionadas
                   </button>
                 </div>
               </div>
             </div>
           </div>
-          {listaSoliState.map(card => {
-           return <Cardsolicitud {...card} key={nanoid(4)} lista={SetListaSeleccion}/>;
-          })}
-          
+          <div>
+            {listaSoliState.map(card => {
+              let {id_solicitud}=card;
+              let select=todos==1;
+              return (
+                <div key={nanoid(5)}> 
+                  <div>
+                    <input type="checkbox" onChange={agregar}  name={id_solicitud} id={id_solicitud}></input>
+                  </div>
+                  <div>
+                    <Cardsolicitud
+                      {...card}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </AppLayout>
