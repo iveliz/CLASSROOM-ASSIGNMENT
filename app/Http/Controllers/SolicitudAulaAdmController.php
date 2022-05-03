@@ -32,7 +32,12 @@ class SolicitudAulaAdmController extends Controller
         date_default_timezone_set("Etc/GMT+4");
 
         //solicitudes de hoy, mañana y mañana pasado
-        $solicitudesCercanas = Solicitudes::whereNotIn("id_solicitud", $solicitudesReg)
+        $solicitudesCercanas = Solicitudes::join('users','users.id','=','solicitudes.id_usuario')
+            ->select('id_solicitud','id_usuario','name','materia_solicitud',
+                'cantidad_estudiantes_solicitud','motivo_reserva_solicitud',
+                'fecha_requerida_solicitud','hora_requerida_solicitud','periodos_solicitud',
+                'estado_solicitud','solicitudes.created_at','solicitudes.updated_at')
+            ->whereNotIn("id_solicitud", $solicitudesReg)
             ->where("fecha_requerida_solicitud", date('Y-m-d'))
             ->orWhere("fecha_requerida_solicitud", date('Y-m-d', strtotime('+1 day')))
             ->orWhere("fecha_requerida_solicitud", date('Y-m-d', strtotime('+2 day')))
@@ -40,7 +45,12 @@ class SolicitudAulaAdmController extends Controller
             ->orderBy("created_at")
             ->get();
 
-        $solicitudes = Solicitudes::whereNotIn("id_solicitud", $solicitudesReg)
+        $solicitudes = Solicitudes::join('users','users.id','=','solicitudes.id_usuario')
+            ->select('id_solicitud','id_usuario','name','materia_solicitud',
+                'cantidad_estudiantes_solicitud','motivo_reserva_solicitud',
+                'fecha_requerida_solicitud','hora_requerida_solicitud','periodos_solicitud',
+                'estado_solicitud','solicitudes.created_at','solicitudes.updated_at')
+            ->whereNotIn("id_solicitud", $solicitudesReg)
             ->orderBy("created_at")
             ->get();
 
