@@ -15,6 +15,7 @@ import Select, { components } from 'react-select';
 
 import { usePage } from '@inertiajs/inertia-react';
 import { add, min } from 'lodash';
+import { Inertia } from '@inertiajs/inertia';
 registerLocale('es', es);
 let esHoy: Date = new Date();
 
@@ -127,6 +128,7 @@ let fechaS: String = fechaHoy();
 
 let materiaS: String = '';
 let horarioL: any ;
+
 export default function () {
   const customStyles = {
     content: {
@@ -219,12 +221,12 @@ export default function () {
   const selectInputRef = useRef();
   const [maxOfNumber, setMaxOfNumber] = useState(6);
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [modalIsOpenError, setIsOpenError] = useState(false);
   const [horaFin, setHoraFin] = useState<String>();
   const [horaInicio, setHoraInicio] = useState<any>();
 
   const { user }: any = usePage().props;
   let { id, name, email } = user;
-
   const getGrupos = (materiaS: String, docentesId: any[]) => {
     axios
       .post(`${endpoint}/grupos`, { materia: materiaS, idDocentes: docentesId })
@@ -264,6 +266,9 @@ export default function () {
         for (let { id, name } of response.data) {
           listaDocentesMostrar.push({ label: name, value: name, id: id });
         }
+        if(docentesNombres.length==0){
+          docentesNombres.push(name)
+        }
         console.log(listaDocentesMostrar);
         setStateNombres(false);
         setStateMateria(true);
@@ -290,6 +295,16 @@ export default function () {
 
   function closeModal() {
     setIsOpen(false);
+  }
+
+  function openModalError() {
+    setIsOpenError(true);
+  }
+
+  function afterOpenModalError() {}
+
+  function closeModalError() {
+    setIsOpenError(false);
   }
 
   const handleChangeGrupos = (grupos: any) => {
@@ -439,23 +454,30 @@ export default function () {
     fecha_requerida_solicitud: fechaS,
   };
 
-  const sendSoli = async () => {
-    await axios
+  const sendSoli =  () => {
+     axios
       .post(`${endpoint}/api/solicitudes/crear`, solicitud)
       .then(response => {
-        closeModal();
+        if(response.data===1){
+           Inertia.visit("solicitudes/pendientes")
+        }else{
+          openModalError();
+        }
         console.log(response.data);
       });
   };
 
   const validarDatos = () => {
     console.log(gruposS.length + 'tamaño xd');
+    let cantidad=parseInt(selectedCantidad);
     if (materiaS === '') {
       alert('El campo de materias no puede estar vacio');
     } else if (gruposS.length === 0) {
       alert('El campo de grupos no puede estar vacio');
     } else if (selectedCantidad === '') {
       alert('El campo de cantidad de estudiantes no puede estar vacio');
+    }else if(cantidad==0){
+       alert('El campo de cantidad tiene que ser mayor a 0')
     } else {
       openModal();
     }
@@ -470,6 +492,11 @@ export default function () {
     return <components.MultiValueRemove {...props} />;
   };
 
+  const validarCantidad=(event:React.ChangeEvent<HTMLInputElement>)=>{
+    return event.preventDefault();
+  }
+
+  console.log(solicitud)
   return (
     <>
       <AppLayout title="Informacion">
@@ -537,7 +564,7 @@ export default function () {
             </div>
             <div className="grid grid-flow-col auto-cols-max">
               <div className="mr-4">
-                <p>Fecha Inicio</p>
+                <p>Fecha</p>
 
                 <DatePicker
                   locale="es"
@@ -597,12 +624,11 @@ export default function () {
               <div>
                 <p>Cantidad de estudiantes</p>
                 <input
+                  id="campoCantidaddeestudiantes"
                   className="label-cant cantidadEstudiantes"
                   type="number"
-                  min={1}
-                  max={999}
                   onKeyDown={event => {
-                    if (!/[0-9]/.test(event.key)) {
+                    if (event.key=="e"||event.key=="+"||event.key=="-"||event.key=="E"||event.ctrlKey) {
                       event.preventDefault();
                     }
                   }}
@@ -643,6 +669,29 @@ export default function () {
                   <button
                     type="button"
                     onClick={sendSoli}
+                    className="btn colorPrimary text-white"
+                  >
+                    Aceptar
+                  </button>
+                </div>
+              </form>
+            </Modal>
+            <Modal
+              isOpen={modalIsOpenError}
+              onAfterOpen={afterOpenModalError}
+              onRequestClose={closeModalError}
+              style={customStyles}
+              contentLabel="Example Modal"
+              ariaHideApp={false}
+            >
+              <div className="font-bold">
+              Ya hizo una solicitud con los mismos datos, por favor, espere una respuesta  o haga una solicitud diferente.
+              </div>
+              <form className="d-flex justify-content-center space-x-4 mt-4">
+                <div>
+                  <button
+                    type="button"
+                    onClick={closeModalError}
                     className="btn colorPrimary text-white"
                   >
                     Aceptar
