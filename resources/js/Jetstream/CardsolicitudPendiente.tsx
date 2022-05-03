@@ -14,6 +14,8 @@ interface Solicitud {
   cantidad_estudiantes_solicitud: Number;
   estado_solicitud:String;
   aulas:any;
+  handleSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  listaSeleccion: number[];
 }
 
 export default function (
@@ -26,7 +28,9 @@ export default function (
     cantidad_estudiantes_solicitud,
     docentes,
     estado_solicitud,
-    aulas
+    aulas,
+    handleSelect,
+    listaSeleccion
   }: Solicitud,
 
 ) {
@@ -78,7 +82,13 @@ export default function (
             {' '}
             {/*items-end*/}
             <div>
-              <input type="checkbox"></input>
+            <input
+              type="checkbox"
+              name={`soliAccept${id_solicitud}`}
+              id={`soliAccept${id_solicitud}`}
+              onChange={handleSelect}
+              checked={listaSeleccion.includes(id_solicitud)}
+            />
             </div>
             <div className="mr-3">{fecha_inicio_reg_sct}</div>
             <div className="mr-4">Código: {id_solicitud}</div>

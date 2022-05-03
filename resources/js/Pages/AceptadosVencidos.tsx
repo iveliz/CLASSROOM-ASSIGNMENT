@@ -33,21 +33,6 @@ export default function (props: { solicitudes: any }) {
         <div className="col-span-5">
           <div className=" mt-6 ">
             <h1 className="font-bold">Solicitudes Aceptadas Vencidas</h1>
-            <div className="fondoBarra  mr-8 ">
-              <div className="flex">
-                <div className="mt-3 ml-4">
-                  <input type="checkbox"></input>
-                </div>
-                <div className="mt-3 ml-6">
-                  <p className="text-white ">Seleccionar todas</p>
-                </div>
-                <div className="flex mt-2 position-absolute end-0  mr-10">
-                  <button type="button" className="btn fondoBarra text-white">
-                    Cancelar
-                  </button>
-                </div>
-              </div>
-            </div>
           </div>
           {listaSoliState.map(card => (
             <Cardsolicitud {...card} key={nanoid(4)} />
