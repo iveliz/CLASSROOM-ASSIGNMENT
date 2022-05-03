@@ -253,13 +253,14 @@ export default function () {
       }
       setStateMateria(false);
       setStateMateriaCharge(false);
-
+      setStateNombres(false);
       console.log(response.data);
       console.log(listaMateriasMostrar);
     });
   };
 
   const getDocentesRelacionados = (Id: any[]) => {
+    setStateNombres(true);
     if (Id.length === 1) {
       axios.post(`${endpoint}/docentesid`, { Id }).then(response => {
         listaDocentesMostrar = [];
@@ -270,7 +271,6 @@ export default function () {
           docentesNombres.push(name)
         }
         console.log(listaDocentesMostrar);
-        setStateNombres(false);
         setStateMateria(true);
         setStateMateriaCharge(true);
         getMaterias(Id);
@@ -282,7 +282,6 @@ export default function () {
           listaDocentesMostrar.push({ label: name, value: name, id: id });
         }
         console.log(listaDocentesMostrar);
-        setStateNombres(false);
       });
     }
   };
@@ -320,6 +319,7 @@ export default function () {
 
   const handleChangeDocentes = (docentes: []) => {
     setSelectedDocentes(docentes);
+   
     docentesId = [];
     docentesNombres = [];
     if (docentes.length > 1) {
@@ -330,6 +330,7 @@ export default function () {
         docentesNombres.push(value);
       }
       setSelectedGroups([]);
+      setStateNombres(true);
       setSelectedMateria({ label: '', value: '' });
       setStateGrupo(true);
       setStateMateria(true);
