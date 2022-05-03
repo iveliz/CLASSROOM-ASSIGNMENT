@@ -148,6 +148,98 @@ class SolicitudesController extends Controller
 
         return $res;
     }
+
+    public function listarPendientesSinVencer(int $id_usuario)
+    {
+        $solicitudes = Solicitudes::join('registro_solicitudes','solicitudes.id_solicitud','=','registro_solicitudes.id_solicitud')
+        ->select('solicitudes.id_solicitud','registro_solicitudes.fecha_inicio_reg_sct','registro_solicitudes.id_reg_sct','solicitudes.materia_solicitud','solicitudes.cantidad_estudiantes_solicitud','solicitudes.fecha_requerida_solicitud','solicitudes.estado_solicitud')
+        ->where('solicitudes.id_usuario',$id_usuario)
+        ->where('registro_solicitudes.estado_solicitud_reg_sct',"aceptada")
+        ->where('registro_solicitudes.created_at',">=",date('Y-m-d'))
+        ->get();
+        
+        foreach ($solicitudes as $soli){
+            $consulta_grupos_solicitud = GrupoSolicitudes::getGruposDeSolicitud($soli['id_solicitud']);
+            $grupos_solicitud = array();
+            foreach ($consulta_grupos_solicitud as $grupo){
+                array_push($grupos_solicitud,$grupo->codigo_grupo_sct);
+            }
+            
+            $consulta_docentes_solicitud = DocenteSolicitudes::getNombreDeDocentes($soli['id_solicitud']);
+            $docentes_solicitud = array();
+            foreach ($consulta_docentes_solicitud as $docente){
+                array_push($docentes_solicitud,$docente->nombre_doc_sct);
+            }
+
+            $id_aulas_reservadas = Reserva::join('aulas_reservadas','reservas.id_reserva','=','aulas_reservadas.id_reserva')
+            -> select('aulas_reservadas.id_aula')->where('reservas.id_reg_sct',$soli['id_reg_sct'])->get();
+            $aulas_reservadas = array();
+            foreach ($id_aulas_reservadas as $id_aula){
+                $aula = Aula::select('numero_aula','letra_aula')->where('id_aula',$id_aula['id_aula'])->get();
+                $numero_aula=(string)$aula[0]['numero_aula'];
+                $letra_aula=$aula[0]['letra_aula'];
+                $aula_reservada = "$numero_aula $letra_aula";
+                array_push($aulas_reservadas,$aula_reservada);
+            }
+
+            $soli->grupos=$grupos_solicitud;
+            $soli->docentes=$docentes_solicitud;
+            $soli->aulas=$aulas_reservadas;
+        }
+
+        $res = array();
+        foreach ($solicitudes as $soli){
+            array_push($res,$soli);
+        }
+
+        return $res;
+    }
+
+    public function listarPendientesVencidas(int $id_usuario)
+    {
+        $solicitudes = Solicitudes::join('registro_solicitudes','solicitudes.id_solicitud','=','registro_solicitudes.id_solicitud')
+        ->select('solicitudes.id_solicitud','registro_solicitudes.fecha_inicio_reg_sct','registro_solicitudes.id_reg_sct','solicitudes.materia_solicitud','solicitudes.cantidad_estudiantes_solicitud','solicitudes.fecha_requerida_solicitud','solicitudes.estado_solicitud')
+        ->where('solicitudes.id_usuario',$id_usuario)
+        ->where('registro_solicitudes.estado_solicitud_reg_sct',"aceptada")
+        ->where('registro_solicitudes.created_at',"<",date('Y-m-d'))
+        ->get();
+        
+        foreach ($solicitudes as $soli){
+            $consulta_grupos_solicitud = GrupoSolicitudes::getGruposDeSolicitud($soli['id_solicitud']);
+            $grupos_solicitud = array();
+            foreach ($consulta_grupos_solicitud as $grupo){
+                array_push($grupos_solicitud,$grupo->codigo_grupo_sct);
+            }
+            
+            $consulta_docentes_solicitud = DocenteSolicitudes::getNombreDeDocentes($soli['id_solicitud']);
+            $docentes_solicitud = array();
+            foreach ($consulta_docentes_solicitud as $docente){
+                array_push($docentes_solicitud,$docente->nombre_doc_sct);
+            }
+
+            $id_aulas_reservadas = Reserva::join('aulas_reservadas','reservas.id_reserva','=','aulas_reservadas.id_reserva')
+            -> select('aulas_reservadas.id_aula')->where('reservas.id_reg_sct',$soli['id_reg_sct'])->get();
+            $aulas_reservadas = array();
+            foreach ($id_aulas_reservadas as $id_aula){
+                $aula = Aula::select('numero_aula','letra_aula')->where('id_aula',$id_aula['id_aula'])->get();
+                $numero_aula=(string)$aula[0]['numero_aula'];
+                $letra_aula=$aula[0]['letra_aula'];
+                $aula_reservada = "$numero_aula $letra_aula";
+                array_push($aulas_reservadas,$aula_reservada);
+            }
+
+            $soli->grupos=$grupos_solicitud;
+            $soli->docentes=$docentes_solicitud;
+            $soli->aulas=$aulas_reservadas;
+        }
+
+        $res = array();
+        foreach ($solicitudes as $soli){
+            array_push($res,$soli);
+        }
+
+        return $res;
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -225,6 +317,7 @@ class SolicitudesController extends Controller
             GrupoSolicitudes::destroy($id_solicitud);
             RegistroSolicitudes::destroy($id_solicitud);
             Solicitudes::where("solicitudes.id_solicitud",$id_solicitud)->delete();
+            //eliminar reservas y aulas_reservadas
             $res = 1;
         } catch (\Throwable $th) {
             //throw $th;

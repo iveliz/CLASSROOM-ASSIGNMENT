@@ -124,6 +124,8 @@ Route::controller(SolicitudesController::class)->group(function () {
   Route::post('/api/solicitudes/crear', 'crearSolicitud');
   Route::get('/api/solicitudes/rechazadas/{id}', 'listarRechazados');
   Route::get('/api/solicitudes/aceptadas/{id}', 'listarAceptados');
+  Route::get('/api/solicitudes/aceptadas/sin_vencer/{id}', 'listarPendientesSinVencer');
+  Route::get('/api/solicitudes/aceptadas/vencidas/{id}', 'listarPendientesVencidas');
   Route::post('/api/solicitudes/cancelarPorArreglo', 'cancelarSolicitudPorArreglo');
 });
 
