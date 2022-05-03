@@ -15,7 +15,7 @@ export default function () {
 
   const [listaSolicitudAula,setListaSolicitudAula] = useState([]);
   const getSolicitudes=  async()=>{
-    await axios.get(`${endpoint}/SolicitudAula`).then((response)=>{
+    await axios.get(`${endpoint}/solicitudesAula`).then((response)=>{
       setListaSolicitudAula(response.data);
       console.log(response.data)
     })
