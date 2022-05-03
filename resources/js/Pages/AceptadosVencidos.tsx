@@ -16,7 +16,7 @@ export default function (props: { solicitudes: any }) {
     axios
       .get(`${endpoint}/api/solicitudes/aceptadas/${id}`)
       .then(response => {
-
+        console.log(response.data);
         SetlistaSoli(response.data);
       });
   };
@@ -32,7 +32,7 @@ export default function (props: { solicitudes: any }) {
         </div>
         <div className="col-span-5">
           <div className=" mt-6 ">
-            <h1 className="font-bold">Solicitudes Aceptadas</h1>
+            <h1 className="font-bold">Solicitudes Aceptadas Vencidas</h1>
             <div className="fondoBarra  mr-8 ">
               <div className="flex">
                 <div className="mt-3 ml-4">
@@ -52,7 +52,7 @@ export default function (props: { solicitudes: any }) {
           {listaSoliState.map(card => (
             <Cardsolicitud {...card} key={nanoid(4)} />
           ))}
-
+          {console.log(listaSoliState)}
         </div>
       </div>
     </AppLayout>

@@ -93,6 +93,12 @@ Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
 });
 
 Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
+  Route::get('/solicitudes/aceptadas-vencidas', function () {
+    return Inertia::render('AceptadosVencidos');
+  })->name('solicitudes/aceptadas-vencidas');
+});
+
+Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
   Route::get('/solicitudes/rechazadas', function () {
     return Inertia::render('Rechazados');
   })->name('solicitudes/rechazadas');
