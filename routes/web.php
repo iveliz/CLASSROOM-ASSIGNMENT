@@ -93,6 +93,12 @@ Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
 });
 
 Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
+  Route::get('/solicitudes/aceptadas-vencidas', function () {
+    return Inertia::render('AceptadosVencidos');
+  })->name('solicitudes/aceptadas-vencidas');
+});
+
+Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
   Route::get('/solicitudes/rechazadas', function () {
     return Inertia::render('Rechazados');
   })->name('solicitudes/rechazadas');
@@ -119,11 +125,14 @@ Route::controller(usuarioController::class)->group(function () {
 
 Route::controller(SolicitudesController::class)->group(function () {
   Route::get('/api/solicitudes', 'index');
-  Route::delete('/api/solicitudes/eliminar/{id}', 'destroy');
+  Route::delete('/api/solicitudes/cancelar/{id}', 'cancelarSolicitud');
   Route::get('/api/solicitudes/pendientes/{id}', 'listarPendientes');
   Route::post('/api/solicitudes/crear', 'crearSolicitud');
   Route::get('/api/solicitudes/rechazadas/{id}', 'listarRechazados');
   Route::get('/api/solicitudes/aceptadas/{id}', 'listarAceptados');
+  Route::get('/api/solicitudes/aceptadas/sin_vencer/{id}', 'listarPendientesSinVencer');
+  Route::get('/api/solicitudes/aceptadas/vencidas/{id}', 'listarPendientesVencidas');
+  Route::post('/api/solicitudes/cancelarPorArreglo', 'cancelarSolicitudPorArreglo');
 });
 
 Route::controller(SolicitudAulaAdmController::class)->group(function () {

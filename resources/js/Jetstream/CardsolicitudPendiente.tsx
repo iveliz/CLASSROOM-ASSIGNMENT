@@ -9,8 +9,8 @@ interface Solicitud {
   id_solicitud: number;
   materia_solicitud: String;
   fecha_requerida_solicitud: String;
-  grupos: [];
-  docentes:[];
+  grupos: any[];
+  docentes:any[];
   cantidad_estudiantes_solicitud: Number;
   estado_solicitud:String;
   aulas:any;

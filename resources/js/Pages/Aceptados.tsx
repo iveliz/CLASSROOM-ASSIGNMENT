@@ -19,10 +19,12 @@ export default function () {
   let { id, name, email } = user;
 
   const getSolicitudes = () => {
-    axios.get(`${endpoint}/api/solicitudes/aceptadas/${id}`).then(response => {
-      console.log(response.data);
-      SetlistaSoli(response.data);
-    });
+    axios
+      .get(`${endpoint}/api/solicitudes/aceptadas/sin_vencer/${id}`)
+      .then(response => {
+
+        SetlistaSoli(response.data);
+      });
   };
 
   const agregar=(event:React.ChangeEvent<HTMLInputElement>)=>{
@@ -83,24 +85,10 @@ export default function () {
               </div>
             </div>
           </div>
-          <div>
-            {listaSoliState.map(card => {
-              let {id_solicitud}=card;
-              let select=todos==1;
-              return (
-                <div key={nanoid(5)}> 
-                  <div>
-                    <input type="checkbox" onChange={agregar}  name={id_solicitud} id={id_solicitud}></input>
-                  </div>
-                  <div>
-                    <Cardsolicitud
-                      {...card}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          {listaSoliState.map(card => (
+            <Cardsolicitud {...card} key={nanoid(4)} />
+          ))}
+
         </div>
       </div>
     </AppLayout>
