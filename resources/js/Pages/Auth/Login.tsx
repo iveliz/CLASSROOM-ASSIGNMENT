@@ -43,7 +43,7 @@ export default function Login({ canResetPassword, status }: Props) {
 
       <form onSubmit={onSubmit}>
         <div>
-          <JetLabel htmlFor="email">Correo Electrónico</JetLabel>
+          <JetLabel htmlFor="email">Nombre de Usuario</JetLabel>
           <JetInput
             id="email"
             type="email"

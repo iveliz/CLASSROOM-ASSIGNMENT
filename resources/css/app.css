@@ -288,12 +288,12 @@ body {
 
 
 /*Ocultar boton de usuario*/
-.inline-flex 
+/*.inline-flex 
 .rounded-md{
   color : #2B629C;
   background-color: #2B629C !important;
   border-color: #2B629C !important;
-}
+}*/
 
 .aceptada{
   color: #1C9027;
