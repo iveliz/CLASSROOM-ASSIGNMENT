@@ -14,8 +14,8 @@ interface Solicitud {
   estado_solicitud: String;
   aulas: [];
 
-  seleccionados:any;
-
+  handleSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  listaSeleccion: number[];
 }
 
 export default function ({
@@ -28,15 +28,15 @@ export default function ({
   docentes,
   estado_solicitud,
   aulas,
-  seleccionados
+
+  handleSelect,
+  listaSeleccion,
 }: Solicitud) {
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [isCheck, SetIsCheck] = useState<boolean>();
-  
-  console.log(seleccionados);
+
   let subtitulo = 'Aula Reservadas: ';
   let mensaje = aulas.toString();
-  let cambio=true;
+  let cambio = true;
   const customStyles = {
     content: {
       top: '50%',
@@ -68,11 +68,13 @@ export default function ({
           <div className="hstack gap-3 items-end ">
             {' '}
             {/*items-end*/}
-            <div>
-
-              
-
-            </div>
+            <input
+              type="checkbox"
+              name={`soliAccept${id_solicitud}`}
+              id={`soliAccept${id_solicitud}`}
+              onChange={handleSelect}
+              checked={listaSeleccion.includes(id_solicitud)}
+            />
             <div className="mr-3">{fecha_inicio_reg_sct}</div>
             <div className="mr-4">Código: {id_solicitud}</div>
             <div>Materia: {materia_solicitud}</div>
