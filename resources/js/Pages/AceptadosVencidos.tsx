@@ -14,7 +14,7 @@ export default function (props: { solicitudes: any }) {
   let { id, name, email } = user;
   const getSolicitudes = () => {
     axios
-      .get(`${endpoint}/api/solicitudes/aceptadas/${id}`)
+      .get(`${endpoint}/api/solicitudes/aceptadas/vencidas/${id}`)
       .then(response => {
         console.log(response.data);
         SetlistaSoli(response.data);
