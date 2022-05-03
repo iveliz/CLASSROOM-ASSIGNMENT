@@ -12,6 +12,7 @@ class Reserva extends Model
 {
   use HasFactory;
   protected $fillable = [
+    'id_reserva',
     'hora_inicio_reserva',
     'hora_fin_reserva',
     'fecha_reserva',
@@ -25,7 +26,10 @@ class Reserva extends Model
     return $this->hasOne(RegistroSolicitud::class);
   }
   public static function destroy($id_solicitud){
-    $id_reg_sct= RegistroSolicitudes::select('id_reg_sct')->where('id_solicitud',$id_solicitud);
-    Reserva::where("reservas.id_reserva",$id_reg_sct)->delete();
+    $reg_sct = RegistroSolicitudes::select('id_reg_sct')->where('id_solicitud',$id_solicitud)->get();
+    if(count($reg_sct)!=0){
+      $id_reg_sct=$reg_sct[0]->id_reg_sct;
+      Reserva::where("reservas.id_reg_sct",$id_reg_sct)->delete();
+    }
   }
 }
