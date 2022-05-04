@@ -17,7 +17,7 @@ interface Props {
 export default function Login({ canResetPassword, status }: Props) {
   const route = useRoute();
   const form = useForm({
-    email: '',
+    user_name: '',
     password: '',
     remember: '',
   });
@@ -43,13 +43,13 @@ export default function Login({ canResetPassword, status }: Props) {
 
       <form onSubmit={onSubmit}>
         <div>
-          <JetLabel htmlFor="email">Correo Electrónico</JetLabel>
+          <JetLabel htmlFor="user_name">Nombre de usuario</JetLabel>
           <JetInput
-            id="email"
-            type="email"
+            id="user_name"
+            type="text"
             className="mt-1 block w-full"
-            value={form.data.email}
-            onChange={e => form.setData('email', e.currentTarget.value)}
+            value={form.data.user_name}
+            onChange={e => form.setData('user_name', e.currentTarget.value)}
             required
             autoFocus
           />
@@ -67,9 +67,9 @@ export default function Login({ canResetPassword, status }: Props) {
             autoComplete="current-password"
           />
         </div>
-
+       
         <div className="mt-4">
-          <label className="flex items-center">
+          {/*  <label className="flex items-center">
             <JetCheckbox
               name="remember"
               checked={form.data.remember === 'on'}
@@ -78,7 +78,7 @@ export default function Login({ canResetPassword, status }: Props) {
               }
             />
             <span className="ml-2 text-sm text-gray-600">Recuerdame</span>
-          </label>
+          </label>*/}
         </div>
 
         {/* <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0 mt-4">*/}
