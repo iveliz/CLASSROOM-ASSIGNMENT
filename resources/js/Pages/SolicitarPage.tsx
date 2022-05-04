@@ -331,6 +331,7 @@ export default function () {
       }
       setSelectedGroups([]);
       setStateNombres(true);
+      materiaS="";
       setSelectedMateria({ label: '', value: '' });
       setStateGrupo(true);
       setStateMateria(true);
@@ -339,6 +340,7 @@ export default function () {
     } else {
       setSelectedGroups([]);
       setSelectedMateria({ label: '', value: '' });
+      materiaS="";
       setStateMateria(true);
       setStateNombres(true);
       setStateGrupo(true);
@@ -351,6 +353,7 @@ export default function () {
     setSelectedMateria(materia);
     let { label, value } = materia;
     materiaS = value;
+    gruposS=[];
     setSelectedGroups([]);
     setStateGrupo(true);
     setStateNombres(true);
