@@ -147,13 +147,11 @@ export default function () {
   }, []);
 
   function horaHoy() {
-    console.log('hola');
     let today: Date = esHoy;
     let dayToday = today.getDate();
     let monthToday = today.getMonth() + 1;
     horariosMostrar = [];
     if (dayToday === diaActual && monthToday === mesActual) {
-      console.log('marciana');
       for (let { hora, minun, label, value, pos } of horarios) {
         if (horaActual === hora) {
           if (minutoActual < minun) {
@@ -173,10 +171,11 @@ export default function () {
             hora: hora,
             minun: minun,
           });
+        }else{
+          horariosMostrar=horarios;
         }
       }
     } else {
-      console.log('rexd');
       horariosMostrar = horarios;
     }
 
@@ -189,7 +188,6 @@ export default function () {
     if(num<6){
       setMaxOfNumber(num);
     }
-    console.log("posicion"+pos)
     setHoraFin(horariosFinales[pos]);
   }
 
