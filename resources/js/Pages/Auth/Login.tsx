@@ -17,7 +17,7 @@ interface Props {
 export default function Login({ canResetPassword, status }: Props) {
   const route = useRoute();
   const form = useForm({
-    name: '',
+    user_name: '',
     password: '',
     remember: '',
   });
@@ -41,13 +41,13 @@ export default function Login({ canResetPassword, status }: Props) {
 
       <form onSubmit={onSubmit}>
         <div>
-          <JetLabel htmlFor="name">Nombre de usuario</JetLabel>
+          <JetLabel htmlFor="user_name">Nombre de usuario</JetLabel>
           <JetInput
-            id="name"
+            id="user_name"
             type="text"
             className="mt-1 block w-full"
-            value={form.data.name}
-            onChange={e => form.setData('name', e.currentTarget.value)}
+            value={form.data.user_name}
+            onChange={e => form.setData('user_name', e.currentTarget.value)}
             required
             autoFocus
           />
