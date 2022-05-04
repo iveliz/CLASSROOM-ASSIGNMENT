@@ -5,6 +5,7 @@ interface SolicitudAula {
     id_usuario: Number;
     fecha_requerida_solicitud: String;
     name: String;
+    prioridad: String;
 }
 
 export default function (
@@ -12,7 +13,8 @@ export default function (
     id_solicitud,
     id_usuario,
     fecha_requerida_solicitud,
-    name
+    name,
+    prioridad
   }: SolicitudAula,
 
 ) {
@@ -38,13 +40,12 @@ export default function (
       transform: 'translate(-50%, -50%)',
     },
   };
-
   return (
     <div>
       <div className="card mt-3 mr-8">
-        <div className="card-body ">
+        <div {...(prioridad ? {"className":"card-body bg-red-200"}:{"className":"card-body"})}>
           <div className="hstack gap-3 items-end ">
-            <div className="mr-3">Número de solicitud de registro: {id_solicitud+"-"+id_usuario}</div>
+            <div className="mr-3">{prioridad?'(*) ':''}Número de solicitud de registro: {id_solicitud+"-"+id_usuario}</div>
             <div className="mr-4">Fecha: {fecha_requerida_solicitud}</div>
             <div>Nombre Docente: {name}</div>
           </div>

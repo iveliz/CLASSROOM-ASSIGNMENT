@@ -13,17 +13,17 @@ const endpoint = 'http://127.0.0.1:8000'
 
 export default function () {
 
-  const [listaSolicitudAula,setListaSolicitudAula] = useState([]);
-  const getSolicitudes=  async()=>{
-    await axios.get(`${endpoint}/solicitudesAula`).then((response)=>{
+  const [listaSolicitudAula, setListaSolicitudAula] = useState([]);
+  const getSolicitudes = async () => {
+    await axios.get(`${endpoint}/solicitudesAula`).then((response) => {
       setListaSolicitudAula(response.data);
       console.log(response.data)
     })
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getSolicitudes()
-   },[])
+  }, [])
 
   return (
     <AppLayout title="Informacion">
@@ -35,9 +35,10 @@ export default function () {
         <div className="col-span-5">
           <div className="ml-5 mt-6 ">
             <h1 className="font-bold">Solicitudes de Aulas</h1>
+            <p>Si encuentra un (*) la solicitud debe ser atendida con urgencia</p>
             <div>
               {(listaSolicitudAula.map((solicitudAula) => {
-                
+
                 return <CardSolicitudAula{...solicitudAula} key={nanoid(4)} />
               }))}
             </div>
