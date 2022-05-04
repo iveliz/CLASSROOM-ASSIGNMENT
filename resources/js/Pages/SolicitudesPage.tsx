@@ -50,6 +50,8 @@ export default function () {
   const [listaSoliState, SetlistaSoli] = useState<any[]>([]);
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [listaSeleccion, setListaSeleccion] = useState<number[]>([]);
+
+
   const [renderizar,SetRenderizar]=useState(true);
   console.log(listaSeleccion);
   const { user }: any = usePage().props;
@@ -70,7 +72,7 @@ export default function () {
   }, []);
 
   useEffect(() => {
-    if (listaSoliState.length === listaSeleccion.length) {
+    if (listaSoliState.length === listaSeleccion.length&&listaSoliState.length!=0) {
       setIsCheckAll(true);
     } else {
       setIsCheckAll(false);
