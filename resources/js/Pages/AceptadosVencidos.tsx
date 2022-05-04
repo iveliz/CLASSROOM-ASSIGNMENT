@@ -3,7 +3,7 @@ import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutTeacher';
 import Sidebar from '@/Jetstream/Sidebar';
 import axios from 'axios';
-import Cardsolicitud from '@/Jetstream/CardsolicitudAceptada';
+import Cardsolicitud from '@/Jetstream/CardsolicitudAceptadasV';
 import { useEffect } from "react";
 import { nanoid } from 'nanoid'
 import { usePage } from '@inertiajs/inertia-react';
