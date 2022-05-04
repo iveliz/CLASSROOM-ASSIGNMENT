@@ -67,9 +67,9 @@ export default function Login({ canResetPassword, status }: Props) {
             autoComplete="current-password"
           />
         </div>
-       {/*  
+       
         <div className="mt-4">
-          <label className="flex items-center">
+          {/*  <label className="flex items-center">
             <JetCheckbox
               name="remember"
               checked={form.data.remember === 'on'}
@@ -78,8 +78,8 @@ export default function Login({ canResetPassword, status }: Props) {
               }
             />
             <span className="ml-2 text-sm text-gray-600">Recuerdame</span>
-          </label>
-        </div>*/}
+          </label>*/}
+        </div>
 
         {/* <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0 mt-4">*/}
           {/* {canResetPassword && (
