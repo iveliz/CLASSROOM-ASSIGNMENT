@@ -465,6 +465,7 @@ export default function () {
         if(response.data===1){
            Inertia.visit("solicitudes/pendientes")
         }else{
+          closeModal();
           openModalError();
         }
         console.log(response.data);
