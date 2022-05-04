@@ -23,6 +23,7 @@ export default function () {
   };
 
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [modalIsOpenVoid, setIsOpenVoid] = useState(false);
   function openModal() {
     setIsOpen(true);
   }
@@ -32,6 +33,19 @@ export default function () {
   function closeModal() {
     setIsOpen(false);
   }
+
+  function openModalVoid() {
+    setIsOpenVoid(true);
+  }
+
+  function afterOpenModalVoid() {
+
+  }
+
+  function closeModalVoid() {
+    setIsOpenVoid(false);
+  }
+
 
   const [listaSoliState, SetlistaSoli] = useState<any[]>([]);
   const [isCheckAll, setIsCheckAll] = useState(false);
@@ -106,11 +120,16 @@ export default function () {
       });
   };
 
-  const averquePasa=()=>{
-    console.log(listaSoliState)
-    setListaSeleccion([]);
-    closeModal();
+  const abrirModals= ()=>{
+    console.log(listaSeleccion.length)
+    if(listaSeleccion.length==0){
+      openModalVoid();
+    
+    }else{
+      openModal();
+    }
   }
+
 
   return (
     <AppLayout title="Informacion">
@@ -136,7 +155,7 @@ export default function () {
                   <p className="text-white ">Seleccionar todas</p>
                 </div>
                 <div className="flex mt-2 position-absolute end-0  mr-10">
-                  <button type="button" className="btn botonBarra text-white" onClick={openModal}>
+                  <button type="button" className="btn botonBarra text-white" onClick={abrirModals}>
                     Cancelar Seleccionadas
                   </button>
                   <Modal
@@ -171,6 +190,34 @@ export default function () {
                       </div>
                     </form>
                   </Modal>
+                <div>
+                <Modal
+                    isOpen={modalIsOpenVoid}
+                    onAfterOpen={afterOpenModalVoid}
+                    onRequestClose={closeModalVoid}
+                    style={customStyles}
+                    contentLabel="Example Modal"
+                    ariaHideApp={false}
+                  >
+                    <div className="font-bold">
+                      No has seleccionado ninguna solicitud para cancelar.
+                    </div>
+                    <form className="d-flex justify-content-center space-x-4 mt-4">
+                      <div>
+                      </div>
+                      <div>
+                        <button
+                          type="button"
+                          onClick={closeModalVoid}
+                          className="btn colorPrimary text-white"
+                        >
+                          Cerrar
+                        </button>
+                      </div>
+                    </form>
+                  </Modal>
+                </div>
+                 
                 </div>
               </div>
             </div>
