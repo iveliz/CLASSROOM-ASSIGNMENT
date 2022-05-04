@@ -68,7 +68,7 @@ export default function () {
   }, []);
 
   useEffect(() => {
-    if (listaSoliState.length === listaSeleccion.length) {
+    if (listaSoliState.length === listaSeleccion.length&&listaSoliState.length!=0) {
       setIsCheckAll(true);
     } else {
       setIsCheckAll(false);

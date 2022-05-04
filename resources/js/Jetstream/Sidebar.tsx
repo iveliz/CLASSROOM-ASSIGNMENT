@@ -30,7 +30,7 @@ export default function () {
             // icon is optional
           },
           {
-            title: 'Aceptados',
+            title: 'Aceptadas',
             itemId: '',
             elemBefore: () => <Check></Check>,
             subNav: [
