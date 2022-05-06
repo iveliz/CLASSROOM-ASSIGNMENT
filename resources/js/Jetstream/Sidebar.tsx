@@ -40,7 +40,7 @@ export default function () {
                elemBefore: () => <p className='text-white'>o</p>,
               },
               {
-                title: 'Aceptadas Vencidas',
+                title: 'Aceptadas Vigentes',
                 itemId: 'aceptadas-vencidas',
                  elemBefore: () => <p className='text-white'>o</p>,
                 // Requires v1.9.1+ (https://github.com/abhijithvijayan/react-minimal-side-navigation/issues/13)

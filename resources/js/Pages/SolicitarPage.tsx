@@ -44,6 +44,7 @@ let horarios = [
 let horariosMostrar: any[] = [];
 
 let hoy = new Date();
+hoy.setHours(21);
 console.log(hoy);
 let ultimoDia = new Date();
 ultimoDia.setMonth(11);
@@ -56,6 +57,8 @@ if (horaActual > 20) {
   hoy = addDays(hoy, 1);
   diaActual = hoy.getDate();
   mesActual = hoy.getMonth() + 1;
+  horaActual = hoy.getHours();
+  minutoActual = hoy.getMinutes();
 }
 
 const tiporeserva = [
@@ -127,7 +130,7 @@ let periodoS: Number = 1;
 let fechaS: String = fechaHoy();
 
 let materiaS: String = '';
-let horarioL: any ;
+let horarioL: any;
 
 export default function () {
   const customStyles = {
@@ -147,7 +150,7 @@ export default function () {
   }, []);
 
   function horaHoy() {
-    let today: Date = esHoy;
+    let today = esHoy;
     let dayToday = today.getDate();
     let monthToday = today.getMonth() + 1;
     horariosMostrar = [];
@@ -171,21 +174,19 @@ export default function () {
             hora: hora,
             minun: minun,
           });
-        }else{
-          horariosMostrar=horarios;
         }
       }
-    } else {
+    } 
+    if(horariosMostrar.length==0){
       horariosMostrar = horarios;
     }
-
     setSelectedHorario(horariosMostrar[0]);
-    
-    let { pos,label } = horariosMostrar[0];
-    horarioL=label;
-    horarioS=label;
-    let num=21-pos;
-    if(num<6){
+
+    let { pos, label } = horariosMostrar[0];
+    horarioL = label;
+    horarioS = label;
+    let num = 21 - pos;
+    if (num < 6) {
       setMaxOfNumber(num);
     }
     setHoraFin(horariosFinales[pos]);
@@ -265,8 +266,8 @@ export default function () {
         for (let { id, name } of response.data) {
           listaDocentesMostrar.push({ label: name, value: name, id: id });
         }
-        if(docentesNombres.length==0){
-          docentesNombres.push(name)
+        if (docentesNombres.length == 0) {
+          docentesNombres.push(name);
         }
         console.log(listaDocentesMostrar);
         setStateMateria(true);
@@ -317,7 +318,7 @@ export default function () {
 
   const handleChangeDocentes = (docentes: []) => {
     setSelectedDocentes(docentes);
-   
+
     docentesId = [];
     docentesNombres = [];
     if (docentes.length > 1) {
@@ -329,7 +330,7 @@ export default function () {
       }
       setSelectedGroups([]);
       setStateNombres(true);
-      materiaS="";
+      materiaS = '';
       setSelectedMateria({ label: '', value: '' });
       setStateGrupo(true);
       setStateMateria(true);
@@ -338,7 +339,7 @@ export default function () {
     } else {
       setSelectedGroups([]);
       setSelectedMateria({ label: '', value: '' });
-      materiaS="";
+      materiaS = '';
       setStateMateria(true);
       setStateNombres(true);
       setStateGrupo(true);
@@ -351,7 +352,7 @@ export default function () {
     setSelectedMateria(materia);
     let { label, value } = materia;
     materiaS = value;
-    gruposS=[];
+    gruposS = [];
     setSelectedGroups([]);
     setStateGrupo(true);
     setStateNombres(true);
@@ -382,7 +383,7 @@ export default function () {
     let i = 0;
     while (noEncontrado) {
       if (horariosFinales[i] === horarioL) {
-        setHoraFin(horariosFinales[i+1]);
+        setHoraFin(horariosFinales[i + 1]);
         noEncontrado = false;
       }
       i += 1;
@@ -404,7 +405,7 @@ export default function () {
     let i = 0;
     while (noEncontrado) {
       if (horariosFinales[i] === horarioL) {
-        console.log("posicion"+horariosFinales[i])
+        console.log('posicion' + horariosFinales[i]);
         setHoraFin(horariosFinales[i + periodo]);
         noEncontrado = false;
       }
@@ -456,13 +457,13 @@ export default function () {
     fecha_requerida_solicitud: fechaS,
   };
 
-  const sendSoli =  () => {
-     axios
+  const sendSoli = () => {
+    axios
       .post(`${endpoint}/api/solicitudes/crear`, solicitud)
       .then(response => {
-        if(response.data===1){
-           Inertia.visit("solicitudes/pendientes")
-        }else{
+        if (response.data === 1) {
+          Inertia.visit('solicitudes/pendientes');
+        } else {
           closeModal();
           openModalError();
         }
@@ -472,15 +473,15 @@ export default function () {
 
   const validarDatos = () => {
     console.log(gruposS.length + 'tamaño xd');
-    let cantidad=parseInt(selectedCantidad);
+    let cantidad = parseInt(selectedCantidad);
     if (materiaS === '') {
       alert('El campo de materias no puede estar vacio');
     } else if (gruposS.length === 0) {
       alert('El campo de grupos no puede estar vacio');
     } else if (selectedCantidad === '') {
       alert('El campo de cantidad de estudiantes no puede estar vacio');
-    }else if(cantidad==0){
-       alert('El campo de cantidad tiene que ser mayor a 0')
+    } else if (cantidad == 0) {
+      alert('El campo de cantidad tiene que ser mayor a 0');
     } else {
       openModal();
     }
@@ -495,11 +496,11 @@ export default function () {
     return <components.MultiValueRemove {...props} />;
   };
 
-  const validarCantidad=(event:React.ChangeEvent<HTMLInputElement>)=>{
+  const validarCantidad = (event: React.ChangeEvent<HTMLInputElement>) => {
     return event.preventDefault();
-  }
+  };
 
-  console.log(solicitud)
+  console.log(solicitud);
   return (
     <>
       <AppLayout title="Informacion">
@@ -631,13 +632,18 @@ export default function () {
                   className="label-cant cantidadEstudiantes"
                   type="number"
                   onKeyDown={event => {
-                    if (event.key=="e"||event.key=="+"||event.key=="-"||event.key=="E"||event.ctrlKey) {
+                    if (
+                      event.key == 'e' ||
+                      event.key == '+' ||
+                      event.key == '-' ||
+                      event.key == 'E' ||
+                      event.ctrlKey
+                    ) {
                       event.preventDefault();
                     }
                   }}
                   onChange={event => handleChangeCantidad(event.target.value)}
                 />
-                
               </div>
             </div>
             <button
@@ -688,7 +694,8 @@ export default function () {
               ariaHideApp={false}
             >
               <div className="font-bold">
-              Ya hizo una solicitud con los mismos datos, por favor, espere una respuesta  o haga una solicitud diferente.
+                Ya hizo una solicitud con los mismos datos, por favor, espere
+                una respuesta o haga una solicitud diferente.
               </div>
               <form className="d-flex justify-content-center space-x-4 mt-4">
                 <div>
