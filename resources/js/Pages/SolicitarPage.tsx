@@ -44,7 +44,6 @@ let horarios = [
 let horariosMostrar: any[] = [];
 
 let hoy = new Date();
-hoy.setHours(21);
 console.log(hoy);
 let ultimoDia = new Date();
 ultimoDia.setMonth(11);
