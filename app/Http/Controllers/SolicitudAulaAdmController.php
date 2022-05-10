@@ -72,26 +72,6 @@ class SolicitudAulaAdmController extends Controller
                     if ($solicitudesCercanas[$i]["fecha_requerida_solicitud"] < $solicitudes[$j]["fecha_requerida_solicitud"]) {
                         if (!in_array($solicitudesCercanas[$i], $res)) {
                             //$solicitudesCercanas[$i]["prioridad"] = "alta";
-                            $docentes = Solicitudes::join('docente_solicitudes','docente_solicitudes.id_solicitud','=','solicitudes.id_solicitud')
-                                ->where('solicitudes.id_solicitud',$solicitudesCercanas[$i]['id_solicitud'])
-                                ->select('nombre_doc_sct')
-                                ->get();
-                            $docentes = json_decode($docentes, true);
-                            $docentesArr = array();
-                            foreach ($docentes as $doc) {
-                                array_push($docentesArr, $doc['nombre_doc_sct']);
-                            }
-                            $grupos = Solicitudes::join('grupo_solicitudes','grupo_solicitudes.id_solicitud','=','solicitudes.id_solicitud')
-                                ->where('solicitudes.id_solicitud',$solicitudesCercanas[$i]['id_solicitud'])
-                                ->select('codigo_grupo_sct')
-                                ->get();
-                            $grupos = json_decode($grupos, true);
-                            $gruposArr = array();
-                            foreach ($grupos as $grup) {
-                                array_push($gruposArr, $grup['codigo_grupo_sct']);
-                            }
-                            $solicitudesCercanas[$i]['docentes'] = $docentesArr;
-                            $solicitudesCercanas[$i]['grupos'] = $gruposArr;
                             array_push($res, $solicitudesCercanas[$i]);
                             $i++;
                             $cont++;
@@ -100,26 +80,6 @@ class SolicitudAulaAdmController extends Controller
                         }
                     } else {
                         if (!in_array($solicitudes[$j], $res)) {
-                            $docentes = Solicitudes::join('docente_solicitudes','docente_solicitudes.id_solicitud','=','solicitudes.id_solicitud')
-                                ->where('solicitudes.id_solicitud',$solicitudes[$j]['id_solicitud'])
-                                ->select('nombre_doc_sct')
-                                ->get();
-                            $docentes = json_decode($docentes, true);
-                            $docentesArr = array();
-                            foreach ($docentes as $doc) {
-                                array_push($docentesArr, $doc['nombre_doc_sct']);
-                            }
-                            $grupos = Solicitudes::join('grupo_solicitudes','grupo_solicitudes.id_solicitud','=','solicitudes.id_solicitud')
-                                ->where('solicitudes.id_solicitud',$solicitudes[$j]['id_solicitud'])
-                                ->select('codigo_grupo_sct')
-                                ->get();
-                            $grupos = json_decode($grupos, true);
-                            $gruposArr = array();
-                            foreach ($grupos as $grup) {
-                                array_push($gruposArr, $grup['codigo_grupo_sct']);
-                            }
-                            $solicitudes[$j]['docentes'] = $docentesArr;
-                            $solicitudes[$j]['grupos'] = $gruposArr;
                             array_push($res, $solicitudes[$j++]);
                         } else {
                             $j++;
@@ -129,26 +89,6 @@ class SolicitudAulaAdmController extends Controller
             } else {
                 if ($i < $n) {
                     if (!in_array($solicitudesCercanas[$i], $res)) {
-                        $docentes = Solicitudes::join('docente_solicitudes','docente_solicitudes.id_solicitud','=','solicitudes.id_solicitud')
-                                ->where('solicitudes.id_solicitud',$solicitudesCercanas[$i]['id_solicitud'])
-                                ->select('nombre_doc_sct')
-                                ->get();
-                        $docentes = json_decode($docentes, true);
-                        $docentesArr = array();
-                        foreach ($docentes as $doc) {
-                            array_push($docentesArr, $doc['nombre_doc_sct']);
-                        }
-                        $grupos = Solicitudes::join('grupo_solicitudes','grupo_solicitudes.id_solicitud','=','solicitudes.id_solicitud')
-                            ->where('solicitudes.id_solicitud',$solicitudesCercanas[$i]['id_solicitud'])
-                            ->select('codigo_grupo_sct')
-                            ->get();
-                        $grupos = json_decode($grupos, true);
-                        $gruposArr = array();
-                        foreach ($grupos as $grup) {
-                            array_push($gruposArr, $grup['codigo_grupo_sct']);
-                        }
-                        $solicitudesCercanas[$i]['docentes'] = $docentesArr;
-                        $solicitudesCercanas[$i]['grupos'] = $gruposArr;
                         array_push($res, $solicitudesCercanas[$i++]);
                         $cont++;
                     } else {
@@ -160,26 +100,6 @@ class SolicitudAulaAdmController extends Controller
                         $j++;
                     } else {
                         if (!in_array($solicitudes[$j], $res)) {
-                            $docentes = Solicitudes::join('docente_solicitudes','docente_solicitudes.id_solicitud','=','solicitudes.id_solicitud')
-                                ->where('solicitudes.id_solicitud',$solicitudes[$j]['id_solicitud'])
-                                ->select('nombre_doc_sct')
-                                ->get();
-                            $docentes = json_decode($docentes, true);
-                            $docentesArr = array();
-                            foreach ($docentes as $doc) {
-                                array_push($docentesArr, $doc['nombre_doc_sct']);
-                            }
-                            $grupos = Solicitudes::join('grupo_solicitudes','grupo_solicitudes.id_solicitud','=','solicitudes.id_solicitud')
-                                ->where('solicitudes.id_solicitud',$solicitudes[$j]['id_solicitud'])
-                                ->select('codigo_grupo_sct')
-                                ->get();
-                            $grupos = json_decode($grupos, true);
-                            $gruposArr = array();
-                            foreach ($grupos as $grup) {
-                                array_push($gruposArr, $grup['codigo_grupo_sct']);
-                            }
-                            $solicitudes[$j]['docentes'] = $docentesArr;
-                            $solicitudes[$j]['grupos'] = $gruposArr;
                             array_push($res, $solicitudes[$j++]);
                         } else {
                             $j++;
@@ -191,6 +111,29 @@ class SolicitudAulaAdmController extends Controller
 
         for($i = 0; $i<$cont; $i++){
             $res[$i]["prioridad"] = "alta";
+        }
+
+        for($i = 0; $i<count($res);$i++){
+            $docentes = Solicitudes::join('docente_solicitudes','docente_solicitudes.id_solicitud','=','solicitudes.id_solicitud')
+                ->where('solicitudes.id_solicitud',$res[$i]['id_solicitud'])
+                ->select('nombre_doc_sct')
+                ->get();
+            $docentes = json_decode($docentes, true);
+            $docentesArr = array();
+            foreach ($docentes as $doc) {
+                array_push($docentesArr, $doc['nombre_doc_sct']);
+            }
+            $grupos = Solicitudes::join('grupo_solicitudes','grupo_solicitudes.id_solicitud','=','solicitudes.id_solicitud')
+                ->where('solicitudes.id_solicitud',$res[$i]['id_solicitud'])
+                ->select('codigo_grupo_sct')
+                ->get();
+            $grupos = json_decode($grupos, true);
+            $gruposArr = array();
+            foreach ($grupos as $grup) {
+                array_push($gruposArr, $grup['codigo_grupo_sct']);
+            }
+            $res[$i]['docentes'] = $docentesArr;
+            $res[$i]['grupos'] = $gruposArr;
         }
 
         return $res;
