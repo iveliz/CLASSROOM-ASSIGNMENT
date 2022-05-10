@@ -225,7 +225,7 @@ export default function AppLayout({
                       )
                     }
                   >
-                    {/* <!-- Account Management --> 
+                    {/* <!-- Account Management --> */}
                     <div className="block px-4 py-2 text-xs text-gray-400">
                       Manage Account
                     </div>
@@ -241,7 +241,7 @@ export default function AppLayout({
                     ) : null}
 
                     <div className="border-t border-gray-100"></div>
-                   */}
+                   
                     {/* <!-- Authentication --> */}
                     <form onSubmit={logout}>
                       <JetDropdownLink as="button">Cerrar Sesión</JetDropdownLink>
