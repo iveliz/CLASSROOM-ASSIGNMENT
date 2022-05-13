@@ -16,7 +16,9 @@ class EmailController extends Controller
     {
         $id=$request->id_usuario;
         $correos= CorreoElectronico:: 
-        where('id_usuario', $id)->get();
+        select("email_secundario","email_principal")
+        ->where('id_usuario', $id)
+        ->get();
         return $correos;
         
        
