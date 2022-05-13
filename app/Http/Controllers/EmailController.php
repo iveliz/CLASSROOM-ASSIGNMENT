@@ -12,9 +12,14 @@ class EmailController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $id=$request->id_usuario;
+        $correos= CorreoElectronico:: 
+        where('id_usuario', $id)->get();
+        return $correos;
         
+       
     }
     /**
      * Show the form for creating a new resource.
