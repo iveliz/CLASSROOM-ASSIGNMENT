@@ -41,27 +41,27 @@ export default function UpdatePasswordForm() {
   return (
     <JetFormSection
       onSubmit={updatePassword}
-      title={'Update Password'}
+      title={'Cambiar contraseña'}
       description={
-        'Ensure your account is using a long, random password to stay secure.'
+        'Asegúrese de que su cuenta esté usando una contraseña larga y aleatoria para mantenerse seguro.'
       }
       renderActions={() => (
         <>
           <JetActionMessage on={form.recentlySuccessful} className="mr-3">
-            Saved.
+            Guardado.
           </JetActionMessage>
 
           <JetButton
             className={classNames({ 'opacity-25': form.processing })}
             disabled={form.processing}
           >
-            Save
+            Confirmar
           </JetButton>
         </>
       )}
     >
       <div className="col-span-6 sm:col-span-4">
-        <JetLabel htmlFor="current_password">Current Password</JetLabel>
+        <JetLabel htmlFor="current_password">Contraseña Actual</JetLabel>
         <JetInput
           id="current_password"
           type="password"
@@ -80,7 +80,7 @@ export default function UpdatePasswordForm() {
       </div>
 
       <div className="col-span-6 sm:col-span-4">
-        <JetLabel htmlFor="password">New Password</JetLabel>
+        <JetLabel htmlFor="password">Contraseña Nueva</JetLabel>
         <JetInput
           id="password"
           type="password"
@@ -94,14 +94,17 @@ export default function UpdatePasswordForm() {
       </div>
 
       <div className="col-span-6 sm:col-span-4">
-        <JetLabel htmlFor="password_confirmation">Confirm Password</JetLabel>
+        <JetLabel htmlFor="password_confirmation">Confirmar Contraseña Nueva</JetLabel>
         <JetInput
           id="password_confirmation"
           type="password"
           className="mt-1 block w-full"
           value={form.data.password_confirmation}
-          onChange={e =>
+          onChange={e =>{
             form.setData('password_confirmation', e.currentTarget.value)
+            console.log(form.data.password_confirmation===form.data.password?'son iguales':'no son iguales')
+            
+          }
           }
           autoComplete="new-password"
         />
@@ -109,6 +112,7 @@ export default function UpdatePasswordForm() {
           message={form.errors.password_confirmation}
           className="mt-2"
         />
+        
       </div>
     </JetFormSection>
   );

@@ -79,6 +79,50 @@ Route::middleware([
   'auth:sanctum',
   config('jetstream.auth_session'),
   'verified',
+  'checkRoleAdmin',
+])->group(function () {
+  Route::get('/administrar_cuenta_admin/cambiar_contraseña', function () {
+    return Inertia::render('Profile/ActualizarContraseniaAdmin');
+  })->name('cambiar_contrasenia_admin');
+});
+
+Route::middleware([
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
+  'checkRoleAdmin',
+])->group(function () {
+  Route::get('/administrar_cuenta_admin/configurar_correos', function () {
+    return Inertia::render('Profile/ActualizarCorreosAdmin');
+  })->name('configurar_correos_admin');
+});
+
+Route::middleware([
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
+  'checkRoleDocente',
+])->group(function () {
+  Route::get('/cambiar_contraseña', function () {
+    return Inertia::render('Profile/ActualizarContraseniaDocente');
+  })->name('cambiar_contrasenia_docente');
+});
+
+Route::middleware([
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
+  'checkRoleDocente',
+])->group(function () {
+  Route::get('/configurar_correos', function () {
+    return Inertia::render('Profile/ActualizarCorreosDocente');
+  })->name('configurar_correos_docente');
+});
+
+Route::middleware([
+  'auth:sanctum',
+  config('jetstream.auth_session'),
+  'verified',
   'checkRoleDocente',
 ])->group(function () {
   Route::get('/solicitudes/pendientes', function () {
