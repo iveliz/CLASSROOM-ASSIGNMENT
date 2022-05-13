@@ -11,6 +11,8 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Grupo;
+use App\Models\CorreoElectronico;
+use PharIo\Manifest\Email;
 
 class User extends Authenticatable
 {
@@ -58,5 +60,11 @@ class User extends Authenticatable
   public function Grupos()
   {
     return $this->hasMany(Grupo::class);
+  }
+
+
+  public function Emails()
+  {
+    return $this->hasMany(CorreoElectronico::class);
   }
 }

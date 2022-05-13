@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\usuarioController;
 use Inertia\Inertia;
 use App\Http\Controllers\AulaController;
-
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\materiaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\SolicitudAulaAdmController;
@@ -194,3 +194,10 @@ Route::controller(AulaController::class)->group(function () {
 Route::controller(SolicitudCuentaController::class)->group(function () {
   Route::get('/SolicitudCuenta', 'verSolicitud');
 });
+
+Route::controller(EmailController::class)->group(function () {
+  Route::post('/correoElectronico', 'store');
+  Route::post('/correoElectronico/actualizar', 'update');
+});
+
+
