@@ -294,7 +294,28 @@ body {
   background-color: #2B629C !important;
   border-color: #2B629C !important;
 }*/
+.aceptadaButton{
+  background-color: #1C9027;
+}
 
+button:disabled,
+button[disabled]{
+  border: 1px solid #999999;
+  background-color: #B1B1B1;
+
+}
+textarea:disabled,
+textarea[disabled]{
+  background-color:#cccccc ;
+  border: 1px solid #999999;
+}
+
+.derecha{
+  float: right;
+}
+.noEditar{
+  resize: none;
+}
 .aceptada{
   color: #1C9027;
 }

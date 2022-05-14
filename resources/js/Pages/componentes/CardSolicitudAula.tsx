@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import Modal from 'react-modal';
+import Xsquare from "../../Icons/X-square"
 const endpoint = 'http://127.0.0.1:8000';
 interface SolicitudAula {
   id_solicitud: Number;
@@ -34,7 +35,10 @@ export default function ({
   cantidad_estudiantes_solicitud,
 }: SolicitudAula) {
   const [modalIsOpen, setIsOpen] = useState(false);
-
+  const [radioAceptar,SetRadioAceptar]=useState(true);
+  const [radioRechazar,SetRadioRechazar]=useState(false);
+  const [aulaSeleccionada,SetAulaSeleccionada]=useState("Ninguna");
+  const [motivos,SetMotivos]=useState("");
   const customStyles = {
     content: {
       top: '50%',
@@ -46,6 +50,21 @@ export default function ({
       padding: 0,
     },
   };
+
+  const handleChangeAceptar = ()=>{
+    SetRadioAceptar(true);
+    SetRadioRechazar(false);
+    SetMotivos("");
+  }
+  const handleChangeRechazar = ()=>{
+    SetRadioAceptar(false);
+    SetRadioRechazar(true);
+    SetAulaSeleccionada("Ninguna");
+  }
+  
+  const handleChangeMotivos=(event: { target: { value: any; }; })=>{
+    SetMotivos(event.target.value)
+  }
 
   function openModal() {
     setIsOpen(true);
@@ -72,14 +91,15 @@ export default function ({
               {id_solicitud + '-' + id_usuario}
             </div>
             <div className="mr-4">Fecha: {fecha_requerida_solicitud}</div>
-            <div>Nombre Docente: {name}</div>
+            <div className='mr-2'>Nombre Docente: {name}</div>
           </div>
 
-          <div className="position-absolute top-50 end-0 translate-middle-y mr-4">
+          <div   className="position-absolute top-50 end-0 translate-middle-y mr-4 ">
             <button
               type="button"
               onClick={openModal}
               className="btn colorPrimary text-white"
+              
             >
               Responder
             </button>
@@ -93,7 +113,9 @@ export default function ({
             >
               <div className="fondoModal ">
                 <div className="text-center colorPrimary text-white px-48 py-2">
-                  <h3 className="col-span-3"> Información de solicitud </h3>
+                  <h3 className="col-span-3"> Responder Solicitud </h3>
+
+
                 </div>
 
                 <div>
@@ -115,45 +137,26 @@ export default function ({
                       <p className="font-bold ">
                         Para fecha: {fecha_requerida_solicitud}
                       </p>
-                      {/*
-                                          <div className="absolute right-0 bottom-0">
-                        <button
-                          className="btn colorPrimary text-white  mr-4 mb-2"
-                          onClick={closeModal}
-                        >
-                          Cerrar
-                        </button>
-                      </div>
-                    
-                    */}
                     </div>
                   </div>
-                  <div className=" fondoModal2">
-                    <FormControl className='maxH'>
-                      <RadioGroup
-                        row
-                        defaultValue="Aceptar"
-                        aria-labelledby="demo-radio-buttons-group-label"
-                        name="radio-buttons-group"
-                      >
-                        <div className='grid grid-cols-2 divide-x'>
-                          <div>
-                            <FormControlLabel
-                              value="Aceptar"
-                              control={<Radio />}
-                              label="Aceptar"
-                            />
-                          </div>
-                          <div>
-                            <FormControlLabel
-                              value="Rechazar"
-                              control={<Radio />}
-                              label="Rechazar"
-                            />
-                          </div>
-                        </div>
-                      </RadioGroup>
-                    </FormControl>
+                  <div className=" fondoModal2 grid grid-cols-2 divide-x">
+                   <div className='mt-2'>
+                     <input  className='ml-8' checked={radioAceptar} onChange={handleChangeAceptar}  id ="AceptarRadio" type="radio"></input>
+                     <label className='ml-2' htmlFor="RechazarRadio ">Aceptar</label>
+                     <p className='aceptada mt-2 ml-8'>Aula(s) Seleccionada(s):</p>
+                     <p className='ml-8 mt-2'>{aulaSeleccionada}</p>
+                     <button type='button' className='btn text-white aceptadaButton ml-8' disabled={!radioAceptar}>Seleccionar aula</button>
+                   </div>
+                   <div className='mt-2'>
+                     <input  className='ml-8'  checked={radioRechazar} onChange={handleChangeRechazar}  id="RechazarRadio" type="radio"></input>
+                     <label className='ml-2' htmlFor="RechazarRadio ">Rechazar</label>
+                     <p className='font-bold mt-2 ml-8'>Motivos:</p>
+                     <textarea className='ml-8 noEditar min-w-[80%]' disabled={!radioRechazar} onChange={handleChangeMotivos} value={motivos}></textarea>
+                   </div>
+                  </div>
+                  <div className='fondoModal2 text-center mb-2'>
+                    <button type='button' className='btn colorPrimary text-white mt-4'>Confirmar</button>
+                   
                   </div>
                 </div>
               </div>
