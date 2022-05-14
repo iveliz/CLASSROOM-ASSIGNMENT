@@ -9,8 +9,12 @@ import JetFormSection from '@/Jetstream/FormSection';
 import JetInput from '@/Jetstream/Input';
 import JetInputError from '@/Jetstream/InputError';
 import JetLabel from '@/Jetstream/Label';
+import axios from 'axios';
+import { useEffect } from "react";
 import JetSecondaryButton from '@/Jetstream/SecondaryButton';
 import { User } from '@/types';
+
+const endpoint = 'http://127.0.0.1:8000'
 
 interface Props {
   user: User;
@@ -23,63 +27,26 @@ export default function UpdateEmails({ user }: Props) {
     email: user.email,
     photo: null as File | null,
   });
-  const route = useRoute();
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const photoRef = useRef<HTMLInputElement>(null);
-  const page = usePage<any>();
-
-  function updateProfileInformation() {
-    form.post(route('user-profile-information.update'), {
-      errorBag: 'updateProfileInformation',
-      preserveScroll: true,
-      onSuccess: () => clearPhotoFileInput(),
-    });
+  
+  const [correos,setCorreos] = useState([]);
+  const getSolicitudes=  async()=>{
+    await axios.post(`${endpoint}/correoElectronico/obtener`,{id_usuario: 1}).then((response)=>{
+      setCorreos(response.data);
+      console.log(response.data)
+    })
   }
 
-  function selectNewPhoto() {
-    photoRef.current?.click();
-  }
+  useEffect(()=>{
+    getSolicitudes()
+   },[])
 
-  function updatePhotoPreview() {
-    const photo = photoRef.current?.files?.[0];
 
-    if (!photo) {
-      return;
-    }
-
-    form.setData('photo', photo);
-
-    const reader = new FileReader();
-
-    reader.onload = e => {
-      setPhotoPreview(e.target?.result as string);
-    };
-
-    reader.readAsDataURL(photo);
-  }
-
-  function deletePhoto() {
-    Inertia.delete(route('current-user-photo.destroy'), {
-      preserveScroll: true,
-      onSuccess: () => {
-        setPhotoPreview(null);
-        clearPhotoFileInput();
-      },
-    });
-  }
-
-  function clearPhotoFileInput() {
-    if (photoRef.current?.value) {
-      photoRef.current.value = '';
-      form.setData('photo', null);
-    }
-  }
 
   return (
     <JetFormSection
-      onSubmit={updateProfileInformation}
+      onSubmit={()=>{}}
       title={`Correos de ${form.data.name}`}
-      description={`El correo primario se utiliza recuerar la contraseña, en caso de perder acceso a su correo primario se recomienda utilizar un correo secundario.`}
+      description={`El correo primario se utiliza para recuperar la contraseña, en caso de perder acceso a su correo primario se recomienda utilizar un correo secundario.`}
       renderActions={() => (
         <>
           <JetActionMessage on={form.recentlySuccessful} className="mr-3">
