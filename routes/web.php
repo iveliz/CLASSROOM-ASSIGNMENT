@@ -198,7 +198,7 @@ Route::controller(SolicitudCuentaController::class)->group(function () {
 Route::controller(EmailController::class)->group(function () {
   Route::post('/correoElectronico', 'store');
   Route::post('/correoElectronico/actualizar', 'update');
-  Route::get('/correoElectronico/obtener', 'index');
+  Route::post('/correoElectronico/mostrar', 'show');
 });
 
 
