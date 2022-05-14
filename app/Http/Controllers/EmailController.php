@@ -12,14 +12,9 @@ class EmailController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $id=$request->id_usuario;
-        $correos= CorreoElectronico:: 
-        select("email_secundario","email_principal")
-        ->where('id_usuario', $id)
-        ->get();
-        return $correos;
+       
         
        
     }
@@ -54,9 +49,14 @@ class EmailController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        //
+        $id=$request->id_usuario;
+        $correos= CorreoElectronico:: 
+        select("email_secundario","email_principal")
+        ->where('id_usuario', $id)
+        ->get();
+        return $correos;
     }
     /**
      * Show the form for editing the specified resource.
