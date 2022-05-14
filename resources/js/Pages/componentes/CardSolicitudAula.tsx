@@ -1,3 +1,12 @@
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  Radio,
+  RadioGroup,
+} from '@mui/material';
 import React, { useState } from 'react';
 import Modal from 'react-modal';
 const endpoint = 'http://127.0.0.1:8000';
@@ -106,18 +115,7 @@ export default function ({
                       <p className="font-bold ">
                         Para fecha: {fecha_requerida_solicitud}
                       </p>
-
-                      <div className="grid grid-cols-2 divide-x">
-                        <div className='grid grid-rows-2 grid-flow-col gap-4'>
-                        <input type="radio"></input>
-                        <p>Aceptar</p>
-                        </div>
-                        <input type="radio"></input>
-                        <p>Rechazar</p>
-                      </div>
-                      
-
-                    {/*
+                      {/*
                                           <div className="absolute right-0 bottom-0">
                         <button
                           className="btn colorPrimary text-white  mr-4 mb-2"
@@ -127,9 +125,35 @@ export default function ({
                         </button>
                       </div>
                     
-                    */}  
-
+                    */}
                     </div>
+                  </div>
+                  <div className=" fondoModal2">
+                    <FormControl className='maxH'>
+                      <RadioGroup
+                        row
+                        defaultValue="Aceptar"
+                        aria-labelledby="demo-radio-buttons-group-label"
+                        name="radio-buttons-group"
+                      >
+                        <div className='grid grid-cols-2 divide-x'>
+                          <div>
+                            <FormControlLabel
+                              value="Aceptar"
+                              control={<Radio />}
+                              label="Aceptar"
+                            />
+                          </div>
+                          <div>
+                            <FormControlLabel
+                              value="Rechazar"
+                              control={<Radio />}
+                              label="Rechazar"
+                            />
+                          </div>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
                   </div>
                 </div>
               </div>
