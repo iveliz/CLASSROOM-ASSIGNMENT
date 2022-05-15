@@ -1,6 +1,6 @@
 import { useForm } from '@inertiajs/inertia-react';
 import classNames from 'classnames';
-import React, { useRef } from 'react';
+import React, { useRef, useState} from 'react';
 import useRoute from '@/Hooks/useRoute';
 import JetActionMessage from '@/Jetstream/ActionMessage';
 import JetButton from '@/Jetstream/Button';
@@ -8,6 +8,8 @@ import JetFormSection from '@/Jetstream/FormSection';
 import JetInput from '@/Jetstream/Input';
 import JetInputError from '@/Jetstream/InputError';
 import JetLabel from '@/Jetstream/Label';
+import { fromPairs } from 'lodash';
+import Modal from 'react-modal';
 
 export default function UpdatePasswordForm() {
   const route = useRoute();
@@ -18,6 +20,21 @@ export default function UpdatePasswordForm() {
   });
   const passwordRef = useRef<HTMLInputElement>(null);
   const currentPasswordRef = useRef<HTMLInputElement>(null);
+  const [errorUno,setErrorUno] = useState('');
+  const [errorDos,setErrorDos] = useState('');
+  const [errorTres,setErrorTres] = useState('');
+  const [modalIsOpen, setIsOpen] = useState(false);
+  
+
+  function afterOpenModal() {}
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
 
   function updatePassword() {
     form.put(route('user-password.update'), {
@@ -38,9 +55,41 @@ export default function UpdatePasswordForm() {
     });
   }
 
+  const reportarError = (contrasenia:any) => {
+    let res = '';
+    if(contrasenia!=''){
+      if(contrasenia.length<8){
+        res += 'La contraseña debe tener mas de 8 caracteres. '
+      }
+    }
+    return res;
+  };
+
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
+
   return (
     <JetFormSection
-      onSubmit={updatePassword}
+      onSubmit={()=>{
+        console.log(errorUno.length,'-',errorDos.length,'-',errorTres.length)
+        console.log(errorUno,'-',errorDos,'-',errorTres)
+        if(form.data.current_password==''||form.data.password==''||form.data.password_confirmation==''){
+          alert('Existen campos vacios, no se puede confirmar');
+        }else if(errorUno.length>0||errorDos.length>0||errorTres.length>0){
+          alert('No se puede confirmar hay cambios no validos');
+        }else{
+          openModal();
+        }
+        //updatePassword
+      }}
       title={'Cambiar contraseña'}
       description={
         'Asegúrese de que su cuenta esté usando una contraseña larga y aleatoria para mantenerse seguro.'
@@ -68,52 +117,107 @@ export default function UpdatePasswordForm() {
           className="mt-1 block w-full"
           ref={currentPasswordRef}
           value={form.data.current_password}
-          onChange={e =>
+          onChange={e =>{
             form.setData('current_password', e.currentTarget.value)
+            if(e.currentTarget.value.length==0 && form.data.password.length>0){
+              setErrorUno('Este campo es obligatorio') 
+            }else{
+              setErrorUno('')
+            }
+          }
           }
           autoComplete="current-password"
         />
-        <JetInputError
-          message={form.errors.current_password}
-          className="mt-2"
-        />
+        <p className="absolute text-sm text-red-600 mt-2 mb-0">{`${form.errors.current_password==undefined?'':form.errors.current_password} ${form.data.password.length==0?'':(form.data.current_password.length!=0?'':errorUno)}`}</p>
       </div>
 
-      <div className="col-span-6 sm:col-span-4">
+      <div className="col-span-6 sm:col-span-4 mt-2">
         <JetLabel htmlFor="password">Contraseña Nueva</JetLabel>
         <JetInput
           id="password"
           type="password"
           className="mt-1 block w-full"
           value={form.data.password}
-          onChange={e => form.setData('password', e.currentTarget.value)}
+          onChange={e => {
+            form.setData('password', e.currentTarget.value)
+            setErrorDos(reportarError(e.currentTarget.value))
+            if(e.currentTarget.value.length>0 && form.data.current_password.length==0){
+              setErrorUno('Este campo es obligatorio')
+            }else{
+              setErrorUno('')
+            }
+            form.data.password_confirmation.length>0?e.currentTarget.value===form.data.password_confirmation?setErrorTres(''):setErrorTres('La confirmación no es igual a la nueva contraseña'):setErrorTres('')
+            if(e.currentTarget.value.length==0 && form.data.password_confirmation.length>0){
+              setErrorDos('Este campo es obligatorio') 
+            }else{
+              setErrorDos('')
+            }
+          }}
           autoComplete="new-password"
           ref={passwordRef}
         />
-        <JetInputError message={form.errors.password} className="mt-2" />
+        <p className="absolute text-sm text-red-600 mt-2 mb-0">{errorDos}</p>
       </div>
 
-      <div className="col-span-6 sm:col-span-4">
+      <div className="col-span-6 sm:col-span-4 mt-2">
         <JetLabel htmlFor="password_confirmation">Confirmar Contraseña Nueva</JetLabel>
         <JetInput
           id="password_confirmation"
           type="password"
+          
           className="mt-1 block w-full"
           value={form.data.password_confirmation}
           onChange={e =>{
             form.setData('password_confirmation', e.currentTarget.value)
-            console.log(form.data.password_confirmation===form.data.password?'son iguales':'no son iguales')
-            
+            form.data.password.length>0?e.currentTarget.value===form.data.password?setErrorTres(''):setErrorTres('La confirmación no es igual a la nueva contraseña'):setErrorTres('')
+            if(e.currentTarget.value.length>0 && form.data.password.length==0){
+              setErrorDos('Este campo es obligatorio') 
+            }else{
+              setErrorDos('')
+            }
           }
           }
           autoComplete="new-password"
         />
-        <JetInputError
-          message={form.errors.password_confirmation}
-          className="mt-2"
-        />
+        <p className="absolute text-sm text-red-600 mt-2 mb-0">{errorTres}</p>
         
       </div>
+      <Modal
+              isOpen={modalIsOpen}
+              onAfterOpen={afterOpenModal}
+              onRequestClose={closeModal}
+              style={customStyles}
+              contentLabel="Example Modal"
+              ariaHideApp={false}
+            >
+              <div className="font-bold">
+                {'Esta seguro de actualizar su contraseña'}
+              </div>
+              <form className="d-flex justify-content-center space-x-4 mt-4">
+                <div>
+                  <button
+                    onClick={closeModal}
+                    type="button"
+                    className="btn btn-danger text-white"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+                <div>
+                  <button
+                    type="button"
+                    onClick={()=>{
+                      updatePassword();
+                      closeModal();
+                    }}
+                    className="btn colorPrimary text-white"
+                  >
+                    Aceptar
+                  </button>
+                </div>
+              </form>
+            </Modal>
     </JetFormSection>
   );
 }
+
