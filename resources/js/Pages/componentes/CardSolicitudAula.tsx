@@ -1,4 +1,5 @@
 import {
+  Button,
   Checkbox,
   FormControl,
   FormControlLabel,
@@ -8,8 +9,9 @@ import {
   RadioGroup,
 } from '@mui/material';
 import React, { useState } from 'react';
-import Modal from 'react-modal';
-import Xsquare from "../../Icons/X-square"
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Xsquare from '../../Icons/X-square';
 const endpoint = 'http://127.0.0.1:8000';
 interface SolicitudAula {
   id_solicitud: Number;
@@ -35,48 +37,123 @@ export default function ({
   cantidad_estudiantes_solicitud,
 }: SolicitudAula) {
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [radioAceptar,SetRadioAceptar]=useState(true);
-  const [radioRechazar,SetRadioRechazar]=useState(false);
-  const [aulaSeleccionada,SetAulaSeleccionada]=useState("Ninguna");
-  const [motivos,SetMotivos]=useState("");
-  const customStyles = {
-    content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-25%',
-      transform: 'translate(-50%, -50%)',
-      padding: 0,
-    },
+  const [radioAceptar, SetRadioAceptar] = useState(true);
+  const [radioRechazar, SetRadioRechazar] = useState(false);
+  const [aulaSeleccionada, SetAulaSeleccionada] = useState('Ninguna');
+  const [motivos, SetMotivos] = useState('');
+  const aulaslista = [
+    { aulas: '691a,691b' },
+    { aulas: '665b' },
+    { aulas: '692a,692b,692d' },
+  ];
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    SetAulaSeleccionada(value.toString())
+  };
+  const handleClose2=()=>{
+    setOpen(false);
+  }
+  const [value, setValue] = useState('');
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
+
   };
 
-  const handleChangeAceptar = ()=>{
-    SetRadioAceptar(true);
-    SetRadioRechazar(false);
-    SetMotivos("");
-  }
-  const handleChangeRechazar = ()=>{
-    SetRadioAceptar(false);
-    SetRadioRechazar(true);
-    SetAulaSeleccionada("Ninguna");
-  }
-  
-  const handleChangeMotivos=(event: { target: { value: any; }; })=>{
-    SetMotivos(event.target.value)
+  const style = {
+    position: 'absolute' as 'absolute',
+    inset: '50% auto auto 50%',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    borderRadius: ' 8px',
+  };
+
+  function ChildModal() {
+    return (
+      <React.Fragment>
+        <button
+          type="button"
+          className="btn text-white aceptadaButton ml-8"
+          disabled={!radioAceptar}
+          onClick={handleOpen}
+        >Seleccionar Aula</button>
+
+        <Modal
+          hideBackdrop
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="child-modal-title"
+          aria-describedby="child-modal-description"
+        >
+          <Box sx={{ ...style, width: 407 }}>
+            <h2 id="child-modal-title">Asignar aulas</h2>
+
+            <p id="child-modal-description">
+              <FormControl>
+                <FormLabel id="aulas-recomendadas-label">
+                  Seleccione una aula:
+                </FormLabel>
+                <RadioGroup
+                  name="aulas-recomendadas"
+                  aria-labelledby="aulas-recomendadas-label"
+                  value={value}
+                  onChange={handleChange}
+                >
+                  {aulaslista.map((aula, index) => {
+                    return (
+                      <FormControlLabel
+                        key={index}
+                        control={<Radio color="success" />}
+                        label={aula.aulas}
+                        value={aula.aulas}
+                      />
+                    );
+                  })}
+                </RadioGroup>
+              </FormControl>
+            </p>
+
+            <Button onClick={handleClose}>Seleccionar</Button>
+            <Button onClick={handleClose2}>Atrás</Button>
+          </Box>
+        </Modal>
+      </React.Fragment>
+    );
   }
 
-  function openModal() {
+  const handleChangeAceptar = () => {
+    SetRadioAceptar(true);
+    SetRadioRechazar(false);
+    SetMotivos('');
+  };
+  const handleChangeRechazar = () => {
+    SetRadioAceptar(false);
+    SetRadioRechazar(true);
+    SetAulaSeleccionada('Ninguna');
+  };
+
+  const handleChangeMotivos = (event: { target: { value: any } }) => {
+    SetMotivos(event.target.value);
+  };
+
+  const openModal = () => {
     setIsOpen(true);
-  }
+  };
 
   function afterOpenModal() {
     // references are now sync'd and can be accessed.
   }
 
-  function closeModal() {
+  const closeModal = () => {
     setIsOpen(false);
-  }
+  };
   return (
     <div>
       <div className="card mt-3 mr-8">
@@ -91,75 +168,97 @@ export default function ({
               {id_solicitud + '-' + id_usuario}
             </div>
             <div className="mr-4">Fecha: {fecha_requerida_solicitud}</div>
-            <div className='mr-2'>Nombre Docente: {name}</div>
+            <div className="mr-2">Nombre Docente: {name}</div>
           </div>
 
-          <div   className="position-absolute top-50 end-0 translate-middle-y mr-4 ">
+          <div className="position-absolute top-50 end-0 translate-middle-y mr-4 ">
             <button
               type="button"
               onClick={openModal}
               className="btn colorPrimary text-white"
-              
             >
               Responder
             </button>
-            <Modal
-              isOpen={modalIsOpen}
-              onAfterOpen={afterOpenModal}
-              onRequestClose={closeModal}
-              style={customStyles}
-              ariaHideApp={false}
-              contentLabel="Example Modal"
-            >
-              <div className="fondoModal ">
-                <div className="text-center colorPrimary text-white px-48 py-2">
-                  <h3 className="col-span-3"> Responder Solicitud </h3>
+            <Modal open={modalIsOpen} onClose={closeModal}>
+              <Box sx={{ ...style, width: 800 }}>
+                <div className="fondoModal rounded-t-lg">
+                  <div className="text-center colorPrimary text-white px-48 py-2 rounded-t-lg">
+                    <h3 id="parent-modal-title" className="col-span-3">
+                      {' '}
+                      Responder Solicitud{' '}
+                    </h3>
+                  </div>
 
-
-                </div>
-
-                <div>
-                  <div className=" space-x-4  ml-12 text-left fondoModal">
-                    <div className="mt-4 flex flex-col">
-                      <p className="font-bold mr-4">
-                        Nombre(s) de Docente(s): {docentes.toString()}
-                      </p>
-                      <p className="font-bold ">
-                        Materia: {materia_solicitud}{' '}
-                      </p>
-                      <p className="font-bold ">
-                        Grupo(s): {grupos.toString()}{' '}
-                      </p>
-                      <p className="font-bold ">
-                        Cantidad de estudiantes:{' '}
-                        {cantidad_estudiantes_solicitud}{' '}
-                      </p>
-                      <p className="font-bold ">
-                        Para fecha: {fecha_requerida_solicitud}
-                      </p>
+                  <div>
+                    <div className=" space-x-4  ml-12 text-left fondoModal">
+                      <div className="mt-4 flex flex-col">
+                        <p className="font-bold mr-4">
+                          Nombre(s) de Docente(s): {docentes.toString()}
+                        </p>
+                        <p className="font-bold ">
+                          Materia: {materia_solicitud}{' '}
+                        </p>
+                        <p className="font-bold ">
+                          Grupo(s): {grupos.toString()}{' '}
+                        </p>
+                        <p className="font-bold ">
+                          Cantidad de estudiantes:{' '}
+                          {cantidad_estudiantes_solicitud}{' '}
+                        </p>
+                        <p className="font-bold ">
+                          Para fecha: {fecha_requerida_solicitud}
+                        </p>
+                      </div>
+                    </div>
+                    <div className=" fondoModal2 grid grid-cols-2 divide-x">
+                      <div className="mt-2">
+                        <input
+                          className="ml-8"
+                          checked={radioAceptar}
+                          onChange={handleChangeAceptar}
+                          id="AceptarRadio"
+                          type="radio"
+                        ></input>
+                        <label className="ml-2" htmlFor="RechazarRadio ">
+                          Aceptar
+                        </label>
+                        <p className="aceptada mt-2 ml-8">
+                          Aula(s) Seleccionada(s):
+                        </p>
+                        <p className="ml-8 mt-2">{aulaSeleccionada}</p>
+                        <ChildModal></ChildModal>
+                      </div>
+                      <div className="mt-2">
+                        <input
+                          className="ml-8"
+                          checked={radioRechazar}
+                          onChange={handleChangeRechazar}
+                          id="RechazarRadio"
+                          type="radio"
+                        ></input>
+                        <label className="ml-2" htmlFor="RechazarRadio ">
+                          Rechazar
+                        </label>
+                        <p className="font-bold mt-2 ml-8">Motivos:</p>
+                        <textarea
+                          className="ml-8 noEditar min-w-[80%]"
+                          disabled={!radioRechazar}
+                          onChange={handleChangeMotivos}
+                          value={motivos}
+                        ></textarea>
+                      </div>
+                    </div>
+                    <div className="fondoModal2 text-center mb-2">
+                      <button
+                        type="button"
+                        className="btn colorPrimary text-white mt-4"
+                      >
+                        Confirmar
+                      </button>
                     </div>
                   </div>
-                  <div className=" fondoModal2 grid grid-cols-2 divide-x">
-                   <div className='mt-2'>
-                     <input  className='ml-8' checked={radioAceptar} onChange={handleChangeAceptar}  id ="AceptarRadio" type="radio"></input>
-                     <label className='ml-2' htmlFor="RechazarRadio ">Aceptar</label>
-                     <p className='aceptada mt-2 ml-8'>Aula(s) Seleccionada(s):</p>
-                     <p className='ml-8 mt-2'>{aulaSeleccionada}</p>
-                     <button type='button' className='btn text-white aceptadaButton ml-8' disabled={!radioAceptar}>Seleccionar aula</button>
-                   </div>
-                   <div className='mt-2'>
-                     <input  className='ml-8'  checked={radioRechazar} onChange={handleChangeRechazar}  id="RechazarRadio" type="radio"></input>
-                     <label className='ml-2' htmlFor="RechazarRadio ">Rechazar</label>
-                     <p className='font-bold mt-2 ml-8'>Motivos:</p>
-                     <textarea className='ml-8 noEditar min-w-[80%]' disabled={!radioRechazar} onChange={handleChangeMotivos} value={motivos}></textarea>
-                   </div>
-                  </div>
-                  <div className='fondoModal2 text-center mb-2'>
-                    <button type='button' className='btn colorPrimary text-white mt-4'>Confirmar</button>
-                   
-                  </div>
                 </div>
-              </div>
+              </Box>
             </Modal>
           </div>
         </div>
