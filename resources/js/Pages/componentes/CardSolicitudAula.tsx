@@ -1,3 +1,8 @@
+import React, { useState } from 'react';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Xsquare from '../../Icons/X-square';
+const endpoint = 'http://127.0.0.1:8000';
 import {
   Button,
   Checkbox,
@@ -8,11 +13,7 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
-import React, { useState } from 'react';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import Xsquare from '../../Icons/X-square';
-const endpoint = 'http://127.0.0.1:8000';
+
 interface SolicitudAula {
   id_solicitud: Number;
   id_usuario: Number;
@@ -44,6 +45,11 @@ export default function ({
   const aulaslista = [
     { aulas: '691a,691b' },
     { aulas: '665b' },
+    { aulas: '692a,692b,692d' },
+    { aulas: '692a,692b,692d' },
+    { aulas: '692a,692b,692d' },
+    { aulas: '692a,692b,692d' },
+    { aulas: '692a,692b,692d' },
     { aulas: '692a,692b,692d' },
   ];
   const [open, setOpen] = React.useState(false);
@@ -92,15 +98,19 @@ export default function ({
           aria-labelledby="child-modal-title"
           aria-describedby="child-modal-description"
         >
-          <Box sx={{ ...style, width: 407 }}>
-            <h2 id="child-modal-title">Asignar aulas</h2>
+          <Box sx={{ ...style, width: 500 }} className="" >
+            <div className="text-center colorPrimary text-white px-18 py-2 rounded-t-lg">
+             <h3 id="child-modal-title" className="col-span-3">Asignar aulas</h3>
+            </div>
+         
 
             <p id="child-modal-description">
               <FormControl>
-                <FormLabel id="aulas-recomendadas-label">
+                {/* <FormLabel id="aulas-recomendadas-label">
                   Seleccione una aula:
-                </FormLabel>
+                </FormLabel> */}
                 <RadioGroup
+                  className="mx-8 my-8 align-middle"
                   name="aulas-recomendadas"
                   aria-labelledby="aulas-recomendadas-label"
                   value={value}
@@ -119,9 +129,20 @@ export default function ({
                 </RadioGroup>
               </FormControl>
             </p>
-
-            <Button onClick={handleClose}>Seleccionar</Button>
-            <Button onClick={handleClose2}>Atrás</Button>
+            <div className="position-absolute bottom-0 end-0 align-text-bottom" > 
+              <button
+                type="button"
+                className="btn colorPrimary text-white mr-4 my-6"
+                onClick={handleClose2}>
+                Atrás
+              </button>
+              <button 
+                type="button" 
+                className="btn aceptadaButton text-white mr-4 my-6" 
+                onClick={handleClose}>
+                Seleccionar
+              </button>
+              </div>
           </Box>
         </Modal>
       </React.Fragment>
