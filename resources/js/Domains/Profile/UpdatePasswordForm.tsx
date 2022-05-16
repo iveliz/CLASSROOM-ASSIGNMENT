@@ -24,7 +24,7 @@ export default function UpdatePasswordForm() {
   const [errorDos,setErrorDos] = useState('');
   const [errorTres,setErrorTres] = useState('');
   const [modalIsOpen, setIsOpen] = useState(false);
-  
+  const [modalIsOpenDos, setIsOpenDos] = useState(false);
 
   function afterOpenModal() {}
 
@@ -36,11 +36,26 @@ export default function UpdatePasswordForm() {
     setIsOpen(true);
   }
 
+  function afterOpenModalDos() {}
+
+  function closeModalDos() {
+    setIsOpenDos(false);
+  }
+
+  function openModalDos() {
+    setIsOpenDos(true);
+  }
+
+
   function updatePassword() {
     form.put(route('user-password.update'), {
       errorBag: 'updatePassword',
       preserveScroll: true,
-      onSuccess: () => form.reset(),
+      onSuccess: () => {
+        openModalDos();
+        form.reset()
+        alert('Contraseña cambiada, se cerrara la sesión ...')
+      },
       onError: () => {
         if (form.errors.password) {
           form.reset('password', 'password_confirmation');
@@ -55,11 +70,15 @@ export default function UpdatePasswordForm() {
     });
   }
 
-  const reportarError = (contrasenia:any) => {
+  const reportarError = (contrasenia:any, aux:any, error: any) => {
     let res = '';
     if(contrasenia!=''){
       if(contrasenia.length<8){
+        console.log('entro')
         res += 'La contraseña debe tener mas de 8 caracteres. '
+      }
+      if(contrasenia==aux && error == 2){
+        res += 'La contraseña nueva no puede ser igual a la contraseña actual'
       }
     }
     return res;
@@ -124,11 +143,14 @@ export default function UpdatePasswordForm() {
             }else{
               setErrorUno('')
             }
+            console.log(e.currentTarget.value)
+            setErrorUno(reportarError(e.currentTarget.value,'',1))
+            setErrorDos(reportarError(form.data.password,e.currentTarget.value,2))
           }
           }
           autoComplete="current-password"
         />
-        <p className="absolute text-sm text-red-600 mt-2 mb-0">{`${form.errors.current_password==undefined?'':form.errors.current_password} ${form.data.password.length==0?'':(form.data.current_password.length!=0?'':errorUno)}`}</p>
+        <p className="absolute text-sm text-red-600 mt-2 mb-0">{`${form.errors.current_password==undefined?errorUno:form.errors.current_password}`}</p>
       </div>
 
       <div className="col-span-6 sm:col-span-4 mt-2">
@@ -140,7 +162,8 @@ export default function UpdatePasswordForm() {
           value={form.data.password}
           onChange={e => {
             form.setData('password', e.currentTarget.value)
-            setErrorDos(reportarError(e.currentTarget.value))
+            setErrorDos(reportarError(e.currentTarget.value,form.data.current_password,2))
+            console.log(errorDos)
             if(e.currentTarget.value.length>0 && form.data.current_password.length==0){
               setErrorUno('Este campo es obligatorio')
             }else{
@@ -150,7 +173,13 @@ export default function UpdatePasswordForm() {
             if(e.currentTarget.value.length==0 && form.data.password_confirmation.length>0){
               setErrorDos('Este campo es obligatorio') 
             }else{
-              setErrorDos('')
+              //setErrorDos('')
+              console.log("entra")
+            }
+            if(e.currentTarget.value.length>0 && form.data.password_confirmation.length==0){
+              setErrorTres('Este campo es obligatorio')
+            }else{
+              //setErrorTres('')
             }
           }}
           autoComplete="new-password"
@@ -173,7 +202,9 @@ export default function UpdatePasswordForm() {
             if(e.currentTarget.value.length>0 && form.data.password.length==0){
               setErrorDos('Este campo es obligatorio') 
             }else{
-              setErrorDos('')
+              if((form.data.current_password!=form.data.password)||(form.data.current_password.length==0&&form.data.password.length==0)){
+                setErrorDos('')
+              }
             }
           }
           }
@@ -207,8 +238,8 @@ export default function UpdatePasswordForm() {
                   <button
                     type="button"
                     onClick={()=>{
-                      updatePassword();
                       closeModal();
+                      updatePassword();
                     }}
                     className="btn colorPrimary text-white"
                   >
@@ -216,6 +247,19 @@ export default function UpdatePasswordForm() {
                   </button>
                 </div>
               </form>
+            </Modal>
+            <Modal
+              isOpen={modalIsOpenDos}
+              onAfterOpen={afterOpenModalDos}
+              onRequestClose={closeModalDos}
+              style={customStyles}
+              contentLabel="Example Modal"
+              ariaHideApp={false}
+            >
+              <div className="font-bold">
+                {'Contraseña cambiada, se cerrara la sesión ...'}
+              </div>
+              
             </Modal>
     </JetFormSection>
   );
