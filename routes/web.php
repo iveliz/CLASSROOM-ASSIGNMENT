@@ -9,6 +9,7 @@ use App\Http\Controllers\EmailController;
 use App\Http\Controllers\materiaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\SolicitudAulaAdmController;
+use App\Http\Controllers\AulasDisponiblesController;
 use App\Http\Controllers\SolicitudesController;
 
 use App\Http\Controllers\SolicitudCuentaController;
@@ -192,6 +193,10 @@ Route::controller(SolicitudAulaAdmController::class)->group(function () {
   Route::get('/solicitudesAula', 'index');
   Route::post('/confirmarSolicitud', 'confirmarSoli');
   Route::post('/rechazarSolicitud', 'rechazarSoli');
+});
+
+Route::controller(AulasDisponiblesController::class)->group(function () {
+  Route::post('/aulasDisponibles', 'aulasDisponibles');
 });
 
 Route::controller(materiaController::class)->group(function () {
