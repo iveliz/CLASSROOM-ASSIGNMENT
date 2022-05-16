@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Solicitudes;
 use App\Models\RegistroSolicitudes;
+use App\Models\Reserva;
+use App\Models\AulaReserva;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,7 +15,7 @@ class SolicitudAulaAdmController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
-     * 
+     *
      * Obtiene solicitudes que no han sido registradas y solicitudes cuya fecha_requerida_solicitud es del dia de hoy
      * y que tambien no han sido registradas
      * Hace un ordenamiento si la solicitud cuya fecha_requerida_solicitud es para hoy entonces se pondra al principio
@@ -32,11 +34,21 @@ class SolicitudAulaAdmController extends Controller
         date_default_timezone_set("Etc/GMT+4");
 
         //solicitudes de hoy, mañana y mañana pasado
-        $solicitudesCercanas = Solicitudes::join('users','users.id','=','solicitudes.id_usuario')
-            ->select('id_solicitud','id_usuario','name','materia_solicitud',
-                'cantidad_estudiantes_solicitud','motivo_reserva_solicitud',
-                'fecha_requerida_solicitud','hora_requerida_solicitud','periodos_solicitud',
-                'estado_solicitud','solicitudes.created_at','solicitudes.updated_at')
+        $solicitudesCercanas = Solicitudes::join('users', 'users.id', '=', 'solicitudes.id_usuario')
+            ->select(
+                'id_solicitud',
+                'id_usuario',
+                'name',
+                'materia_solicitud',
+                'cantidad_estudiantes_solicitud',
+                'motivo_reserva_solicitud',
+                'fecha_requerida_solicitud',
+                'hora_requerida_solicitud',
+                'periodos_solicitud',
+                'estado_solicitud',
+                'solicitudes.created_at',
+                'solicitudes.updated_at'
+            )
             ->whereNotIn("id_solicitud", $solicitudesReg)
             ->where("fecha_requerida_solicitud", date('Y-m-d'))
             ->orWhere("fecha_requerida_solicitud", date('Y-m-d', strtotime('+1 day')))
@@ -45,11 +57,21 @@ class SolicitudAulaAdmController extends Controller
             ->orderBy("created_at")
             ->get();
 
-        $solicitudes = Solicitudes::join('users','users.id','=','solicitudes.id_usuario')
-            ->select('id_solicitud','id_usuario','name','materia_solicitud',
-                'cantidad_estudiantes_solicitud','motivo_reserva_solicitud',
-                'fecha_requerida_solicitud','hora_requerida_solicitud','periodos_solicitud',
-                'estado_solicitud','solicitudes.created_at','solicitudes.updated_at')
+        $solicitudes = Solicitudes::join('users', 'users.id', '=', 'solicitudes.id_usuario')
+            ->select(
+                'id_solicitud',
+                'id_usuario',
+                'name',
+                'materia_solicitud',
+                'cantidad_estudiantes_solicitud',
+                'motivo_reserva_solicitud',
+                'fecha_requerida_solicitud',
+                'hora_requerida_solicitud',
+                'periodos_solicitud',
+                'estado_solicitud',
+                'solicitudes.created_at',
+                'solicitudes.updated_at'
+            )
             ->whereNotIn("id_solicitud", $solicitudesReg)
             ->orderBy("created_at")
             ->get();
@@ -109,13 +131,13 @@ class SolicitudAulaAdmController extends Controller
             }
         }
 
-        for($i = 0; $i<$cont; $i++){
+        for ($i = 0; $i < $cont; $i++) {
             $res[$i]["prioridad"] = "alta";
         }
 
-        for($i = 0; $i<count($res);$i++){
-            $docentes = Solicitudes::join('docente_solicitudes','docente_solicitudes.id_solicitud','=','solicitudes.id_solicitud')
-                ->where('solicitudes.id_solicitud',$res[$i]['id_solicitud'])
+        for ($i = 0; $i < count($res); $i++) {
+            $docentes = Solicitudes::join('docente_solicitudes', 'docente_solicitudes.id_solicitud', '=', 'solicitudes.id_solicitud')
+                ->where('solicitudes.id_solicitud', $res[$i]['id_solicitud'])
                 ->select('nombre_doc_sct')
                 ->get();
             $docentes = json_decode($docentes, true);
@@ -123,8 +145,8 @@ class SolicitudAulaAdmController extends Controller
             foreach ($docentes as $doc) {
                 array_push($docentesArr, $doc['nombre_doc_sct']);
             }
-            $grupos = Solicitudes::join('grupo_solicitudes','grupo_solicitudes.id_solicitud','=','solicitudes.id_solicitud')
-                ->where('solicitudes.id_solicitud',$res[$i]['id_solicitud'])
+            $grupos = Solicitudes::join('grupo_solicitudes', 'grupo_solicitudes.id_solicitud', '=', 'solicitudes.id_solicitud')
+                ->where('solicitudes.id_solicitud', $res[$i]['id_solicitud'])
                 ->select('codigo_grupo_sct')
                 ->get();
             $grupos = json_decode($grupos, true);
@@ -132,6 +154,7 @@ class SolicitudAulaAdmController extends Controller
             foreach ($grupos as $grup) {
                 array_push($gruposArr, $grup['codigo_grupo_sct']);
             }
+            $res[$i]['hora_fin_solicitud'] = $this->horaFin($res[$i]['hora_requerida_solicitud'], $res[$i]['periodos_solicitud']);
             $res[$i]['docentes'] = $docentesArr;
             $res[$i]['grupos'] = $gruposArr;
         }
@@ -139,17 +162,81 @@ class SolicitudAulaAdmController extends Controller
         return $res;
     }
 
-    public function rechazarSoliVencida($s){
-        $nuevo_registro_solicitud = new RegistroSolicitudes;
-        $nuevo_registro_solicitud->id_solicitud = $s["id_solicitud"];
-        $nuevo_registro_solicitud->id_usuario = $s["id_usuario"];
-        $nuevo_registro_solicitud->fecha_inicio_reg_sct = $s["fecha_requerida_solicitud"];
-        $nuevo_registro_solicitud->fecha_modificacion_reg_sct =  date('Y-m-d');
-        $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'rechazado';
-        $nuevo_registro_solicitud->motivo_reg_sct = 'La fecha solicitada de reserva esta vencida';
+    public function rechazarSoliVencida($s)
+    {
+        $nuevo_registro_solicitud = new RegistroSolicitudes();
+        $nuevo_registro_solicitud->id_solicitud = $s['id_solicitud'];
+        $nuevo_registro_solicitud->id_usuario = $s['id_usuario'];
+        $nuevo_registro_solicitud->fecha_inicio_reg_sct =
+            $s['fecha_requerida_solicitud'];
+        $nuevo_registro_solicitud->fecha_modificacion_reg_sct = date('Y-m-d');
+        $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'rechazada';
+        $nuevo_registro_solicitud->motivo_reg_sct =
+            'La fecha solicitada de reserva esta vencida';
         $nuevo_registro_solicitud->save();
     }
+    private function horaFin($hora, $periodos)
+    {
+        #hora = 00:00:00
+        $hh = substr($hora, 0, 2);
+        $mm = substr($hora, 3, 2);
+        $ss = substr($hora, 6, 2);
+        $hh_int = intval($hh);
+        $mm_int = intval($mm);
+        $ss_int = intval($ss);
+        $mm_int = (int)($periodos * 45 + $mm) % 60;
+        $hh_int = (int)($hh + ($periodos * 45 + $mm) / 60);
+        if ($mm_int < 10) {
+            $mm = "0" . strval($mm_int);
+        } else {
+            $mm = strval($mm_int);
+        }
+        if ($hh_int < 10) {
+            $hh = "0" . strval($hh_int);
+        } else {
+            $hh = strval($hh_int);
+        }
+        return $hh . ":" . $mm . ":" . $ss;
+    }
 
+    public function confirmarSoli(Request $datos_solicitud)
+    {
+        $nuevo_registro_solicitud = new RegistroSolicitudes();
+        $nuevo_registro_solicitud->id_solicitud = $datos_solicitud->id_solicitud;
+        $nuevo_registro_solicitud->id_usuario = $datos_solicitud->id_usuario;
+        $nuevo_registro_solicitud->fecha_inicio_reg_sct =
+            $datos_solicitud->fecha_requerida_solicitud;
+        $nuevo_registro_solicitud->fecha_modificacion_reg_sct = date('Y-m-d');
+        $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'aceptada';
+        $nuevo_registro_solicitud->save();
+        $id_guardado = $nuevo_registro_solicitud->id;
+        $nueva_reserva = new Reserva();
+        $nueva_reserva->id_reg_sct = $id_guardado;
+        $nueva_reserva->hora_inicio_reserva = $datos_solicitud->hora_inicio;
+        $nueva_reserva->hora_fin_reserva = $datos_solicitud->hora_fin;
+        $nueva_reserva->fecha_reserva = $datos_solicitud->fecha_requerida_solicitud;
+        $nueva_reserva->save();
+        $id_guardada = $nueva_reserva->id;
+        foreach ($datos_solicitud->id_aulas as $aula) {
+            $nueva_aula_reservada = new AulaReserva();
+            $nueva_aula_reservada->id_reserva = $id_guardada;
+            $nueva_aula_reservada->id_aula = $aula;
+            $nueva_aula_reservada->save();
+        }
+    }
+
+    public function rechazarSoli(Request $datos_solicitud)
+    {
+        $nuevo_registro_solicitud = new RegistroSolicitudes();
+        $nuevo_registro_solicitud->id_solicitud = $datos_solicitud->id_solicitud;
+        $nuevo_registro_solicitud->id_usuario = $datos_solicitud->id_usuario;
+        $nuevo_registro_solicitud->fecha_inicio_reg_sct =
+            $datos_solicitud->fecha_requerida_solicitud;
+        $nuevo_registro_solicitud->fecha_modificacion_reg_sct = date('Y-m-d');
+        $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'rechazada';
+        $nuevo_registro_solicitud->motivo_reg_sct = $datos_solicitud->motivo;
+        $nuevo_registro_solicitud->save();
+    }
     /**
      * Show the form for creating a new resource.
      *
