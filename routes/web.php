@@ -174,13 +174,24 @@ Route::controller(SolicitudesController::class)->group(function () {
   Route::post('/api/solicitudes/crear', 'crearSolicitud');
   Route::get('/api/solicitudes/rechazadas/{id}', 'listarRechazados');
   Route::get('/api/solicitudes/aceptadas/{id}', 'listarAceptados');
-  Route::get('/api/solicitudes/aceptadas/sin_vencer/{id}', 'listarAceptadasSinVencer');
-  Route::get('/api/solicitudes/aceptadas/vencidas/{id}', 'listarAceptadasVencidas');
-  Route::post('/api/solicitudes/cancelarPorArreglo', 'cancelarSolicitudPorArreglo');
+  Route::get(
+    '/api/solicitudes/aceptadas/sin_vencer/{id}',
+    'listarAceptadasSinVencer'
+  );
+  Route::get(
+    '/api/solicitudes/aceptadas/vencidas/{id}',
+    'listarAceptadasVencidas'
+  );
+  Route::post(
+    '/api/solicitudes/cancelarPorArreglo',
+    'cancelarSolicitudPorArreglo'
+  );
 });
 
 Route::controller(SolicitudAulaAdmController::class)->group(function () {
   Route::get('/solicitudesAula', 'index');
+  Route::post('/confirmarSolicitud', 'confirmarSoli');
+  Route::post('/rechazarSolicitud', 'rechazarSoli');
 });
 
 Route::controller(materiaController::class)->group(function () {
@@ -200,5 +211,3 @@ Route::controller(EmailController::class)->group(function () {
   Route::post('/correoElectronico/actualizar', 'update');
   Route::post('/correoElectronico/mostrar', 'show');
 });
-
-
