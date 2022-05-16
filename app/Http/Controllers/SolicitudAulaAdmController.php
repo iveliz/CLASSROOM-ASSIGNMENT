@@ -132,6 +132,7 @@ class SolicitudAulaAdmController extends Controller
             foreach ($grupos as $grup) {
                 array_push($gruposArr, $grup['codigo_grupo_sct']);
             }
+            $res[$i]['hora_fin_solicitud'] = $this->horaFin($res[$i]['hora_requerida_solicitud'],$res[$i]['periodos_solicitud']);
             $res[$i]['docentes'] = $docentesArr;
             $res[$i]['grupos'] = $gruposArr;
         }
@@ -148,6 +149,29 @@ class SolicitudAulaAdmController extends Controller
         $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'rechazado';
         $nuevo_registro_solicitud->motivo_reg_sct = 'La fecha solicitada de reserva esta vencida';
         $nuevo_registro_solicitud->save();
+    }
+
+    private function horaFin($hora,$periodos){
+        #hora = 00:00:00
+        $hh = substr($hora,0,2);
+        $mm = substr($hora,3,2);
+        $ss = substr($hora,6,2);
+        $hh_int = intval($hh);
+        $mm_int = intval($mm);
+        $ss_int = intval($ss);
+        $mm_int = (int)($periodos*45 + $mm)%60;
+        $hh_int = (int)($hh + ($periodos*45 + $mm)/60);
+        if($mm_int < 10){
+            $mm = "0".strval($mm_int);
+        }else{
+            $mm = strval($mm_int);
+        }
+        if($hh_int < 10){
+            $hh = "0".strval($hh_int);
+        }else{
+            $hh = strval($hh_int);
+        }
+        return $hh.":".$mm.":".$ss;
     }
 
     /**

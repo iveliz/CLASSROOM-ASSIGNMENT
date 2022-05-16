@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Expr\Cast\Object_;
 use stdClass;
 
+use function PHPUnit\Framework\isEmpty;
+
 class AulasDisponiblesController extends Controller
 {
     /**
@@ -90,7 +92,7 @@ class AulasDisponiblesController extends Controller
     public function aulasDisponibles(Request $request){
         $fecha = $request->fecha;
         $horaIni = $request->hora_ini;
-        $cantAlum = $request->cantAlum;
+        $cantAlum = $request->capacidad;
         //$facultad = $request->facultad; //para facultades se tendria que añadir en la consulta y en la bd
         $aulasNoDispo = DB::table('reservas')->join('aulas_reservadas', 'reservas.id_reserva', '=', 'aulas_reservadas.id_reserva')
             ->where(function ($query) use ($fecha){
@@ -134,10 +136,11 @@ class AulasDisponiblesController extends Controller
 
             array_unshift($vecinos,$aulaAct);
 
-            $subres["vecinos"] = $vecinos;
-            $subres["capacidad_total"] = $this->capTotal($vecinos);
-
-            array_push($res,$subres);
+            if(count($vecinos)>1 or $aulaAct->capacidad_aula>=$cantAlum){
+                $subres["vecinos"] = $vecinos;
+                $subres["capacidad_total"] = $this->capTotal($vecinos);
+                array_push($res,$subres);
+            }
         }
         
         return $res;
@@ -161,7 +164,7 @@ class AulasDisponiblesController extends Controller
         $total = 0;
         $res = array();
         foreach($aulas as $au){
-            if($total < $capacidad){
+            if($total <= $capacidad){
                 $au->distancia = $vecinos[$i]->distancia;
                 $i++;
                 $total = $total + ($au->capacidad_aula);
