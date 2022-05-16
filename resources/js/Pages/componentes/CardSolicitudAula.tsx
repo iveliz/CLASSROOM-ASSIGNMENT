@@ -24,6 +24,7 @@ interface SolicitudAula {
   materia_solicitud: String;
   grupos: [];
   cantidad_estudiantes_solicitud: Number;
+  hora_requerida_solicitud:String
 }
 
 export default function ({
@@ -36,6 +37,7 @@ export default function ({
   materia_solicitud,
   grupos,
   cantidad_estudiantes_solicitud,
+  hora_requerida_solicitud
 }: SolicitudAula) {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [radioAceptar, SetRadioAceptar] = useState(true);
@@ -228,6 +230,9 @@ export default function ({
                         </p>
                         <p className="font-bold ">
                           Para fecha: {fecha_requerida_solicitud}
+                        </p>
+                        <p className="font-bold">
+                          Hora Inicio: {hora_requerida_solicitud.substring(0,5)}
                         </p>
                       </div>
                     </div>
