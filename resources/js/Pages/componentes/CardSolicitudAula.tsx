@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Backdrop from '@mui/material/Backdrop';
@@ -51,14 +51,16 @@ export default function ({
   const [aulaSeleccionada, SetAulaSeleccionada] = useState('Ninguna');
   const [motivos, SetMotivos] = useState('');
   const [stateBack, SetStateBack] = useState(false);
-  const [aulasDisponibles, SetAulaDisponibles] = useState();
+  const [aulasDisponibles, SetAulaDisponibles] = useState<any[]>();
+
   const [reserva, SetReserva] = useState({
     fecha: fecha_requerida_solicitud,
     hora_ini: hora_requerida_solicitud,
     hora_fin: hora_fin_solicitud,
     capacidad: cantidad_estudiantes_solicitud,
   });
-  const [mensajeConfirmacion,SetMensajeConfirmacion]=useState("");
+  console.log(reserva)
+  const [mensajeConfirmacion, SetMensajeConfirmacion] = useState('');
 
   const customStyles = {
     content: {
@@ -71,17 +73,8 @@ export default function ({
     },
   };
 
-  const [listaMostrar,SetListaMostrar]=useState<any[]>([]);
-  const aulaslista = [
-    { aulas: '691a,691b' },
-    { aulas: '665b' },
-    { aulas: '692a,692b,692d' },
-    { aulas: '692a,692b,692d' },
-    { aulas: '692a,692b,692d' },
-    { aulas: '692a,692b,692d' },
-    { aulas: '692a,692b,692d' },
-    { aulas: '692a,692b,692d' },
-  ];
+  const [listaMostrar, SetListaMostrar] = useState<any[]>([]);
+
   const [open, setOpen] = React.useState(false);
   const [stateModal, setIsOpenConfir] = useState(false);
   const handleOpen = () => {
@@ -98,6 +91,7 @@ export default function ({
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
+   
   };
 
   const handleOpenBack = () => {
@@ -120,13 +114,15 @@ export default function ({
   const handleChangeAceptar = () => {
     SetRadioAceptar(true);
     SetRadioRechazar(false);
-    SetMensajeConfirmacion("¿Está seguro de aceptar asignando :  a  esta solicitud?");
+    SetMensajeConfirmacion(
+      '¿Está seguro de aceptar asignando :  a  esta solicitud?',
+    );
     SetMotivos('');
   };
   const handleChangeRechazar = () => {
     SetRadioAceptar(false);
     SetRadioRechazar(true);
-    SetMensajeConfirmacion("¿Está seguro de rechazar  esta solicitud?")
+    SetMensajeConfirmacion('¿Está seguro de rechazar  esta solicitud?');
     SetAulaSeleccionada('Ninguna');
   };
 
@@ -138,10 +134,6 @@ export default function ({
     setIsOpen(true);
   };
 
-  function afterOpenModal() {
-    // references are now sync'd and can be accessed.
-  }
-
   const closeModal = () => {
     setIsOpen(false);
   };
@@ -150,23 +142,32 @@ export default function ({
     handleOpenBack();
     axios.post(`${endpoint}/aulasDisponibles`, reserva).then(response => {
       SetAulaDisponibles(response.data);
+      console.log(response.data)
       handleCloseBack();
       handleOpen();
-      console.log(response.data);
     });
   };
 
-  const generateAulas=()=>{
-     let lista:any[]=[];
-     for(let aula of listaMostrar){
-         let aulas:any[] = [];
-         aula.map((aula: any)=>{
-           aulas.push(aula.numero_aula+aula.letra_aula);
-         })
-         lista.push(aulas.join(",")+"-Capacidad:"+aula.capacidad_total);
-     }
-     SetListaMostrar(lista);
-  }
+  const generateAulas = () => {
+    let lista: any[] = [];
+    if (aulasDisponibles != null) {
+      for (let aula of aulasDisponibles) {
+        let aulas: any[] = [];
+        console.log(aula)
+        aula.vecinos.map((aula: any) => {
+          aulas.push(aula.numero_aula + aula.letra_aula);
+        });
+        console.log(aulas)
+        lista.push(aulas.join(',') + '-Capacidad: ' + aula.capacidad_total);
+      }
+      SetListaMostrar(lista);
+    }
+  };
+
+  useEffect(() => {
+   generateAulas();
+}, [aulasDisponibles]);
+
 
   const style = {
     position: 'absolute' as 'absolute',
@@ -189,35 +190,28 @@ export default function ({
         >
           Confirmar
         </button>
-        <Modal
-        open={stateModal} 
-        onClose={closeModalConfir}
-        >
-        <Box sx={{...style, width: 500 }}>
-              <div className="font-bold d-flex justify-content-center mt-4">
-                {mensajeConfirmacion}
+        <Modal open={stateModal} onClose={closeModalConfir}>
+          <Box sx={{ ...style, width: 500 }}>
+            <div className="font-bold d-flex justify-content-center mt-4">
+              {mensajeConfirmacion}
+            </div>
+            <form className="d-flex justify-content-center space-x-4 mt-4 mb-4">
+              <div>
+                <button
+                  onClick={closeModalConfir}
+                  type="button"
+                  className="btn btn-danger text-white"
+                >
+                  Cancelar
+                </button>
               </div>
-              <form className="d-flex justify-content-center space-x-4 mt-4 mb-4">
-                <div>
-                  <button
-                    onClick={closeModalConfir}
-                    type="button"
-                    className="btn btn-danger text-white"
-                  >
-                    Cancelar
-                  </button>
-                </div>
-                <div>
-                  <button
-                    type="button"
-                    className="btn colorPrimary text-white"
-                  >
-                    Aceptar
-                  </button>
-                </div>
-              </form>
-        </Box>
-
+              <div>
+                <button type="button" className="btn colorPrimary text-white">
+                  Aceptar
+                </button>
+              </div>
+            </form>
+          </Box>
         </Modal>
       </React.Fragment>
     );
@@ -261,7 +255,7 @@ export default function ({
                   value={value}
                   onChange={handleChange}
                 >
-                 {listaMostrar.map(aula => {
+                  {listaMostrar!=null?listaMostrar.map(aula => {
                     return (
                       <FormControlLabel
                         key={nanoid(6)}
@@ -270,7 +264,7 @@ export default function ({
                         value={aula}
                       ></FormControlLabel>
                     );
-                  })}
+                  }):""}
                 </RadioGroup>
               </FormControl>
             </div>
@@ -296,7 +290,6 @@ export default function ({
     );
   }
 
- 
   return (
     <div>
       <div className="card mt-3 mr-8">
@@ -383,7 +376,7 @@ export default function ({
                         >
                           <CircularProgress color="inherit" />
                         </Backdrop>
-                        <ChildModal/>
+                        <ChildModal />
                       </div>
                       <div className="mt-2">
                         <input
@@ -406,7 +399,7 @@ export default function ({
                       </div>
                     </div>
                     <div className="fondoModal2 text-center mb-2">
-                      <ChildModalConfirmation/>
+                      <ChildModalConfirmation />
                     </div>
                   </div>
                 </div>
