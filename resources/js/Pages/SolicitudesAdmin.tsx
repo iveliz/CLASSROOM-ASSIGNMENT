@@ -17,7 +17,6 @@ export default function () {
   const getSolicitudes = async () => {
     await axios.get(`${endpoint}/solicitudesAula`).then((response) => {
       setListaSolicitudAula(response.data);
-      console.log(response.data)
     })
   }
 
