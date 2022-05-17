@@ -3,6 +3,7 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import { nanoid } from 'nanoid';
 import Xsquare from '../../Icons/X-square';
 const endpoint = 'http://127.0.0.1:8000';
 import {
@@ -70,6 +71,7 @@ export default function ({
     },
   };
 
+  const [listaMostrar,SetListaMostrar]=useState<any[]>([]);
   const aulaslista = [
     { aulas: '691a,691b' },
     { aulas: '665b' },
@@ -153,6 +155,18 @@ export default function ({
       console.log(response.data);
     });
   };
+
+  const generateAulas=()=>{
+     let lista:any[]=[];
+     for(let aula of listaMostrar){
+         let aulas:any[] = [];
+         aula.map((aula: any)=>{
+           aulas.push(aula.numero_aula+aula.letra_aula);
+         })
+         lista.push(aulas.join(",")+"-Capacidad:"+aula.capacidad_total);
+     }
+     SetListaMostrar(lista);
+  }
 
   const style = {
     position: 'absolute' as 'absolute',
@@ -247,14 +261,14 @@ export default function ({
                   value={value}
                   onChange={handleChange}
                 >
-                  {aulaslista.map((aula, index) => {
+                 {listaMostrar.map(aula => {
                     return (
                       <FormControlLabel
-                        key={index}
+                        key={nanoid(6)}
                         control={<Radio color="success" />}
-                        label={aula.aulas}
-                        value={aula.aulas}
-                      />
+                        label={aula}
+                        value={aula}
+                      ></FormControlLabel>
                     );
                   })}
                 </RadioGroup>
