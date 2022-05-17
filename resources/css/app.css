@@ -341,6 +341,9 @@ textarea[disabled]{
   
 }
 
+.card{
+  position: initial;
+}
 
 .side-navigation-panel .side-navigation-panel-select .side-navigation-panel-select-inner .side-navigation-panel-select-inner-wrap .side-navigation-panel-select-inner-option-selected {
   --tw-border-opacity: 1;
