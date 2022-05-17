@@ -50,13 +50,25 @@ export default function ({
   const [aulaSeleccionada, SetAulaSeleccionada] = useState('Ninguna');
   const [motivos, SetMotivos] = useState('');
   const [stateBack, SetStateBack] = useState(false);
-  const [aulasDisponibles,SetAulaDisponibles]=useState();
+  const [aulasDisponibles, SetAulaDisponibles] = useState();
   const [reserva, SetReserva] = useState({
     fecha: fecha_requerida_solicitud,
     hora_ini: hora_requerida_solicitud,
     hora_fin: hora_fin_solicitud,
     capacidad: cantidad_estudiantes_solicitud,
   });
+  const [mensajeConfirmacion,SetMensajeConfirmacion]=useState("");
+
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
 
   const aulaslista = [
     { aulas: '691a,691b' },
@@ -69,6 +81,7 @@ export default function ({
     { aulas: '692a,692b,692d' },
   ];
   const [open, setOpen] = React.useState(false);
+  const [stateModal, setIsOpenConfir] = useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
@@ -92,16 +105,54 @@ export default function ({
   const handleCloseBack = () => {
     SetStateBack(false);
   };
-  
-  const getAulas =() =>{
+  function openModalConfir() {
+    setIsOpenConfir(true);
+  }
+
+  function afterOpenModalConfir() {}
+
+  function closeModalConfir() {
+    setIsOpenConfir(false);
+  }
+
+  const handleChangeAceptar = () => {
+    SetRadioAceptar(true);
+    SetRadioRechazar(false);
+    SetMensajeConfirmacion("¿Está seguro de aceptar asignando :  a  esta solicitud?");
+    SetMotivos('');
+  };
+  const handleChangeRechazar = () => {
+    SetRadioAceptar(false);
+    SetRadioRechazar(true);
+    SetMensajeConfirmacion("¿Está seguro de rechazar  esta solicitud?")
+    SetAulaSeleccionada('Ninguna');
+  };
+
+  const handleChangeMotivos = (event: { target: { value: any } }) => {
+    SetMotivos(event.target.value);
+  };
+
+  const openModal = () => {
+    setIsOpen(true);
+  };
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+  }
+
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+
+  const getAulas = () => {
     handleOpenBack();
-    axios.post(`${endpoint}/aulasDisponibles`,reserva).then(response=>{
-       SetAulaDisponibles(response.data);
-       handleCloseBack();
-       handleOpen();
-       console.log(response.data);
-    }) 
-  } 
+    axios.post(`${endpoint}/aulasDisponibles`, reserva).then(response => {
+      SetAulaDisponibles(response.data);
+      handleCloseBack();
+      handleOpen();
+      console.log(response.data);
+    });
+  };
 
   const style = {
     position: 'absolute' as 'absolute',
@@ -113,6 +164,50 @@ export default function ({
     boxShadow: 24,
     borderRadius: ' 8px',
   };
+
+  function ChildModalConfirmation() {
+    return (
+      <React.Fragment>
+        <button
+          type="button"
+          className="btn colorPrimary text-white mt-4"
+          onClick={openModalConfir}
+        >
+          Confirmar
+        </button>
+        <Modal
+        open={stateModal} 
+        onClose={closeModalConfir}
+        >
+        <Box sx={{...style, width: 500 }}>
+              <div className="font-bold d-flex justify-content-center mt-4">
+                {mensajeConfirmacion}
+              </div>
+              <form className="d-flex justify-content-center space-x-4 mt-4 mb-4">
+                <div>
+                  <button
+                    onClick={closeModalConfir}
+                    type="button"
+                    className="btn btn-danger text-white"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+                <div>
+                  <button
+                    type="button"
+                    className="btn colorPrimary text-white"
+                  >
+                    Aceptar
+                  </button>
+                </div>
+              </form>
+        </Box>
+
+        </Modal>
+      </React.Fragment>
+    );
+  }
 
   function ChildModal() {
     return (
@@ -187,32 +282,7 @@ export default function ({
     );
   }
 
-  const handleChangeAceptar = () => {
-    SetRadioAceptar(true);
-    SetRadioRechazar(false);
-    SetMotivos('');
-  };
-  const handleChangeRechazar = () => {
-    SetRadioAceptar(false);
-    SetRadioRechazar(true);
-    SetAulaSeleccionada('Ninguna');
-  };
-
-  const handleChangeMotivos = (event: { target: { value: any } }) => {
-    SetMotivos(event.target.value);
-  };
-
-  const openModal = () => {
-    setIsOpen(true);
-  };
-
-  function afterOpenModal() {
-    // references are now sync'd and can be accessed.
-  }
-
-  const closeModal = () => {
-    setIsOpen(false);
-  };
+ 
   return (
     <div>
       <div className="card mt-3 mr-8">
@@ -299,7 +369,7 @@ export default function ({
                         >
                           <CircularProgress color="inherit" />
                         </Backdrop>
-                        <ChildModal></ChildModal>
+                        <ChildModal/>
                       </div>
                       <div className="mt-2">
                         <input
@@ -322,12 +392,7 @@ export default function ({
                       </div>
                     </div>
                     <div className="fondoModal2 text-center mb-2">
-                      <button
-                        type="button"
-                        className="btn colorPrimary text-white mt-4"
-                      >
-                        Confirmar
-                      </button>
+                      <ChildModalConfirmation/>
                     </div>
                   </div>
                 </div>
