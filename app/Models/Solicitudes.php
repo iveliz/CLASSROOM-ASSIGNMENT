@@ -16,5 +16,6 @@ class Solicitudes extends Model
         'fecha_requerida_solicitud',
         'hora_requerida_solicitud',
         'periodos_solicitud'];
+    protected  $primaryKey = 'id_solicitud';
     use HasFactory;
 }
