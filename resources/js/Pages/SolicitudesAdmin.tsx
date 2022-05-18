@@ -48,10 +48,8 @@ export default function () {
           }));
           console.log(listaSolicitudAula)
           SetSolicitud(null);
-        } else if(response.data==2) {
-          alert('Otro docente ya creo una reserva para esta solicitud.');
-        }else{
-          alert('El aula que tratas de asignar ya esta en uso');
+        } else{
+          alert('Un error ha ocurrido, por favor recargue la página.');
         }
         handleCloseBack();
         console.log(response)
@@ -73,8 +71,10 @@ export default function () {
           }));
           console.log(listaSolicitudAula)
           SetSolicitud(null);
+        }else if(response.data==2) {
+          alert('Otro docente ya creo una reserva para esta solicitud.');
         }else{
-          alert('Un error ha ocurrido, por favor recarge la página');
+          alert('El aula que tratas de asignar ya esta en uso.');
         }
         handleCloseBack();
         console.log(response)
@@ -89,9 +89,9 @@ export default function () {
   useEffect(() => {
     if(solicitud!=null){
       createReserva();
+      console.log("esta es la soli")
       console.log(solicitud)
     }
-
   }, [solicitud]);
 
   return (

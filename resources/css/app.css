@@ -155,7 +155,7 @@ body {
 .preguntas-frecuentes-contenedor {
   margin: 0 auto;
 	padding: 1em;
-	position: relative;
+	position: initial;
 	overflow: hidden;
 	width: 80%;
 	max-width: 106.25rem;

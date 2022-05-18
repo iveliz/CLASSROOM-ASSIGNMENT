@@ -30,7 +30,7 @@ interface SolicitudAula {
   cantidad_estudiantes_solicitud: Number;
   hora_requerida_solicitud: String;
   hora_fin_solicitud: String;
-  responder:any;
+  responder: any;
 }
 
 export default function ({
@@ -45,16 +45,17 @@ export default function ({
   cantidad_estudiantes_solicitud,
   hora_requerida_solicitud,
   hora_fin_solicitud,
-  responder
+  responder,
 }: SolicitudAula) {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [radioAceptar, SetRadioAceptar] = useState(true);
   const [radioRechazar, SetRadioRechazar] = useState(false);
   const [aulaSeleccionada, SetAulaSeleccionada] = useState('Ninguna');
-  const [motivos, SetMotivos] = useState("");
+  const [motivos, SetMotivos] = useState('');
   const [stateBack, SetStateBack] = useState(false);
   const [aulasDisponibles, SetAulaDisponibles] = useState<any[]>();
-  const [aulasId,SetAulasId]=useState<any[]>();
+  const [aulasId, SetAulasId] = useState<any[]>();
+  const [listaBuscar, SetListaBuscar] = useState<any[]>();
   const [reserva, SetReserva] = useState({
     fecha: fecha_requerida_solicitud,
     hora_ini: hora_requerida_solicitud,
@@ -75,20 +76,26 @@ export default function ({
   };
 
   const [listaMostrar, SetListaMostrar] = useState<any[]>([]);
-
+  const [isChecked, SetIsChecked] = useState<any>();
   const [open, setOpen] = React.useState(false);
   const [stateModal, setIsOpenConfir] = useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
-    setOpen(false);
-    SetAulaSeleccionada(value.toString());
+    if (isChecked) {
+      setOpen(false);
+      SetAulaSeleccionada(value);
+      SetIsChecked(false);
+      setValue('');
+    } else {
+      alert('Seleccione una opción de la lista.');
+    }
   };
   const handleClose2 = () => {
     setOpen(false);
   };
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState<any>();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
@@ -132,10 +139,9 @@ export default function ({
   };
 
   const closeModal = () => {
-    if(stateBack==false){
+    if (stateBack == false) {
       setIsOpen(false);
     }
-  
   };
 
   const getAulas = () => {
@@ -150,18 +156,25 @@ export default function ({
 
   const generateAulas = () => {
     let lista: any[] = [];
+    let listamuestra: any[] = [];
     if (aulasDisponibles != null) {
       for (let aula of aulasDisponibles) {
         let aulas: any[] = [];
-        let aulasId: any[]=[];
+        let aulasId: any[] = [];
         aula.vecinos.map((aula: any) => {
           aulas.push(aula.numero_aula + aula.letra_aula);
           aulasId.push(aula.id_aula);
         });
-        lista.push(aulas.join(',') + ' - Capacidad: ' + aula.capacidad_total);
-        SetAulasId(aulasId);
+        lista.push({
+          text: aulas.join(',') + ' - Capacidad: ' + aula.capacidad_total,
+          idAula: aulasId,
+        });
+        listamuestra.push(
+          aulas.join(',') + ' - Capacidad: ' + aula.capacidad_total,
+        );
       }
-      SetListaMostrar(lista);
+      SetListaMostrar(listamuestra);
+      SetListaBuscar(lista);
     }
   };
 
@@ -169,57 +182,72 @@ export default function ({
     if (radioAceptar) {
       if (aulaSeleccionada == 'Ninguna') {
         alert('Por favor seleccione un aula');
-      }else{
+      } else {
         openModalConfir();
       }
-    }else{
+    } else {
       openModalConfir();
     }
   };
 
-  const createReserva=()=>{
+  const createReserva = () => {
     let soli;
+
+    console.log(aulasId);
     if (radioRechazar) {
       soli = {
         id_solicitud: id_solicitud,
         id_usuario: id_usuario,
         fecha_requerida_solicitud: fecha_requerida_solicitud,
-        motivo:motivos,
-        aceptar:false
+        motivo: motivos,
+        aceptar: false,
       };
-      console.log("rechazado")
+      console.log('rechazado');
     } else {
-       soli = {
+      soli = {
         id_solicitud: id_solicitud,
         id_usuario: id_usuario,
         fecha_requerida_solicitud: fecha_requerida_solicitud,
         hora_inicio: hora_requerida_solicitud,
         hora_fin: hora_fin_solicitud,
-        id_aulas:aulasId,
-        aceptar:true
+        id_aulas: aulasId,
+        aceptar: true,
       };
-      console.log("aceptado")
+      console.log('aceptado');
     }
     responder(soli);
     closeModalConfir();
     closeModal();
-  }
+  };
 
-
+  const getID = () => {
+    let ids = listaBuscar
+      ?.filter(item => {
+        return item.text == aulaSeleccionada;
+      })
+      .map(item => item.idAula.join(','));
+    SetAulasId(ids);
+  };
 
   useEffect(() => {
     generateAulas();
   }, [aulasDisponibles]);
 
   useEffect(() => {
-    if(aulaSeleccionada!="Ninguna"){
+    if (value != null) {
+      SetIsChecked(true);
+    }
+  }, [value]);
+
+  useEffect(() => {
+    if (aulaSeleccionada != 'Ninguna') {
       SetMensajeConfirmacion(
         `¿Está seguro de aceptar asignando : ${aulaSeleccionada} a  esta solicitud?`,
       );
+      getID();
+      console.log(aulasId);
     }
   }, [aulaSeleccionada]);
-
-  
 
   const style = {
     position: 'absolute' as 'absolute',
@@ -258,7 +286,11 @@ export default function ({
                 </button>
               </div>
               <div>
-                <button type="button" className="btn colorPrimary text-white" onClick={createReserva}>
+                <button
+                  type="button"
+                  className="btn colorPrimary text-white"
+                  onClick={createReserva}
+                >
                   Aceptar
                 </button>
               </div>
@@ -307,18 +339,24 @@ export default function ({
                   value={value}
                   onChange={handleChange}
                 >
-                  {listaMostrar != null
-                    ? listaMostrar.map(aula => {
-                        return (
-                          <FormControlLabel
-                            key={nanoid(6)}
-                            control={<Radio color="success" />}
-                            label={aula}
-                            value={aula}
-                          ></FormControlLabel>
-                        );
-                      })
-                    : ''}
+                  {listaMostrar.length!=0 ? (
+                    listaMostrar.map(aula => {
+                      return (
+                        <FormControlLabel
+                          key={nanoid(6)}
+                          control={<Radio color="success" />}
+                          label={aula}
+                          value={aula}
+                        ></FormControlLabel>
+                      );
+                    })
+                  ) : (
+                    <div className='text-center'>
+                      <p className="rechazada">
+                        No hay Aulas disponibles para asignar
+                      </p>
+                    </div>
+                  )}
                 </RadioGroup>
               </FormControl>
             </div>
@@ -330,13 +368,17 @@ export default function ({
               >
                 Atrás
               </button>
-              <button
-                type="button"
-                className="btn aceptadaButton text-white mr-6 ml-2 mb-4"
-                onClick={handleClose}
-              >
-                Seleccionar
-              </button>
+              {listaMostrar.length!=0 ? (
+                <button
+                  type="button"
+                  className="btn aceptadaButton text-white mr-6 ml-2 mb-4"
+                  onClick={handleClose}
+                >
+                  Seleccionar
+                </button>
+              ) : (
+                ''
+              )}
             </div>
           </Box>
         </Modal>
@@ -354,7 +396,7 @@ export default function ({
         >
           <div className="hstack gap-3 items-end ">
             <div className="mr-3">
-              {prioridad ? '(*) ' : ''}Número de solicitud de registro:{' '}
+              {prioridad ? '(*) ' : ''}Número de solicitud de aula:{' '}
               {id_solicitud + '-' + id_usuario}
             </div>
             <div className="mr-4">Fecha: {fecha_requerida_solicitud}</div>
