@@ -30,6 +30,7 @@ interface SolicitudAula {
   cantidad_estudiantes_solicitud: Number;
   hora_requerida_solicitud: String;
   hora_fin_solicitud: String;
+  responder:any;
 }
 
 export default function ({
@@ -44,6 +45,7 @@ export default function ({
   cantidad_estudiantes_solicitud,
   hora_requerida_solicitud,
   hora_fin_solicitud,
+  responder
 }: SolicitudAula) {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [radioAceptar, SetRadioAceptar] = useState(true);
@@ -52,14 +54,13 @@ export default function ({
   const [motivos, SetMotivos] = useState('');
   const [stateBack, SetStateBack] = useState(false);
   const [aulasDisponibles, SetAulaDisponibles] = useState<any[]>();
-
+  const [aulasId,SetAulasId]=useState<any[]>();
   const [reserva, SetReserva] = useState({
     fecha: fecha_requerida_solicitud,
     hora_ini: hora_requerida_solicitud,
     hora_fin: hora_fin_solicitud,
     capacidad: cantidad_estudiantes_solicitud,
   });
-  console.log(reserva);
   const [mensajeConfirmacion, SetMensajeConfirmacion] = useState('');
 
   const customStyles = {
@@ -113,9 +114,6 @@ export default function ({
   const handleChangeAceptar = () => {
     SetRadioAceptar(true);
     SetRadioRechazar(false);
-    SetMensajeConfirmacion(
-      '¿Está seguro de aceptar asignando :  a  esta solicitud?',
-    );
     SetMotivos('');
   };
   const handleChangeRechazar = () => {
@@ -134,7 +132,10 @@ export default function ({
   };
 
   const closeModal = () => {
-    setIsOpen(false);
+    if(stateBack==false){
+      setIsOpen(false);
+    }
+  
   };
 
   const getAulas = () => {
@@ -152,20 +153,71 @@ export default function ({
     if (aulasDisponibles != null) {
       for (let aula of aulasDisponibles) {
         let aulas: any[] = [];
-        console.log(aula);
+        let aulasId: any[]=[];
         aula.vecinos.map((aula: any) => {
           aulas.push(aula.numero_aula + aula.letra_aula);
+          aulasId.push(aula.id_aula);
         });
-        console.log(aulas);
-        lista.push(aulas.join(',') + '-Capacidad: ' + aula.capacidad_total);
+        lista.push(aulas.join(',') + ' - Capacidad: ' + aula.capacidad_total);
+        SetAulasId(aulasId);
       }
       SetListaMostrar(lista);
     }
   };
 
+  const validar = () => {
+    if (radioAceptar) {
+      if (aulaSeleccionada == 'Ninguna') {
+        alert('Por favor seleccione un aula');
+      }else{
+        openModalConfir();
+      }
+    }else{
+      openModalConfir();
+    }
+  };
+
+  const createReserva=()=>{
+    let soli;
+    if (radioRechazar) {
+      soli = {
+        id_solicitud: id_solicitud,
+        id_usuario: id_usuario,
+        fecha_requerida_solicitud: fecha_requerida_solicitud,
+        motivo:motivos,
+        aceptar:false
+      };
+    } else {
+       soli = {
+        id_solicitud: id_solicitud,
+        id_usuario: id_usuario,
+        fecha_requerida_solicitud: fecha_requerida_solicitud,
+        hora_inicio: hora_requerida_solicitud,
+        hora_fin: hora_fin_solicitud,
+        id_aulas:aulasId,
+        aceptar:true
+      };
+    }
+    responder(soli);
+    closeModalConfir();
+    closeModal();
+  }
+
+
+
   useEffect(() => {
     generateAulas();
   }, [aulasDisponibles]);
+
+  useEffect(() => {
+    if(aulaSeleccionada!="Ninguna"){
+      SetMensajeConfirmacion(
+        `¿Está seguro de aceptar asignando : ${aulaSeleccionada} a  esta solicitud?`,
+      );
+    }
+  }, [aulaSeleccionada]);
+
+  
 
   const style = {
     position: 'absolute' as 'absolute',
@@ -184,14 +236,14 @@ export default function ({
         <button
           type="button"
           className="btn colorPrimary text-white mt-4"
-          onClick={openModalConfir}
+          onClick={validar}
         >
           Confirmar
         </button>
         <Modal open={stateModal} onClose={closeModalConfir}>
           <Box sx={{ ...style, width: 500 }}>
-            <div className="font-bold d-flex justify-content-center mt-4">
-              {mensajeConfirmacion}
+            <div className="font-bold text-center m-4">
+              <p>{mensajeConfirmacion}</p>
             </div>
             <form className="d-flex justify-content-center space-x-4 mt-4 mb-4">
               <div>
@@ -204,7 +256,7 @@ export default function ({
                 </button>
               </div>
               <div>
-                <button type="button" className="btn colorPrimary text-white">
+                <button type="button" className="btn colorPrimary text-white" onClick={createReserva}>
                   Aceptar
                 </button>
               </div>
@@ -372,7 +424,6 @@ export default function ({
                             zIndex: theme => theme.zIndex.drawer + 1,
                           }}
                           open={stateBack}
-                          onClick={handleCloseBack}
                         >
                           <CircularProgress color="inherit" />
                         </Backdrop>
