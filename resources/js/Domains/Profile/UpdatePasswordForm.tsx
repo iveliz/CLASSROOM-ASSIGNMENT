@@ -142,7 +142,7 @@ export default function UpdatePasswordForm() {
               console.log('entra')
               setErrorUno('Este campo es obligatorio') 
             }else if(e.currentTarget.value.length<8 && e.currentTarget.value.length>0){
-              setErrorUno('La contraseña debe tener mas de 8 caracteres.')
+              setErrorUno('La contraseña debe tener más de 8 caracteres.')
             }else{
               setErrorUno('')
             }
