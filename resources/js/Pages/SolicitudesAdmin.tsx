@@ -32,12 +32,12 @@ export default function () {
 
   const createReserva = () => {
     handleOpenBack();
-    if (solicitud.aceptar) {
+    if (!(solicitud.aceptar)) {
       let soli = {
         id_solicitud: solicitud.id_solicitud,
         id_usuario: solicitud.id_usuario,
         fecha_requerida_solicitud: solicitud.fecha_requerida_solicitud,
-        motivo: solicitud.motivos,
+        motivo: solicitud.motivo,
       };
       console.log(soli);
       axios.post(`${endpoint}/rechazarSolicitud`, soli).then(response => {
@@ -48,21 +48,23 @@ export default function () {
           }));
           console.log(listaSolicitudAula)
           SetSolicitud(null);
-          handleCloseBack();
-        } else {
-          alert('Un error ha ocurrido, por favor recarge la página');
+        } else if(response.data==2) {
+          alert('Otro docente ya creo una reserva para esta solicitud.');
+        }else{
+          alert('El aula que tratas de asignar ya esta en uso');
         }
+        handleCloseBack();
+        console.log(response)
       });
     } else {
       let soli = {
         id_solicitud: solicitud.id_solicitud,
         id_usuario: solicitud.id_usuario,
         fecha_requerida_solicitud: solicitud.fecha_requerida_solicitud,
-        hora_inicio: solicitud.hora_requerida_solicitud,
-        hora_fin: solicitud.hora_fin_solicitud,
-        id_aulas: solicitud.aulasId,
+        hora_inicio: solicitud.hora_inicio,
+        hora_fin: solicitud.hora_fin,
+        id_aulas: solicitud.id_aulas,
       };
-      console.log(soli);
       axios.post(`${endpoint}/confirmarSolicitud`, soli).then(response => {
         if (response.data == 1) {
           setListaSolicitudAula(listaSolicitudAula.filter((item: any)=>{
@@ -71,10 +73,11 @@ export default function () {
           }));
           console.log(listaSolicitudAula)
           SetSolicitud(null);
-          handleCloseBack();
-        } else {
+        }else{
           alert('Un error ha ocurrido, por favor recarge la página');
         }
+        handleCloseBack();
+        console.log(response)
       });
     }
   };

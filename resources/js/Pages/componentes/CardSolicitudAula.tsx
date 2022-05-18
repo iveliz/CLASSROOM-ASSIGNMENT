@@ -51,7 +51,7 @@ export default function ({
   const [radioAceptar, SetRadioAceptar] = useState(true);
   const [radioRechazar, SetRadioRechazar] = useState(false);
   const [aulaSeleccionada, SetAulaSeleccionada] = useState('Ninguna');
-  const [motivos, SetMotivos] = useState('');
+  const [motivos, SetMotivos] = useState("");
   const [stateBack, SetStateBack] = useState(false);
   const [aulasDisponibles, SetAulaDisponibles] = useState<any[]>();
   const [aulasId,SetAulasId]=useState<any[]>();
@@ -187,6 +187,7 @@ export default function ({
         motivo:motivos,
         aceptar:false
       };
+      console.log("rechazado")
     } else {
        soli = {
         id_solicitud: id_solicitud,
@@ -197,6 +198,7 @@ export default function ({
         id_aulas:aulasId,
         aceptar:true
       };
+      console.log("aceptado")
     }
     responder(soli);
     closeModalConfir();
