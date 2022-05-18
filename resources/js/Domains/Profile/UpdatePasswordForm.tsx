@@ -52,9 +52,8 @@ export default function UpdatePasswordForm() {
       errorBag: 'updatePassword',
       preserveScroll: true,
       onSuccess: () => {
-        openModalDos();
+        //openModalDos();
         form.reset()
-        alert('Contraseña cambiada, se cerrara la sesión ...')
       },
       onError: () => {
         if (form.errors.password) {
@@ -74,7 +73,7 @@ export default function UpdatePasswordForm() {
     let res = '';
     if(contrasenia!=''){
       if(contrasenia.length<8){
-        console.log('entro')
+        
         res += 'La contraseña debe tener mas de 8 caracteres. '
       }
       if(contrasenia==aux && error == 2){
@@ -116,7 +115,7 @@ export default function UpdatePasswordForm() {
       renderActions={() => (
         <>
           <JetActionMessage on={form.recentlySuccessful} className="mr-3">
-            Guardado.
+            Contraseña actualizada correctamente.
           </JetActionMessage>
 
           <JetButton
@@ -143,7 +142,7 @@ export default function UpdatePasswordForm() {
             }else{
               setErrorUno('')
             }
-            console.log(e.currentTarget.value)
+            
             setErrorUno(reportarError(e.currentTarget.value,'',1))
             setErrorDos(reportarError(form.data.password,e.currentTarget.value,2))
           }
@@ -163,7 +162,7 @@ export default function UpdatePasswordForm() {
           onChange={e => {
             form.setData('password', e.currentTarget.value)
             setErrorDos(reportarError(e.currentTarget.value,form.data.current_password,2))
-            console.log(errorDos)
+            
             if(e.currentTarget.value.length>0 && form.data.current_password.length==0){
               setErrorUno('Este campo es obligatorio')
             }else{
@@ -174,7 +173,7 @@ export default function UpdatePasswordForm() {
               setErrorDos('Este campo es obligatorio') 
             }else{
               //setErrorDos('')
-              console.log("entra")
+              
             }
             if(e.currentTarget.value.length>0 && form.data.password_confirmation.length==0){
               setErrorTres('Este campo es obligatorio')
