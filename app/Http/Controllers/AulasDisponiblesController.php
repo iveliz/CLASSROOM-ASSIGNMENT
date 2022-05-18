@@ -164,7 +164,7 @@ class AulasDisponiblesController extends Controller
 
         if (count($res) < 1) {
             //buscar vecinos
-            $cantidad_res = 5;
+            $cantidad_res = 7;
             $i = 0;
             foreach ($aulasDispo as $aulas) {
                 if ($i < $cantidad_res) {
@@ -244,16 +244,13 @@ class AulasDisponiblesController extends Controller
     }
 
     private function estaDentro($res,$subres){
-        $r = FALSE;
-        $i = 0;
+        $capacidad = $subres["capacidad_total"];
         foreach($res as $rs){
-            $vecAct = $subres[$i]->vecinos;
-            $vecSR = $rs->vecinos;
-            foreach($vecAct as $va){
-                
+            if($rs["capacidad_total"]==$capacidad){
+                return TRUE;
             }
         }
-        return $r;
+        return FALSE;
     }
 
     private function capTotal($aulas)
