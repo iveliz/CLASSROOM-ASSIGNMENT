@@ -55,7 +55,7 @@ export default function () {
 
   const getSolicitudes = () => {
     if(renderizar){
-      axios.get(`${endpoint}/api/solicitudes/aceptadas/${id}`).then(response => {
+      axios.get(`${endpoint}/api/solicitudes/aceptadas/sin_vencer/${id}`).then(response => {
         console.log(response.data);
         SetlistaSoli(response.data);
       });
