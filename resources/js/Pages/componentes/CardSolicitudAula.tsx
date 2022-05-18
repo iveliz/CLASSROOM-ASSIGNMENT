@@ -5,7 +5,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { nanoid } from 'nanoid';
 import Xsquare from '../../Icons/X-square';
-const endpoint = 'http://127.0.0.1:8000';
+const endpoint = 'http://3.238.9.78';
 import {
   Button,
   Checkbox,
