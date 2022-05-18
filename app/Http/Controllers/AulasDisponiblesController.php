@@ -96,6 +96,10 @@ class AulasDisponiblesController extends Controller
         $horaFin = $request->hora_fin;
         $cantAlum = $request->capacidad;
         //$facultad = $request->facultad; //para facultades se tendria que añadir en la consulta y en la bd
+        $bioseguridad = TRUE;
+        if($bioseguridad){
+            $cantAlum = $cantAlum*2;
+        }
         $aulasNoDispo = DB::table('reservas')->join('aulas_reservadas', 'reservas.id_reserva', '=', 'aulas_reservadas.id_reserva')
             ->where(function ($query) use ($fecha) {
                 $query->where('reservas.fecha_reserva', '=', $fecha);
