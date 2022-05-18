@@ -83,6 +83,7 @@ export default function UpdateEmails({ user }: Props) {
         res += 'El correo secundario no puede ser igual al principal'
       }
       
+      
     }
     return res;
   };
@@ -172,6 +173,14 @@ export default function UpdateEmails({ user }: Props) {
           onChange={(e) => {
             setPrincipal(e.currentTarget.value.replace(' ','').replace(/[*+\-?^${}()|[\]\\/#|¿%&]/g,''))
             setErrorPrincipal(reportarError(e.currentTarget.value,1))
+            if(e.currentTarget.value==secundario && e.currentTarget.value.length>0 && secundario.length>0){
+              setErrorSecundario('El correo secundario no puede ser igual al principal')
+            }else{
+              if(e.currentTarget.value.length!=secundario.length && secundario.length>0 && e.currentTarget.value.length>0){
+
+                setErrorSecundario('')
+              }
+            }
           }}
         />
         {principal == undefined ?<LinearProgress className='absolute' />:''}
