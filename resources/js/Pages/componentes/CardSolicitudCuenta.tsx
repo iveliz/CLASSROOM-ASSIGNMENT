@@ -1,5 +1,5 @@
 import React from 'react';
-const endpoint = 'http://127.0.0.1:8000'
+const endpoint = 'http://3.238.9.78';
 interface SolicitudRegistro {
     id_sct_cnt: Number;
     fecha: String;

@@ -55,7 +55,7 @@ export default function () {
 
   const getSolicitudes = () => {
     if(renderizar){
-      axios.get(`${endpoint}/api/solicitudes/aceptadas/${id}`).then(response => {
+      axios.get(`${endpoint}/api/solicitudes/aceptadas/sin_vencer/${id}`).then(response => {
         console.log(response.data);
         SetlistaSoli(response.data);
       });
@@ -136,7 +136,7 @@ export default function () {
         </div>
         <div className="col-span-5">
           <div className=" mt-6 ">
-            <h1 className="font-bold">Solicitudes Aceptadas</h1>
+            <h1 className="font-bold">Solicitudes Aceptadas Vigentes</h1>
             <div className="fondoBarra  mr-8 ">
               <div className="flex">
                 <div className="mt-3 ml-4">

@@ -225,13 +225,17 @@ export default function AppLayout({
                       )
                     }
                   >
-                    {/* <!-- Account Management --> 
+                    {/* <!-- Account Management --> */}
                     <div className="block px-4 py-2 text-xs text-gray-400">
-                      Manage Account
+                      Administrar Cuenta
                     </div>
 
-                    <JetDropdownLink href={route('profile.show')}>
-                      Profile
+                    <JetDropdownLink href={route('cambiar_contrasenia_docente')}>
+                      Cambiar Contraseña
+                    </JetDropdownLink>
+
+                    <JetDropdownLink href={route('configurar_correos_docente')}>
+                      Configurar Correos
                     </JetDropdownLink>
 
                     {page.props.jetstream.hasApiFeatures ? (
@@ -241,7 +245,7 @@ export default function AppLayout({
                     ) : null}
 
                     <div className="border-t border-gray-100"></div>
-                   */}
+                   
                     {/* <!-- Authentication --> */}
                     <form onSubmit={logout}>
                       <JetDropdownLink as="button">Cerrar Sesión</JetDropdownLink>
@@ -344,10 +348,17 @@ export default function AppLayout({
 
               <div className="mt-3 space-y-1">
                 <JetResponsiveNavLink
-                  href={route('profile.show')}
-                  active={route().current('profile.show')}
+                  href={route('cambiar_contrasenia_docente')}
+                  active={route().current('cambiar_contrasenia_docente')}
                 >
-                  Profile
+                  Cambiar Contraseña
+                </JetResponsiveNavLink>
+
+                <JetResponsiveNavLink
+                  href={route('configurar_correos_docente')}
+                  active={route().current('configurar_correos_docente')}
+                >
+                  Configurar Correos
                 </JetResponsiveNavLink>
 
                 {page.props.jetstream.hasApiFeatures ? (

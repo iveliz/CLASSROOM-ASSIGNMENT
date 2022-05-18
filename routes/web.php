@@ -5,10 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\usuarioController;
 use Inertia\Inertia;
 use App\Http\Controllers\AulaController;
-
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\materiaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\SolicitudAulaAdmController;
+use App\Http\Controllers\AulasDisponiblesController;
 use App\Http\Controllers\SolicitudesController;
 
 use App\Http\Controllers\SolicitudCuentaController;
@@ -30,7 +31,7 @@ Route::get('/', function () {
 Route::middleware([
   'auth',
   'auth:sanctum',
-  config('jetstream.auth_session'),
+  //config('jetstream.auth_session'),
   'verified',
   'checkRoleAdmin',
 ])->group(function () {
@@ -41,7 +42,7 @@ Route::middleware([
 
 Route::middleware([
   'auth:sanctum',
-  config('jetstream.auth_session'),
+ // config('jetstream.auth_session'),
   'verified',
   'checkRoleDocente',
 ])->group(function () {
@@ -66,7 +67,7 @@ Route::middleware(['auth', 'checkRoleAdmin'])->group(function () {
 
 Route::middleware([
   'auth:sanctum',
-  config('jetstream.auth_session'),
+ // config('jetstream.auth_session'),
   'verified',
   'checkRoleAdmin',
 ])->group(function () {
@@ -77,7 +78,51 @@ Route::middleware([
 
 Route::middleware([
   'auth:sanctum',
-  config('jetstream.auth_session'),
+ // config('jetstream.auth_session'),
+  'verified',
+  'checkRoleAdmin',
+])->group(function () {
+  Route::get('/administrar_cuenta_admin/cambiar_contraseña', function () {
+    return Inertia::render('Profile/ActualizarContraseniaAdmin');
+  })->name('cambiar_contrasenia_admin');
+});
+
+Route::middleware([
+  'auth:sanctum',
+  //config('jetstream.auth_session'),
+  'verified',
+  'checkRoleAdmin',
+])->group(function () {
+  Route::get('/administrar_cuenta_admin/configurar_correos', function () {
+    return Inertia::render('Profile/ActualizarCorreosAdmin');
+  })->name('configurar_correos_admin');
+});
+
+Route::middleware([
+  'auth:sanctum',
+  //config('jetstream.auth_session'),
+  'verified',
+  'checkRoleDocente',
+])->group(function () {
+  Route::get('/cambiar_contraseña', function () {
+    return Inertia::render('Profile/ActualizarContraseniaDocente');
+  })->name('cambiar_contrasenia_docente');
+});
+
+Route::middleware([
+  'auth:sanctum',
+  //config('jetstream.auth_session'),
+  'verified',
+  'checkRoleDocente',
+])->group(function () {
+  Route::get('/configurar_correos', function () {
+    return Inertia::render('Profile/ActualizarCorreosDocente');
+  })->name('configurar_correos_docente');
+});
+
+Route::middleware([
+  'auth:sanctum',
+ // config('jetstream.auth_session'),
   'verified',
   'checkRoleDocente',
 ])->group(function () {
@@ -130,13 +175,28 @@ Route::controller(SolicitudesController::class)->group(function () {
   Route::post('/api/solicitudes/crear', 'crearSolicitud');
   Route::get('/api/solicitudes/rechazadas/{id}', 'listarRechazados');
   Route::get('/api/solicitudes/aceptadas/{id}', 'listarAceptados');
-  Route::get('/api/solicitudes/aceptadas/sin_vencer/{id}', 'listarAceptadasSinVencer');
-  Route::get('/api/solicitudes/aceptadas/vencidas/{id}', 'listarAceptadasVencidas');
-  Route::post('/api/solicitudes/cancelarPorArreglo', 'cancelarSolicitudPorArreglo');
+  Route::get(
+    '/api/solicitudes/aceptadas/sin_vencer/{id}',
+    'listarAceptadasSinVencer'
+  );
+  Route::get(
+    '/api/solicitudes/aceptadas/vencidas/{id}',
+    'listarAceptadasVencidas'
+  );
+  Route::post(
+    '/api/solicitudes/cancelarPorArreglo',
+    'cancelarSolicitudPorArreglo'
+  );
 });
 
 Route::controller(SolicitudAulaAdmController::class)->group(function () {
   Route::get('/solicitudesAula', 'index');
+  Route::post('/confirmarSolicitud', 'confirmarSoli');
+  Route::post('/rechazarSolicitud', 'rechazarSoli');
+});
+
+Route::controller(AulasDisponiblesController::class)->group(function () {
+  Route::post('/aulasDisponibles', 'aulasDisponibles');
 });
 
 Route::controller(materiaController::class)->group(function () {
@@ -149,4 +209,10 @@ Route::controller(AulaController::class)->group(function () {
 
 Route::controller(SolicitudCuentaController::class)->group(function () {
   Route::get('/SolicitudCuenta', 'verSolicitud');
+});
+
+Route::controller(EmailController::class)->group(function () {
+  Route::post('/correoElectronico', 'store');
+  Route::post('/correoElectronico/actualizar', 'update');
+  Route::post('/correoElectronico/mostrar', 'show');
 });

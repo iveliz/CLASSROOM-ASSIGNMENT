@@ -7,7 +7,7 @@ import Cardsolicitud from '@/Jetstream/CardsolicitudAceptadasV';
 import { useEffect } from "react";
 import { nanoid } from 'nanoid'
 import { usePage } from '@inertiajs/inertia-react';
-const endpoint = 'http://127.0.0.1:8000'
+const endpoint = 'http://3.238.9.78';
 export default function (props: { solicitudes: any }) {
   const [listaSoliState, SetlistaSoli] = useState([]);
   const { user }: any = usePage().props;

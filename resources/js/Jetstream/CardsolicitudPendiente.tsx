@@ -3,7 +3,7 @@ import image from '../../css/images/userImage.png';
 import Modal from 'react-modal';
 import { useState } from 'react';
 import axios from 'axios';
-const endpoint = 'http://127.0.0.1:8000'
+const endpoint = 'http://3.238.9.78';
 interface Solicitud {
   fecha_inicio_reg_sct: String;
   id_solicitud: number;
@@ -95,7 +95,7 @@ export default function (
             <div>Materia: {materia_solicitud}</div>
           </div>
 
-          <div className="position-absolute top-50 end-0 translate-middle-y mr-4">
+          <div className="float-right  top-50 end-0 translate-middle-y mr-4">
             {/*<div className"></div>*/}
             <button
               type="button"

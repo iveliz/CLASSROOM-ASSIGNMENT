@@ -35,7 +35,7 @@ export default function () {
             elemBefore: () => <Check></Check>,
             subNav: [
               {
-               title:"Aceptadas Válidas",
+               title:"Aceptadas Vigentes",
                itemId:"aceptadas",
                elemBefore: () => <p className='text-white'>o</p>,
               },
