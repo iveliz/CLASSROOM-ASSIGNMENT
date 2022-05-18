@@ -160,14 +160,14 @@ export default function UpdateEmails({ user }: Props) {
 
       {/* <!-- Email primario--> */}
       <div className="col-span-6 sm:col-span-4">
-        <JetLabel htmlFor="email" value="Correo electrónico primario:" />
+        <JetLabel htmlFor="email" value="Correo electrónico primario" />
         <JetInput
           id="email-p"
           type="text"
           className="mt-1 block w-full rounded-b-none"
           value={principal ?principal:''}
           onChange={(e) => {
-            setPrincipal(e.currentTarget.value.trim())
+            setPrincipal(e.currentTarget.value.replace(' ','').replace(/[.*+\-?^${}()|[\]\\/#|¿%&]/g,''))
             setErrorPrincipal(reportarError(e.currentTarget.value,1))
           }}
         />
@@ -176,7 +176,7 @@ export default function UpdateEmails({ user }: Props) {
       </div>
       {/* <!-- Email secundario --> */}
       <div className="col-span-6 sm:col-span-4 mt-2">
-        <JetLabel htmlFor="email" value="Correo electrónico secundario:" />
+        <JetLabel htmlFor="email" value="Correo electrónico secundario" />
         <JetInput
           id="email"
           type="text"
