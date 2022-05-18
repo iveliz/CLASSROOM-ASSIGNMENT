@@ -96,6 +96,10 @@ class AulasDisponiblesController extends Controller
         $horaFin = $request->hora_fin;
         $cantAlum = $request->capacidad;
         //$facultad = $request->facultad; //para facultades se tendria que añadir en la consulta y en la bd
+        $bioseguridad = TRUE;
+        if($bioseguridad){
+            $cantAlum = $cantAlum*2;
+        }
         $aulasNoDispo = DB::table('reservas')->join('aulas_reservadas', 'reservas.id_reserva', '=', 'aulas_reservadas.id_reserva')
             ->where(function ($query) use ($fecha) {
                 $query->where('reservas.fecha_reserva', '=', $fecha);
@@ -164,7 +168,7 @@ class AulasDisponiblesController extends Controller
 
         if (count($res) < 1) {
             //buscar vecinos
-            $cantidad_res = 5;
+            $cantidad_res = 7;
             $i = 0;
             foreach ($aulasDispo as $aulas) {
                 if ($i < $cantidad_res) {
@@ -244,16 +248,13 @@ class AulasDisponiblesController extends Controller
     }
 
     private function estaDentro($res,$subres){
-        $r = FALSE;
-        $i = 0;
+        $capacidad = $subres["capacidad_total"];
         foreach($res as $rs){
-            $vecAct = $subres[$i]->vecinos;
-            $vecSR = $rs->vecinos;
-            foreach($vecAct as $va){
-                
+            if($rs["capacidad_total"]==$capacidad){
+                return TRUE;
             }
         }
-        return $r;
+        return FALSE;
     }
 
     private function capTotal($aulas)
