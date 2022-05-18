@@ -436,6 +436,7 @@ export default function () {
       '-' +
       sD +
       fecha.getDate();
+    setSelectedPeriodo(1);
     setStartDate(fecha);
     esHoy = fecha;
     horaHoy();
