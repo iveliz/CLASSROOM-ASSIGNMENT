@@ -148,7 +148,14 @@ export default function UpdatePasswordForm() {
             }
             
             //setErrorUno(reportarError(e.currentTarget.value,'',1))
-            setErrorDos(reportarError(form.data.password,e.currentTarget.value,2))
+            if(e.currentTarget.value.length<=30 && form.data.password.length<=30){
+              setErrorDos(reportarError(form.data.password,e.currentTarget.value,2))
+
+            }
+
+            if(e.currentTarget.value.length>30){
+              setErrorUno('La contraseña no puede tener mas de 30 caracteres')
+            }
           }
           }
           autoComplete="current-password"
@@ -169,8 +176,9 @@ export default function UpdatePasswordForm() {
             
             if(e.currentTarget.value.length>0 && form.data.current_password.length==0){
               setErrorUno('Este campo es obligatorio')
-            }else{
-              setErrorUno('')
+            }else if(form.data.current_password.length<=30){
+
+              setErrorUno('');
             }
             form.data.password_confirmation.length>0?e.currentTarget.value===form.data.password_confirmation?setErrorTres(''):setErrorTres('La confirmación no es igual a la nueva contraseña'):setErrorTres('')
             if(e.currentTarget.value.length==0 && form.data.password_confirmation.length>0){
@@ -183,6 +191,9 @@ export default function UpdatePasswordForm() {
               setErrorTres('Este campo es obligatorio')
             }else{
               //setErrorTres('')
+            }
+            if(e.currentTarget.value.length>30){
+              setErrorDos('La contraseña no puede tener mas de 30 caracteres')
             }
           }}
           autoComplete="new-password"
@@ -206,10 +217,13 @@ export default function UpdatePasswordForm() {
               setErrorDos('Este campo es obligatorio') 
             }else{
               if((form.data.current_password!=form.data.password)||(form.data.current_password.length==0&&form.data.password.length==0)){
-                if(errorDos.length==0){
+                if(errorDos.length==0 || e.currentTarget.value.length==0){
                   setErrorDos('')
                 }
               }
+            }
+            if(e.currentTarget.value.length>30){
+              setErrorTres('La contraseña no puede tener mas de 30 caracteres')
             }
           }
           }
