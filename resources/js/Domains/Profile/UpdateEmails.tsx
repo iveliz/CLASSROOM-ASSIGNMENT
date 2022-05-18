@@ -53,12 +53,13 @@ export default function UpdateEmails({ user }: Props) {
  
   const getCorreos=  async()=>{
     await axios.post(`${endpoint}/correoElectronico/mostrar`,{id_usuario: user.id}).then((response)=>{
-      setPrincipal(response.data[0].email_principal);
-      setSecundario(response.data[0].email_secundario);
+      setPrincipal(response.data[0].email_principal!=null?response.data[0].email_principal:'');
+      setSecundario(response.data[0].email_secundario!=null?response.data[0].email_secundario:'');
       setCorreos({
-        email_principal: response.data[0].email_principal,
-        email_secundario: response.data[0].email_secundario
+        email_principal: response.data[0].email_principal!=null?response.data[0].email_principal:'',
+        email_secundario: response.data[0].email_secundario!=null?response.data[0].email_secundario:''
       })
+      console.log(response.data[0])
     })
   }
 

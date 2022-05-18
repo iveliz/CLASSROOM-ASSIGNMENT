@@ -137,13 +137,17 @@ export default function UpdatePasswordForm() {
           value={form.data.current_password}
           onChange={e =>{
             form.setData('current_password', e.currentTarget.value)
+            console.log(e.currentTarget.value.length)
             if(e.currentTarget.value.length==0 && form.data.password.length>0){
+              console.log('entra')
               setErrorUno('Este campo es obligatorio') 
+            }else if(e.currentTarget.value.length<8 && e.currentTarget.value.length>0){
+              setErrorUno('La contraseña debe tener mas de 8 caracteres.')
             }else{
               setErrorUno('')
             }
             
-            setErrorUno(reportarError(e.currentTarget.value,'',1))
+            //setErrorUno(reportarError(e.currentTarget.value,'',1))
             setErrorDos(reportarError(form.data.password,e.currentTarget.value,2))
           }
           }
@@ -202,7 +206,9 @@ export default function UpdatePasswordForm() {
               setErrorDos('Este campo es obligatorio') 
             }else{
               if((form.data.current_password!=form.data.password)||(form.data.current_password.length==0&&form.data.password.length==0)){
-                setErrorDos('')
+                if(errorDos.length==0){
+                  setErrorDos('')
+                }
               }
             }
           }
