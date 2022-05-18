@@ -38,6 +38,7 @@ export default function UpdateEmails({ user }: Props) {
   const [erroSecundario,setErrorSecundario] = useState('');
   const [modalIsOpen, setIsOpen] = useState(false);
   const [mensajeModal,setMensajeModal] = useState('');
+  const [confimacion, setConfirmacion] = useState(false)
 
 
   function afterOpenModal() {}
@@ -102,12 +103,15 @@ export default function UpdateEmails({ user }: Props) {
       })
       .then(response => {
         console.log(response.data);
+        setConfirmacion(false)
       });
       setCorreos({
         email_principal: principal,
         email_secundario: secundario
       })
       closeModal();
+      setConfirmacion(true)
+      //setConfirmacion(false)
   };
 
   return (
@@ -117,8 +121,8 @@ export default function UpdateEmails({ user }: Props) {
       description={`El correo primario se utiliza para recuperar la contraseña, en caso de perder acceso a su correo primario se recomienda utilizar un correo secundario.`}
       renderActions={() => (
         <>
-          <JetActionMessage on={form.recentlySuccessful} className="mr-3">
-            Guardado.
+          <JetActionMessage on={confimacion} className="mr-3">
+            Los cambios se guardaron exitosamente.
           </JetActionMessage>
 
           <button
