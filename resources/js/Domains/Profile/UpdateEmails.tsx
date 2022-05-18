@@ -176,7 +176,7 @@ export default function UpdateEmails({ user }: Props) {
             if(e.currentTarget.value==secundario && e.currentTarget.value.length>0 && secundario.length>0){
               setErrorSecundario('El correo secundario no puede ser igual al principal')
             }else{
-              if(e.currentTarget.value.length!=secundario.length && secundario.length>0 && e.currentTarget.value.length>0){
+              if(e.currentTarget.value.length!=secundario.length && secundario.length>0 && e.currentTarget.value.length>0 && secundario.length<=50 && e.currentTarget.value.length<=50){
 
                 setErrorSecundario('')
               }
