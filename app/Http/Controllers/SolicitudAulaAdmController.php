@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Solicitudes;
 use App\Models\RegistroSolicitudes;
 use Illuminate\Http\Request;
+use App\Models\Reserva;
+use App\Models\AulaReserva;
 use Illuminate\Support\Facades\DB;
 
 class SolicitudAulaAdmController extends Controller
@@ -201,6 +203,84 @@ class SolicitudAulaAdmController extends Controller
         }
         return $hh . ":" . $mm . ":" . $ss;
     }
+    public function confirmarSoli(Request $datos_solicitud)
+  {
+    $res = 0;
+    try {
+      foreach ($datos_solicitud->id_aulas as $aula) {
+        $reserva_existente = AulaReserva::select('id_reserva')
+          ->where('id_aula', $aula)
+          ->get();
+      }
+      if (count($reserva_existente) == 0) {
+        $solicitud_existente = RegistroSolicitudes::select('id_reg_sct')
+          ->where('id_solicitud', $datos_solicitud->id_solicitud)
+          ->get();
+        if (count($solicitud_existente) == 0) {
+          $nuevo_registro_solicitud = new RegistroSolicitudes();
+          $nuevo_registro_solicitud->id_solicitud =
+            $datos_solicitud->id_solicitud;
+          $nuevo_registro_solicitud->id_usuario = $datos_solicitud->id_usuario;
+          $nuevo_registro_solicitud->fecha_inicio_reg_sct =
+            $datos_solicitud->fecha_requerida_solicitud;
+          $nuevo_registro_solicitud->fecha_modificacion_reg_sct = date('Y-m-d');
+          $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'aceptada';
+          $nuevo_registro_solicitud->save();
+          $id_guardado = $nuevo_registro_solicitud->id;
+          Solicitudes::where(
+            'id_solicitud',
+            $datos_solicitud->id_solicitud
+          )->update(['estado_solicitud' => 'aceptada']);
+          $nueva_reserva = new Reserva();
+          $nueva_reserva->id_reg_sct = $id_guardado;
+          $nueva_reserva->hora_inicio_reserva = $datos_solicitud->hora_inicio;
+          $nueva_reserva->hora_fin_reserva = $datos_solicitud->hora_fin;
+          $nueva_reserva->fecha_reserva =
+            $datos_solicitud->fecha_requerida_solicitud;
+          $nueva_reserva->save();
+          $id_guardada = $nueva_reserva->id;
+          foreach ($datos_solicitud->id_aulas as $aula) {
+            $nueva_aula_reservada = new AulaReserva();
+            $nueva_aula_reservada->id_reserva = $id_guardada;
+            $nueva_aula_reservada->id_aula = $aula;
+            $nueva_aula_reservada->save();
+          }
+          $res = 1;
+        } else {
+          $res = 2;
+        }
+      }
+    } catch (\Throwable $th) {
+      //throw $th;
+      $res = $th;
+    }
+    return $res;
+  }
+
+  public function rechazarSoli(Request $datos_solicitud)
+  {
+    $res = 0;
+    $solicitud_existente = RegistroSolicitudes::select('id_reg_sct')
+      ->where('id_solicitud', $datos_solicitud->id_solicitud)
+      ->get();
+    if (count($solicitud_existente) == 0) {
+      $nuevo_registro_solicitud = new RegistroSolicitudes();
+      $nuevo_registro_solicitud->id_solicitud = $datos_solicitud->id_solicitud;
+      $nuevo_registro_solicitud->id_usuario = $datos_solicitud->id_usuario;
+      $nuevo_registro_solicitud->fecha_inicio_reg_sct =
+        $datos_solicitud->fecha_requerida_solicitud;
+      $nuevo_registro_solicitud->fecha_modificacion_reg_sct = date('Y-m-d');
+      $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'rechazada';
+      $nuevo_registro_solicitud->motivo_reg_sct = $datos_solicitud->motivo;
+      $nuevo_registro_solicitud->save();
+      Solicitudes::where(
+        'id_solicitud',
+        $datos_solicitud->id_solicitud
+      )->update(['estado_solicitud' => 'rechazada']);
+      $res = 1;
+    }
+    return $res;
+  }
 
     /**
      * Show the form for creating a new resource.
