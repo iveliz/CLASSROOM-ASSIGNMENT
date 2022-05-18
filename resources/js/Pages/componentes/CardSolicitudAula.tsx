@@ -59,7 +59,7 @@ export default function ({
     hora_fin: hora_fin_solicitud,
     capacidad: cantidad_estudiantes_solicitud,
   });
-  console.log(reserva)
+  console.log(reserva);
   const [mensajeConfirmacion, SetMensajeConfirmacion] = useState('');
 
   const customStyles = {
@@ -91,7 +91,6 @@ export default function ({
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
-   
   };
 
   const handleOpenBack = () => {
@@ -142,7 +141,7 @@ export default function ({
     handleOpenBack();
     axios.post(`${endpoint}/aulasDisponibles`, reserva).then(response => {
       SetAulaDisponibles(response.data);
-      console.log(response.data)
+      console.log(response.data);
       handleCloseBack();
       handleOpen();
     });
@@ -153,11 +152,11 @@ export default function ({
     if (aulasDisponibles != null) {
       for (let aula of aulasDisponibles) {
         let aulas: any[] = [];
-        console.log(aula)
+        console.log(aula);
         aula.vecinos.map((aula: any) => {
           aulas.push(aula.numero_aula + aula.letra_aula);
         });
-        console.log(aulas)
+        console.log(aulas);
         lista.push(aulas.join(',') + '-Capacidad: ' + aula.capacidad_total);
       }
       SetListaMostrar(lista);
@@ -165,9 +164,8 @@ export default function ({
   };
 
   useEffect(() => {
-   generateAulas();
-}, [aulasDisponibles]);
-
+    generateAulas();
+  }, [aulasDisponibles]);
 
   const style = {
     position: 'absolute' as 'absolute',
@@ -255,30 +253,32 @@ export default function ({
                   value={value}
                   onChange={handleChange}
                 >
-                  {listaMostrar!=null?listaMostrar.map(aula => {
-                    return (
-                      <FormControlLabel
-                        key={nanoid(6)}
-                        control={<Radio color="success" />}
-                        label={aula}
-                        value={aula}
-                      ></FormControlLabel>
-                    );
-                  }):""}
+                  {listaMostrar != null
+                    ? listaMostrar.map(aula => {
+                        return (
+                          <FormControlLabel
+                            key={nanoid(6)}
+                            control={<Radio color="success" />}
+                            label={aula}
+                            value={aula}
+                          ></FormControlLabel>
+                        );
+                      })
+                    : ''}
                 </RadioGroup>
               </FormControl>
             </div>
-            <div className="position-absolute bottom-0 end-0 align-text-bottom">
+            <div className="float-right">
               <button
                 type="button"
-                className="btn colorPrimary text-white mr-4 my-6"
+                className="btn colorPrimary text-white mr-2 ml-16 mb-4"
                 onClick={handleClose2}
               >
                 Atrás
               </button>
               <button
                 type="button"
-                className="btn aceptadaButton text-white mr-4 my-6"
+                className="btn aceptadaButton text-white mr-6 ml-2 mb-4"
                 onClick={handleClose}
               >
                 Seleccionar
@@ -307,7 +307,7 @@ export default function ({
             <div className="mr-2">Nombre Docente: {name}</div>
           </div>
 
-          <div className="position-absolute top-50 end-0 translate-middle-y mr-4 ">
+          <div className=" float-right top-50 end-0 translate-middle-y mr-4 ">
             <button
               type="button"
               onClick={openModal}
