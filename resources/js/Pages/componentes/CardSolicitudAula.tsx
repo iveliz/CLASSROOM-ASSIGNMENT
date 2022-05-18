@@ -310,7 +310,7 @@ export default function ({
           disabled={!radioAceptar}
           onClick={getAulas}
         >
-          Seleccionar Aula
+          Seleccionar Aula(s)
         </button>
 
         <Modal
