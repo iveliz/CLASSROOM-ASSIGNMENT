@@ -82,7 +82,7 @@ export default function (
             <div>Materia: {materia_solicitud}</div>
           </div>
 
-          <div className="position-absolute top-50 end-0 translate-middle-y mr-4">
+          <div className=" float-right top-50 end-0 translate-middle-y mr-4">
             {/*<div className"></div>*/}
             <button
               type="button"
