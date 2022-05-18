@@ -160,7 +160,7 @@ export default function UpdatePasswordForm() {
           }
           autoComplete="current-password"
         />
-        <p className="absolute text-sm text-red-600 mt-2 mb-0">{`${form.errors.current_password==undefined?errorUno:(form.data.current_password.length>0?form.errors.current_password:'')}`}</p>
+        <p className="absolute text-sm text-red-600 mt-2 mb-0">{`${form.errors.current_password==undefined?errorUno:form.errors.current_password}`}</p>
       </div>
 
       <div className="col-span-6 sm:col-span-4 mt-2">
