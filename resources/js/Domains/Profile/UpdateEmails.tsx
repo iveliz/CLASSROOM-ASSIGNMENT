@@ -170,7 +170,7 @@ export default function UpdateEmails({ user }: Props) {
           className="mt-1 block w-full rounded-b-none"
           value={principal ?principal:''}
           onChange={(e) => {
-            setPrincipal(e.currentTarget.value.replace(' ','').replace(/[.*+\-?^${}()|[\]\\/#|¿%&]/g,''))
+            setPrincipal(e.currentTarget.value.replace(' ','').replace(/[*+\-?^${}()|[\]\\/#|¿%&]/g,''))
             setErrorPrincipal(reportarError(e.currentTarget.value,1))
           }}
         />
@@ -186,7 +186,7 @@ export default function UpdateEmails({ user }: Props) {
           className="mt-1 block w-full rounded-b-none"
           value={secundario?secundario:''}
           onChange={(e) => {
-            setSecundario(e.currentTarget.value.replace(' ','').replace(/[.*+\-?^${}()|[\]\\/#|¿%&]/g,''))
+            setSecundario(e.currentTarget.value.replace(' ','').replace(/[*+\-?^${}()|[\]\\/#|¿%&]/g,''))
             
               setErrorSecundario(reportarError(e.currentTarget.value,2))
           }}
