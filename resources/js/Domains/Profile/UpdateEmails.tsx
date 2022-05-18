@@ -76,8 +76,8 @@ export default function UpdateEmails({ user }: Props) {
       if(correo.length>0&&correo.search('@')==-1){
         res += 'El correo debe tener un @ para ser valido. '
       }
-       if(correo.length>=30){
-        res += 'Un correo no puede tener mas de 30 caracteres. '
+       if(correo.length>=50){
+        res += 'Un correo no puede tener mas de 50 caracteres. '
       }
       if(correo.length>0 && correo==principal && numero==2){
         res += 'El correo secundario no puede ser igual al principal'
