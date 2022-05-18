@@ -31,7 +31,7 @@ Route::get('/', function () {
 Route::middleware([
   'auth',
   'auth:sanctum',
-  config('jetstream.auth_session'),
+  //config('jetstream.auth_session'),
   'verified',
   'checkRoleAdmin',
 ])->group(function () {
@@ -42,7 +42,7 @@ Route::middleware([
 
 Route::middleware([
   'auth:sanctum',
-  config('jetstream.auth_session'),
+ // config('jetstream.auth_session'),
   'verified',
   'checkRoleDocente',
 ])->group(function () {
@@ -67,7 +67,7 @@ Route::middleware(['auth', 'checkRoleAdmin'])->group(function () {
 
 Route::middleware([
   'auth:sanctum',
-  config('jetstream.auth_session'),
+ // config('jetstream.auth_session'),
   'verified',
   'checkRoleAdmin',
 ])->group(function () {
@@ -89,7 +89,7 @@ Route::middleware([
 
 Route::middleware([
   'auth:sanctum',
-  config('jetstream.auth_session'),
+  //config('jetstream.auth_session'),
   'verified',
   'checkRoleAdmin',
 ])->group(function () {
@@ -111,7 +111,7 @@ Route::middleware([
 
 Route::middleware([
   'auth:sanctum',
-  config('jetstream.auth_session'),
+  //config('jetstream.auth_session'),
   'verified',
   'checkRoleDocente',
 ])->group(function () {
@@ -122,7 +122,7 @@ Route::middleware([
 
 Route::middleware([
   'auth:sanctum',
-  config('jetstream.auth_session'),
+ // config('jetstream.auth_session'),
   'verified',
   'checkRoleDocente',
 ])->group(function () {
