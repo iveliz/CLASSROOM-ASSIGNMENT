@@ -79,6 +79,9 @@ export default function UpdateEmails({ user }: Props) {
        if(correo.length>=30){
         res += 'Un correo no puede tener mas de 30 caracteres. '
       }
+      if(correo.length>0 && correo==principal && numero==2){
+        res += 'El correo secundario no puede ser igual al principal'
+      }
       
     }
     return res;
@@ -147,7 +150,7 @@ export default function UpdateEmails({ user }: Props) {
                   openModal();
                 }
               }else {
-                alert('No se puede confirmar hay cambios no validos')
+                alert('No se puede confirmar hay cambios no válidos')
               }
             }}
             
@@ -183,7 +186,7 @@ export default function UpdateEmails({ user }: Props) {
           className="mt-1 block w-full rounded-b-none"
           value={secundario?secundario:''}
           onChange={(e) => {
-            setSecundario(e.currentTarget.value.trim())
+            setSecundario(e.currentTarget.value.replace(' ','').replace(/[.*+\-?^${}()|[\]\\/#|¿%&]/g,''))
             
               setErrorSecundario(reportarError(e.currentTarget.value,2))
           }}

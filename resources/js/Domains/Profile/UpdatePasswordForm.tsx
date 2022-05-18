@@ -217,14 +217,15 @@ export default function UpdatePasswordForm() {
               setErrorDos('Este campo es obligatorio') 
             }else{
               if((form.data.current_password!=form.data.password)||(form.data.current_password.length==0&&form.data.password.length==0)){
-                if(errorDos.length==0 || e.currentTarget.value.length==0){
-                  setErrorDos('')
+                if(errorDos.length==0 || e.currentTarget.value.length==0 ){
+                  if(form.data.password.length <=30){
+
+                    setErrorDos('')
+                  }
                 }
               }
             }
-            if(e.currentTarget.value.length>30){
-              setErrorTres('La contraseña no puede tener mas de 30 caracteres')
-            }
+            
           }
           }
           autoComplete="new-password"
