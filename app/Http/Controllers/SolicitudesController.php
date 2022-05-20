@@ -301,7 +301,7 @@ class SolicitudesController extends Controller
                 
                 if($coincidencia==false){
                     $nueva_solicitud->save();
-                    $id_nueva_solicitud = $nueva_solicitud->id;
+                    $id_nueva_solicitud = $nueva_solicitud->id_solicitud;
                     
                     
                     foreach ($datos_solicitud->grupos_solicitud as $grupo){
@@ -322,7 +322,7 @@ class SolicitudesController extends Controller
                 //$res=$docente_distinto?1:0;
             }else{
                 $nueva_solicitud->save();
-                $id_nueva_solicitud = $nueva_solicitud->id;
+                $id_nueva_solicitud = $nueva_solicitud->id_solicitud;
                 
                 
                 foreach ($datos_solicitud->grupos_solicitud as $grupo){
