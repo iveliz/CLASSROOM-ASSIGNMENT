@@ -252,21 +252,31 @@ class SolicitudAulaAdmController extends Controller
     $fecha = $datos_solicitud->fecha_requerida_solicitud;
     $horaIni = $datos_solicitud->hora_inicio;
     $horaFin = $datos_solicitud->hora_fin;
+    $reserva_existente = [];
     try {
-      foreach ($datos_solicitud->id_aulas as $aula) {
-        $reserva_existente = AulaReserva::select('id_reserva')
+      $aulas = $datos_solicitud->id_aulas;
+      for ($i = 0; $i < count($aulas); $i++) {
+        $aula = $aulas[$i];
+        $aulareserva = AulaReserva::select('id_reserva')
           ->where('id_aula', $aula)
           ->get();
+        if (count($aulareserva) > 0) {
+          array_push($reserva_existente, $aulareserva);
+        }
       }
+      $reserva_ocupada = [];
       foreach ($reserva_existente as $reserva) {
         $reserva_hora = Reserva::select('id_reg_sct')
-          ->where('id_reserva', $reserva->id_reserva)
+          ->where('id_reserva', $reserva)
           ->where('fecha_reserva', '=', $fecha)
           ->where('hora_inicio_reserva', '>=', $horaIni)
-          ->where('hora_fin_reserva', '<=', $horaFin)
+          ->orwhere('hora_fin_reserva', '<=', $horaFin)
           ->get();
+        if (count($reserva_hora) > 0) {
+          array_push($reserva_ocupada, $reserva_hora);
+        }
       }
-      if (count($reserva_hora) == 0) {
+      if (count($reserva_ocupada) == 0) {
         $solicitud_existente = RegistroSolicitudes::select('id_reg_sct')
           ->where('id_solicitud', $datos_solicitud->id_solicitud)
           ->get();
