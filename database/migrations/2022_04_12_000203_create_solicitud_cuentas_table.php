@@ -16,7 +16,9 @@ class CreateSolicitudCuentasTable extends Migration
     Schema::create('solicitud_cuentas', function (Blueprint $table) {
       $table->id('id_sct_cnt');
       $table->string('nombre_sct_cnt', 250);
-      $table->string('correo_sct_cnt', 250);
+      $table->string('usuario_sct_cnt', 250);
+      $table->string('correo_principal_sct_cnt', 250);
+      $table->string('correo_secundario_sct_cnt', 250);
       $table->timestamps();
     });
   }

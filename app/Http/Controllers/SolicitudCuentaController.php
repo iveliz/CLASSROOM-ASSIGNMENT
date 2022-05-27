@@ -90,12 +90,25 @@ class SolicitudCuentaController extends Controller
    */
   public function verSolicitud()
   {
-    $solicitud = SolicitudCuenta::select(
-      'id_sct_cnt',
-      'nombre_sct_cnt',
-      DB::raw("(DATE_FORMAT(created_at, '%d-%m-%Y')) as fecha")
+    $solicitud = SolicitudCuenta::join(
+      'materia_solicitadas',
+      'solicitud_cuentas.id_sct_cnt',
+      '=',
+      'materia_solicitadas.id_sct_cnt'
     )
-      ->orderBy('created_at')
+      ->select(
+        'solicitud_cuentas.id_sct_cnt',
+        'solicitud_cuentas.nombre_sct_cnt',
+        'solicitud_cuentas.usuario_sct_cnt',
+        'solicitud_cuentas.correo_principal_sct_cnt',
+        'solicitud_cuentas.correo_secundario_sct_cnt',
+        DB::raw(
+          "(DATE_FORMAT(solicitud_cuentas.created_at, '%d-%m-%Y')) as fecha"
+        ),
+        'materia_solicitadas.id_materia_solicitada',
+        'materia_solicitadas.id_grupo_solicitado'
+      )
+      ->orderBy('fecha')
       ->get();
 
     return $solicitud;
