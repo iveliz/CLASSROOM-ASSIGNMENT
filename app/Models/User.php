@@ -14,7 +14,7 @@ use App\Models\Grupo;
 use App\Models\CorreoElectronico;
 use PharIo\Manifest\Email;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
   use HasApiTokens;
   use HasFactory;
