@@ -16,16 +16,15 @@ export default function Register() {
   const form = useForm({
     name: '',
     email: '',
-    username: '',
-    password : '',
-    secondaryEmail: '',
+    password: '',
+    password_confirmation: '',
     terms: false,
   });
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     form.post(route('register'), {
-      onFinish: () => form.reset('password'),
+      onFinish: () => form.reset('password', 'password_confirmation'),
     });
   }
 
@@ -34,10 +33,10 @@ export default function Register() {
       <Head title="Register" />
 
       <JetValidationErrors className="mb-4" />
-      <h1 className="text-center">Solicitar cuenta</h1>
+
       <form onSubmit={onSubmit}>
         <div>
-          <JetLabel htmlFor="name">Nombre Completo</JetLabel>
+          <JetLabel htmlFor="name">Name</JetLabel>
           <JetInput
             id="name"
             type="text"
@@ -50,24 +49,8 @@ export default function Register() {
           />
         </div>
 
-
-
-        <div>
-          <JetLabel htmlFor="username">Nombre de Usuario</JetLabel>
-          <JetInput
-            id="username"
-            type="text"
-            className="mt-1 block w-full"
-            value={form.data.username}
-            onChange={e => form.setData('username', e.currentTarget.value)}
-            required
-            autoFocus
-            autoComplete="username"
-          />
-        </div>
-
         <div className="mt-4">
-          <JetLabel htmlFor="email">Correo electrónico principal</JetLabel>
+          <JetLabel htmlFor="email">Email</JetLabel>
           <JetInput
             id="email"
             type="email"
@@ -79,18 +62,6 @@ export default function Register() {
         </div>
 
         <div className="mt-4">
-          <JetLabel htmlFor="secondaryEmail">Correo electrónico secundario</JetLabel>
-          <JetInput
-            id="secondaryEmail"
-            type="email"
-            className="mt-1 block w-full"
-            value={form.data.secondaryEmail}
-            onChange={e => form.setData('secondaryEmail', e.currentTarget.value)}
-            required
-          />
-        </div>
-
-      {/*    <div className="mt-4">
           <JetLabel htmlFor="password">Password</JetLabel>
           <JetInput
             id="password"
@@ -104,7 +75,7 @@ export default function Register() {
         </div>
 
         <div className="mt-4">
-          <JetLabel htmlFor="password_confirmation">Confirmar C</JetLabel>
+          <JetLabel htmlFor="password_confirmation">Confirm Password</JetLabel>
           <JetInput
             id="password_confirmation"
             type="password"
@@ -116,7 +87,7 @@ export default function Register() {
             required
             autoComplete="new-password"
           />
-        </div> */}
+        </div>
 
         {page.props.jetstream.hasTermsAndPrivacyPolicyFeature && (
           <div className="mt-4">
@@ -157,14 +128,14 @@ export default function Register() {
             href={route('login')}
             className="underline text-sm text-gray-600 hover:text-gray-900"
           >
-            Ya tienes una cuenta?
+            Already registered?
           </InertiaLink>
 
           <JetButton
             className={classNames('ml-4', { 'opacity-25': form.processing })}
             disabled={form.processing}
           >
-            Registrarse
+            Register
           </JetButton>
         </div>
       </form>
