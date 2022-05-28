@@ -42,7 +42,7 @@ Route::middleware([
 
 Route::middleware([
   'auth:sanctum',
- // config('jetstream.auth_session'),
+  // config('jetstream.auth_session'),
   'verified',
   'checkRoleDocente',
 ])->group(function () {
@@ -67,7 +67,7 @@ Route::middleware(['auth', 'checkRoleAdmin'])->group(function () {
 
 Route::middleware([
   'auth:sanctum',
- // config('jetstream.auth_session'),
+  // config('jetstream.auth_session'),
   'verified',
   'checkRoleAdmin',
 ])->group(function () {
@@ -78,7 +78,7 @@ Route::middleware([
 
 Route::middleware([
   'auth:sanctum',
- // config('jetstream.auth_session'),
+  // config('jetstream.auth_session'),
   'verified',
   'checkRoleAdmin',
 ])->group(function () {
@@ -122,7 +122,7 @@ Route::middleware([
 
 Route::middleware([
   'auth:sanctum',
- // config('jetstream.auth_session'),
+  // config('jetstream.auth_session'),
   'verified',
   'checkRoleDocente',
 ])->group(function () {
@@ -209,6 +209,9 @@ Route::controller(AulaController::class)->group(function () {
 
 Route::controller(SolicitudCuentaController::class)->group(function () {
   Route::get('/SolicitudCuenta', 'verSolicitud');
+  Route::post('/crearSolicitudCuenta', 'crearSolicitudCuenta');
+  Route::post('/aceptarSolicitudCuenta', 'confirmarSolicitudCuenta');
+  Route::post('/rechazarSolicitudCuenta', 'rechazarSolicitudCuenta');
 });
 
 Route::controller(EmailController::class)->group(function () {
