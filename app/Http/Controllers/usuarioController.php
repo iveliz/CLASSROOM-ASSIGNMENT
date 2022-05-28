@@ -40,13 +40,23 @@ class usuarioController extends Controller
   public function store(Request $request)
   {
     $request->validate([
-      'id_usuario' => 'require',
-      'nombre_usuario' => 'require',
-      'email_usuario' => 'require',
-      'contrasenia_usuario' => 'require',
-      'token_recordado_usuario' => 'require',
-      'rol_usuario' => 'require',
+      'name' => 'required',
+      'user_name' => 'required',
+      'email_principal' => 'required',
+      'rol' => 'required',
     ]);
+  }
+
+  private function generarContra()
+  {
+    $comb = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+    $pass = [];
+    $combLen = strlen($comb) - 1;
+    for ($i = 0; $i < 8; $i++) {
+      $n = rand(0, $combLen);
+      $pass[] = $comb[$n];
+    }
+    return (implode($pass)); 
   }
 
   /**
