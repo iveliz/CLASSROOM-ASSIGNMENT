@@ -93,13 +93,13 @@ export default function Login({ canResetPassword, status }: Props) {
             </div>
           )}*/}
 
-          <div className="sm:justify-center items-center flex flex-col">
-            {/* <InertiaLink
+          <div className="sm:justify-center text-start flex flex-col">
+             <InertiaLink
               href={route('register')}
               className="underline text-sm text-gray-600 hover:text-gray-900"
             >
-              Need an account?
-            </InertiaLink>*/}
+             Solicitar cuenta
+            </InertiaLink>
            
               <JetButton
                 className={classNames( 'colorPrimary', {
