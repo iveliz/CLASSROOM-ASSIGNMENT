@@ -20,12 +20,24 @@ interface SolicitudRegistro {
   id_sct_cnt: Number;
   fecha: String;
   nombre_sct_cnt: String;
+  usuario_sct_cnt: String;
+  correo_principal_sct_cnt: String;
+  correo_secundario_sct_cnt: String;
+  usuarioSimilar: {
+    name: String;
+    user_name: String;
+    email_principal: String;
+  };
 }
 
 export default function ({
   id_sct_cnt,
   fecha,
   nombre_sct_cnt,
+  usuario_sct_cnt,
+  correo_principal_sct_cnt,
+  correo_secundario_sct_cnt,
+  usuarioSimilar,
 }: SolicitudRegistro) {
   const style = {
     position: 'absolute' as 'absolute',
@@ -99,26 +111,26 @@ export default function ({
   const handleOpenBack = () => {
     SetStateBack(true);
   };
-  const getUsuarioSimilar = () => {
+  const getUsuarioSimi = () => {
     handleOpen();
   };
   const responderbtn = () => {
     handleOpen();
   };
 
-  var hayproblema = new Boolean(true);  
+  var hayproblema = new Boolean(true);
 
   function ChildModal() {
     return (
       <React.Fragment>
         <div className="d-flex justify-content-between">
           <p className="rechazada mt-2">
-            Ya hay un usuario con un nombre similar
+            Ya hay un usuario con credenciales similares
           </p>
           <button
             type="button"
             className="btn verUsuarioButton text-white  mr-8 "
-            onClick={getUsuarioSimilar}
+            onClick={getUsuarioSimi}
           >
             Ver Usuario
           </button>
@@ -137,13 +149,31 @@ export default function ({
               </h3>
             </div>
 
-            <div id="child-modal-description">
+            <div id="child-modal-description m-2">
               <p className="m-4 text-align">
-                El Nombre de usuario es similar al de otro usuario. Usuario
+                Las credenciales son similares al de otro usuario. Usuario
                 similar:
               </p>
-              {/*nombre de usuario 
-                 nombre completo*/}
+              <div className="flex flex-col font-semibold ml-6 mb-4">
+                {usuarioSimilar.name == null ? (
+                  ''
+                ) : (
+                  <div>Nombre de docente: {usuarioSimilar.name}</div>
+                )}
+
+                {usuarioSimilar.user_name == null ? (
+                  ''
+                ) : (
+                  <div>Nombre de usuario: {usuarioSimilar.user_name}</div>
+                )}
+
+                {usuarioSimilar.email_principal == null ? (
+                  ''
+                ) : (
+                  <div>Correo principal: {usuarioSimilar.email_principal}</div>
+                )}
+              </div>
+              <div></div>
             </div>
             <div className="float-right">
               <button
@@ -159,6 +189,7 @@ export default function ({
       </React.Fragment>
     );
   }
+  console.log(usuarioSimilar);
   return (
     <div>
       <div className="card mt-3 mr-8">
@@ -194,13 +225,13 @@ export default function ({
                           Nombre(s) de Docente(s): {nombre_sct_cnt}
                         </p>
                         <p className="font-bold ">
-                          Nombre de usuario: {/*nombreusuario*/}{' '}
+                          Nombre de usuario: {usuario_sct_cnt}{' '}
                         </p>
                         <p className="font-bold ">
-                          Correo principal: {/*correoprincipal*/}{' '}
+                          Correo principal: {correo_principal_sct_cnt}{' '}
                         </p>
                         <p className="font-bold ">
-                          Correo secundario: {/*correosecundario*/}{' '}
+                          Correo secundario: {correo_secundario_sct_cnt}{' '}
                         </p>
                         <p className="font-bold ">
                           Fecha de solicitud: {fecha}
@@ -233,8 +264,8 @@ export default function ({
                             </label>
                           </div>
                         </div>
-                        {/*aca va si es que hay problema con el usuario*/}
-                        {hayproblema == false ? (
+
+                        {usuarioSimilar == null ? (
                           ''
                         ) : (
                           <div className="font-semibold  ml-8">
