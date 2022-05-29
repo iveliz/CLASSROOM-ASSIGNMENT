@@ -9,15 +9,22 @@ import JetCheckbox from '@/Jetstream/Checkbox';
 import JetInput from '@/Jetstream/Input';
 import JetLabel from '@/Jetstream/Label';
 import JetValidationErrors from '@/Jetstream/ValidationErrors';
-
+import Select, { components } from 'react-select';
 export default function Register() {
+  const rolType = [
+    { label: 'Docente', value: 'Docente' },
+    { label: 'Administrador', value: 'Administrador' },
+  ];
+
   const page = useTypedPage();
   const route = useRoute();
   const form = useForm({
     name: '',
     email: '',
+    username: '',
     password: '',
-    password_confirmation: '',
+    userRol: '',
+    secondaryEmail: '',
     terms: false,
   });
 
@@ -33,10 +40,10 @@ export default function Register() {
       <Head title="Register" />
 
       <JetValidationErrors className="mb-4" />
-
+      <h1 className="text-center">Registrar nuevo usuario</h1>
       <form onSubmit={onSubmit}>
         <div>
-          <JetLabel htmlFor="name">Name</JetLabel>
+          <JetLabel htmlFor="name">Nombre Completo</JetLabel>
           <JetInput
             id="name"
             type="text"
@@ -49,8 +56,22 @@ export default function Register() {
           />
         </div>
 
+        <div>
+          <JetLabel htmlFor="username">Nombre de Usuario</JetLabel>
+          <JetInput
+            id="username"
+            type="text"
+            className="mt-1 block w-full"
+            value={form.data.username}
+            onChange={e => form.setData('username', e.currentTarget.value)}
+            required
+            autoFocus
+            autoComplete="username"
+          />
+        </div>
+
         <div className="mt-4">
-          <JetLabel htmlFor="email">Email</JetLabel>
+          <JetLabel htmlFor="email">Correo electrónico principal</JetLabel>
           <JetInput
             id="email"
             type="email"
@@ -62,31 +83,33 @@ export default function Register() {
         </div>
 
         <div className="mt-4">
-          <JetLabel htmlFor="password">Password</JetLabel>
+          <JetLabel htmlFor="secondaryEmail">
+            Correo electrónico secundario
+          </JetLabel>
           <JetInput
-            id="password"
-            type="password"
+            id="secondaryEmail"
+            type="email"
             className="mt-1 block w-full"
-            value={form.data.password}
-            onChange={e => form.setData('password', e.currentTarget.value)}
+            value={form.data.secondaryEmail}
+            onChange={e =>
+              form.setData('secondaryEmail', e.currentTarget.value)
+            }
             required
-            autoComplete="new-password"
           />
         </div>
 
         <div className="mt-4">
-          <JetLabel htmlFor="password_confirmation">Confirm Password</JetLabel>
-          <JetInput
-            id="password_confirmation"
-            type="password"
-            className="mt-1 block w-full"
-            value={form.data.password_confirmation}
-            onChange={e =>
-              form.setData('password_confirmation', e.currentTarget.value)
-            }
-            required
-            autoComplete="new-password"
-          />
+        <JetLabel htmlFor="selectRol">
+           Cargo
+          </JetLabel>
+          <Select
+            id="selectRol"
+            options={rolType}
+            defaultValue={rolType[0]}
+            value={form.data.userRol}
+            isClearable={false}
+            placeholder="Selecciona el cargo"
+          ></Select>
         </div>
 
         {page.props.jetstream.hasTermsAndPrivacyPolicyFeature && (

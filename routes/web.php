@@ -75,6 +75,17 @@ Route::middleware([
     return Inertia::render('SolicitudesAdminRegistro');
   })->name('solicitudes/registros');
 });
+Route::middleware([
+  'auth:sanctum',
+  // config('jetstream.auth_session'),
+  'verified',
+  'checkRoleAdmin',
+])->group(function () {
+  Route::get('/registrar', function () {
+    return Inertia::render('Registrar');
+  })->name('registrar');
+});
+
 
 Route::middleware([
   'auth:sanctum',
