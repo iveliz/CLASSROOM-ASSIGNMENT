@@ -15,7 +15,7 @@ const endpoint = 'http://127.0.0.1:8000';
 export default function () {
   const [listaSolicitudAula, setListaSolicitudAula] = useState<any>([]);
   const [stateBack, SetStateBack] = useState(false);
-  const [solicitud, SetSolicitud] = useState<any>();
+  const [solicitud, SetSolicitud] = useState<any>(); 
   const getSolicitudes = async () => {
     await axios.get(`${endpoint}/solicitudesAula`).then(response => {
       setListaSolicitudAula(response.data);
