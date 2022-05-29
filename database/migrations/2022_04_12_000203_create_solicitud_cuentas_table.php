@@ -19,6 +19,7 @@ class CreateSolicitudCuentasTable extends Migration
       $table->string('usuario_sct_cnt', 250);
       $table->string('correo_principal_sct_cnt', 250);
       $table->string('correo_secundario_sct_cnt', 250);
+      $table->string('estado_sct_cnt', 50);
       $table->timestamps();
     });
   }

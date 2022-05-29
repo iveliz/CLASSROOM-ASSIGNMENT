@@ -14,6 +14,7 @@ class SolicitudCuenta extends Model
     'usuario_sct_cnt',
     'correo_principal_sct_cnt',
     'correo_secundario_sct_cnt',
+    'estado_sct_cnt',
   ];
   use HasFactory;
 }
