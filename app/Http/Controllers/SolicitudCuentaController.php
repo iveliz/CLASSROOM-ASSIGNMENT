@@ -104,6 +104,19 @@ class SolicitudCuentaController extends Controller
       ->orderBy('fecha')
       ->get();
 
+    $usuariosActuales = DB::table('users')->join('correo__electronicos','users.id','=','correo__electronicos.id_usuario')->select('users.name','users.user_name','correo__electronicos.email_principal')->get();
+    foreach ($solicitud as $soli) {
+      $i = 0;
+      $encontrado = false;
+      while ($i<count($usuariosActuales) && !$encontrado) {
+        if(levenshtein(strtolower($soli->usuario_sct_cnt),strtolower($usuariosActuales[$i]->user_name))<=2 || $soli->correo_principal_sct_cnt == $usuariosActuales[$i]->user_name){
+          $soli->usuarioSimilar = $usuariosActuales[$i];
+          $encontrado = true;
+        }
+        $i = $i +1;
+      }
+    }
+
     return $solicitud;
   }
 

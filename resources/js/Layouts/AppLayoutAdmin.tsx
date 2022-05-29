@@ -80,6 +80,13 @@ export default function AppLayoutAdmin({
                     Solicitudes
                   </JetNavLink>
 
+                  <JetNavLink
+                    href={route('registrar')}
+                    active={route().current('registrar')}
+                  >
+                    Registrar
+                  </JetNavLink>
+
 
                 </div>
 
@@ -306,6 +313,12 @@ export default function AppLayoutAdmin({
                 active={route().current('solicitudes/aulas')}
               >
                 Solicitudes
+              </JetResponsiveNavLink>
+              <JetResponsiveNavLink
+                href={route('registrar')}
+                active={route().current('registrar')}
+              >
+                Registrar
               </JetResponsiveNavLink>
             </div>
 

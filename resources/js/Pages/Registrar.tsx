@@ -9,15 +9,21 @@ import JetCheckbox from '@/Jetstream/Checkbox';
 import JetInput from '@/Jetstream/Input';
 import JetLabel from '@/Jetstream/Label';
 import JetValidationErrors from '@/Jetstream/ValidationErrors';
-
+import Select, { components } from 'react-select';
 export default function Register() {
+  const rolType = [
+    { label: 'Docente', value: 'Docente' },
+    { label: 'Administrador', value: 'Administrador' },
+  ];
+
   const page = useTypedPage();
   const route = useRoute();
   const form = useForm({
     name: '',
     email: '',
     username: '',
-    password : '',
+    password: '',
+    userRol: '',
     secondaryEmail: '',
     terms: false,
   });
@@ -25,7 +31,7 @@ export default function Register() {
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     form.post(route('register'), {
-      onFinish: () => form.reset('password'),
+      onFinish: () => form.reset('password', 'password_confirmation'),
     });
   }
 
@@ -34,7 +40,7 @@ export default function Register() {
       <Head title="Register" />
 
       <JetValidationErrors className="mb-4" />
-      <h1 className="text-center">Solicitar cuenta</h1>
+      <h1 className="text-center">Registrar nuevo usuario</h1>
       <form onSubmit={onSubmit}>
         <div>
           <JetLabel htmlFor="name">Nombre Completo</JetLabel>
@@ -49,8 +55,6 @@ export default function Register() {
             autoComplete="name"
           />
         </div>
-
-
 
         <div>
           <JetLabel htmlFor="username">Nombre de Usuario</JetLabel>
@@ -79,44 +83,34 @@ export default function Register() {
         </div>
 
         <div className="mt-4">
-          <JetLabel htmlFor="secondaryEmail">Correo electrónico secundario</JetLabel>
+          <JetLabel htmlFor="secondaryEmail">
+            Correo electrónico secundario
+          </JetLabel>
           <JetInput
             id="secondaryEmail"
             type="email"
             className="mt-1 block w-full"
             value={form.data.secondaryEmail}
-            onChange={e => form.setData('secondaryEmail', e.currentTarget.value)}
+            onChange={e =>
+              form.setData('secondaryEmail', e.currentTarget.value)
+            }
             required
-          />
-        </div>
-
-      {/*    <div className="mt-4">
-          <JetLabel htmlFor="password">Password</JetLabel>
-          <JetInput
-            id="password"
-            type="password"
-            className="mt-1 block w-full"
-            value={form.data.password}
-            onChange={e => form.setData('password', e.currentTarget.value)}
-            required
-            autoComplete="new-password"
           />
         </div>
 
         <div className="mt-4">
-          <JetLabel htmlFor="password_confirmation">Confirmar C</JetLabel>
-          <JetInput
-            id="password_confirmation"
-            type="password"
-            className="mt-1 block w-full"
-            value={form.data.password_confirmation}
-            onChange={e =>
-              form.setData('password_confirmation', e.currentTarget.value)
-            }
-            required
-            autoComplete="new-password"
-          />
-        </div> */}
+        <JetLabel htmlFor="selectRol">
+           Cargo
+          </JetLabel>
+          <Select
+            id="selectRol"
+            options={rolType}
+            defaultValue={rolType[0]}
+            value={form.data.userRol}
+            isClearable={false}
+            placeholder="Selecciona el cargo"
+          ></Select>
+        </div>
 
         {page.props.jetstream.hasTermsAndPrivacyPolicyFeature && (
           <div className="mt-4">
@@ -157,14 +151,14 @@ export default function Register() {
             href={route('login')}
             className="underline text-sm text-gray-600 hover:text-gray-900"
           >
-            Ya tienes una cuenta?
+            Already registered?
           </InertiaLink>
 
           <JetButton
             className={classNames('ml-4', { 'opacity-25': form.processing })}
             disabled={form.processing}
           >
-            Registrarse
+            Register
           </JetButton>
         </div>
       </form>
