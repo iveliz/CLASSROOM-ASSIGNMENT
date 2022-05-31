@@ -143,7 +143,10 @@ class SolicitudCuentaController extends Controller
     try {
       $solicitud_existente = SolicitudCuenta::select('id_sct_cnt')
         ->where('usuario_sct_cnt', $datos_solicitud->usuario_sct_cnt)
-        ->where('correo_principal_sct_cnt', $datos_solicitud->correo_principal)
+        ->Orwhere(
+          'correo_principal_sct_cnt',
+          $datos_solicitud->correo_principal
+        )
         ->get();
       $usuariosActuales = DB::table('users')
         ->join(
@@ -168,7 +171,7 @@ class SolicitudCuentaController extends Controller
             $datos_solicitud->correo_principal;
           $nueva_solicitud->correo_secundario_sct_cnt =
             $datos_solicitud->correo_secundario;
-          $nueva_solicitud->estado_sct_cnt = 'Pendiente';
+          $nueva_solicitud->estado_sct_cnt = 'pendiente';
           $nueva_solicitud->save();
           $res = 1;
         } else {
@@ -193,12 +196,12 @@ class SolicitudCuentaController extends Controller
         $nueva_solicitud = new RegistroCuenta();
         $nueva_solicitud->id = $datos_solicitud->id;
         $nueva_solicitud->id_sct_cnt = $datos_solicitud->id_sct_cnt;
-        $nueva_solicitud->estado_reg_cnt = 'Aceptada';
+        $nueva_solicitud->estado_reg_cnt = 'aceptada';
         $nueva_solicitud->save();
         SolicitudCuenta::where(
           'id_sct_cnt',
           $datos_solicitud->id_sct_cnt
-        )->update(['estado_sct_cnt' => 'Aceptada']);
+        )->update(['estado_sct_cnt' => 'aceptada']);
         $res = 1;
       }
     } catch (\Throwable $th) {
@@ -217,12 +220,12 @@ class SolicitudCuentaController extends Controller
         $nueva_solicitud = new RegistroCuenta();
         $nueva_solicitud->id = $datos_solicitud->id;
         $nueva_solicitud->id_sct_cnt = $datos_solicitud->id_sct_cnt;
-        $nueva_solicitud->estado_reg_cnt = 'Rechazada';
+        $nueva_solicitud->estado_reg_cnt = 'rechazada';
         $nueva_solicitud->save();
         SolicitudCuenta::where(
           'id_sct_cnt',
           $datos_solicitud->id_sct_cnt
-        )->update(['estado_sct_cnt' => 'Rechazada']);
+        )->update(['estado_sct_cnt' => 'rechazada']);
         $res = 1;
       }
     } catch (\Throwable $th) {
