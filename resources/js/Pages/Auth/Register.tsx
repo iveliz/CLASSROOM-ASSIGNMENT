@@ -1,6 +1,7 @@
 import { InertiaLink, useForm, Head } from '@inertiajs/inertia-react';
+import Modal from 'react-modal';
 import classNames from 'classnames';
-import React from 'react';
+import React, { useState } from 'react';
 import useRoute from '@/Hooks/useRoute';
 import useTypedPage from '@/Hooks/useTypedPage';
 import JetAuthenticationCard from '@/Jetstream/AuthenticationCard';
@@ -9,25 +10,81 @@ import JetCheckbox from '@/Jetstream/Checkbox';
 import JetInput from '@/Jetstream/Input';
 import JetLabel from '@/Jetstream/Label';
 import JetValidationErrors from '@/Jetstream/ValidationErrors';
+import axios from 'axios';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+const endpoint = 'http://127.0.0.1:8000';
 
 export default function Register() {
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
   const page = useTypedPage();
   const route = useRoute();
   const form = useForm({
     name: '',
     email: '',
     username: '',
-    password : '',
+    password: '',
     secondaryEmail: '',
     terms: false,
   });
 
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {}
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [stateBack, SetStateBack] = useState(false);
+  const [errorMessage,SetErrorMessage]=useState('');
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    form.post(route('register'), {
-      onFinish: () => form.reset('password'),
+    handleOpenBack();
+    let account = {
+      nombre_sct_cnt: form.data.name,
+      usuario_sct_cnt: form.data.username,
+      correo_principal: form.data.email,
+      correo_secundario: form.data.secondaryEmail,
+    };
+    axios.post(`${endpoint}/crearSolicitudCuenta`, account).then(response => {
+      handleCloseBack();
+      if (response.data == 3) {
+        SetErrorMessage("El Nombre de usuario o el correo principal están registrados en otra cuenta")
+        openModal();
+      }else if(response.data==2){
+        SetErrorMessage("Una solicitud ya ha sido creada usando el correo principal o el usuario");
+        openModal();
+      }else if(response.data==1){
+        SetErrorMessage("Su solicitud fue creada con éxito")
+        openModal();
+        form.reset();
+      }else{
+        SetErrorMessage("Ha ocurrido un error inesperado, intente de nuevo más tarde");
+        openModal();
+      }
+   
     });
   }
+
+  const handleOpenBack = () => {
+    SetStateBack(true);
+  };
+
+  const handleCloseBack = () => {
+    SetStateBack(false);
+  };
 
   return (
     <JetAuthenticationCard>
@@ -49,9 +106,6 @@ export default function Register() {
             autoComplete="name"
           />
         </div>
-
-
-
         <div>
           <JetLabel htmlFor="username">Nombre de Usuario</JetLabel>
           <JetInput
@@ -79,18 +133,31 @@ export default function Register() {
         </div>
 
         <div className="mt-4">
-          <JetLabel htmlFor="secondaryEmail">Correo electrónico secundario</JetLabel>
+          <JetLabel htmlFor="secondaryEmail">
+            Correo electrónico secundario
+          </JetLabel>
           <JetInput
             id="secondaryEmail"
             type="email"
             className="mt-1 block w-full"
             value={form.data.secondaryEmail}
-            onChange={e => form.setData('secondaryEmail', e.currentTarget.value)}
+            onChange={e =>
+              form.setData('secondaryEmail', e.currentTarget.value)
+            }
             required
           />
         </div>
+        <Backdrop
+          sx={{
+            color: '#fff',
+            zIndex: theme => theme.zIndex.drawer + 1,
+          }}
+          open={stateBack}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
 
-      {/*    <div className="mt-4">
+        {/*    <div className="mt-4">
           <JetLabel htmlFor="password">Password</JetLabel>
           <JetInput
             id="password"
@@ -167,6 +234,29 @@ export default function Register() {
             Registrarse
           </JetButton>
         </div>
+        <Modal
+              isOpen={modalIsOpen}
+              onAfterOpen={afterOpenModal}
+              onRequestClose={closeModal}
+              style={customStyles}
+              contentLabel="Example Modal"
+              ariaHideApp={false}
+            >
+              <div className="font-bold">
+               {errorMessage}
+              </div>
+              <form className="d-flex justify-content-center space-x-4 mt-4">
+                <div>
+                  <button
+                    onClick={closeModal}
+                    type="button"
+                    className="btn colorPrimary text-white"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </form>
+            </Modal>
       </form>
     </JetAuthenticationCard>
   );
