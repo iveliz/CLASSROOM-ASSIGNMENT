@@ -31,7 +31,7 @@ export default function Register() {
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     form.post(route('register'), {
-      onFinish: () => form.reset('password', 'password_confirmation'),
+     
     });
   }
 
