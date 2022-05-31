@@ -25,10 +25,7 @@ class CreateRegistroCuentasTable extends Migration
         ->references('id_sct_cnt')
         ->on('solicitud_cuentas')
         ->onDelete('set null');
-      $table->date('fecha_reg_cnt');
       $table->string('estado_reg_cnt', 250);
-      $table->date('fecha_creacion_reg_cnt');
-      $table->date('fecha_actualizacion_reg_cnt');
       $table->timestamps();
     });
   }

@@ -141,21 +141,41 @@ class SolicitudCuentaController extends Controller
   {
     $res = 0;
     try {
-      $solicitud = $solicitud_existente = SolicitudCuenta::select('id_sct_cnt')
+      $solicitud_existente = SolicitudCuenta::select('id_sct_cnt')
         ->where('usuario_sct_cnt', $datos_solicitud->usuario_sct_cnt)
         ->where('correo_principal_sct_cnt', $datos_solicitud->correo_principal)
         ->get();
+      $usuariosActuales = DB::table('users')
+        ->join(
+          'correo__electronicos',
+          'users.id',
+          '=',
+          'correo__electronicos.id_usuario'
+        )
+        ->select('users.user_name', 'correo__electronicos.email_principal')
+        ->where('users.user_name', $datos_solicitud->usuario_sct_cnt)
+        ->Orwhere(
+          'correo__electronicos.email_principal',
+          $datos_solicitud->correo_principal
+        )
+        ->get();
       if (count($solicitud_existente) == 0) {
-        $nueva_solicitud = new SolicitudCuenta();
-        $nueva_solicitud->nombre_sct_cnt = $datos_solicitud->nombre_sct_cnt;
-        $nueva_solicitud->usuario_sct_cnt = $datos_solicitud->usuario_sct_cnt;
-        $nueva_solicitud->correo_principal_sct_cnt =
-          $datos_solicitud->correo_principal;
-        $nueva_solicitud->correo_secundario_sct_cnt =
-          $datos_solicitud->correo_secundario;
-        $nueva_solicitud->estado_sct_cnt = 'Pendiente';
-        $nueva_solicitud->save();
-        $res = 1;
+        if (count($usuariosActuales) == 0) {
+          $nueva_solicitud = new SolicitudCuenta();
+          $nueva_solicitud->nombre_sct_cnt = $datos_solicitud->nombre_sct_cnt;
+          $nueva_solicitud->usuario_sct_cnt = $datos_solicitud->usuario_sct_cnt;
+          $nueva_solicitud->correo_principal_sct_cnt =
+            $datos_solicitud->correo_principal;
+          $nueva_solicitud->correo_secundario_sct_cnt =
+            $datos_solicitud->correo_secundario;
+          $nueva_solicitud->estado_sct_cnt = 'Pendiente';
+          $nueva_solicitud->save();
+          $res = 1;
+        } else {
+          $res = 3;
+        }
+      } else {
+        $res = 2;
       }
     } catch (\Throwable $th) {
       $res = $th;
@@ -173,10 +193,7 @@ class SolicitudCuentaController extends Controller
         $nueva_solicitud = new RegistroCuenta();
         $nueva_solicitud->id = $datos_solicitud->id;
         $nueva_solicitud->id_sct_cnt = $datos_solicitud->id_sct_cnt;
-        $nueva_solicitud->fecha_reg_cnt = date('Y-m-d');
         $nueva_solicitud->estado_reg_cnt = 'Aceptada';
-        $nueva_solicitud->fecha_creacion_reg_cnt = date('Y-m-d');
-        $nueva_solicitud->fecha_actualizacion_reg_cnt = date('Y-m-d');
         $nueva_solicitud->save();
         SolicitudCuenta::where(
           'id_sct_cnt',
@@ -200,10 +217,7 @@ class SolicitudCuentaController extends Controller
         $nueva_solicitud = new RegistroCuenta();
         $nueva_solicitud->id = $datos_solicitud->id;
         $nueva_solicitud->id_sct_cnt = $datos_solicitud->id_sct_cnt;
-        $nueva_solicitud->fecha_reg_cnt = date('Y-m-d');
         $nueva_solicitud->estado_reg_cnt = 'Rechazada';
-        $nueva_solicitud->fecha_creacion_reg_cnt = date('Y-m-d');
-        $nueva_solicitud->fecha_actualizacion_reg_cnt = date('Y-m-d');
         $nueva_solicitud->save();
         SolicitudCuenta::where(
           'id_sct_cnt',
