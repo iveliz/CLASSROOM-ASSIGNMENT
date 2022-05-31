@@ -177,6 +177,7 @@ Route::controller(GrupoController::class)->group(function () {
 Route::controller(usuarioController::class)->group(function () {
   Route::post('/docentes', 'ObtenerDocentes');
   Route::post('/docentesid', 'ObtenerDocentesId');
+  Route::post('/registrar', 'store');
 });
 
 Route::controller(SolicitudesController::class)->group(function () {
