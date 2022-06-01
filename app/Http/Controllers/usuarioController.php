@@ -59,6 +59,7 @@ class usuarioController extends Controller
       'id_admin' => ['required'],
       'id_sct_cnt' => ['required'],
     ]);
+   
 
     $nuevo = User::create([
       'name' => $input->name,
@@ -68,8 +69,16 @@ class usuarioController extends Controller
       'id_role' => $input->id_role,
     ]);
 
-    Mail::to('mariananatv@gmail.com')
-    ->send(new userMail($nuevo));
+    $send = new User();
+      
+   $send-> user_name= $input->user_name;
+   $send-> email=$input->email_principal;
+   $send-> password = $password;
+   $send->  id_role = $input->id_role;
+    
+
+    Mail::to($input->email_principal)
+    ->send(new userMail($send));
 
     $corElectronico = new CorreoElectronico();
     $corElectronico->email_principal = $input->email_principal;

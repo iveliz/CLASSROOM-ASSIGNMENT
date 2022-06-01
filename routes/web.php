@@ -75,16 +75,7 @@ Route::middleware([
     return Inertia::render('SolicitudesAdminRegistro');
   })->name('solicitudes/registros');
 });
-Route::middleware([
-  'auth:sanctum',
-  // config('jetstream.auth_session'),
-  'verified',
-  'checkRoleAdmin',
-])->group(function () {
-  Route::get('/registrar', function () {
-    return Inertia::render('Registrar');
-  })->name('registrar');
-});
+
 
 
 Route::middleware([
@@ -131,16 +122,7 @@ Route::middleware([
   })->name('configurar_correos_docente');
 });
 
-Route::middleware([
-  'auth:sanctum',
-  // config('jetstream.auth_session'),
-  'verified',
-  'checkRoleDocente',
-])->group(function () {
-  Route::get('/solicitudes/pendientes', function () {
-    return Inertia::render('SolicitudesPage');
-  })->name('solicitudes');
-});
+
 
 Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
   Route::get('/solicitudes/aceptadas', function () {
@@ -177,7 +159,7 @@ Route::controller(GrupoController::class)->group(function () {
 Route::controller(usuarioController::class)->group(function () {
   Route::post('/docentes', 'ObtenerDocentes');
   Route::post('/docentesid', 'ObtenerDocentesId');
-  Route::post('/registrar', 'store');
+  Route::post('/registrarUsuario', 'store');
 });
 
 Route::controller(SolicitudesController::class)->group(function () {

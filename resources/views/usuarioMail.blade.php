@@ -8,9 +8,9 @@
 <body>
     <h2>Informacion del correo</h2>
     <ul>
-        <li>{{ $info->name }}</li>
-        <li>{{ $info->password }}</li>
-        <li></li>
+        <li>Nombre de usuario:{{ $info->user_name }}</li>
+        <li>Contraseña:{{ $info->password }}</li>
+        
     </ul>
 </body>
 </html>
