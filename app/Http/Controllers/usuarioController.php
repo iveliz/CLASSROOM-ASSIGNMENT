@@ -25,7 +25,7 @@ class usuarioController extends Controller
    */
   public function index()
   {
-    
+
     $docentesComun = User::select('id', 'name')->get();
     return $docentesComun;
   }
@@ -50,51 +50,62 @@ class usuarioController extends Controller
   {
 
     $password = $this->generarContra();
-    $input->validate([
-      'name' => ['required', 'string', 'max:255'],
-      'user_name' => ['required', 'string', 'max:255', 'unique:users'],
-      'email_principal' => ['required', 'string', 'email', 'max:255'],
-      'email_secundario' => ['string', 'email', 'max:255'],
-      'id_role' => ['required'],
-      'id_admin' => ['required'],
-      'id_sct_cnt' => ['required'],
-    ]);
-   
 
-    $nuevo = User::create([
-      'name' => $input->name,
-      'user_name' => $input->user_name,
-      'email'=>$input->email_principal,
-      'password' => Hash::make($password),
-      'id_role' => $input->id_role,
-    ]);
+    $usuarioActual = DB::table('users')
+      ->select('users.user_name')
+      ->where('users.user_name', $input->user_name)
+      ->get();
+    $correoActual = CorreoElectronico::select('email_principal')
+      ->where('email_principal', $input->email_principal)
+      ->get();
 
-    $send = new User();
-      
-   $send-> user_name= $input->user_name;
-   $send-> email=$input->email_principal;
-   $send-> password = $password;
-   $send->  id_role = $input->id_role;
+    $res = 0;
+    try {
+      if(count($usuarioActual) == 0){
+        if (count($correoActual) == 0) {
+          $nuevo = User::create([
+            'name' => $input->name,
+            'user_name' => $input->user_name,
+            'email' => $input->email_principal,
+            'password' => Hash::make($password),
+            'id_role' => $input->id_role,
+          ]);
     
-
-    Mail::to($input->email_principal)
-    ->send(new userMail($send));
-
-    $corElectronico = new CorreoElectronico();
-    $corElectronico->email_principal = $input->email_principal;
-    $corElectronico->email_secundario = $input->email_secundario;
-    $corElectronico->id_usuario = $nuevo->id;
-    $corElectronico->save();
-
-    DB::table('registro_cuentas')->insert([
-      'id' => $nuevo->id,
-      'id_sct_cnt' => $input->id_sct_cnt,
-      'estado_reg_cnt' => 'aceptada',
-    ]);
-
-    SolicitudCuenta::where('id_sct_cnt',$input->id_sct_cnt)->update(['estado_sct_cnt' => 'aceptada']);
-
-    return $password;
+          $send = new User();
+    
+          $send->user_name = $input->user_name;
+          $send->email = $input->email_principal;
+          $send->password = $password;
+          $send->id_role = $input->id_role;
+    
+    
+          Mail::to($input->email_principal)
+            ->send(new userMail($send));
+    
+          $corElectronico = new CorreoElectronico();
+          $corElectronico->email_principal = $input->email_principal;
+          $corElectronico->email_secundario = $input->email_secundario;
+          $corElectronico->id_usuario = $nuevo->id;
+          $corElectronico->save();
+    
+          DB::table('registro_cuentas')->insert([
+            'id' => $nuevo->id,
+            'id_sct_cnt' => $input->id_sct_cnt,
+            'estado_reg_cnt' => 'aceptada',
+          ]);
+    
+          SolicitudCuenta::where('id_sct_cnt', $input->id_sct_cnt)->update(['estado_sct_cnt' => 'aceptada']);
+          $res = 1;
+        }else{
+          $res = 2;
+        }
+      }else{
+        $res = 3;
+      }
+    } catch (\Throwable $th) {
+      $res = $th;
+    }
+    return $res;
   }
 
   private function generarContra()
