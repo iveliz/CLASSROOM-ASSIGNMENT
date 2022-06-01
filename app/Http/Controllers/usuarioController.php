@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Models\User;
 use App\Models\Grupo;
+use App\Models\SolicitudCuenta;
 use App\Models\Materia;
 use Illuminate\Support\Facades\Redirect;
 
@@ -74,11 +75,10 @@ class usuarioController extends Controller
     DB::table('registro_cuentas')->insert([
       'id' => $nuevo->id,
       'id_sct_cnt' => $input->id_sct_cnt,
-      'fecha_reg_cnt' => date('Y-m-d', time()),
       'estado_reg_cnt' => 'aceptada',
-      'fecha_creacion_reg_cnt' => date('Y-m-d', time()),
-      'fecha_actualizacion_reg_cnt' => date('Y-m-d', time()),
     ]);
+
+    SolicitudCuenta::where('id_sct_cnt',$input->id_sct_cnt)->update(['estado_sct_cnt' => 'aceptada']);
 
     return $password;
   }
