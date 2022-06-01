@@ -25,7 +25,6 @@ class usuarioController extends Controller
    */
   public function index()
   {
-
     $docentesComun = User::select('id', 'name')->get();
     return $docentesComun;
   }
@@ -48,7 +47,6 @@ class usuarioController extends Controller
    */
   public function store(Request $input)
   {
-
     $password = $this->generarContra();
 
     $usuarioActual = DB::table('users')
@@ -61,7 +59,7 @@ class usuarioController extends Controller
 
     $res = 0;
     try {
-      if(count($usuarioActual) == 0){
+      if (count($usuarioActual) == 0) {
         if (count($correoActual) == 0) {
           $nuevo = User::create([
             'name' => $input->name,
@@ -70,36 +68,37 @@ class usuarioController extends Controller
             'password' => Hash::make($password),
             'id_role' => $input->id_role,
           ]);
-    
+
           $send = new User();
-    
+
           $send->user_name = $input->user_name;
           $send->email = $input->email_principal;
           $send->password = $password;
           $send->id_role = $input->id_role;
-    
+
           $corElectronico = new CorreoElectronico();
           $corElectronico->email_principal = $input->email_principal;
           $corElectronico->email_secundario = $input->email_secundario;
           $corElectronico->id_usuario = $nuevo->id;
           $corElectronico->save();
-    
+
           DB::table('registro_cuentas')->insert([
-            'id' => $nuevo->id,
+            'id' => $input->id,
             'id_sct_cnt' => $input->id_sct_cnt,
             'estado_reg_cnt' => 'aceptada',
           ]);
-    
-          SolicitudCuenta::where('id_sct_cnt', $input->id_sct_cnt)->update(['estado_sct_cnt' => 'aceptada']);
 
-          Mail::to($input->email_principal)
-            ->send(new userMail($send));
+          SolicitudCuenta::where('id_sct_cnt', $input->id_sct_cnt)->update([
+            'estado_sct_cnt' => 'aceptada',
+          ]);
+
+          Mail::to($input->email_principal)->send(new userMail($send));
 
           $res = 1;
-        }else{
+        } else {
           $res = 2;
         }
-      }else{
+      } else {
         $res = 3;
       }
     } catch (\Throwable $th) {
