@@ -78,10 +78,6 @@ class usuarioController extends Controller
           $send->password = $password;
           $send->id_role = $input->id_role;
     
-    
-          Mail::to($input->email_principal)
-            ->send(new userMail($send));
-    
           $corElectronico = new CorreoElectronico();
           $corElectronico->email_principal = $input->email_principal;
           $corElectronico->email_secundario = $input->email_secundario;
@@ -95,6 +91,10 @@ class usuarioController extends Controller
           ]);
     
           SolicitudCuenta::where('id_sct_cnt', $input->id_sct_cnt)->update(['estado_sct_cnt' => 'aceptada']);
+
+          Mail::to($input->email_principal)
+            ->send(new userMail($send));
+
           $res = 1;
         }else{
           $res = 2;
