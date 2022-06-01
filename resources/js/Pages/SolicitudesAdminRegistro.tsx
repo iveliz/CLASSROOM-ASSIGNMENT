@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Welcome from '@/Jetstream/Welcome';
 import AppLayout from '@/Layouts/AppLayoutAdmin';
 import Sidebar from '@/Jetstream/SidebarAdmin';
+import CircularProgress from '@mui/material/CircularProgress';
 import { solicitudes } from '@/Const/solicitudes';
 import Cardsolicitud from '@/Jetstream/CardsolicitudPendiente';
 import axios from 'axios';
@@ -10,10 +11,13 @@ import { nanoid } from 'nanoid';
 import CardSolicitudCuenta from './componentes/CardSolicitudCuenta';
 const endpoint = 'http://127.0.0.1:8000'
 
+interface solicitudcard{
+  id_sct_cnt: Number;
+}
+export default function (props:any) {
 
-export default function () {
-
-  const [listaRegistro,setListaRegistro] = useState([]);
+  const [listaRegistro,setListaRegistro] = useState<any[]>([]);
+  const [progressActivo,setProgressActivo] = useState(false);
   const getSolicitudes=  async()=>{
     await axios.get(`${endpoint}/SolicitudCuenta`).then((response)=>{
       setListaRegistro(response.data);
@@ -24,8 +28,15 @@ export default function () {
   useEffect(()=>{
     getSolicitudes()
    },[])
+  
+   const limpiar = (idCard: any) =>{
+      let aux = listaRegistro.filter(solicitud => solicitud.id_sct_cnt!==idCard)
+      setListaRegistro(aux)
+   }
 
+   
   return (
+    
     <AppLayout title="Informacion">
       <div className="grid grid-cols-6 gap-4">
         <div className=" colorPrimary mt-6 drop-shadow-lg ">
@@ -34,11 +45,14 @@ export default function () {
         </div>
         <div className="col-span-5">
           <div className="ml-5 mt-6 ">
-            <h1 className="font-bold">Solicitudes de Registros</h1>
+            <div className="d-flex flex-row">
+              <div> <h1 className="p-2 font-bold">Solicitudes de Registros</h1></div>
+              <div className="p-2 ml-2">{progressActivo ?<CircularProgress />:''}</div>
+            </div>
             <div>
               {(listaRegistro.map((registro) => {
                 
-                return <CardSolicitudCuenta{...registro} key={nanoid(4)} />
+                return <CardSolicitudCuenta{...registro} setProgressActivo={setProgressActivo} actualizar={limpiar} key={nanoid(4)} />
               }))}
             </div>
           </div>
