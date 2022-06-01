@@ -136,6 +136,17 @@ Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
   })->name('solicitudes/aceptadas-vencidas');
 });
 
+Route::middleware([
+  'auth:sanctum',
+  // config('jetstream.auth_session'),
+  'verified',
+  'checkRoleDocente',
+])->group(function () {
+  Route::get('/solicitudes/pendientes', function () {
+    return Inertia::render('SolicitudesPage');
+  })->name('solicitudes');
+});
+
 Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
   Route::get('/solicitudes/rechazadas', function () {
     return Inertia::render('Rechazados');
