@@ -8,8 +8,8 @@
 <body>
     <h2>Informacion del correo</h2>
     <ul>
-        <li>Nombre de usuario:{{ $info->user_name }}</li>
-        <li>Contraseña:{{ $info->password }}</li>
+        <li><b>Nombre de usuario :{{ $info->user_name }}</li>
+        <li><b>Contraseña :{{ $info->password }}</li>
         
     </ul>
 </body>
