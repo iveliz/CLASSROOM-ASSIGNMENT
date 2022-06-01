@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\SolicitudCuenta;
 use App\Models\MateriaSolicitada;
 use App\Models\RegistroCuenta;
+use App\Models\CorreoElectronico;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 class SolicitudCuentaController extends Controller
@@ -151,12 +152,8 @@ class SolicitudCuentaController extends Controller
         ->select('users.user_name')
         ->where('users.user_name', $datos_solicitud->usuario_sct_cnt)
         ->get();
-      $correoActual = DB::table('correo_electronicos')
-        ->select('correo_electronicos.email_principal')
-        ->where(
-          'correo_electronicos.email_principal',
-          $datos_solicitud->correo_principal
-        )
+      $correoActual = CorreoElectronico::select('email_principal')
+        ->where('email_principal', $datos_solicitud->correo_principal)
         ->get();
       if (count($usuario_solicitud_existente) == 0) {
         if (count($correo_solicitud_existente) == 0) {
