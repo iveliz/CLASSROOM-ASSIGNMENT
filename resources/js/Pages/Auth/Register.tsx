@@ -115,7 +115,7 @@ export default function Register(this: any) {
       <JetValidationErrors className="mb-4" />
       <h1 className="text-center">Solicitar cuenta</h1>
       <form onSubmit={onSubmit}>
-        <div>
+        <div className="mt-4">
           <JetLabel htmlFor="name">Nombre Completo</JetLabel>
           <JetInput
             id="name"
@@ -137,7 +137,7 @@ export default function Register(this: any) {
             autoComplete="name"
           />
         </div>
-        <div>
+        <div className="mt-4">
           <JetLabel htmlFor="username">Nombre de Usuario</JetLabel>
           <JetInput
             id="username"
