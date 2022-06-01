@@ -42,7 +42,7 @@ export default function Registrar(this: any) {
     username: '',
     password: '',
     secondaryEmail: '',
-    userRol: 'Administrador',
+    userRol: {label : 'Administrador',value : 'Administrador'},
     terms: false,
   });
 
@@ -61,6 +61,7 @@ export default function Registrar(this: any) {
   const [errorMessage, SetErrorMessage] = useState('');
 
   function onSubmit(e: React.FormEvent) {
+    let {value}=form.data.userRol;
     e.preventDefault();
     if(form.data.email!=''&&form.data.email==form.data.secondaryEmail){
       alert("El correo principal no puede ser igual al secundario")
@@ -71,7 +72,7 @@ export default function Registrar(this: any) {
         user_name: form.data.username,
         email_principal: form.data.email,
         email_secundario: form.data.secondaryEmail,
-        id_role:(form.data.userRol=='Administrador'?1:2),
+        id_role:(value=='Administrador'?1:2),
         id_admin:id,
       };
       console.log(account)
@@ -112,7 +113,6 @@ export default function Registrar(this: any) {
     SetStateBack(false);
   };
 
-
   return (
 
 <AppLayout title="Informacion">
@@ -144,6 +144,8 @@ export default function Registrar(this: any) {
             autoComplete="name"
           />
         </div>
+        {console.log(form.data.userRol)}
+
         <div className="mt-4">
           <JetLabel htmlFor="username">Nombre de Usuario</JetLabel>
           <JetInput
@@ -205,8 +207,8 @@ export default function Registrar(this: any) {
             options={rolType}
             defaultValue={{label : 'Administrador',value : 'Administrador'}}
             value={form.data.userRol}
-            onChange={((e: { currentTarget: string; }) =>
-              form.setData('userRol', e.currentTarget ))
+            onChange={((e: { label: string; value: string; }) =>
+              form.setData('userRol', e ))
             }
             isClearable={false}
             placeholder="Selecciona el cargo"
