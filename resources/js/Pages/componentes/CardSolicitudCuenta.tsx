@@ -250,7 +250,7 @@ export default function ({
       <React.Fragment>
         <div className="d-flex justify-content-between">
           <p className="rechazada mt-2">
-            Ya hay un usuario con credenciales similares
+            Ya hay un usuario con Nombre similar
           </p>
           <button
             type="button"
