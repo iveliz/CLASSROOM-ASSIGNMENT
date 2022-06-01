@@ -100,7 +100,7 @@ class SolicitudCuentaController extends Controller
       'correo_secundario_sct_cnt',
       DB::raw("(DATE_FORMAT(created_at, '%d-%m-%Y')) as fecha")
     )
-      ->where('estado_sct_cnt', 'Pendiente')
+      ->where('estado_sct_cnt', 'pendiente')
       ->orderBy('fecha')
       ->get();
 
@@ -123,10 +123,9 @@ class SolicitudCuentaController extends Controller
       while ($i < count($usuariosActuales) && !$encontrado) {
         if (
           levenshtein(
-            strtolower($soli->usuario_sct_cnt),
-            strtolower($usuariosActuales[$i]->user_name)
-          ) <= 2 ||
-          $soli->correo_principal_sct_cnt == $usuariosActuales[$i]->user_name
+            strtolower($soli->nombre_sct_cnt),
+            strtolower($usuariosActuales[$i]->name)
+          ) <= 5 
         ) {
           $soli->usuarioSimilar = $usuariosActuales[$i];
           $encontrado = true;
