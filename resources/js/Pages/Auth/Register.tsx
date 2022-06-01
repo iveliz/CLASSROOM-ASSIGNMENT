@@ -132,7 +132,7 @@ export default function Register(this: any) {
               (e.target as HTMLInputElement).setCustomValidity('');
             }}
             required
-            pattern="[A-Za-z- ]{8,}"
+            pattern="^[a-zA-ZÀ-ÿ- \u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ- \u00f1\u00d1]*)*[a-zA-ZÀ-ÿ- \u00f1\u00d1]{8,}"
             autoFocus
             autoComplete="name"
           />
@@ -148,7 +148,7 @@ export default function Register(this: any) {
             pattern="[A-Za-z-0-9_]{8,}"
             onInvalid={e => {
               (e.target as HTMLInputElement).setCustomValidity(
-                "Debe ser sólo letra, números y el carácter '_', minimo 8 carácteres",
+                "Debe ser sólo letras, números y el carácter '_', minimo 8 carácteres",
               );
             }}
             onInput={e => {
@@ -261,6 +261,7 @@ export default function Register(this: any) {
         )}
 
         <div className="flex items-center justify-end mt-4">
+     
           <InertiaLink
             href={route('login')}
             className="underline text-sm text-gray-600 hover:text-gray-900"

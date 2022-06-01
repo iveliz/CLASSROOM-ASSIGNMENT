@@ -14,10 +14,11 @@ import axios from 'axios';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Select, { components } from 'react-select';
+import AppLayout from '@/Layouts/AppLayoutAdmin';
 const endpoint = 'http://127.0.0.1:8000';
 const rolType = [
-  { label: 'Docente', value: 2 },
-  { label: 'Administrador', value: 1 },
+  { label: 'Docente', value: 'Docente' },
+  { label: 'Administrador', value: 'Administrador' },
 ];
 export default function Registrar(this: any) {
   const { user }: any = usePage().props;
@@ -41,7 +42,7 @@ export default function Registrar(this: any) {
     username: '',
     password: '',
     secondaryEmail: '',
-    userRol: 0,
+    userRol: 'Administrador',
     terms: false,
   });
 
@@ -61,38 +62,46 @@ export default function Registrar(this: any) {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    handleOpenBack();
-    let account = {
-      name: form.data.name,
-      username: form.data.username,
-      email_principal: form.data.email,
-      email_secundario: form.data.secondaryEmail,
-      id_role:form.data.userRol,
-      id_admin:id,
-    };
-    axios.post(`${endpoint}/registrarUsuario`, account).then(response => {
-      handleCloseBack();
-       if (response.data == 3) {
-        SetErrorMessage(
-          'El nombre de usuario ingresado ya esta en uso',
-        );
-        openModal();
-      } else if (response.data == 2) {
-        SetErrorMessage(
-          'El correo principal ingresado ya esta en uso',
-        );
-        openModal();
-      } else if (response.data == 1) {
-        SetErrorMessage('Su solicitud fue creada con éxito');
-        openModal();
-        form.reset();
-      } else {
-        SetErrorMessage(
-          'Ha ocurrido un error inesperado, intente de nuevo más tarde',
-        );
-        openModal();
-      }
-    });
+    if(form.data.email!=''&&form.data.email==form.data.secondaryEmail){
+      alert("El correo principal no puede ser igual al secundario")
+    }else{
+      handleOpenBack();
+      let account = {
+        name: form.data.name,
+        user_name: form.data.username,
+        email_principal: form.data.email,
+        email_secundario: form.data.secondaryEmail,
+        id_role:(form.data.userRol=='Administrador'?1:2),
+        id_admin:id,
+      };
+      console.log(account)
+      axios.post(`${endpoint}/registrarUsuario`, account).then(response => {
+        console.log(response)
+        handleCloseBack();
+         if (response.data == 3) {
+          SetErrorMessage(
+            'El nombre de usuario ingresado ya esta en uso',
+          );
+          openModal();
+        } else if (response.data == 2) {
+          SetErrorMessage(
+            'El correo principal ingresado ya esta en uso',
+          );
+          console.log(response)
+          openModal();
+        } else if (response.data == 1) {
+          SetErrorMessage('Su solicitud fue creada con éxito');
+          openModal();
+          form.reset();
+        } else {
+          SetErrorMessage(
+            'Ha ocurrido un error inesperado, intente de nuevo más tarde',
+          );
+          openModal();
+        }
+      });
+    }
+   
   }
 
   const handleOpenBack = () => {
@@ -105,7 +114,9 @@ export default function Registrar(this: any) {
 
 
   return (
-    <JetAuthenticationCard>
+
+<AppLayout title="Informacion">
+<JetAuthenticationCard>
       <Head title="Register" />
 
       <JetValidationErrors className="mb-4" />
@@ -128,7 +139,7 @@ export default function Registrar(this: any) {
               (e.target as HTMLInputElement).setCustomValidity('');
             }}
             required
-            pattern="[A-Za-z- ]{8,}"
+            pattern="^[a-zA-ZÀ-ÿ- \u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ- \u00f1\u00d1]*)*[a-zA-ZÀ-ÿ- \u00f1\u00d1]{8,}"
             autoFocus
             autoComplete="name"
           />
@@ -144,7 +155,7 @@ export default function Registrar(this: any) {
             pattern="[A-Za-z-0-9_]{8,}"
             onInvalid={e => {
               (e.target as HTMLInputElement).setCustomValidity(
-                "Debe ser sólo letra, números y el carácter '_', minimo 8 carácteres",
+                "Debe ser sólo letras, números y el carácter '_', minimo 8 carácteres",
               );
             }}
             onInput={e => {
@@ -192,10 +203,14 @@ export default function Registrar(this: any) {
           <Select
             id="selectRol"
             options={rolType}
-            defaultValue={rolType[0]}
+            defaultValue={{label : 'Administrador',value : 'Administrador'}}
             value={form.data.userRol}
+            onChange={((e: { currentTarget: string; }) =>
+              form.setData('userRol', e.currentTarget ))
+            }
             isClearable={false}
             placeholder="Selecciona el cargo"
+            required
           ></Select>
         </div>
 
@@ -275,12 +290,6 @@ export default function Registrar(this: any) {
         )}
 
         <div className="flex items-center justify-end mt-4">
-          <InertiaLink
-            href={route('login')}
-            className="underline text-sm text-gray-600 hover:text-gray-900"
-          >
-            Ya tienes una cuenta?
-          </InertiaLink>
 
           <JetButton
             className={classNames('ml-4', { 'opacity-25': form.processing })}
@@ -313,5 +322,8 @@ export default function Registrar(this: any) {
         </Modal>
       </form>
     </JetAuthenticationCard>
+</AppLayout>
+
+    
   );
 }
