@@ -91,7 +91,7 @@ export default function Registrar(this: any) {
           console.log(response)
           openModal();
         } else if (response.data == 1) {
-          SetErrorMessage('Su solicitud fue creada con éxito');
+          SetErrorMessage('La cuenta fue creada con éxito');
           openModal();
           form.reset();
         } else {
