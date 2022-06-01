@@ -101,7 +101,7 @@ export default function Register(this: any) {
   };
 
   const sendForm=( e : any)=>{
-    if(form.data.email==form.data.secondaryEmail){
+    if(form.data.email==form.data.secondaryEmail&&form.data.email!=null){
        alert("El correo principal no puede ser igual al secundario")
     }else{
       onSubmit(e);
