@@ -162,6 +162,17 @@ Route::controller(usuarioController::class)->group(function () {
   Route::post('/registrarUsuario', 'store');
 });
 
+Route::middleware([
+  'auth:sanctum',
+  // config('jetstream.auth_session'),
+  'verified',
+  'checkRoleAdmin',
+])->group(function () {
+  Route::get('/registrar', function () {
+    return Inertia::render('Registrar');
+  })->name('registrar');
+});
+
 Route::controller(SolicitudesController::class)->group(function () {
   Route::get('/api/solicitudes', 'index');
   Route::delete('/api/solicitudes/cancelar/{id}', 'cancelarSolicitud');
