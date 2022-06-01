@@ -141,39 +141,45 @@ class SolicitudCuentaController extends Controller
   {
     $res = 0;
     try {
-      $solicitud_existente = SolicitudCuenta::select('id_sct_cnt')
+      $usuario_solicitud_existente = SolicitudCuenta::select('id_sct_cnt')
         ->where('usuario_sct_cnt', $datos_solicitud->usuario_sct_cnt)
-        ->Orwhere(
-          'correo_principal_sct_cnt',
-          $datos_solicitud->correo_principal
-        )
         ->get();
-      $usuariosActuales = DB::table('users')
-        ->join(
-          'correo__electronicos',
-          'users.id',
-          '=',
-          'correo__electronicos.id_usuario'
-        )
-        ->select('users.user_name', 'correo__electronicos.email_principal')
+      $correo_solicitud_existente = SolicitudCuenta::select('id_sct_cnt')
+        ->where('correo_principal_sct_cnt', $datos_solicitud->correo_principal)
+        ->get();
+      $usuarioActual = DB::table('users')
+        ->select('users.user_name')
         ->where('users.user_name', $datos_solicitud->usuario_sct_cnt)
-        ->Orwhere(
-          'correo__electronicos.email_principal',
+        ->get();
+      $correoActual = DB::table('correo_electronicos')
+        ->select('correo_electronicos.email_principal')
+        ->where(
+          'correo_electronicos.email_principal',
           $datos_solicitud->correo_principal
         )
         ->get();
-      if (count($solicitud_existente) == 0) {
-        if (count($usuariosActuales) == 0) {
-          $nueva_solicitud = new SolicitudCuenta();
-          $nueva_solicitud->nombre_sct_cnt = $datos_solicitud->nombre_sct_cnt;
-          $nueva_solicitud->usuario_sct_cnt = $datos_solicitud->usuario_sct_cnt;
-          $nueva_solicitud->correo_principal_sct_cnt =
-            $datos_solicitud->correo_principal;
-          $nueva_solicitud->correo_secundario_sct_cnt =
-            $datos_solicitud->correo_secundario;
-          $nueva_solicitud->estado_sct_cnt = 'pendiente';
-          $nueva_solicitud->save();
-          $res = 1;
+      if (count($usuario_solicitud_existente) == 0) {
+        if (count($correo_solicitud_existente) == 0) {
+          if (count($usuarioActual) == 0) {
+            if (count($correoActual) == 0) {
+              $nueva_solicitud = new SolicitudCuenta();
+              $nueva_solicitud->nombre_sct_cnt =
+                $datos_solicitud->nombre_sct_cnt;
+              $nueva_solicitud->usuario_sct_cnt =
+                $datos_solicitud->usuario_sct_cnt;
+              $nueva_solicitud->correo_principal_sct_cnt =
+                $datos_solicitud->correo_principal;
+              $nueva_solicitud->correo_secundario_sct_cnt =
+                $datos_solicitud->correo_secundario;
+              $nueva_solicitud->estado_sct_cnt = 'pendiente';
+              $nueva_solicitud->save();
+              $res = 1;
+            } else {
+              $res = 5;
+            }
+          } else {
+            $res = 4;
+          }
         } else {
           $res = 3;
         }
