@@ -109,7 +109,7 @@ export default function Registrar(this: any) {
       <Head title="Register" />
 
       <JetValidationErrors className="mb-4" />
-      <h1 className="text-center">Solicitar cuenta</h1>
+      <h1 className="text-center">Registrar Usuario</h1>
       <form onSubmit={onSubmit}>
         <div>
           <JetLabel htmlFor="name">Nombre Completo</JetLabel>
@@ -287,7 +287,7 @@ export default function Registrar(this: any) {
             disabled={form.processing}
             type="submit"
           >
-            Registrarse
+            Registrar
           </JetButton>
         </div>
         <Modal
