@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { nanoid } from 'nanoid';
+import { usePage } from '@inertiajs/inertia-react';
 const endpoint = 'http://127.0.0.1:8000';
 import {
   Button,
@@ -28,6 +29,8 @@ interface SolicitudRegistro {
     user_name: String;
     email_principal: String;
   };
+  actualizar:any;
+  setProgressActivo:any;
 }
 
 export default function ({
@@ -38,6 +41,8 @@ export default function ({
   correo_principal_sct_cnt,
   correo_secundario_sct_cnt,
   usuarioSimilar,
+  actualizar,
+  setProgressActivo,
 }: SolicitudRegistro) {
   const style = {
     position: 'absolute' as 'absolute',
@@ -56,12 +61,15 @@ export default function ({
   const [radioRechazar, SetRadioRechazar] = useState(false);
   const [motivos, SetMotivos] = useState('');
   const [mensajeConfirmacion, SetMensajeConfirmacion] = useState('');
+  const [stateModal, setIsOpenConfir] = useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
 
   const openModal = () => {
     setIsOpen(true);
+    SetRadioAceptar(false);
+    SetRadioRechazar(false);
   };
   const closeModal = () => {
     if (stateBack == false) {
@@ -74,6 +82,7 @@ export default function ({
   const handleChangeAceptar = () => {
     SetRadioAceptar(true);
     SetRadioRechazar(false);
+    SetMensajeConfirmacion('¿Está seguro de aceptar esta solicitud?');
     SetMotivos('');
   };
 
@@ -117,9 +126,125 @@ export default function ({
   const responderbtn = () => {
     handleOpen();
   };
-
   var hayproblema = new Boolean(true);
 
+  function closeModalConfir() {
+    setIsOpenConfir(false);
+  }
+
+  function openModalConfir() {
+    setIsOpenConfir(true);
+  }
+
+  const validar = () => {
+    if (radioAceptar || radioRechazar) {
+      openModalConfir();
+    } else {
+      alert('Por favor seleccione una opción');
+    }
+  };
+  const handleCloseBack = () => {
+    SetStateBack(false);
+  };
+
+  const responder = () => {
+    handleOpenBack();
+    axios.post(`${endpoint}/aulasDisponibles`).then(response => {
+      console.log(response.data);
+      handleCloseBack();
+    });
+  };
+
+  const { user }: any = usePage().props;
+  let { id, name, email } = user;
+
+  const createReserva = () => {
+  
+    let solicitud_ctn;
+    let solicitud_ctn2;
+    if (radioRechazar) {
+      solicitud_ctn = {
+        id_sct_cnt: id_sct_cnt,
+        id: user.id,
+      };
+      axios
+        .post(`${endpoint}/rechazarSolicitudCuenta`, solicitud_ctn)
+        .then(response => {
+          actualizar(id_sct_cnt);
+          handleCloseBack();
+          console.log(response.data);
+          console.log('rechazada');
+          setProgressActivo(false);
+        });
+    setProgressActivo(true);
+    } else {
+      solicitud_ctn2 = {
+        id_sct_cnt: id_sct_cnt,
+        name: nombre_sct_cnt,
+        user_name: usuario_sct_cnt,
+        email_principal: correo_principal_sct_cnt,
+        email_secundario: correo_secundario_sct_cnt,
+        id_role: 2,
+        id_admin: user.id,
+      };
+      console.log(solicitud_ctn2);
+      axios
+        .post(`${endpoint}/registrarUsuario`, solicitud_ctn2)
+        .then(response => {
+          console.log(response);
+          actualizar(id_sct_cnt);
+          handleCloseBack();
+          handleOpen();
+          setProgressActivo(false);
+        });
+        setProgressActivo(true);
+    }
+    closeModalConfir();
+    closeModal();
+
+  };
+
+  function ChildModalConfirmation() {
+    return (
+      <React.Fragment>
+        <button
+          type="button"
+          className="btn colorPrimary text-white mt-4"
+          onClick={validar}
+        >
+          Confirmar
+        </button>
+        <Modal open={stateModal} onClose={closeModalConfir}>
+          <Box sx={{ ...style, width: 500 }}>
+            <div className="font-bold text-center m-4">
+              <p>{mensajeConfirmacion}</p>
+            </div>
+            <form className="d-flex justify-content-center space-x-4 mt-4 mb-4">
+              <div>
+                <button
+                  onClick={closeModalConfir}
+                  type="button"
+                  className="btn btn-danger text-white"
+                >
+                  Cancelar
+                </button>
+              </div>
+              <div>
+                <button
+                  type="button"
+                  className="btn colorPrimary text-white"
+                  onClick={createReserva}
+                >
+                  Aceptar
+                </button>
+             
+              </div>
+            </form>
+          </Box>
+        </Modal>
+      </React.Fragment>
+    );
+  }
   function ChildModal() {
     return (
       <React.Fragment>
@@ -151,7 +276,7 @@ export default function ({
 
             <div id="child-modal-description m-2">
               <p className="m-4 text-align">
-                Las credenciales son similares al de otro usuario. Usuario
+                El Nombre de docente es similar al de otro usuario. Usuario
                 similar:
               </p>
               <div className="flex flex-col font-semibold ml-6 mb-4">
@@ -159,18 +284,6 @@ export default function ({
                   ''
                 ) : (
                   <div>Nombre de docente: {usuarioSimilar.name}</div>
-                )}
-
-                {usuarioSimilar.user_name == null ? (
-                  ''
-                ) : (
-                  <div>Nombre de usuario: {usuarioSimilar.user_name}</div>
-                )}
-
-                {usuarioSimilar.email_principal == null ? (
-                  ''
-                ) : (
-                  <div>Correo principal: {usuarioSimilar.email_principal}</div>
                 )}
               </div>
               <div></div>
@@ -190,6 +303,7 @@ export default function ({
     );
   }
   console.log(usuarioSimilar);
+  console.log(user.id);
   return (
     <div>
       <div className="card mt-3 mr-8">
@@ -280,18 +394,10 @@ export default function ({
                           onChange={handleChangeMotivos}
                           value={motivos}
                         ></textarea>
-                        <button
-                          type="button"
-                          className="btn colorPrimary text-white m-8 mx-auto bottom-0 w-32"
-                        >
-                          Confirmar
-                        </button>
                       </div>
-                      {/* 
-                      <div className="fondoModal2 text-center mb-2">
-                        {/* <ChildModalConfirmation />
+                      <div className="fondoModal2 text-center mb-4">
+                        <ChildModalConfirmation />
                       </div>
-                      */}
                     </div>
                   </div>
                 </div>
