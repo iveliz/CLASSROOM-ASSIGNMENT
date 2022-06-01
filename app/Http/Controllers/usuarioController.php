@@ -12,7 +12,8 @@ use App\Models\User;
 use App\Models\Grupo;
 use App\Models\Materia;
 use Illuminate\Support\Facades\Redirect;
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\userMail;
 class usuarioController extends Controller
 {
   /**
@@ -22,6 +23,7 @@ class usuarioController extends Controller
    */
   public function index()
   {
+    
     $docentesComun = User::select('id', 'name')->get();
     return $docentesComun;
   }
@@ -46,7 +48,7 @@ class usuarioController extends Controller
   {
 
     $password = $this->generarContra();
-
+    
     $input->validate([
       'name' => ['required', 'string', 'max:255'],
       'user_name' => ['required', 'string', 'max:255', 'unique:users'],
@@ -64,6 +66,9 @@ class usuarioController extends Controller
       'password' => Hash::make($password),
       'id_role' => $input->id_role,
     ]);
+
+    Mail::to('mariananatv@gmail.com')
+    ->send(new userMail($nuevo));
 
     $corElectronico = new CorreoElectronico();
     $corElectronico->email_principal = $input->email_principal;
