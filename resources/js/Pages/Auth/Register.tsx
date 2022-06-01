@@ -52,44 +52,49 @@ export default function Register(this: any) {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    handleOpenBack();
-    let account = {
-      nombre_sct_cnt: form.data.name,
-      usuario_sct_cnt: form.data.username,
-      correo_principal: form.data.email,
-      correo_secundario: form.data.secondaryEmail,
-    };
-    axios.post(`${endpoint}/crearSolicitudCuenta`, account).then(response => {
-      handleCloseBack();
-      if(response.data==5){
-        SetErrorMessage(
-          'El correo principal ingresado ya esta en uso',
-        );
-      }else if(response.data==4){
-        SetErrorMessage(
-          'El nombre de usuario ingresado ya esta en uso',
-        );
-      }else if (response.data == 3) {
-        SetErrorMessage(
-          'Ya se uso antes el correo principal para hacer una solicitud',
-        );
-        openModal();
-      } else if (response.data == 2) {
-        SetErrorMessage(
-          'Ya se uso antes el nombre de usuario para hacer una solicitud',
-        );
-        openModal();
-      } else if (response.data == 1) {
-        SetErrorMessage('Su solicitud fue creada con éxito');
-        openModal();
-        form.reset();
-      } else {
-        SetErrorMessage(
-          'Ha ocurrido un error inesperado, intente de nuevo más tarde',
-        );
-        openModal();
-      }
-    });
+    if(form.data.email!=''&&form.data.email==form.data.secondaryEmail){
+      alert("El correo principal no puede ser igual al secundario")
+    }else{
+      handleOpenBack();
+      let account = {
+        nombre_sct_cnt: form.data.name,
+        usuario_sct_cnt: form.data.username,
+        correo_principal: form.data.email,
+        correo_secundario: form.data.secondaryEmail,
+      };
+      axios.post(`${endpoint}/crearSolicitudCuenta`, account).then(response => {
+        handleCloseBack();
+        if(response.data==5){
+          SetErrorMessage(
+            'El correo principal ingresado ya esta en uso',
+          );
+        }else if(response.data==4){
+          SetErrorMessage(
+            'El nombre de usuario ingresado ya esta en uso',
+          );
+        }else if (response.data == 3) {
+          SetErrorMessage(
+            'Ya se uso antes el correo principal para hacer una solicitud',
+          );
+          openModal();
+        } else if (response.data == 2) {
+          SetErrorMessage(
+            'Ya se uso antes el nombre de usuario para hacer una solicitud',
+          );
+          openModal();
+        } else if (response.data == 1) {
+          SetErrorMessage('Su solicitud fue creada con éxito');
+          openModal();
+          form.reset();
+        } else {
+          SetErrorMessage(
+            'Ha ocurrido un error inesperado, intente de nuevo más tarde',
+          );
+          openModal();
+        }
+      })
+    }
+;
   }
 
   const handleOpenBack = () => {
@@ -100,13 +105,6 @@ export default function Register(this: any) {
     SetStateBack(false);
   };
 
-  const sendForm=( e : any)=>{
-    if(form.data.email==form.data.secondaryEmail&&form.data.email!=null){
-       alert("El correo principal no puede ser igual al secundario")
-    }else{
-      onSubmit(e);
-    }
-  }
 
   return (
     <JetAuthenticationCard>
@@ -272,8 +270,7 @@ export default function Register(this: any) {
           <JetButton
             className={classNames('ml-4', { 'opacity-25': form.processing })}
             disabled={form.processing}
-            type="button"
-            onClick={e => sendForm(e)}
+            type="submit"
           >
             Registrarse
           </JetButton>
