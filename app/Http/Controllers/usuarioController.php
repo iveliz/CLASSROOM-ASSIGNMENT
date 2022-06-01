@@ -10,10 +10,12 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Models\User;
 use App\Models\Grupo;
+use App\Models\SolicitudCuenta;
 use App\Models\Materia;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\userMail;
+
 class usuarioController extends Controller
 {
   /**
@@ -48,7 +50,6 @@ class usuarioController extends Controller
   {
 
     $password = $this->generarContra();
-    
     $input->validate([
       'name' => ['required', 'string', 'max:255'],
       'user_name' => ['required', 'string', 'max:255', 'unique:users'],
@@ -79,11 +80,10 @@ class usuarioController extends Controller
     DB::table('registro_cuentas')->insert([
       'id' => $nuevo->id,
       'id_sct_cnt' => $input->id_sct_cnt,
-      'fecha_reg_cnt' => date('Y-m-d', time()),
       'estado_reg_cnt' => 'aceptada',
-      'fecha_creacion_reg_cnt' => date('Y-m-d', time()),
-      'fecha_actualizacion_reg_cnt' => date('Y-m-d', time()),
     ]);
+
+    SolicitudCuenta::where('id_sct_cnt',$input->id_sct_cnt)->update(['estado_sct_cnt' => 'aceptada']);
 
     return $password;
   }
