@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\SolicitudCuenta;
 use App\Models\MateriaSolicitada;
+use App\Models\RegistroCuenta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 class SolicitudCuentaController extends Controller
@@ -90,27 +91,146 @@ class SolicitudCuentaController extends Controller
    */
   public function verSolicitud()
   {
-    $solicitud = SolicitudCuenta::join(
-      'materia_solicitadas',
-      'solicitud_cuentas.id_sct_cnt',
-      '=',
-      'materia_solicitadas.id_sct_cnt'
+    $solicitud = SolicitudCuenta::select(
+      'id_sct_cnt',
+      'nombre_sct_cnt',
+      'usuario_sct_cnt',
+      'correo_principal_sct_cnt',
+      'correo_secundario_sct_cnt',
+      DB::raw("(DATE_FORMAT(created_at, '%d-%m-%Y')) as fecha")
     )
-      ->select(
-        'solicitud_cuentas.id_sct_cnt',
-        'solicitud_cuentas.nombre_sct_cnt',
-        'solicitud_cuentas.usuario_sct_cnt',
-        'solicitud_cuentas.correo_principal_sct_cnt',
-        'solicitud_cuentas.correo_secundario_sct_cnt',
-        DB::raw(
-          "(DATE_FORMAT(solicitud_cuentas.created_at, '%d-%m-%Y')) as fecha"
-        ),
-        'materia_solicitadas.id_materia_solicitada',
-        'materia_solicitadas.id_grupo_solicitado'
-      )
+      ->where('estado_sct_cnt', 'Pendiente')
       ->orderBy('fecha')
       ->get();
 
+    $usuariosActuales = DB::table('users')
+      ->join(
+        'correo__electronicos',
+        'users.id',
+        '=',
+        'correo__electronicos.id_usuario'
+      )
+      ->select(
+        'users.name',
+        'users.user_name',
+        'correo__electronicos.email_principal'
+      )
+      ->get();
+    foreach ($solicitud as $soli) {
+      $i = 0;
+      $encontrado = false;
+      while ($i < count($usuariosActuales) && !$encontrado) {
+        if (
+          levenshtein(
+            strtolower($soli->usuario_sct_cnt),
+            strtolower($usuariosActuales[$i]->user_name)
+          ) <= 2 ||
+          $soli->correo_principal_sct_cnt == $usuariosActuales[$i]->user_name
+        ) {
+          $soli->usuarioSimilar = $usuariosActuales[$i];
+          $encontrado = true;
+        }
+        $i = $i + 1;
+      }
+    }
+
     return $solicitud;
+  }
+
+  public function crearSolicitudCuenta(Request $datos_solicitud)
+  {
+    $res = 0;
+    try {
+      $solicitud_existente = SolicitudCuenta::select('id_sct_cnt')
+        ->where('usuario_sct_cnt', $datos_solicitud->usuario_sct_cnt)
+        ->Orwhere(
+          'correo_principal_sct_cnt',
+          $datos_solicitud->correo_principal
+        )
+        ->get();
+      $usuariosActuales = DB::table('users')
+        ->join(
+          'correo__electronicos',
+          'users.id',
+          '=',
+          'correo__electronicos.id_usuario'
+        )
+        ->select('users.user_name', 'correo__electronicos.email_principal')
+        ->where('users.user_name', $datos_solicitud->usuario_sct_cnt)
+        ->Orwhere(
+          'correo__electronicos.email_principal',
+          $datos_solicitud->correo_principal
+        )
+        ->get();
+      if (count($solicitud_existente) == 0) {
+        if (count($usuariosActuales) == 0) {
+          $nueva_solicitud = new SolicitudCuenta();
+          $nueva_solicitud->nombre_sct_cnt = $datos_solicitud->nombre_sct_cnt;
+          $nueva_solicitud->usuario_sct_cnt = $datos_solicitud->usuario_sct_cnt;
+          $nueva_solicitud->correo_principal_sct_cnt =
+            $datos_solicitud->correo_principal;
+          $nueva_solicitud->correo_secundario_sct_cnt =
+            $datos_solicitud->correo_secundario;
+          $nueva_solicitud->estado_sct_cnt = 'pendiente';
+          $nueva_solicitud->save();
+          $res = 1;
+        } else {
+          $res = 3;
+        }
+      } else {
+        $res = 2;
+      }
+    } catch (\Throwable $th) {
+      $res = $th;
+    }
+    return $res;
+  }
+  public function confirmarSolicitudCuenta(Request $datos_solicitud)
+  {
+    $res = 0;
+    try {
+      $solicitud_existente = RegistroCuenta::select('id_reg_cnt')
+        ->where('id_sct_cnt', $datos_solicitud->id_sct_cnt)
+        ->get();
+      if (count($solicitud_existente) == 0) {
+        $nueva_solicitud = new RegistroCuenta();
+        $nueva_solicitud->id = $datos_solicitud->id;
+        $nueva_solicitud->id_sct_cnt = $datos_solicitud->id_sct_cnt;
+        $nueva_solicitud->estado_reg_cnt = 'aceptada';
+        $nueva_solicitud->save();
+        SolicitudCuenta::where(
+          'id_sct_cnt',
+          $datos_solicitud->id_sct_cnt
+        )->update(['estado_sct_cnt' => 'aceptada']);
+        $res = 1;
+      }
+    } catch (\Throwable $th) {
+      $res = $th;
+    }
+    return $res;
+  }
+  public function rechazarSolicitudCuenta(Request $datos_solicitud)
+  {
+    $res = 0;
+    try {
+      $solicitud_existente = RegistroCuenta::select('id_reg_cnt')
+        ->where('id_sct_cnt', $datos_solicitud->id_sct_cnt)
+        ->get();
+      if (count($solicitud_existente) == 0) {
+        $nueva_solicitud = new RegistroCuenta();
+        $nueva_solicitud->id = $datos_solicitud->id;
+        $nueva_solicitud->id_sct_cnt = $datos_solicitud->id_sct_cnt;
+        $nueva_solicitud->estado_reg_cnt = 'rechazada';
+        $nueva_solicitud->save();
+        SolicitudCuenta::where(
+          'id_sct_cnt',
+          $datos_solicitud->id_sct_cnt
+        )->update(['estado_sct_cnt' => 'rechazada']);
+        $res = 1;
+      }
+    } catch (\Throwable $th) {
+      $res = $th;
+    }
+    return $res;
   }
 }

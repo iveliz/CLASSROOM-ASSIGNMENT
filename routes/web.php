@@ -42,7 +42,7 @@ Route::middleware([
 
 Route::middleware([
   'auth:sanctum',
- // config('jetstream.auth_session'),
+  // config('jetstream.auth_session'),
   'verified',
   'checkRoleDocente',
 ])->group(function () {
@@ -67,7 +67,7 @@ Route::middleware(['auth', 'checkRoleAdmin'])->group(function () {
 
 Route::middleware([
   'auth:sanctum',
- // config('jetstream.auth_session'),
+  // config('jetstream.auth_session'),
   'verified',
   'checkRoleAdmin',
 ])->group(function () {
@@ -75,10 +75,21 @@ Route::middleware([
     return Inertia::render('SolicitudesAdminRegistro');
   })->name('solicitudes/registros');
 });
+Route::middleware([
+  'auth:sanctum',
+  // config('jetstream.auth_session'),
+  'verified',
+  'checkRoleAdmin',
+])->group(function () {
+  Route::get('/registrar', function () {
+    return Inertia::render('Registrar');
+  })->name('registrar');
+});
+
 
 Route::middleware([
   'auth:sanctum',
- // config('jetstream.auth_session'),
+  // config('jetstream.auth_session'),
   'verified',
   'checkRoleAdmin',
 ])->group(function () {
@@ -122,7 +133,7 @@ Route::middleware([
 
 Route::middleware([
   'auth:sanctum',
- // config('jetstream.auth_session'),
+  // config('jetstream.auth_session'),
   'verified',
   'checkRoleDocente',
 ])->group(function () {
@@ -166,6 +177,7 @@ Route::controller(GrupoController::class)->group(function () {
 Route::controller(usuarioController::class)->group(function () {
   Route::post('/docentes', 'ObtenerDocentes');
   Route::post('/docentesid', 'ObtenerDocentesId');
+  Route::post('/registrar', 'store');
 });
 
 Route::controller(SolicitudesController::class)->group(function () {
@@ -209,6 +221,9 @@ Route::controller(AulaController::class)->group(function () {
 
 Route::controller(SolicitudCuentaController::class)->group(function () {
   Route::get('/SolicitudCuenta', 'verSolicitud');
+  Route::post('/crearSolicitudCuenta', 'crearSolicitudCuenta');
+  Route::post('/aceptarSolicitudCuenta', 'confirmarSolicitudCuenta');
+  Route::post('/rechazarSolicitudCuenta', 'rechazarSolicitudCuenta');
 });
 
 Route::controller(EmailController::class)->group(function () {

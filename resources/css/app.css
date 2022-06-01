@@ -297,6 +297,9 @@ body {
 .aceptadaButton{
   background-color: #1C9027;
 }
+.verUsuarioButton{
+  background-color: #C1423A;
+}
 
 button:disabled,
 button[disabled]{
