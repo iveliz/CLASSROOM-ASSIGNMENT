@@ -1,7 +1,7 @@
 import { InertiaLink, useForm, Head } from '@inertiajs/inertia-react';
 import Modal from 'react-modal';
 import classNames from 'classnames';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useRoute from '@/Hooks/useRoute';
 import useTypedPage from '@/Hooks/useTypedPage';
 import JetAuthenticationCard from '@/Jetstream/AuthenticationCard';
@@ -15,7 +15,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 const endpoint = 'http://127.0.0.1:8000';
 
-export default function Register() {
+export default function Register(this: any) {
   const customStyles = {
     content: {
       top: '50%',
@@ -48,7 +48,8 @@ export default function Register() {
   }
   const [modalIsOpen, setIsOpen] = useState(false);
   const [stateBack, SetStateBack] = useState(false);
-  const [errorMessage,SetErrorMessage]=useState('');
+  const [errorMessage, SetErrorMessage] = useState('');
+
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     handleOpenBack();
@@ -60,21 +61,34 @@ export default function Register() {
     };
     axios.post(`${endpoint}/crearSolicitudCuenta`, account).then(response => {
       handleCloseBack();
-      if (response.data == 3) {
-        SetErrorMessage("El Nombre de usuario o el correo principal están registrados en otra cuenta")
+      if(response.data==5){
+        SetErrorMessage(
+          'El correo principal ingresado ya esta en uso',
+        );
+      }else if(response.data==4){
+        SetErrorMessage(
+          'El nombre de usuario ingresado ya esta en uso',
+        );
+      }else if (response.data == 3) {
+        SetErrorMessage(
+          'Ya se uso antes el correo principal para hacer una solicitud',
+        );
         openModal();
-      }else if(response.data==2){
-        SetErrorMessage("Una solicitud ya ha sido creada usando el correo principal o el usuario");
+      } else if (response.data == 2) {
+        SetErrorMessage(
+          'Ya se uso antes el nombre de usuario para hacer una solicitud',
+        );
         openModal();
-      }else if(response.data==1){
-        SetErrorMessage("Su solicitud fue creada con éxito")
+      } else if (response.data == 1) {
+        SetErrorMessage('Su solicitud fue creada con éxito');
         openModal();
         form.reset();
-      }else{
-        SetErrorMessage("Ha ocurrido un error inesperado, intente de nuevo más tarde");
+      } else {
+        SetErrorMessage(
+          'Ha ocurrido un error inesperado, intente de nuevo más tarde',
+        );
         openModal();
       }
-   
     });
   }
 
@@ -85,6 +99,14 @@ export default function Register() {
   const handleCloseBack = () => {
     SetStateBack(false);
   };
+
+  const sendForm=( e : any)=>{
+    if(form.data.email==form.data.secondaryEmail){
+       alert("El correo principal no puede ser igual al secundario")
+    }else{
+      onSubmit(e);
+    }
+  }
 
   return (
     <JetAuthenticationCard>
@@ -101,7 +123,16 @@ export default function Register() {
             className="mt-1 block w-full"
             value={form.data.name}
             onChange={e => form.setData('name', e.currentTarget.value)}
+            onInvalid={e => {
+              (e.target as HTMLInputElement).setCustomValidity(
+                'Debe ser sólo letras y espacios, minimo 8 carácteres',
+              );
+            }}
+            onInput={e => {
+              (e.target as HTMLInputElement).setCustomValidity('');
+            }}
             required
+            pattern="[A-Za-z- ]{8,}"
             autoFocus
             autoComplete="name"
           />
@@ -114,6 +145,15 @@ export default function Register() {
             className="mt-1 block w-full"
             value={form.data.username}
             onChange={e => form.setData('username', e.currentTarget.value)}
+            pattern="[A-Za-z-0-9_]{8,}"
+            onInvalid={e => {
+              (e.target as HTMLInputElement).setCustomValidity(
+                "Debe ser sólo letra,números y el carácter '_', minimo 8 carácteres",
+              );
+            }}
+            onInput={e => {
+              (e.target as HTMLInputElement).setCustomValidity('');
+            }}
             required
             autoFocus
             autoComplete="username"
@@ -127,7 +167,9 @@ export default function Register() {
             type="email"
             className="mt-1 block w-full"
             value={form.data.email}
-            onChange={e => form.setData('email', e.currentTarget.value)}
+            onChange={e => {
+              form.setData('email', e.currentTarget.value);
+            }}
             required
           />
         </div>
@@ -230,33 +272,33 @@ export default function Register() {
           <JetButton
             className={classNames('ml-4', { 'opacity-25': form.processing })}
             disabled={form.processing}
+            type="button"
+            onClick={e => sendForm(e)}
           >
             Registrarse
           </JetButton>
         </div>
         <Modal
-              isOpen={modalIsOpen}
-              onAfterOpen={afterOpenModal}
-              onRequestClose={closeModal}
-              style={customStyles}
-              contentLabel="Example Modal"
-              ariaHideApp={false}
-            >
-              <div className="font-bold">
-               {errorMessage}
-              </div>
-              <form className="d-flex justify-content-center space-x-4 mt-4">
-                <div>
-                  <button
-                    onClick={closeModal}
-                    type="button"
-                    className="btn colorPrimary text-white"
-                  >
-                    Cerrar
-                  </button>
-                </div>
-              </form>
-            </Modal>
+          isOpen={modalIsOpen}
+          onAfterOpen={afterOpenModal}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="Example Modal"
+          ariaHideApp={false}
+        >
+          <div className="font-bold">{errorMessage}</div>
+          <form className="d-flex justify-content-center space-x-4 mt-4">
+            <div>
+              <button
+                onClick={closeModal}
+                type="button"
+                className="btn colorPrimary text-white"
+              >
+                Cerrar
+              </button>
+            </div>
+          </form>
+        </Modal>
       </form>
     </JetAuthenticationCard>
   );
