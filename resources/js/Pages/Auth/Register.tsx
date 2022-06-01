@@ -68,10 +68,12 @@ export default function Register(this: any) {
           SetErrorMessage(
             'El correo principal ingresado ya esta en uso',
           );
+          openModal();
         }else if(response.data==4){
           SetErrorMessage(
             'El nombre de usuario ingresado ya esta en uso',
           );
+          openModal();
         }else if (response.data == 3) {
           SetErrorMessage(
             'Ya se uso antes el correo principal para hacer una solicitud',
@@ -146,7 +148,7 @@ export default function Register(this: any) {
             pattern="[A-Za-z-0-9_]{8,}"
             onInvalid={e => {
               (e.target as HTMLInputElement).setCustomValidity(
-                "Debe ser sólo letra,números y el carácter '_', minimo 8 carácteres",
+                "Debe ser sólo letra, números y el carácter '_', minimo 8 carácteres",
               );
             }}
             onInput={e => {
@@ -184,7 +186,6 @@ export default function Register(this: any) {
             onChange={e =>
               form.setData('secondaryEmail', e.currentTarget.value)
             }
-            required
           />
         </div>
         <Backdrop
@@ -272,7 +273,7 @@ export default function Register(this: any) {
             disabled={form.processing}
             type="submit"
           >
-            Registrarse
+            Solicitar
           </JetButton>
         </div>
         <Modal

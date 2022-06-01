@@ -1,6 +1,7 @@
-import { InertiaLink, useForm, Head } from '@inertiajs/inertia-react';
+import { InertiaLink, useForm, Head, usePage } from '@inertiajs/inertia-react';
+import Modal from 'react-modal';
 import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useRoute from '@/Hooks/useRoute';
 import useTypedPage from '@/Hooks/useTypedPage';
 import JetAuthenticationCard from '@/Jetstream/AuthenticationCard';
@@ -9,13 +10,29 @@ import JetCheckbox from '@/Jetstream/Checkbox';
 import JetInput from '@/Jetstream/Input';
 import JetLabel from '@/Jetstream/Label';
 import JetValidationErrors from '@/Jetstream/ValidationErrors';
+import axios from 'axios';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 import Select, { components } from 'react-select';
-export default function Register() {
-  const rolType = [
-    { label: 'Docente', value: 'Docente' },
-    { label: 'Administrador', value: 'Administrador' },
-  ];
+const endpoint = 'http://127.0.0.1:8000';
+const rolType = [
+  { label: 'Docente', value: 2 },
+  { label: 'Administrador', value: 1 },
+];
+export default function Registrar(this: any) {
+  const { user }: any = usePage().props;
+  let { id, name, email } = user;
 
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
   const page = useTypedPage();
   const route = useRoute();
   const form = useForm({
@@ -23,24 +40,76 @@ export default function Register() {
     email: '',
     username: '',
     password: '',
-    userRol: '',
     secondaryEmail: '',
+    userRol: 0,
     terms: false,
   });
 
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {}
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+  
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [stateBack, SetStateBack] = useState(false);
+  const [errorMessage, SetErrorMessage] = useState('');
+
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    form.post(route('register'), {
-     
+    handleOpenBack();
+    let account = {
+      name: form.data.name,
+      username: form.data.username,
+      email_principal: form.data.email,
+      email_secundario: form.data.secondaryEmail,
+      id_role:form.data.userRol,
+      id_admin:id,
+    };
+    axios.post(`${endpoint}/registrarUsuario`, account).then(response => {
+      handleCloseBack();
+       if (response.data == 3) {
+        SetErrorMessage(
+          'El nombre de usuario ingresado ya esta en uso',
+        );
+        openModal();
+      } else if (response.data == 2) {
+        SetErrorMessage(
+          'El correo principal ingresado ya esta en uso',
+        );
+        openModal();
+      } else if (response.data == 1) {
+        SetErrorMessage('Su solicitud fue creada con éxito');
+        openModal();
+        form.reset();
+      } else {
+        SetErrorMessage(
+          'Ha ocurrido un error inesperado, intente de nuevo más tarde',
+        );
+        openModal();
+      }
     });
   }
+
+  const handleOpenBack = () => {
+    SetStateBack(true);
+  };
+
+  const handleCloseBack = () => {
+    SetStateBack(false);
+  };
+
 
   return (
     <JetAuthenticationCard>
       <Head title="Register" />
 
       <JetValidationErrors className="mb-4" />
-      <h1 className="text-center">Registrar nuevo usuario</h1>
+      <h1 className="text-center">Solicitar cuenta</h1>
       <form onSubmit={onSubmit}>
         <div>
           <JetLabel htmlFor="name">Nombre Completo</JetLabel>
@@ -50,12 +119,20 @@ export default function Register() {
             className="mt-1 block w-full"
             value={form.data.name}
             onChange={e => form.setData('name', e.currentTarget.value)}
+            onInvalid={e => {
+              (e.target as HTMLInputElement).setCustomValidity(
+                'Debe ser sólo letras y espacios, minimo 8 carácteres',
+              );
+            }}
+            onInput={e => {
+              (e.target as HTMLInputElement).setCustomValidity('');
+            }}
             required
+            pattern="[A-Za-z- ]{8,}"
             autoFocus
             autoComplete="name"
           />
         </div>
-
         <div>
           <JetLabel htmlFor="username">Nombre de Usuario</JetLabel>
           <JetInput
@@ -64,6 +141,15 @@ export default function Register() {
             className="mt-1 block w-full"
             value={form.data.username}
             onChange={e => form.setData('username', e.currentTarget.value)}
+            pattern="[A-Za-z-0-9_]{8,}"
+            onInvalid={e => {
+              (e.target as HTMLInputElement).setCustomValidity(
+                "Debe ser sólo letra, números y el carácter '_', minimo 8 carácteres",
+              );
+            }}
+            onInput={e => {
+              (e.target as HTMLInputElement).setCustomValidity('');
+            }}
             required
             autoFocus
             autoComplete="username"
@@ -77,7 +163,9 @@ export default function Register() {
             type="email"
             className="mt-1 block w-full"
             value={form.data.email}
-            onChange={e => form.setData('email', e.currentTarget.value)}
+            onChange={e => {
+              form.setData('email', e.currentTarget.value);
+            }}
             required
           />
         </div>
@@ -94,7 +182,6 @@ export default function Register() {
             onChange={e =>
               form.setData('secondaryEmail', e.currentTarget.value)
             }
-            required
           />
         </div>
 
@@ -111,6 +198,47 @@ export default function Register() {
             placeholder="Selecciona el cargo"
           ></Select>
         </div>
+
+
+        <Backdrop
+          sx={{
+            color: '#fff',
+            zIndex: theme => theme.zIndex.drawer + 1,
+          }}
+          open={stateBack}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+
+
+
+        {/*    <div className="mt-4">
+          <JetLabel htmlFor="password">Password</JetLabel>
+          <JetInput
+            id="password"
+            type="password"
+            className="mt-1 block w-full"
+            value={form.data.password}
+            onChange={e => form.setData('password', e.currentTarget.value)}
+            required
+            autoComplete="new-password"
+          />
+        </div>
+
+        <div className="mt-4">
+          <JetLabel htmlFor="password_confirmation">Confirmar C</JetLabel>
+          <JetInput
+            id="password_confirmation"
+            type="password"
+            className="mt-1 block w-full"
+            value={form.data.password_confirmation}
+            onChange={e =>
+              form.setData('password_confirmation', e.currentTarget.value)
+            }
+            required
+            autoComplete="new-password"
+          />
+        </div> */}
 
         {page.props.jetstream.hasTermsAndPrivacyPolicyFeature && (
           <div className="mt-4">
@@ -151,16 +279,38 @@ export default function Register() {
             href={route('login')}
             className="underline text-sm text-gray-600 hover:text-gray-900"
           >
-            Already registered?
+            Ya tienes una cuenta?
           </InertiaLink>
 
           <JetButton
             className={classNames('ml-4', { 'opacity-25': form.processing })}
             disabled={form.processing}
+            type="submit"
           >
-            Register
+            Registrarse
           </JetButton>
         </div>
+        <Modal
+          isOpen={modalIsOpen}
+          onAfterOpen={afterOpenModal}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="Example Modal"
+          ariaHideApp={false}
+        >
+          <div className="font-bold">{errorMessage}</div>
+          <form className="d-flex justify-content-center space-x-4 mt-4">
+            <div>
+              <button
+                onClick={closeModal}
+                type="button"
+                className="btn colorPrimary text-white"
+              >
+                Cerrar
+              </button>
+            </div>
+          </form>
+        </Modal>
       </form>
     </JetAuthenticationCard>
   );
