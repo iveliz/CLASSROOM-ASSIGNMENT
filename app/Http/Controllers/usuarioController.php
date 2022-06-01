@@ -83,7 +83,7 @@ class usuarioController extends Controller
           $corElectronico->save();
 
           DB::table('registro_cuentas')->insert([
-            'id' => $input->id,
+            'id' => $input->id_admin,
             'id_sct_cnt' => $input->id_sct_cnt,
             'estado_reg_cnt' => 'aceptada',
           ]);
