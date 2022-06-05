@@ -232,11 +232,12 @@ class SolicitudCuentaController extends Controller
           $datos_solicitud->id_sct_cnt
         )->update(['estado_sct_cnt' => 'rechazada']);
         $res = 1;
+      
 
-       
-        Mail::to($datos_solicitud->correoDocente)->send(new userMailRechazo($datos_solicitud->motivos));
+        
+        Mail::to($datos_solicitud->correoDocente)->send(new userMailRechazo($datos_solicitud->motivo));
 
-
+    
       }
     } catch (\Throwable $th) {
       $res = $th;

@@ -8,8 +8,8 @@
 <body>
     <h2>Informacion del correo</h2>
     <ul>
-        <li><b>La solicitud de  registro de cuenta del sistema de reserva de aulas fue rechazada </li>  
-        <li><b>Motivos :{{ $info->motivos }}</li>    
+        <li><b>La solicitud de  registro de cuenta para el sistema de reserva de aulas fue rechazada </li>  
+        <li><b>Motivos :{{ $info }}</li>    
     </ul>
 </body>
 </html>
