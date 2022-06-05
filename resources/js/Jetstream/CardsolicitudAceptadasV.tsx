@@ -13,6 +13,7 @@ interface Solicitud {
   docentes:[];
   cantidad_estudiantes_solicitud: Number;
   estado_solicitud:String;
+  setProgressActivo:any;
   aulas:[];
 }
 
@@ -27,6 +28,7 @@ export default function (
     docentes,
     estado_solicitud,
     aulas,
+    setProgressActivo,
   }: Solicitud,
 
 ) {
@@ -72,6 +74,7 @@ export default function (
 
   return (
     <div>
+      {setProgressActivo(false)}
       <div className="card mt-3 mr-8">
         <div className="card-body ">
           <div className="hstack gap-3 items-end ">

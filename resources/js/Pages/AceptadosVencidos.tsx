@@ -23,7 +23,7 @@ export default function (props: { solicitudes: any }) {
   useEffect(()=>{
     getSolicitudes()
    },[])
- 
+  const [progressActivo,setProgressActivo] = useState(true);
   return (
     <AppLayout title="Informacion">
       <div className="grid grid-cols-6 gap-4">
@@ -32,10 +32,13 @@ export default function (props: { solicitudes: any }) {
         </div>
         <div className="col-span-5">
           <div className=" mt-6 ">
-            <h1 className="font-bold">Solicitudes Aceptadas Vencidas</h1>
+            <div className="d-flex flex-row items-baseline ">
+            <h1 className="font-bold p-2 mb-2">Solicitudes Aceptadas Vencidas</h1>
+            <div>{progressActivo ? <h5 className=" ml-4 mb-2 pt-12 pb-4 ">Espere...</h5>:''}</div>
+          </div>
           </div>
           {listaSoliState.map(card => (
-            <Cardsolicitud {...card} key={nanoid(4)} />
+            <Cardsolicitud {...card} setProgressActivo={setProgressActivo} key={nanoid(4)} />
           ))}
           {console.log(listaSoliState)}
         </div>

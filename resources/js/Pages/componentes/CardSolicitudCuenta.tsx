@@ -31,6 +31,7 @@ interface SolicitudRegistro {
   };
   actualizar:any;
   setProgressActivo:any;
+  correoDocente:String;
 }
 
 export default function ({
@@ -43,6 +44,7 @@ export default function ({
   usuarioSimilar,
   actualizar,
   setProgressActivo,
+  correoDocente,
 }: SolicitudRegistro) {
   const style = {
     position: 'absolute' as 'absolute',
@@ -166,6 +168,7 @@ export default function ({
       solicitud_ctn = {
         id_sct_cnt: id_sct_cnt,
         id: user.id,
+        correoDocente: correo_principal_sct_cnt,
       };
       axios
         .post(`${endpoint}/rechazarSolicitudCuenta`, solicitud_ctn)
