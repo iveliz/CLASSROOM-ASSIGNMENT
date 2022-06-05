@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
 
-class userMail extends Mailable
+class userMailRechazo extends Mailable
 {
     use Queueable, SerializesModels;
     public $info;
@@ -17,9 +17,9 @@ class userMail extends Mailable
      *
      * @return void
      */
-    public function __construct($data)
+    public function  __construct($data)
     {
-      $this->info=$data;
+        $this->info=$data;
     }
 
     /**
@@ -29,6 +29,6 @@ class userMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Informacion de registro de cuenta')->view('usuarioMail');
+        return $this->subject('Informacion de registro de cuenta')->view('mailRechazo');
     }
 }
