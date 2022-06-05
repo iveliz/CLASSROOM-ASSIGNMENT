@@ -7,6 +7,9 @@ use App\Models\RegistroCuenta;
 use App\Models\CorreoElectronico;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Mail\userMail;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 class SolicitudCuentaController extends Controller
 {
   /**
@@ -229,6 +232,11 @@ class SolicitudCuentaController extends Controller
           $datos_solicitud->id_sct_cnt
         )->update(['estado_sct_cnt' => 'rechazada']);
         $res = 1;
+
+        $send = new User();
+        Mail::to($input->email_principal)->send(new userMail($send));
+
+
       }
     } catch (\Throwable $th) {
       $res = $th;
