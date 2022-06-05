@@ -13,9 +13,9 @@ interface Solicitud {
   cantidad_estudiantes_solicitud: Number;
   estado_solicitud: String;
   aulas: [];
-
   handleSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   listaSeleccion: number[];
+  setProgressActivo:any;
 }
 
 export default function ({
@@ -28,9 +28,9 @@ export default function ({
   docentes,
   estado_solicitud,
   aulas,
-
   handleSelect,
   listaSeleccion,
+  setProgressActivo,
 }: Solicitud) {
   const [modalIsOpen, setIsOpen] = useState(false);
 
@@ -62,7 +62,9 @@ export default function ({
   }
 
   return (
+    
     <div>
+      {setProgressActivo(false)}
       <div className="card mt-3 mr-8">
         <div className="card-body ">
           <div className="hstack gap-3 items-end ">
@@ -136,6 +138,4 @@ export default function ({
     </div>
   );
 }
-{
-  /*( =ω=)..nyaa falta cancelar e informacion */
-}
+

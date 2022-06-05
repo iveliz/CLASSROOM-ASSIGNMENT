@@ -15,6 +15,7 @@ interface Solicitud {
   estado_solicitud:String;
   motivo_reg_sct:any;
   aulas:any;
+  setProgressActivo:any;
 }
 
 export default function (
@@ -28,7 +29,8 @@ export default function (
     docentes,
     estado_solicitud,
     aulas,
-    motivo_reg_sct
+    motivo_reg_sct,
+    setProgressActivo,
   }: Solicitud,
 
 ) {
@@ -74,6 +76,7 @@ export default function (
 
   return (
     <div>
+      {setProgressActivo(false)}
       <div className="card mt-3 mr-8">
         <div className="card-body ">
           <div className="hstack gap-3 items-end ">

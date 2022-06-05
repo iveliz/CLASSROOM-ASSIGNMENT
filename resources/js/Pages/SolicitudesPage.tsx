@@ -132,6 +132,7 @@ export default function () {
     }
   }
 
+  const [progressActivo,setProgressActivo] = useState(true);
 
   return (
     <AppLayout title="Informacion">
@@ -141,7 +142,11 @@ export default function () {
         </div>
         <div className="col-span-5">
           <div className=" mt-6 ">
-            <h1 className="font-bold">Solicitudes Pendientes</h1>
+            <div className="d-flex flex-row items-baseline  ">
+            <h1 className="p-2 mb-2  font-bold ">Solicitudes Pendientes </h1>
+            <div>{progressActivo ? <h5 className=" ml-4 mb-2 pt-12 pb-4 ">Espere...</h5>:''}</div>
+            </div>
+            
             <div className="fondoBarra  mr-8 ">
               <div className="flex">
                 <div className="mt-3 ml-4">
@@ -230,6 +235,7 @@ export default function () {
                 {...card}
                 handleSelect={handleSelect}
                 listaSeleccion={listaSeleccion}
+                setProgressActivo={setProgressActivo} 
                 key={nanoid(5)}
               />
             ))}
