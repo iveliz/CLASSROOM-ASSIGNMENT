@@ -67,7 +67,7 @@ export default function Login({ canResetPassword, status }: Props) {
             autoComplete="current-password"
           />
         </div>
-       
+
         <div className="mt-4">
           {/*  <label className="flex items-center">
             <JetCheckbox
@@ -82,35 +82,31 @@ export default function Login({ canResetPassword, status }: Props) {
         </div>
 
         {/* <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0 mt-4">*/}
-          {/* {canResetPassword && (
-            <div>
-              <InertiaLink
-                href={route('password.request')}
-                className="underline text-sm text-gray-600 hover:text-gray-900"
-              >
-                Forgot your password?
-              </InertiaLink>
-            </div>
-          )}*/}
 
-          <div className="sm:justify-center text-start flex flex-col">
-             <InertiaLink
-              href={route('register')}
-              className="underline text-sm text-gray-600 hover:text-gray-900"
-            >
-             Solicitar cuenta
-            </InertiaLink>
-           
-              <JetButton
-                className={classNames( 'colorPrimary', {
-                  'opacity-25': form.processing,
-                })}
-                disabled={form.processing}
-              >
-                Entrar
-              </JetButton>
-            
-          </div>
+        <div className="sm:justify-center text-start flex flex-col">
+          {/* <InertiaLink
+            href={route('password.request')}
+            className="underline text-sm text-gray-600 hover:text-gray-900"
+          >
+            ¿Olvidaste tu Contraseña?
+          </InertiaLink> */}
+
+          <InertiaLink
+            href={route('register')}
+            className="underline text-sm text-gray-600 hover:text-gray-900"
+          >
+            Solicitar cuenta
+          </InertiaLink>
+
+          <JetButton
+            className={classNames('colorPrimary', {
+              'opacity-25': form.processing,
+            })}
+            disabled={form.processing}
+          >
+            Entrar
+          </JetButton>
+        </div>
         {/*  </div>*/}
       </form>
     </JetAuthenticationCard>

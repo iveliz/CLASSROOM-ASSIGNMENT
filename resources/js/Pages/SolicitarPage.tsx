@@ -175,7 +175,7 @@ export default function () {
           });
         }
       }
-    } 
+    }
     if(horariosMostrar.length==0){
       horariosMostrar = horarios;
     }
@@ -463,6 +463,8 @@ export default function () {
       .then(response => {
         if (response.data === 1) {
           Inertia.visit('solicitudes/pendientes');
+          fechaS="";
+
         } else {
           closeModal();
           openModalError();
