@@ -16,10 +16,14 @@ export default function () {
   const [listaSolicitudAula, setListaSolicitudAula] = useState<any>([]);
   const [stateBack, SetStateBack] = useState(false);
   const [solicitud, SetSolicitud] = useState<any>(); 
+  
+  const [mensajeEspera,setMensajeEspera] = useState(true);
   const getSolicitudes = async () => {
     await axios.get(`${endpoint}/solicitudesAula`).then(response => {
       setListaSolicitudAula(response.data);
+      setMensajeEspera(true)
     });
+    setMensajeEspera(false)
   };
 
   const handleOpenBack = () => {
@@ -102,10 +106,15 @@ export default function () {
         </div>
         <div className="col-span-5">
           <div className="ml-5 mt-6 ">
-            <h1 className="font-bold">Solicitudes de Aulas</h1>
+            <div className="d-flex flex-row items-center">
+              <h1 className="font-bold mr-5">Solicitudes de Aulas</h1>
+            </div>
             <p>
               Si encuentra un (*) la solicitud debe ser atendida con urgencia
             </p>
+            <div className='text-center mr-8'>
+              {mensajeEspera?<h5 className='mt-10'>Espere...</h5>:listaSolicitudAula.length==0?<h5 className='mt-10'>Aun no hay solicitudes para mostrar</h5>:''}
+            </div>
             <div>
               {listaSolicitudAula.map((solicitudAula:any) => {
                 return <CardSolicitudAula {...solicitudAula} responder={SetSolicitud} key={nanoid(4)} />;
