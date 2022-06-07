@@ -9,7 +9,7 @@
     <h2>Informacion del correo</h2>
     <ul>
         <li><b>La solicitud de  registro de cuenta para el sistema de reserva de aulas fue rechazada </li>  
-        <li><b>Motivos :{{ $info }}</li>    
+        <li><b>Motivos: {{ $info->motivo_reg_sct }}</li>    
     </ul>
 </body>
 </html>
