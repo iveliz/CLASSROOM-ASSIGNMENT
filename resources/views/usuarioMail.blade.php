@@ -6,11 +6,9 @@
     <title>Document</title>
 </head>
 <body>
-    <h2>Informacion del correo</h2>
-    <ul>
-        <li><b>Nombre de usuario :{{ $info->user_name }}</li>
-        <li><b>Contraseña :{{ $info->password }}</li>
-        
-    </ul>
+    <h2>Se ha completado su registro satisfactoriamente!</h2>
+        <p>El nombre de usuario para el acceso a su cuenta es: {{ $info->user_name }}
+        <p>La contraseña para el acceso a su ecuenta es: {{ $info->password }}  
+        <p>Esta informacion es privada y exclusiva ,no comparta con nadie .
 </body>
 </html>
