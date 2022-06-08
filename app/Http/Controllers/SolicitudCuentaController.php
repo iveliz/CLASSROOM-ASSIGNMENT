@@ -7,6 +7,9 @@ use App\Models\RegistroCuenta;
 use App\Models\CorreoElectronico;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Mail\userMailRechazo;
+use App\Models\RegistroSolicitudes;
+use Illuminate\Support\Facades\Mail;
 class SolicitudCuentaController extends Controller
 {
   /**
@@ -229,6 +232,13 @@ class SolicitudCuentaController extends Controller
           $datos_solicitud->id_sct_cnt
         )->update(['estado_sct_cnt' => 'rechazada']);
         $res = 1;
+
+       $send=new RegistroSolicitudes();
+       $send-> motivo_reg_sct=$datos_solicitud->motivo;
+
+        Mail::to($datos_solicitud->correoDocente)->send(new userMailRechazo($send));
+
+        
       }
     } catch (\Throwable $th) {
       $res = $th;
