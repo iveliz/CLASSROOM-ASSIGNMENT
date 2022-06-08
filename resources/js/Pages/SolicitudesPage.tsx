@@ -59,12 +59,13 @@ export default function () {
 
   const getSolicitudes = () => {
     if(renderizar){
+      setMensaje(true)
       axios.get(`${endpoint}/api/solicitudes/pendientes/${id}`).then(response => {
         console.log(response.data);
         SetlistaSoli(response.data);
+        setMensaje(false)
       });
     }
-
   };
 
   useEffect(() => {
@@ -132,7 +133,8 @@ export default function () {
     }
   }
 
-  const [progressActivo,setProgressActivo] = useState(true);
+  const [progressActivo,setProgressActivo] = useState(false);
+  const [mensaje,setMensaje] = useState(true);
 
   return (
     <AppLayout title="Informacion">
@@ -144,7 +146,11 @@ export default function () {
           <div className=" mt-6 ">
             <div className="d-flex flex-row items-baseline  ">
             <h1 className="p-2 mb-2  font-bold ">Solicitudes Pendientes </h1>
-            <div>{progressActivo ? <h5 className=" ml-4 mb-2 pt-12 pb-4 ">Espere...</h5>:''}</div>
+            <div className='text-center mr-8'>
+              {mensaje?
+              <h5 className='mt-10'>Espere...</h5>:listaSoliState.length===0?
+              <h5 className='mt-10'>Aun no hay solicitudes para mostrar..gri..gri</h5>:''}
+            </div>
             </div>
             
             <div className="fondoBarra  mr-8 ">

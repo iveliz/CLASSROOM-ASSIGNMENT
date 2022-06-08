@@ -72,7 +72,7 @@ export default function ({
 
   return (
     <div>
-      {setProgressActivo(false)} 
+      {setProgressActivo(true)}
       <div className="card mt-3 mr-8">
         <div className="card-body ">
           <div className="hstack gap-3 items-end ">
@@ -148,6 +148,4 @@ export default function ({
     </div>
   );
 }
-{
-  /*( =ω=)..nyaa falta cancelar e informacion */
-}
+

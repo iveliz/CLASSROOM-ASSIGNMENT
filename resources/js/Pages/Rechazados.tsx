@@ -12,17 +12,21 @@ export default function () {
   const [listaSoliState, SetlistaSoli] = useState([]);
   const { user }: any = usePage().props;
   let { id, name, email } = user;
+
   const getSolicitudes = () => {
+    setMensaje(true)
     axios
       .get(`${endpoint}/api/solicitudes/rechazadas/${id}`)
       .then(response => {
         SetlistaSoli(response.data);
+        setMensaje(false)
       });
   };
   useEffect(()=>{
     getSolicitudes()
    },[])
    const [progressActivo,setProgressActivo] = useState(true);
+   const [mensaje,setMensaje] = useState(true);
   return (
     <AppLayout title="Informacion">
       <div className="grid grid-cols-6 gap-4">
@@ -33,7 +37,11 @@ export default function () {
            <div className="ml-5 mt-6 ">
             <div className="d-flex flex-row items-baseline">
              <h1 className="p-2 mb-2  font-bold ">Solicitudes Rechazadas</h1>
-             <div>{progressActivo ? <h5 className=" ml-4 mb-2 pt-12 pb-4 ">Espere...</h5>:''}</div>
+             <div className='text-center mr-8'>
+              {mensaje?
+              <h5 className='mt-10'>Espere...</h5>:listaSoliState.length===0?
+              <h5 className='mt-10'>Aun no hay solicitudes para mostrar..gri..gri</h5>:''}
+            </div>
            </div>
           </div>
           {listaSoliState.map(card => (
