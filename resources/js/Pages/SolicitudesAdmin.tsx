@@ -113,7 +113,7 @@ export default function () {
               Si encuentra un (*) la solicitud debe ser atendida con urgencia
             </p>
             <div className='text-center mr-8'>
-              {mensajeEspera?<h5 className='mt-10'>Espere...</h5>:listaSolicitudAula.length==0?<h5 className='mt-10'>Aun no hay solicitudes para mostrar</h5>:''}
+              {mensajeEspera?<h5 className='mt-10'>Espere...</h5>:listaSolicitudAula.length==0?<h5 className='mt-10'>Aun no hay solicitudes para mostrar..gri..gri</h5>:''}
             </div>
             <div>
               {listaSolicitudAula.map((solicitudAula:any) => {

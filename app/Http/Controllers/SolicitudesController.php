@@ -42,6 +42,7 @@ class SolicitudesController extends Controller
 
             $soli->grupos=$grupos_solicitud;
             $soli->docentes=$docentes_solicitud;
+            $soli->hora_fin_solicitud=$this->horaFin($soli['hora_requerida_solicitud'],$soli['periodos_solicitud']);
         }
         
         return $solicitudes;
@@ -72,6 +73,8 @@ class SolicitudesController extends Controller
 
             $soli->grupos=$grupos_solicitud;
             $soli->docentes=$docentes_solicitud;
+            $soli->hora_fin_solicitud=$this->horaFin($soli['hora_requerida_solicitud'],$soli['periodos_solicitud']);
+            $soli->hora_creacion = $this->horaCreacion($soli['created_at']);
         }
 
         return $solicitudes;
@@ -101,6 +104,8 @@ class SolicitudesController extends Controller
 
             $soli->grupos=$grupos_solicitud;
             $soli->docentes=$docentes_solicitud;
+            $soli->hora_fin_solicitud = $this->horaFin($soli['hora_requerida_solicitud'],$soli['periodos_solicitud']);
+            $soli->hora_creacion = $this->horaCreacion($soli['created_at']);
         }
 
         return $solicitudes;
@@ -142,6 +147,8 @@ class SolicitudesController extends Controller
             $soli->grupos=$grupos_solicitud;
             $soli->docentes=$docentes_solicitud;
             $soli->aulas=$aulas_reservadas;
+            $soli->hora_fin_solicitud=$this->horaFin($soli['hora_requerida_solicitud'],$soli['periodos_solicitud']);
+            $soli->hora_creacion = $this->horaCreacion($soli['created_at']);
         }
 
         $res = array();
@@ -189,6 +196,8 @@ class SolicitudesController extends Controller
             $soli->grupos=$grupos_solicitud;
             $soli->docentes=$docentes_solicitud;
             $soli->aulas=$aulas_reservadas;
+            $soli->hora_fin_solicitud=$this->horaFin($soli['hora_requerida_solicitud'],$soli['periodos_solicitud']);
+            $soli->hora_creacion = $this->horaCreacion($soli['created_at']);
         }
 
         $res = array();
@@ -236,6 +245,8 @@ class SolicitudesController extends Controller
             $soli->grupos=$grupos_solicitud;
             $soli->docentes=$docentes_solicitud;
             $soli->aulas=$aulas_reservadas;
+            $soli->hora_fin_solicitud=$this->horaFin($soli['hora_requerida_solicitud'],$soli['periodos_solicitud']);
+            $soli->hora_creacion = $this->horaCreacion($soli['created_at']);
         }
 
         $res = array();
@@ -433,4 +444,31 @@ class SolicitudesController extends Controller
         return $res;
     }
 
+    private function horaFin($hora, $periodos)
+  {
+    #hora = 00:00:00
+    $hh = substr($hora, 0, 2);
+    $mm = substr($hora, 3, 2);
+    $ss = substr($hora, 6, 2);
+    $hh_int = intval($hh);
+    $mm_int = intval($mm);
+    $ss_int = intval($ss);
+    $mm_int = (int) ($periodos * 45 + $mm) % 60;
+    $hh_int = (int) ($hh + ($periodos * 45 + $mm) / 60);
+    if ($mm_int < 10) {
+      $mm = '0' . strval($mm_int);
+    } else {
+      $mm = strval($mm_int);
+    }
+    if ($hh_int < 10) {
+      $hh = '0' . strval($hh_int);
+    } else {
+      $hh = strval($hh_int);
+    }
+    return $hh . ':' . $mm . ':' . $ss;
+  }
+
+  private function horaCreacion($hora){
+      return substr($hora,-8);
+  }
 }

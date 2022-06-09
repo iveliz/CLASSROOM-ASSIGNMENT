@@ -53,7 +53,7 @@ export default function (props:any) {
               <div> <h1 className="p-2 font-bold">Solicitudes de Registros</h1></div>
             </div>
             <div className='text-center mr-8'>
-              {mensajeEspera?<h5 className='mt-10'>Espere...</h5>:listaRegistro.length==0?<h5 className='mt-10'>Aun no hay solicitudes para mostrar</h5>:''}
+              {mensajeEspera?<h5 className='mt-10'>Espere...</h5>:listaRegistro.length==0?<h5 className='mt-10'>Aun no hay solicitudes para mostrar..gri..gri</h5>:''}
             </div>
             <div className=''>
               {(listaRegistro.map((registro) => {
