@@ -31,6 +31,7 @@ interface SolicitudAula {
   hora_requerida_solicitud: string;
   hora_fin_solicitud: string;
   responder: any;
+  created_at:string;
 }
 
 export default function ({
@@ -46,6 +47,7 @@ export default function ({
   hora_requerida_solicitud,
   hora_fin_solicitud,
   responder,
+  created_at
 }: SolicitudAula) {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [radioAceptar, SetRadioAceptar] = useState(true);
@@ -447,8 +449,22 @@ export default function ({
                           Para fecha: {fecha_requerida_solicitud}
                         </p>
                         <p className="font-bold">
+                          Fecha de Creación:{' '}
+                          {created_at.substring(0, 10)}
+                        </p>
+
+                       <p className="font-bold">
+                          Hora de Creación:{' '}
+                          {created_at.substring(11, 16)}
+                        </p>
+
+                        <p className="font-bold">
                           Hora Inicio:{' '}
                           {hora_requerida_solicitud.substring(0, 5)}
+                        </p>
+                        <p className="font-bold">
+                          Hora Fin:{' '}
+                          {hora_fin_solicitud.substring(0, 5)}
                         </p>
                       </div>
                     </div>

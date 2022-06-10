@@ -3,50 +3,48 @@ import image from '../../css/images/userImage.png';
 import Modal from 'react-modal';
 import { useState } from 'react';
 import axios from 'axios';
-const endpoint = 'http://127.0.0.1:8000'
+const endpoint = 'http://127.0.0.1:8000';
 interface Solicitud {
   fecha_inicio_reg_sct: String;
   id_solicitud: number;
   materia_solicitud: String;
   fecha_requerida_solicitud: String;
   grupos: [];
-  docentes:[];
+  docentes: [];
   cantidad_estudiantes_solicitud: Number;
-  estado_solicitud:String;
-  setProgressActivo:any;
-  aulas:[];
+  estado_solicitud: String;
+  setProgressActivo: any;
+  aulas: [];
+  created_at: string;
+  hora_fin_solicitud: string;
+  hora_requerida_solicitud:any;
 }
 
-export default function (
-  {
-    fecha_inicio_reg_sct,
-    id_solicitud,
-    materia_solicitud,
-    fecha_requerida_solicitud,
-    grupos,
-    cantidad_estudiantes_solicitud,
-    docentes,
-    estado_solicitud,
-    aulas,
-    setProgressActivo,
-  }: Solicitud,
-
-) {
+export default function ({
+  fecha_inicio_reg_sct,
+  id_solicitud,
+  materia_solicitud,
+  fecha_requerida_solicitud,
+  grupos,
+  cantidad_estudiantes_solicitud,
+  docentes,
+  estado_solicitud,
+  aulas,
+  setProgressActivo,
+  created_at,
+  hora_fin_solicitud,
+  hora_requerida_solicitud
+}: Solicitud) {
   let subtitle: any;
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [stateAula,SetAula]= useState(aulas);
-  
-
+  const [stateAula, SetAula] = useState(aulas);
 
   console.log(estado_solicitud);
-  let cadenaEstado =""
-  let aula="";
-  
-  let subtitulo="Aula(s) Reservada"
-  let mensaje=aulas.toString();
-  
+  let cadenaEstado = '';
+  let aula = '';
 
-
+  let subtitulo = 'Aula(s) Reservada';
+  let mensaje = aulas.toString();
 
   const customStyles = {
     content: {
@@ -119,15 +117,31 @@ export default function (
                   <p className="font-bold ">
                     Para fecha: {fecha_requerida_solicitud}
                   </p>
-                  <p className="font-bold"><span className='aceptada'>{subtitulo}</span>{mensaje}</p>
-            
-                  <div className="absolute right-0 bottom-0">
+                  <p className="font-bold">
+                    Hora Inicio: {hora_requerida_solicitud.substring(0, 5)}
+                  </p>
+                  <p className="font-bold">
+                    Fecha de Creación: {created_at.substring(0, 10)}
+                  </p>
 
+                  <p className="font-bold">
+                    Hora de Creación: {created_at.substring(11, 16)}
+                  </p>
+
+                  <p className="font-bold">
+                    Hora Fin: {hora_fin_solicitud.substring(0, 5)}
+                  </p>
+                  <p className="font-bold">
+                    <span className="aceptada">{subtitulo}</span>
+                    {mensaje}
+                  </p>
+
+                  <div className="absolute right-0 bottom-0">
                     <button
                       className="btn colorPrimary text-white  mr-4 mb-2"
                       onClick={closeModal}
                     >
-                     Cerrar
+                      Cerrar
                     </button>
                   </div>
                 </div>
