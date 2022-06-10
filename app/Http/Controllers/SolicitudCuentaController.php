@@ -101,6 +101,7 @@ class SolicitudCuentaController extends Controller
       'usuario_sct_cnt',
       'correo_principal_sct_cnt',
       'correo_secundario_sct_cnt',
+      'created_at',
       DB::raw("(DATE_FORMAT(created_at, '%d-%m-%Y')) as fecha")
     )
       ->where('estado_sct_cnt', 'pendiente')
@@ -128,7 +129,7 @@ class SolicitudCuentaController extends Controller
           levenshtein(
             strtolower($soli->nombre_sct_cnt),
             strtolower($usuariosActuales[$i]->name)
-          ) <= 5 
+          ) <= 5
         ) {
           $soli->usuarioSimilar = $usuariosActuales[$i];
           $encontrado = true;
@@ -233,12 +234,12 @@ class SolicitudCuentaController extends Controller
         )->update(['estado_sct_cnt' => 'rechazada']);
         $res = 1;
 
-       $send=new RegistroSolicitudes();
-       $send-> motivo_reg_sct=$datos_solicitud->motivo;
+        $send = new RegistroSolicitudes();
+        $send->motivo_reg_sct = $datos_solicitud->motivo;
 
-        Mail::to($datos_solicitud->correoDocente)->send(new userMailRechazo($send));
-
-        
+        Mail::to($datos_solicitud->correoDocente)->send(
+          new userMailRechazo($send)
+        );
       }
     } catch (\Throwable $th) {
       $res = $th;
