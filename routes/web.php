@@ -10,6 +10,7 @@ use App\Http\Controllers\materiaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\SolicitudAulaAdmController;
 use App\Http\Controllers\AulasDisponiblesController;
+use App\Http\Controllers\recuperarContraseñaController;
 use App\Http\Controllers\SolicitudesController;
 
 use App\Http\Controllers\SolicitudCuentaController;
@@ -239,3 +240,10 @@ Route::controller(EmailController::class)->group(function () {
   Route::post('/correoElectronico/actualizar', 'update');
   Route::post('/correoElectronico/mostrar', 'show');
 });
+
+Route::controller(recuperarContraseñaController::class)->group(function () {
+  Route::post('/recuperarContraseña', 'show');
+  Route::post('/recuperarContraseña/correoElectronico', 'verifyEmail');
+
+});
+
