@@ -28,6 +28,10 @@ Route::get('/', function () {
   return Inertia::render('Auth/Login');
 });
 
+Route::get('/recuperar_cuenta', function () {
+  return Inertia::render('RecuperarCuentaPage');
+})->name('recuperarCuenta');
+
 Route::middleware([
   'auth',
   'auth:sanctum',

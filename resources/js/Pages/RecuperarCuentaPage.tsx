@@ -1,4 +1,5 @@
 import { useForm, Head } from '@inertiajs/inertia-react';
+import { Inertia } from '@inertiajs/inertia';
 import classNames from 'classnames';
 import React from 'react';
 import useRoute from '@/Hooks/useRoute';
@@ -12,7 +13,7 @@ interface Props {
   status: string;
 }
 
-export default function ForgotPassword({ status }: Props) {
+export default function RecuperarCuentaPage({ status }: Props) {
   const route = useRoute();
   const form = useForm({
     email: '',
@@ -20,29 +21,25 @@ export default function ForgotPassword({ status }: Props) {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    form.post(route('password.email'));
+    //form.post(route('password.request'));
+    Inertia.visit(route('password.request'));
   }
 
   return (
     <JetAuthenticationCard>
-      <Head title="Forgot Password" />
-
       <div className="mb-4 text-sm text-gray-600">
-      Ahora introduce uno de los correos que tienes en tu cuenta para poder recuperar tu contraseña.
+      ¿Perdiste tu contraseña?, no hay problema, introduce tu nombre de usuario para buscar tu cuenta
       </div>
 
-      {status && (
-        <div className="mb-4 font-medium text-sm text-green-600">{status}</div>
-      )}
-
-      <JetValidationErrors className="mb-4" />
+      <p className='mb-2 text-sm text-red-600'>Mensaje error</p>
 
       <form onSubmit={onSubmit}>
         <div>
-          <JetLabel htmlFor="email">Correo Electrónico:</JetLabel>
+          <JetLabel htmlFor="email">Nombre de Usuario:</JetLabel>
+          
           <JetInput
-            id="email"
-            type="email"
+            id="user"
+            type="text"
             className="mt-1 block w-full"
             value={form.data.email}
             onChange={e => form.setData('email', e.currentTarget.value)}
@@ -56,7 +53,7 @@ export default function ForgotPassword({ status }: Props) {
             className={classNames({ 'opacity-25': form.processing })}
             disabled={form.processing}
           >
-            Recuperar Contraseña
+            Siguiente
           </JetButton>
         </div>
       </form>
