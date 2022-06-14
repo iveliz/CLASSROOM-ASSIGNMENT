@@ -141,7 +141,7 @@ Route::controller(SolicitudAulaAdmController::class)->group(function () {
 });
 
 Route::controller(AulasDisponiblesController::class)->group(function () {
-  Route::post('/aulasDisponibles', 'aulasDisponibles');
+  Route::post('/aulasDisponibles', 'aulasDisponibles2');
 });
 
 Route::controller(materiaController::class)->group(function () {
