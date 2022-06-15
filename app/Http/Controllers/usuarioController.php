@@ -166,7 +166,9 @@ class usuarioController extends Controller
 
   public function ObtenerDocentes()
   {
-    $docentesComun = User::select('id', 'name')->get();
+    $docentesComun = User::select('id', 'name')
+      ->where('id_role', '=', 2)
+      ->get();
     return $docentesComun;
   }
 
