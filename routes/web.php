@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\usuarioController;
 use Inertia\Inertia;
+use App\Http\Controllers\CarreraController;
 use App\Http\Controllers\AulaController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\materiaController;
@@ -77,8 +78,6 @@ Route::middleware([
   })->name('solicitudes/registros');
 });
 
-
-
 Route::middleware([
   'auth:sanctum',
   // config('jetstream.auth_session'),
@@ -123,8 +122,6 @@ Route::middleware([
   })->name('configurar_correos_docente');
 });
 
-
-
 Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
   Route::get('/solicitudes/aceptadas', function () {
     return Inertia::render('Aceptados');
@@ -166,12 +163,15 @@ Route::middleware(['auth'])->group(function () {
 
 Route::controller(GrupoController::class)->group(function () {
   Route::post('/grupos', 'gruposMateria');
+  Route::post('/gruposMateria', 'mostrarGruposMateria');
 });
 
 Route::controller(usuarioController::class)->group(function () {
   Route::post('/docentes', 'ObtenerDocentes');
   Route::post('/docentesid', 'ObtenerDocentesId');
   Route::post('/registrarUsuario', 'store');
+  Route::post('/agregarMateria', 'agregarMateria');
+  Route::post('/quitarMateria', 'eliminarMateria');
 });
 
 Route::middleware([
@@ -218,6 +218,12 @@ Route::controller(AulasDisponiblesController::class)->group(function () {
 
 Route::controller(materiaController::class)->group(function () {
   Route::post('/materias', 'show');
+  Route::post('/materiasDocente', 'mostrarMateriasDocente');
+  Route::post('/materiasCarrera', 'mostrarMateriasCarrera');
+});
+
+Route::controller(CarreraController::class)->group(function () {
+  Route::post('/carreras', 'show');
 });
 
 Route::controller(AulaController::class)->group(function () {
@@ -240,6 +246,4 @@ Route::controller(EmailController::class)->group(function () {
 Route::controller(recuperarContraseñaController::class)->group(function () {
   Route::post('/recuperarContraseña', 'show');
   Route::post('/recuperarContraseña/correoElectronico', 'verifyEmail');
-
 });
-

@@ -15,6 +15,12 @@ class CreateMateriasTable extends Migration
   {
     Schema::create('materias', function (Blueprint $table) {
       $table->id('id_materia');
+      $table->unsignedBigInteger('id_carrera')->nullable();
+      $table
+        ->foreign('id_carrera')
+        ->references('id_carrera')
+        ->on('carreras')
+        ->onDelete('set null');
       $table->string('nombre_materia', 250);
       $table->timestamps();
     });
