@@ -140,15 +140,16 @@ export default function () {
         </div>
         <div className="col-span-5">
           <div className=" mt-6 ">
-            <div className="d-flex flex-row items-baseline ">
-            <h1 className="font-bold p-2 mb-2">Solicitudes Aceptadas Vigentes</h1>
+            <div className="d-flex flex-row">
+             <h1 className="font-bold p-2 mb-2">Solicitudes Aceptadas Vigentes</h1>
+            </div>
             <div className='text-center mr-8'>
               {mensaje?
               <h5 className='mt-10'>Espere...</h5>:listaSoliState.length===0?
               <h5 className='mt-10'>Aun no hay solicitudes para mostrar..gri..gri</h5>:''}
             </div>
-            </div>
-            <div className="fondoBarra  mr-8 ">
+            
+            { listaSoliState.length !==0 &&  <div className="fondoBarra  mr-8 ">
               <div className="flex">
                 <div className="mt-3 ml-4">
                   <input
@@ -228,7 +229,7 @@ export default function () {
                 </div>
                 </div>
               </div>
-            </div>
+            </div>}
           </div>
           <div>
             {listaSoliState.map(card => (
