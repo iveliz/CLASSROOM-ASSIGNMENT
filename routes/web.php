@@ -53,7 +53,7 @@ Route::middleware([
   })->name('solicitar');
 });
 
-Route::middleware(['auth', 'role:docente', 'checkRoleDocente'])->group(
+Route::middleware(['auth:sanctum', 'role:docente', 'checkRoleDocente'])->group(
   function () {
     Route::get('/dashboard', function () {
       return Inertia::render('Dashboard');
@@ -61,7 +61,7 @@ Route::middleware(['auth', 'role:docente', 'checkRoleDocente'])->group(
   }
 );
 
-Route::middleware(['auth', 'checkRoleAdmin'])->group(function () {
+Route::middleware(['auth:sanctum', 'checkRoleAdmin'])->group(function () {
   Route::get('/solicitudes/aulas', function () {
     return Inertia::render('SolicitudesAdmin');
   })->name('solicitudes/aulas');
@@ -122,13 +122,15 @@ Route::middleware([
   })->name('configurar_correos_docente');
 });
 
-Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
+
+
+Route::middleware(['auth:sanctum', 'checkRoleDocente'])->group(function () {
   Route::get('/solicitudes/aceptadas', function () {
     return Inertia::render('Aceptados');
   })->name('solicitudes/aceptadas');
 });
 
-Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
+Route::middleware(['auth:sanctum', 'checkRoleDocente'])->group(function () {
   Route::get('/solicitudes/aceptadas-vencidas', function () {
     return Inertia::render('AceptadosVencidos');
   })->name('solicitudes/aceptadas-vencidas');
@@ -145,7 +147,7 @@ Route::middleware([
   })->name('solicitudes');
 });
 
-Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
+Route::middleware(['auth:sanctum', 'checkRoleDocente'])->group(function () {
   Route::get('/solicitudes/rechazadas', function () {
     return Inertia::render('Rechazados');
   })->name('solicitudes/rechazadas');
@@ -155,7 +157,7 @@ Route::resource('prueba_solicitudes', SolicitudesController::class)->middleware(
   ['auth:sanctum', 'verified']
 );
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
   Route::get('/admin', function () {
     return Inertia::render('adminView');
   })->name('adminView');
@@ -184,6 +186,18 @@ Route::middleware([
     return Inertia::render('Registrar');
   })->name('registrar');
 });
+
+Route::middleware([
+    'auth:sanctum',
+    // config('jetstream.auth_session'),
+    'verified',
+    'checkRoleAdmin',
+  ])->group(function () {
+    Route::get('/materias', function () {
+      return Inertia::render('Materias');
+    })->name('materias');
+  });
+
 
 Route::controller(SolicitudesController::class)->group(function () {
   Route::get('/api/solicitudes', 'index');
