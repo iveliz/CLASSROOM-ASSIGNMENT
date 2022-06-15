@@ -36,7 +36,7 @@ export default function ResetPassword({ token, email }: Props) {
       <JetValidationErrors className="mb-4" />
 
       <form onSubmit={onSubmit}>
-        <div>
+        {/*<div>
           <JetLabel htmlFor="email">Email</JetLabel>
           <JetInput
             id="email"
@@ -47,10 +47,10 @@ export default function ResetPassword({ token, email }: Props) {
             required
             autoFocus
           />
-        </div>
+  </div>*/}
 
         <div className="mt-4">
-          <JetLabel htmlFor="password">Password</JetLabel>
+          <JetLabel htmlFor="password">Contraseña Nueva</JetLabel>
           <JetInput
             id="password"
             type="password"
@@ -63,7 +63,7 @@ export default function ResetPassword({ token, email }: Props) {
         </div>
 
         <div className="mt-4">
-          <JetLabel htmlFor="password_confirmation">Confirm Password</JetLabel>
+          <JetLabel htmlFor="password_confirmation">Confirmar Contraseña Nueva</JetLabel>
           <JetInput
             id="password_confirmation"
             type="password"
@@ -82,7 +82,7 @@ export default function ResetPassword({ token, email }: Props) {
             className={classNames({ 'opacity-25': form.processing })}
             disabled={form.processing}
           >
-            Reset Password
+            Restablecer Contraseña
           </JetButton>
         </div>
       </form>

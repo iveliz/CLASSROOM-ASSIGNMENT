@@ -7,6 +7,7 @@ import JetButton from '@/Jetstream/Button';
 import JetInput from '@/Jetstream/Input';
 import JetLabel from '@/Jetstream/Label';
 import JetValidationErrors from '@/Jetstream/ValidationErrors';
+import axios from 'axios';
 
 interface Props {
   status: string;
@@ -14,23 +15,31 @@ interface Props {
 
 export default function ForgotPassword({ status }: Props) {
   const route = useRoute();
+  const endpoint = 'http://127.0.0.1:8000';
   const form = useForm({
     email: '',
   });
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    form.post(route('password.email'));
+    
+    axios
+      .post(`${endpoint}/recuperarContraseña/correoElectronico`, { correo: form.data.email})
+      .then(response => {
+        if(response.data == 1){
+          console.log("correo valido")
+        }else{
+          console.log("correo no valido")
+        }
+      });
+    //form.post(route('password.email'));
   }
 
   return (
     <JetAuthenticationCard>
-      <Head title="Forgot Password" />
-
+      
       <div className="mb-4 text-sm text-gray-600">
-        Forgot your password? No problem. Just let us know your email address
-        and we will email you a password reset link that will allow you to
-        choose a new one.
+      Ahora introduce uno de los correos que tienes en tu cuenta para poder recuperar tu contraseña.
       </div>
 
       {status && (
@@ -41,7 +50,7 @@ export default function ForgotPassword({ status }: Props) {
 
       <form onSubmit={onSubmit}>
         <div>
-          <JetLabel htmlFor="email">Email</JetLabel>
+          <JetLabel htmlFor="email">Correo Electrónico:</JetLabel>
           <JetInput
             id="email"
             type="email"
@@ -58,7 +67,7 @@ export default function ForgotPassword({ status }: Props) {
             className={classNames({ 'opacity-25': form.processing })}
             disabled={form.processing}
           >
-            Email Password Reset Link
+            Recuperar Contraseña
           </JetButton>
         </div>
       </form>
