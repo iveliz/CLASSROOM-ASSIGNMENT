@@ -1,13 +1,14 @@
 import { useForm, Head } from '@inertiajs/inertia-react';
 import { Inertia } from '@inertiajs/inertia';
 import classNames from 'classnames';
-import React from 'react';
+import React, {useState} from 'react';
 import useRoute from '@/Hooks/useRoute';
 import JetAuthenticationCard from '@/Jetstream/AuthenticationCard';
+import JetValidationErrors from '@/Jetstream/ValidationErrors';
 import JetButton from '@/Jetstream/Button';
 import JetInput from '@/Jetstream/Input';
 import JetLabel from '@/Jetstream/Label';
-import JetValidationErrors from '@/Jetstream/ValidationErrors';
+import axios from 'axios';
 
 interface Props {
   status: string;
@@ -15,25 +16,98 @@ interface Props {
 
 export default function RecuperarCuentaPage({ status }: Props) {
   const route = useRoute();
+  const [usuario,setUsuario] = useState('');
+  const [envio,setEnvio] = useState(false);
+  const [error, setError] = useState(false);
+  const [bandera, setBandera] = useState(false);
+  const endpoint = 'http://127.0.0.1:8000';
+
   const form = useForm({
     email: '',
   });
 
-  function onSubmit(e: React.FormEvent) {
+  function onSubmitUser(e: React.FormEvent) {
     e.preventDefault();
-    //form.post(route('password.request'));
-    Inertia.visit(route('password.request'));
+    
+    axios
+      .post(`${endpoint}/recuperarContraseña`, { user_name: usuario})
+      .then(response => {
+        if(response.data == 1){
+          //console.log("el usuario existe")
+          //setError(false);
+          //Inertia.visit(route('password.request'));
+          setBandera(true);
+        }else{
+          //console.log("el usuario no existe")
+          setError(true);
+          setEnvio(false);
+        }
+      });
+      setEnvio(true);
+    //Inertia.visit(route('password.request'));
+  }
+
+  function onSubmitEmail(e: React.FormEvent) {
+    e.preventDefault();
+    
+    axios
+      .post(`${endpoint}/recuperarContraseña/correoElectronico`, { correo: form.data.email})
+      .then(response => {
+        if(response.data == 1){
+          console.log("correo valido")
+        }else{
+          console.log("correo no valido")
+        }
+      });
+    //form.post(route('password.email'));
   }
 
   return (
+    bandera?<JetAuthenticationCard>
+      <Head title="Recuperar contraseña" />
+    <div className="mb-4 text-sm text-gray-600">
+    Ahora introduce uno de los correos que tienes en tu cuenta para poder recuperar tu contraseña.
+    </div>
+
+    {status && (
+      <div className="mb-4 font-medium text-sm text-green-600">{status}</div>
+    )}
+
+    <JetValidationErrors className="mb-4" />
+
+    <form onSubmit={onSubmitEmail}>
+      <div>
+        <JetLabel htmlFor="email">Correo Electrónico:</JetLabel>
+        <JetInput
+          id="email"
+          type="email"
+          className="mt-1 block w-full"
+          value={form.data.email}
+          onChange={e => form.setData('email', e.currentTarget.value)}
+          required
+          autoFocus
+        />
+      </div>
+
+      <div className="flex items-center justify-end mt-4">
+        <JetButton
+          className={classNames({ 'opacity-25': form.processing })}
+          disabled={form.processing}
+        >
+          Recuperar Contraseña
+        </JetButton>
+      </div>
+    </form>
+  </JetAuthenticationCard>:
     <JetAuthenticationCard>
+      <Head title="Recuperar contraseña" />
       <div className="mb-4 text-sm text-gray-600">
       ¿Perdiste tu contraseña?, no hay problema, introduce tu nombre de usuario para buscar tu cuenta
       </div>
 
-      <p className='mb-2 text-sm text-red-600'>Mensaje error</p>
+      {error?<p className='mb-2 text-sm text-red-600'>Esta cuenta no esta registrada</p>:<p> </p>}
 
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmitUser}>
         <div>
           <JetLabel htmlFor="email">Nombre de Usuario:</JetLabel>
           
@@ -41,8 +115,8 @@ export default function RecuperarCuentaPage({ status }: Props) {
             id="user"
             type="text"
             className="mt-1 block w-full"
-            value={form.data.email}
-            onChange={e => form.setData('email', e.currentTarget.value)}
+            //value={form.data.nombreUsuario}
+            onChange={e => setUsuario(e.currentTarget.value)}
             required
             autoFocus
           />
@@ -50,13 +124,14 @@ export default function RecuperarCuentaPage({ status }: Props) {
 
         <div className="flex items-center justify-end mt-4">
           <JetButton
-            className={classNames({ 'opacity-25': form.processing })}
-            disabled={form.processing}
+            className={classNames({ 'opacity-25': envio })}
+            disabled={envio}
           >
             Siguiente
           </JetButton>
         </div>
       </form>
     </JetAuthenticationCard>
+    
   );
 }

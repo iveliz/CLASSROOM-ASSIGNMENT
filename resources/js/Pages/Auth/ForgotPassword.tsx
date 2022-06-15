@@ -7,6 +7,7 @@ import JetButton from '@/Jetstream/Button';
 import JetInput from '@/Jetstream/Input';
 import JetLabel from '@/Jetstream/Label';
 import JetValidationErrors from '@/Jetstream/ValidationErrors';
+import axios from 'axios';
 
 interface Props {
   status: string;
@@ -14,19 +15,29 @@ interface Props {
 
 export default function ForgotPassword({ status }: Props) {
   const route = useRoute();
+  const endpoint = 'http://127.0.0.1:8000';
   const form = useForm({
     email: '',
   });
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    form.post(route('password.email'));
+    
+    axios
+      .post(`${endpoint}/recuperarContraseña/correoElectronico`, { correo: form.data.email})
+      .then(response => {
+        if(response.data == 1){
+          console.log("correo valido")
+        }else{
+          console.log("correo no valido")
+        }
+      });
+    //form.post(route('password.email'));
   }
 
   return (
     <JetAuthenticationCard>
-      <Head title="Forgot Password" />
-
+      
       <div className="mb-4 text-sm text-gray-600">
       Ahora introduce uno de los correos que tienes en tu cuenta para poder recuperar tu contraseña.
       </div>
