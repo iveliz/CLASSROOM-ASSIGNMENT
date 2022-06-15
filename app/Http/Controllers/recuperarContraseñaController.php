@@ -99,12 +99,12 @@ class recuperarContraseñaController extends Controller
      */
     public function update(Request $request)
     {
-        $correo=$request->correo;
+        $user_name=$request->nombre_usuario;
         $pass=$request->contraseña;
 
 
-        $usuarioActuales = DB::table('users')
-        ->where('users.email', $correo)
+          DB::table('users')
+        ->where('users.user_name', $user_name)
         ->update(['users.password' => Hash::make($pass)]);
       
         
