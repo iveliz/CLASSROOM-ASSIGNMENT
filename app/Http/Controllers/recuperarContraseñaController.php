@@ -103,11 +103,11 @@ class recuperarContraseñaController extends Controller
         $pass=$request->contraseña;
 
 
-          DB::table('users')
+          $user=DB::table('users')
         ->where('users.user_name', $user_name)
         ->update(['users.password' => Hash::make($pass)]);
       
-        
+        return $user;
     }
 
     /**
