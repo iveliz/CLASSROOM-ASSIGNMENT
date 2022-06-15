@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\RecuperarContraseñaMail;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use App\Models\CorreoElectronico;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\userMail;
 
 class recuperarContraseñaController extends Controller
 {
@@ -68,7 +71,9 @@ class recuperarContraseñaController extends Controller
             return 0;
           }else{
             return 1;
+            Mail::to($request->email_principal)->send(new RecuperarContraseñaMail());
           }
+         
         
     }
 
@@ -92,7 +97,11 @@ class recuperarContraseñaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        /*
+        $user->forceFill([
+            'password' => Hash::make($input['password']),
+        ])->save();
+        */
     }
 
     /**
