@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CorreoElectronico;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\userMail;
+use Illuminate\Support\Facades\Hash;
 
 class recuperarContraseñaController extends Controller
 {
@@ -70,8 +71,9 @@ class recuperarContraseñaController extends Controller
         if (count( $correoActual) == 0) {
             return 0;
           }else{
+            Mail::to($request->correo)->send(new RecuperarContraseñaMail());
             return 1;
-            Mail::to($request->email_principal)->send(new RecuperarContraseñaMail());
+           
           }
          
         
@@ -95,13 +97,17 @@ class recuperarContraseñaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        /*
-        $user->forceFill([
-            'password' => Hash::make($input['password']),
-        ])->save();
-        */
+        $correo=$request->correo;
+        $pass=$request->contraseña;
+
+
+        $usuarioActuales = DB::table('users')
+        ->where('users.email', $correo)
+        ->update(['users.password' => Hash::make($pass)]);
+      
+        
     }
 
     /**

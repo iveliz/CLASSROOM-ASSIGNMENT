@@ -264,4 +264,5 @@ Route::controller(EmailController::class)->group(function () {
 Route::controller(recuperarContraseñaController::class)->group(function () {
   Route::post('/recuperarContraseña', 'show');
   Route::post('/recuperarContraseña/correoElectronico', 'verifyEmail');
+  Route::put('/recuperarContraseña/contraseña', 'update');
 });
