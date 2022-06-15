@@ -59,9 +59,9 @@ export default function AppLayoutAdmin({
               <div className="flex">
                 {/* <!-- Logo --> */}
                 <div className="flex-shrink-0 flex items-center">
-                  
+
                     <JetApplicationMark className="block h-9 w-auto" />
-               
+
                 </div>
 
                 {/* <!-- Navigation Links --> */}
@@ -85,6 +85,12 @@ export default function AppLayoutAdmin({
                     active={route().current('registrar')}
                   >
                     Registrar
+                  </JetNavLink>
+                  <JetNavLink
+                    href={route('materias')}
+                    active={route().current('materias')}
+                  >
+                    Materias
                   </JetNavLink>
 
 
@@ -319,6 +325,12 @@ export default function AppLayoutAdmin({
                 active={route().current('registrar')}
               >
                 Registrar
+              </JetResponsiveNavLink>
+              <JetResponsiveNavLink
+                href={route('materias')}
+                active={route().current('materias')}
+              >
+                Materias
               </JetResponsiveNavLink>
             </div>
 

@@ -11,6 +11,7 @@ use Inertia\Inertia;
 use App\Models\User;
 use App\Models\Grupo;
 use App\Models\SolicitudCuenta;
+use App\Models\Carrera;
 use App\Models\Materia;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Mail;
@@ -165,7 +166,9 @@ class usuarioController extends Controller
 
   public function ObtenerDocentes()
   {
-    $docentesComun = User::select('id', 'name')->get();
+    $docentesComun = User::select('id', 'name')
+      ->where('id_role', '=', 2)
+      ->get();
     return $docentesComun;
   }
 
@@ -194,5 +197,67 @@ class usuarioController extends Controller
       ->whereIn('id', $docentesidMaterias)
       ->get();
     return $docentesComun;
+  }
+
+  public function agregarMateria(Request $request)
+  {
+    $carrera = $request->id_carrera;
+    $materia = $request->id_materia;
+    $usuario = $request->id_usuario;
+    $grupo = $request->id_grupo;
+    $codgrupo = $request->codigo_grupo;
+    $res = 0;
+    try {
+      $materiaOcupada = Grupo::join(
+        'materias',
+        'materias.id_materia',
+        '=',
+        'grupos.id_materia'
+      )
+        ->join('carreras', 'carreras.id_carrera', '=', 'materias.id_carrera')
+        ->select('materias.id_materia')
+        ->where('carreras.id_carrera', '=', $carrera)
+        ->where('materias.id_materia', '=', $materia)
+        ->where('grupos.id_grupo', '=', $grupo)
+        ->get();
+      if (count($materiaOcupada) == 0) {
+        $grupoDocente = new Grupo();
+        $grupoDocente->id_materia = $materia;
+        $grupoDocente->id_usuario = $usuario;
+        $grupoDocente->codigo_grupo = $codgrupo;
+        $grupoDocente->save();
+        $res = 1; //Docente con nuevo grupo en materias
+      } else {
+        Grupo::join('materias', 'materias.id_materia', '=', 'grupos.id_materia')
+          ->join('carreras', 'carreras.id_carrera', '=', 'materias.id_carrera')
+          ->where('carreras.id_carrera', '=', $carrera)
+          ->where('materias.id_materia', '=', $materia)
+          ->where('grupos.id_grupo', '=', $grupo)
+          ->update(['grupos.id_usuario' => $usuario]);
+        $res = 2; //Docente de reemplazo de grupo en materias
+      }
+    } catch (\Throwable $th) {
+      $res = $th;
+    }
+    return $res;
+  }
+
+  public function eliminarMateria(Request $request)
+  {
+    $carrera = $request->id_carrera;
+    $materia = $request->id_materia;
+    $usuario = $request->id_usuario;
+    $grupo = $request->id_grupo;
+    $res = 0;
+    try {
+      Grupo::where('grupos.id_grupo', '=', $grupo)
+        ->where('grupos.id_materia', '=', $materia)
+        ->where('grupos.id_usuario', '=', $usuario)
+        ->delete();
+      $res = 1;
+    } catch (\Throwable $th) {
+      $res = $th;
+    }
+    return $res;
   }
 }

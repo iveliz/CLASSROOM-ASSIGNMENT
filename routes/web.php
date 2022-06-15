@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\usuarioController;
 use Inertia\Inertia;
+use App\Http\Controllers\CarreraController;
 use App\Http\Controllers\AulaController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\materiaController;
@@ -56,7 +57,7 @@ Route::middleware([
   })->name('solicitar');
 });
 
-Route::middleware(['auth', 'role:docente', 'checkRoleDocente'])->group(
+Route::middleware(['auth:sanctum', 'role:docente', 'checkRoleDocente'])->group(
   function () {
     Route::get('/dashboard', function () {
       return Inertia::render('Dashboard');
@@ -64,7 +65,7 @@ Route::middleware(['auth', 'role:docente', 'checkRoleDocente'])->group(
   }
 );
 
-Route::middleware(['auth', 'checkRoleAdmin'])->group(function () {
+Route::middleware(['auth:sanctum', 'checkRoleAdmin'])->group(function () {
   Route::get('/solicitudes/aulas', function () {
     return Inertia::render('SolicitudesAdmin');
   })->name('solicitudes/aulas');
@@ -80,8 +81,6 @@ Route::middleware([
     return Inertia::render('SolicitudesAdminRegistro');
   })->name('solicitudes/registros');
 });
-
-
 
 Route::middleware([
   'auth:sanctum',
@@ -129,13 +128,13 @@ Route::middleware([
 
 
 
-Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
+Route::middleware(['auth:sanctum', 'checkRoleDocente'])->group(function () {
   Route::get('/solicitudes/aceptadas', function () {
     return Inertia::render('Aceptados');
   })->name('solicitudes/aceptadas');
 });
 
-Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
+Route::middleware(['auth:sanctum', 'checkRoleDocente'])->group(function () {
   Route::get('/solicitudes/aceptadas-vencidas', function () {
     return Inertia::render('AceptadosVencidos');
   })->name('solicitudes/aceptadas-vencidas');
@@ -152,7 +151,7 @@ Route::middleware([
   })->name('solicitudes');
 });
 
-Route::middleware(['auth', 'checkRoleDocente'])->group(function () {
+Route::middleware(['auth:sanctum', 'checkRoleDocente'])->group(function () {
   Route::get('/solicitudes/rechazadas', function () {
     return Inertia::render('Rechazados');
   })->name('solicitudes/rechazadas');
@@ -162,7 +161,7 @@ Route::resource('prueba_solicitudes', SolicitudesController::class)->middleware(
   ['auth:sanctum', 'verified']
 );
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
   Route::get('/admin', function () {
     return Inertia::render('adminView');
   })->name('adminView');
@@ -170,12 +169,15 @@ Route::middleware(['auth'])->group(function () {
 
 Route::controller(GrupoController::class)->group(function () {
   Route::post('/grupos', 'gruposMateria');
+  Route::post('/gruposMateria', 'mostrarGruposMateria');
 });
 
 Route::controller(usuarioController::class)->group(function () {
   Route::post('/docentes', 'ObtenerDocentes');
   Route::post('/docentesid', 'ObtenerDocentesId');
   Route::post('/registrarUsuario', 'store');
+  Route::post('/agregarMateria', 'agregarMateria');
+  Route::post('/quitarMateria', 'eliminarMateria');
 });
 
 Route::middleware([
@@ -188,6 +190,18 @@ Route::middleware([
     return Inertia::render('Registrar');
   })->name('registrar');
 });
+
+Route::middleware([
+    'auth:sanctum',
+    // config('jetstream.auth_session'),
+    'verified',
+    'checkRoleAdmin',
+  ])->group(function () {
+    Route::get('/materias', function () {
+      return Inertia::render('Materias');
+    })->name('materias');
+  });
+
 
 Route::controller(SolicitudesController::class)->group(function () {
   Route::get('/api/solicitudes', 'index');
@@ -222,6 +236,12 @@ Route::controller(AulasDisponiblesController::class)->group(function () {
 
 Route::controller(materiaController::class)->group(function () {
   Route::post('/materias', 'show');
+  Route::post('/materiasDocente', 'mostrarMateriasDocente');
+  Route::post('/materiasCarrera', 'mostrarMateriasCarrera');
+});
+
+Route::controller(CarreraController::class)->group(function () {
+  Route::post('/carreras', 'show');
 });
 
 Route::controller(AulaController::class)->group(function () {
@@ -244,6 +264,4 @@ Route::controller(EmailController::class)->group(function () {
 Route::controller(recuperarContraseñaController::class)->group(function () {
   Route::post('/recuperarContraseña', 'show');
   Route::post('/recuperarContraseña/correoElectronico', 'verifyEmail');
-
 });
-
