@@ -20,6 +20,9 @@ export default function RecuperarCuentaPage({ status }: Props) {
   const [envio,setEnvio] = useState(false);
   const [error, setError] = useState(false);
   const [bandera, setBandera] = useState(false);
+  const [errorEmail, setErrorEmail] = useState(false);
+  const [envioExitoso, setEnvioExitoso] = useState(false);
+  const [envioEmail,setEnvioEmail] = useState(false)
   const endpoint = 'http://127.0.0.1:8000';
 
   const form = useForm({
@@ -55,25 +58,27 @@ export default function RecuperarCuentaPage({ status }: Props) {
       .then(response => {
         if(response.data == 1){
           console.log("correo valido")
+          setErrorEmail(false);
+          setEnvioExitoso(true);
         }else{
+          setErrorEmail(true);
+          setEnvioEmail(false);
           console.log("correo no valido")
         }
       });
+      setEnvioEmail(true);
     //form.post(route('password.email'));
   }
 
   return (
     bandera?<JetAuthenticationCard>
+      
       <Head title="Recuperar contraseña" />
     <div className="mb-4 text-sm text-gray-600">
     Ahora introduce uno de los correos que tienes en tu cuenta para poder recuperar tu contraseña.
     </div>
 
-    {status && (
-      <div className="mb-4 font-medium text-sm text-green-600">{status}</div>
-    )}
-
-    <JetValidationErrors className="mb-4" />
+    {errorEmail?<p className='mb-2 text-sm text-red-600'>Este correo no corresponde a su cuenta</p>:(envioExitoso?<p className='mb-2 text-sm text-green-600'>Ya se envio un correo para la recuperación</p>:<p> </p>)}
 
     <form onSubmit={onSubmitEmail}>
       <div>
@@ -91,8 +96,8 @@ export default function RecuperarCuentaPage({ status }: Props) {
 
       <div className="flex items-center justify-end mt-4">
         <JetButton
-          className={classNames({ 'opacity-25': form.processing })}
-          disabled={form.processing}
+          className={classNames({ 'opacity-25': envioEmail })}
+          disabled={envioEmail}
         >
           Recuperar Contraseña
         </JetButton>
@@ -115,7 +120,7 @@ export default function RecuperarCuentaPage({ status }: Props) {
             id="user"
             type="text"
             className="mt-1 block w-full"
-            //value={form.data.nombreUsuario}
+            value={usuario}
             onChange={e => setUsuario(e.currentTarget.value)}
             required
             autoFocus
