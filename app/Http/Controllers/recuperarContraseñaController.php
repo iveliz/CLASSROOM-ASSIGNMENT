@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\RecuperarContraseñaMail;
+use App\Mail\RecuperarContraseña;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -71,7 +71,7 @@ class recuperarContraseñaController extends Controller
         if (count( $correoActual) == 0) {
             return 0;
           }else{
-            Mail::to($request->correo)->send(new RecuperarContraseñaMail());
+            Mail::to($request->correo)->send(new RecuperarContraseña());
             return 1;
            
           }
