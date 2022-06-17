@@ -131,7 +131,33 @@ let fechaS: String = fechaHoy();
 let materiaS: String = '';
 let horarioL: any;
 
+import Echo from 'laravel-echo';
+window.Pusher = require('pusher-js');
+
+declare global {
+  interface Window {
+      Echo:any;
+      Pusher:any;
+  }
+}
+
 export default function () {
+
+  window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'ASDASD2121',
+    wsHost: window.location.hostname,
+    wsPort: 6001,
+    forceTLS: false,
+    disableStats: true,
+  });
+  window.Echo.private('notiSoli').listen('SoliEvent', (e:any) => {
+    console.log(e);
+  })
+  window.Echo.private('App.Models.User.1').notification((notification:any) => {
+    console.log(notification)
+  } )
+
   const customStyles = {
     content: {
       top: '50%',
