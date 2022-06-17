@@ -368,3 +368,9 @@ textarea[disabled]{
   background-color: rgba(32,78,126,var(--tw-bg-opacity)) !important;
   border-color:  rgba(32,78,126,var(--tw-bg-opacity)) !important;
 } 
+
+#noti2{
+   position: absolute!;
+   z-index:3!;
+}
+
