@@ -15,7 +15,8 @@ class Solicitudes extends Model
         'motivo_reserva_solicitud',
         'fecha_requerida_solicitud',
         'hora_requerida_solicitud',
-        'periodos_solicitud'];
+        'periodos_solicitud',
+        'estado_solicitud'];
     protected  $primaryKey = 'id_solicitud';
     use HasFactory;
 }

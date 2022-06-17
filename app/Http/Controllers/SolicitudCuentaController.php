@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Mail\userMailRechazo;
 use App\Models\RegistroSolicitudes;
+use App\Models\User;
+use App\Notifications\SoliNotification;
 use Illuminate\Support\Facades\Mail;
 class SolicitudCuentaController extends Controller
 {
@@ -173,6 +175,8 @@ class SolicitudCuentaController extends Controller
                 $datos_solicitud->correo_secundario;
               $nueva_solicitud->estado_sct_cnt = 'pendiente';
               $nueva_solicitud->save();
+
+              $this->enviarNotificacion($datos_solicitud->usuario_sct_cnt,$nueva_solicitud->id);
               $res = 1;
             } else {
               $res = 5;
@@ -245,5 +249,15 @@ class SolicitudCuentaController extends Controller
       $res = $th;
     }
     return $res;
+  }
+  public function enviarNotificacion($nombre,$id_sct_cnt){
+    //$usuario = User::where('id',$id_usuario)->first();
+    //$nombre = $usuario->user_name;
+    $mensaje = "Ha recibido una nueva solicitud (Registro) de: ".$nombre;
+    //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
+    User::where('id_role',1)
+        ->each(function(User $user) use ($mensaje,$id_sct_cnt){
+            $user->notify(new SoliNotification($mensaje,$id_sct_cnt));
+        }); 
   }
 }

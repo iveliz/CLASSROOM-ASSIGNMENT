@@ -7,6 +7,8 @@ use App\Models\RegistroSolicitudes;
 use Illuminate\Http\Request;
 use App\Models\Reserva;
 use App\Models\AulaReserva;
+use App\Models\User;
+use App\Notifications\ResNotification;
 use Illuminate\Support\Facades\DB;
 
 class SolicitudAulaAdmController extends Controller
@@ -290,6 +292,9 @@ class SolicitudAulaAdmController extends Controller
           $nuevo_registro_solicitud->fecha_modificacion_reg_sct = date('Y-m-d');
           $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'aceptada';
           $nuevo_registro_solicitud->save();
+
+          $this->enviarNotificacionConfirm($datos_solicitud->id_usuario,$datos_solicitud->fecha_requerida_solicitud,$datos_solicitud->id_solicitud);
+
           $id_guardado = $nuevo_registro_solicitud->id;
           Solicitudes::where(
             'id_solicitud',
@@ -337,6 +342,9 @@ class SolicitudAulaAdmController extends Controller
       $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'rechazada';
       $nuevo_registro_solicitud->motivo_reg_sct = $datos_solicitud->motivo;
       $nuevo_registro_solicitud->save();
+
+      $this->enviarNotificacionRechazar($datos_solicitud->id_usuario,$datos_solicitud->fecha_requerida_solicitud,$datos_solicitud->id_solicitud);
+
       Solicitudes::where(
         'id_solicitud',
         $datos_solicitud->id_solicitud
@@ -410,5 +418,20 @@ class SolicitudAulaAdmController extends Controller
   public function destroy(Solicitudes $solicitudes)
   {
     //
+  }
+
+  public function enviarNotificacionConfirm($id_usuario,$fecha,$id_solicitud){
+    $mensaje = "Su solicitud de reserva para la fecha ".strval($fecha)." ha sido ACEPTADA";
+    //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
+    $usuario = User::where('id',$id_usuario)->first();
+    $usuario->notify(new ResNotification($mensaje,$id_solicitud));
+        
+  }
+
+  public function enviarNotificacionRechazar($id_usuario,$fecha,$id_solicitud){
+    $mensaje = "Su solicitud de reserva para la fecha ".strval($fecha)." ha sido RECHAZADA";
+    //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
+    $usuario = User::where('id',$id_usuario)->first();
+    $usuario->notify(new ResNotification($mensaje,$id_solicitud));
   }
 }

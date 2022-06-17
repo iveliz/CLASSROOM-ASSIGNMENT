@@ -12,7 +12,33 @@ import { nanoid } from 'nanoid';
 import CardSolicitudAula from './componentes/CardSolicitudAula';
 const endpoint = 'http://127.0.0.1:8000';
 
+import Echo from 'laravel-echo';
+window.Pusher = require('pusher-js');
+
+declare global {
+  interface Window {
+      Echo:any;
+      Pusher:any;
+  }
+}
+
 export default function () {
+
+  window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'ASDASD2121',
+    wsHost: window.location.hostname,
+    wsPort: 6001,
+    forceTLS: false,
+    disableStats: true,
+  });
+  window.Echo.private('notiSoli').listen('SoliEvent', (e:any) => {
+    console.log(e);
+  })
+  window.Echo.private('App.Models.User.16').notification((notification:any) => {
+    console.log(notification)
+  } )
+
   const [listaSolicitudAula, setListaSolicitudAula] = useState<any>([]);
   const [stateBack, SetStateBack] = useState(false);
   const [solicitud, SetSolicitud] = useState<any>(); 
