@@ -204,37 +204,40 @@ class usuarioController extends Controller
     $carrera = $request->id_carrera;
     $materia = $request->id_materia;
     $usuario = $request->id_usuario;
-    $grupo = $request->id_grupo;
-    $codgrupo = $request->codigo_grupo;
+    $grupos = $request->id_grupos;
+    $codgrupos = $request->codigo_grupos;
     $res = 0;
     try {
-      $materiaOcupada = Grupo::join(
-        'materias',
-        'materias.id_materia',
-        '=',
-        'grupos.id_materia'
-      )
-        ->join('carreras', 'carreras.id_carrera', '=', 'materias.id_carrera')
-        ->select('materias.id_materia')
-        ->where('carreras.id_carrera', '=', $carrera)
-        ->where('materias.id_materia', '=', $materia)
-        ->where('grupos.id_grupo', '=', $grupo)
-        ->get();
-      if (count($materiaOcupada) == 0) {
-        $grupoDocente = new Grupo();
-        $grupoDocente->id_materia = $materia;
-        $grupoDocente->id_usuario = $usuario;
-        $grupoDocente->codigo_grupo = $codgrupo;
-        $grupoDocente->save();
-        $res = 1; //Docente con nuevo grupo en materias
-      } else {
-        Grupo::join('materias', 'materias.id_materia', '=', 'grupos.id_materia')
+      $materiasocupadas = [];
+      foreach ($grupos as $grupo) {
+        $materiaOcupada = Grupo::join(
+          'materias',
+          'materias.id_materia',
+          '=',
+          'grupos.id_materia'
+        )
           ->join('carreras', 'carreras.id_carrera', '=', 'materias.id_carrera')
+          ->select('materias.id_materia')
           ->where('carreras.id_carrera', '=', $carrera)
           ->where('materias.id_materia', '=', $materia)
           ->where('grupos.id_grupo', '=', $grupo)
-          ->update(['grupos.id_usuario' => $usuario]);
-        $res = 2; //Docente de reemplazo de grupo en materias
+          ->where('grupos.id_usuario', '=', $usuario)
+          ->get();
+        if (count($materiaOcupada) > 0) {
+          array_push($materiasocupadas, $materiaOcupada);
+        }
+      }
+      if (count($materiasocupadas) == 0) {
+        foreach ($codgrupos as $codgrupo) {
+          Grupo::where('id_materia', $materia)
+            ->where('codigo_grupo', $codgrupo)
+            ->update([
+              'id_usuario' => $usuario,
+            ]);
+        }
+        $res = 1; //Docente con nuevo grupo en materias
+      } else {
+        $res = 2; //Un administrador ya añadio los grupos al docente
       }
     } catch (\Throwable $th) {
       $res = $th;
@@ -244,16 +247,19 @@ class usuarioController extends Controller
 
   public function eliminarMateria(Request $request)
   {
-    $carrera = $request->id_carrera;
     $materia = $request->id_materia;
     $usuario = $request->id_usuario;
-    $grupo = $request->id_grupo;
+    $grupos = $request->id_grupos;
     $res = 0;
     try {
-      Grupo::where('grupos.id_grupo', '=', $grupo)
-        ->where('grupos.id_materia', '=', $materia)
-        ->where('grupos.id_usuario', '=', $usuario)
-        ->delete();
+      foreach ($grupos as $grupo) {
+        Grupo::where('grupos.id_grupo', '=', $grupo)
+          ->where('grupos.id_materia', '=', $materia)
+          ->where('grupos.id_usuario', '=', $usuario)
+          ->update([
+            'id_usuario' => null,
+          ]);
+      }
       $res = 1;
     } catch (\Throwable $th) {
       $res = $th;

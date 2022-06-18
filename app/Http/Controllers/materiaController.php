@@ -135,6 +135,7 @@ class materiaController extends Controller
   public function mostrarMateriasDocente(Request $request)
   {
     $id_user = $request->id_usuario;
+    $res = 0;
     $materias = Grupo::join(
       'materias',
       'materias.id_materia',
@@ -152,17 +153,20 @@ class materiaController extends Controller
       ->groupby('materias.id_materia')
       ->where('grupos.id_usuario', '=', $id_user)
       ->get();
-
-    $tamaño = count($materias);
-    for ($x = 0; $x < $tamaño; $x++) {
-      $id = $materias[$x]->id_materia;
-      $grupo = Grupo::select('codigo_grupo')
-        ->where('id_materia', '=', $id)
-        ->where('id_usuario', '=', $id_user)
-        ->get();
-      $materias[$x]->grupos = $grupo;
+    if (count($materias) > 0) {
+      $res = 2;
+      $tamaño = count($materias);
+      for ($x = 0; $x < $tamaño; $x++) {
+        $id = $materias[$x]->id_materia;
+        $grupo = Grupo::select('codigo_grupo')
+          ->where('id_materia', '=', $id)
+          ->where('id_usuario', '=', $id_user)
+          ->get();
+        $materias[$x]->grupos = $grupo;
+      }
+    } else {
+      return $res;
     }
-
     return $materias;
   }
 
