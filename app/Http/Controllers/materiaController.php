@@ -158,7 +158,7 @@ class materiaController extends Controller
       $tamaño = count($materias);
       for ($x = 0; $x < $tamaño; $x++) {
         $id = $materias[$x]->id_materia;
-        $grupo = Grupo::select('codigo_grupo')
+        $grupo = Grupo::select('codigo_grupo', 'id_grupo')
           ->where('id_materia', '=', $id)
           ->where('id_usuario', '=', $id_user)
           ->get();
