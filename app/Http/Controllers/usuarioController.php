@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Solicitudes;
 use App\Models\CorreoElectronico;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -13,6 +14,7 @@ use App\Models\Grupo;
 use App\Models\SolicitudCuenta;
 use App\Models\Carrera;
 use App\Models\Materia;
+use App\Models\RegistroGrupos;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\userMail;
@@ -206,6 +208,8 @@ class usuarioController extends Controller
     $usuario = $request->id_usuario;
     $grupos = $request->id_grupos;
     $codgrupos = $request->codigo_grupos;
+    $admin = $request->id_admin;
+    $estado = 'agregado';
     $res = 0;
     try {
       $materiasocupadas = [];
@@ -225,6 +229,8 @@ class usuarioController extends Controller
           ->get();
         if (count($materiaOcupada) > 0) {
           array_push($materiasocupadas, $materiaOcupada);
+        } else {
+          $this->crearRegistro($usuario, $materia, $grupo, $admin, $estado);
         }
       }
       if (count($materiasocupadas) == 0) {
@@ -250,6 +256,8 @@ class usuarioController extends Controller
     $materia = $request->id_materia;
     $usuario = $request->id_usuario;
     $grupos = $request->id_grupos;
+    $admin = $request->id_admin;
+    $estado = 'eliminado';
     $res = 0;
     try {
       foreach ($grupos as $grupo) {
@@ -259,11 +267,44 @@ class usuarioController extends Controller
           ->update([
             'id_usuario' => null,
           ]);
+        $this->crearRegistro($usuario, $materia, $grupo, $admin, $estado);
       }
+      $this->completarEliminar($usuario, $materia);
       $res = 1;
     } catch (\Throwable $th) {
       $res = $th;
     }
     return $res;
+  }
+
+  private function completarEliminar($user, $materia)
+  {
+    $nombre_materia = Materia::where('id_materia', $materia)
+      ->select('nombre_materia')
+      ->get();
+    $solicitud = Solicitudes::where('id_usuario', $user)
+      ->where('estado_solicitud', 'pendiente')
+      ->select('id_solicitud', 'materia_solicitud')
+      ->get();
+    foreach ($solicitud as $soli) {
+      if (
+        strcmp($nombre_materia[0]->nombre_materia, $soli->materia_solicitud) ===
+        0
+      ) {
+        $id = $soli->id_solicitud;
+      }
+    }
+    Solicitudes::where('id_solicitud', $id)->delete();
+  }
+
+  private function crearRegistro($usuario, $materia, $grupo, $admin, $estado)
+  {
+    $nuevo_registro = new RegistroGrupos();
+    $nuevo_registro->id_admin = $admin;
+    $nuevo_registro->id_docente = $usuario;
+    $nuevo_registro->id_materia = $materia;
+    $nuevo_registro->id_grupo = $grupo;
+    $nuevo_registro->estado_reg_grupos = $estado;
+    $nuevo_registro->save();
   }
 }
