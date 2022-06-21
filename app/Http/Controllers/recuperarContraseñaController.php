@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 
 class recuperarContraseñaController extends Controller
 {
+  public $rute = 'http://127.0.0.1:8000/';
     /**
      * Display a listing of the resource.
      *
@@ -72,6 +73,8 @@ class recuperarContraseñaController extends Controller
             return 0;
           }else{
 
+
+            $link= $this->rute.'reset-password/';
             Mail::to($request->correo)->send(new RecuperarContraseña($link));
             return 1;
            
