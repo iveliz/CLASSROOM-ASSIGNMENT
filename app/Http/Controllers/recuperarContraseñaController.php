@@ -10,6 +10,7 @@ use App\Models\CorreoElectronico;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\userMail;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class recuperarContraseñaController extends Controller
 {
@@ -72,9 +73,10 @@ class recuperarContraseñaController extends Controller
         if (count( $correoActual) == 0) {
             return 0;
           }else{
-
-
-            $link= $this->rute.'reset-password/';
+            $token = Str::ramdom(64);
+            $link= $this->rute.'reset-password/';//. $token ;//. '?email=' . urlencode($request->correo);
+            //$link=route('restablecerCuenta');
+           // $link= $this->rute.'reset-password/';
             Mail::to($request->correo)->send(new RecuperarContraseña($link));
             return 1;
            
