@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 
 class recuperarContraseñaController extends Controller
 {
-  public $rute = 'http://127.0.0.1:8000/';
+  public $rute = 'http://127.0.0.1:8000';
     /**
      * Display a listing of the resource.
      *
@@ -73,8 +73,8 @@ class recuperarContraseñaController extends Controller
         if (count( $correoActual) == 0) {
             return 0;
           }else{
-            $token = Str::ramdom(64);
-            $link= $this->rute.'reset-password/';//. $token ;//. '?email=' . urlencode($request->correo);
+          //  $token = Str::ramdom(64);
+            $link= $this->rute.'/restablecer_contraseña' . $token.'?email=' . urlencode($request->correo);
             //$link=route('restablecerCuenta');
            // $link= $this->rute.'reset-password/';
             Mail::to($request->correo)->send(new RecuperarContraseña($link));
