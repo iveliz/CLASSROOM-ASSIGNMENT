@@ -11,6 +11,7 @@ use App\Http\Controllers\materiaController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\SolicitudAulaAdmController;
 use App\Http\Controllers\AulasDisponiblesController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\recuperarContraseñaController;
 use App\Http\Controllers\SolicitudesController;
 
@@ -269,4 +270,10 @@ Route::controller(recuperarContraseñaController::class)->group(function () {
   Route::post('/recuperarContraseña', 'show');
   Route::post('/recuperarContraseña/correoElectronico', 'verifyEmail');
   Route::put('/recuperarContraseña/contraseña', 'update');
+});
+
+Route::controller(NotificationController::class)->group(function(){
+  Route::get('notificaciones/{id}','obtenerNotificaciones');
+  Route::post('leerNotificacion','leerNotificacion');
+  Route::post('leerTodas','leerTodas');
 });

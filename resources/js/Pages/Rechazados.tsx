@@ -35,16 +35,17 @@ export default function () {
         </div>
         <div className="col-span-5">
            <div className="ml-5 mt-6 ">
-            <div className="d-flex flex-row items-baseline">
+            <div className="d-flex flex-row ">
              <h1 className="p-2 mb-2  font-bold ">Solicitudes Rechazadas</h1>
+             </div>
              <div className='text-center mr-8'>
               {mensaje?
               <h5 className='mt-10'>Espere...</h5>:listaSoliState.length===0?
               <h5 className='mt-10'>Aun no hay solicitudes para mostrar..gri..gri</h5>:''}
             </div>
-           </div>
+
           </div>
-          {listaSoliState.map(card => (
+          {listaSoliState.map((card:any) => (
             <Cardsolicitud {...card}  setProgressActivo={setProgressActivo}  key={nanoid(4)}/>
           ))}
           {console.log(listaSoliState)}
