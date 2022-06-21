@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Solicitudes;
 use App\Models\CorreoElectronico;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -13,6 +14,7 @@ use App\Models\Grupo;
 use App\Models\SolicitudCuenta;
 use App\Models\Carrera;
 use App\Models\Materia;
+use App\Models\RegistroGrupos;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\userMail;
@@ -204,37 +206,44 @@ class usuarioController extends Controller
     $carrera = $request->id_carrera;
     $materia = $request->id_materia;
     $usuario = $request->id_usuario;
-    $grupo = $request->id_grupo;
-    $codgrupo = $request->codigo_grupo;
+    $grupos = $request->id_grupos;
+    $codgrupos = $request->codigo_grupos;
+    $admin = $request->id_admin;
+    $estado = 'agregado';
     $res = 0;
     try {
-      $materiaOcupada = Grupo::join(
-        'materias',
-        'materias.id_materia',
-        '=',
-        'grupos.id_materia'
-      )
-        ->join('carreras', 'carreras.id_carrera', '=', 'materias.id_carrera')
-        ->select('materias.id_materia')
-        ->where('carreras.id_carrera', '=', $carrera)
-        ->where('materias.id_materia', '=', $materia)
-        ->where('grupos.id_grupo', '=', $grupo)
-        ->get();
-      if (count($materiaOcupada) == 0) {
-        $grupoDocente = new Grupo();
-        $grupoDocente->id_materia = $materia;
-        $grupoDocente->id_usuario = $usuario;
-        $grupoDocente->codigo_grupo = $codgrupo;
-        $grupoDocente->save();
-        $res = 1; //Docente con nuevo grupo en materias
-      } else {
-        Grupo::join('materias', 'materias.id_materia', '=', 'grupos.id_materia')
+      $materiasocupadas = [];
+      foreach ($grupos as $grupo) {
+        $materiaOcupada = Grupo::join(
+          'materias',
+          'materias.id_materia',
+          '=',
+          'grupos.id_materia'
+        )
           ->join('carreras', 'carreras.id_carrera', '=', 'materias.id_carrera')
+          ->select('materias.id_materia')
           ->where('carreras.id_carrera', '=', $carrera)
           ->where('materias.id_materia', '=', $materia)
           ->where('grupos.id_grupo', '=', $grupo)
-          ->update(['grupos.id_usuario' => $usuario]);
-        $res = 2; //Docente de reemplazo de grupo en materias
+          ->where('grupos.id_usuario', '=', $usuario)
+          ->get();
+        if (count($materiaOcupada) > 0) {
+          array_push($materiasocupadas, $materiaOcupada);
+        } else {
+          $this->crearRegistro($usuario, $materia, $grupo, $admin, $estado);
+        }
+      }
+      if (count($materiasocupadas) == 0) {
+        foreach ($codgrupos as $codgrupo) {
+          Grupo::where('id_materia', $materia)
+            ->where('codigo_grupo', $codgrupo)
+            ->update([
+              'id_usuario' => $usuario,
+            ]);
+        }
+        $res = 1; //Docente con nuevo grupo en materias
+      } else {
+        $res = 2; //Un administrador ya añadio los grupos al docente
       }
     } catch (\Throwable $th) {
       $res = $th;
@@ -244,20 +253,58 @@ class usuarioController extends Controller
 
   public function eliminarMateria(Request $request)
   {
-    $carrera = $request->id_carrera;
     $materia = $request->id_materia;
     $usuario = $request->id_usuario;
-    $grupo = $request->id_grupo;
+    $grupos = $request->id_grupos;
+    $admin = $request->id_admin;
+    $estado = 'eliminado';
     $res = 0;
     try {
-      Grupo::where('grupos.id_grupo', '=', $grupo)
-        ->where('grupos.id_materia', '=', $materia)
-        ->where('grupos.id_usuario', '=', $usuario)
-        ->delete();
+      foreach ($grupos as $grupo) {
+        Grupo::where('grupos.id_grupo', '=', $grupo)
+          ->where('grupos.id_materia', '=', $materia)
+          ->where('grupos.id_usuario', '=', $usuario)
+          ->update([
+            'id_usuario' => null,
+          ]);
+        $this->crearRegistro($usuario, $materia, $grupo, $admin, $estado);
+      }
+      $this->completarEliminar($usuario, $materia);
       $res = 1;
     } catch (\Throwable $th) {
       $res = $th;
     }
     return $res;
+  }
+
+  private function completarEliminar($user, $materia)
+  {
+    $nombre_materia = Materia::where('id_materia', $materia)
+      ->select('nombre_materia')
+      ->get();
+    $solicitud = Solicitudes::where('id_usuario', $user)
+      ->where('estado_solicitud', 'pendiente')
+      ->select('id_solicitud', 'materia_solicitud')
+      ->get();
+    foreach ($solicitud as $soli) {
+      if (
+        strcmp($nombre_materia[0]->nombre_materia, $soli->materia_solicitud) ===
+        0
+      ) {
+        $id = $soli->id_solicitud;
+      }
+    }
+    Solicitudes::where('id_solicitud', $id)->delete();
+  }
+
+  private function crearRegistro($usuario, $materia, $grupo, $admin, $estado)
+  {
+    $nuevo_registro = new RegistroGrupos();
+    $nuevo_registro->id_admin = $admin;
+    $nuevo_registro->id_docente = $usuario;
+    $nuevo_registro->id_materia = $materia;
+    $nuevo_registro->id_grupo = $grupo;
+    $nuevo_registro->estado_reg_grupos = $estado;
+    $nuevo_registro->save();
   }
 }

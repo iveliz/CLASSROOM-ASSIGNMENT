@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SoliEvent;
 use Illuminate\Http\Request;
 use App\Models\Solicitudes;
 use App\Models\GrupoSolicitudes;
@@ -10,8 +11,13 @@ use App\Models\RegistroSolicitudes;
 use App\Models\Reserva;
 use App\Models\AulaReserva;
 use App\Models\Aula;
+use App\Models\User;
+use App\Notifications\ResNotification;
+use App\Notifications\SoliNotification;
+use App\Notifications\SoliNotificationDB;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use stdClass;
 
 class SolicitudesController extends Controller
 {
@@ -313,6 +319,7 @@ class SolicitudesController extends Controller
                 if($coincidencia==false){
                     $nueva_solicitud->save();
                     $id_nueva_solicitud = $nueva_solicitud->id_solicitud;
+                    $this->enviarNotificacionSoli($datos_solicitud->id_usuario,$id_nueva_solicitud);
                     
                     
                     foreach ($datos_solicitud->grupos_solicitud as $grupo){
@@ -334,7 +341,7 @@ class SolicitudesController extends Controller
             }else{
                 $nueva_solicitud->save();
                 $id_nueva_solicitud = $nueva_solicitud->id_solicitud;
-                
+                $this->enviarNotificacionSoli($datos_solicitud->id_usuario,$id_nueva_solicitud);
                 
                 foreach ($datos_solicitud->grupos_solicitud as $grupo){
                     $nuevo_grupo = new GrupoSolicitudes;
@@ -470,5 +477,16 @@ class SolicitudesController extends Controller
 
   private function horaCreacion($hora){
       return substr($hora,-8);
+  }
+  
+  public function enviarNotificacionSoli($id_usuario,$id_solicitud){
+    $usuario = User::where('id',$id_usuario)->first();
+    $nombre = $usuario->user_name;
+    $mensaje = "Ha recibido una nueva solicitud (Aula) de: ".$nombre;
+    //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
+    User::whereIn('id_role',[1,3])
+        ->each(function(User $user) use ($mensaje,$id_solicitud){
+            $user->notify(new SoliNotification($mensaje,$id_solicitud));
+        });
   }
 }

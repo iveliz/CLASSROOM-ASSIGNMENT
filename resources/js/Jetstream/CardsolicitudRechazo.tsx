@@ -155,6 +155,3 @@ export default function ({
     </div>
   );
 }
-{
-  /*( =ω=)..nyaa falta cancelar e informacion */
-}

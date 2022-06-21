@@ -148,11 +148,12 @@ class AulasDisponiblesController extends Controller
                 $aulaAct = $this->crearAula($ad);
                 $aux = array();
                 $aux["vecinos"] = array($aulaAct);
-                $aux["capacidad_total"] = $aulaAct->capacidad_aula;
-                array_push($res, $aux);
+                $aux["capacidad_total#"] = $aulaAct->capacidad_aula;
+                //array_push($res, $aux);
 
                 $vecinosAux = $this->cargarVecinos($aulasDispo, $cantAlum, $aulasNoDispo);
-                $res = array_merge($res, $vecinosAux);
+                //$res = array_merge($res, $vecinosAux);
+                $res = $vecinosAux;
 
                 break;
             } else {

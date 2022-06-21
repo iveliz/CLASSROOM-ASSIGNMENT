@@ -51,9 +51,9 @@ export default function ResetPassword({ token, email }: Props) {
   const controlarError = (error:any, pass:any, confPass:any) => {
     let res = "";
     if (error == 1 && pass.length < 8) {
-      res = "La contraseña debe tener mas de ocho caractéres";
+      res = pass.length!=0?"La contraseña debe tener mas de ocho caractéres":"";
     }else if (error == 2 && confPass!=pass){
-      res = "Las confirmacion no es igual a la nueva contraseña"
+      res = confPass.length==0&&pass.length==0?"":"Las confirmación no es igual a la nueva contraseña";
     }else if (error == 0 && pass.length<8){
       res = "El usuario debe tener mas de ocho caractéres";
     }
@@ -75,13 +75,14 @@ export default function ResetPassword({ token, email }: Props) {
             className="mt-1 block w-full"
             value={form.data.user_name}
             onChange={e => {
-              form.setData('user_name', e.currentTarget.value)
-              setErrorCero(controlarError(0,form.data.user_name,""))
+              let texto = e.currentTarget.value.replace(' ','').replace(/[*+\-?^${}()|[\]\\/#|¿%&]/g,'');
+              form.setData('user_name',texto)
+              setErrorCero(controlarError(0,texto,""))
             }}
             required
             autoFocus
           />
-          <p className="absolute text-sm text-red-600 mt-2 mb-0">{errorCero}</p>
+          <p className="absolute text-sm text-red-600 mt-2 mb-0">{form.data.user_name.length>0?errorCero:"El nombre de usuario es obligatorio"}</p>
         </div>
 
         <div className="mt-8">
@@ -94,6 +95,7 @@ export default function ResetPassword({ token, email }: Props) {
             onChange={e => {
               form.setData('password', e.currentTarget.value)
               setErrorUno(controlarError(1,e.currentTarget.value,""))
+              setErrorDos(controlarError(2,e.currentTarget.value,form.data.password_confirmation));
             }}
             required
             autoComplete="new-password"

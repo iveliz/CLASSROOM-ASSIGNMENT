@@ -144,6 +144,7 @@ class GrupoController extends Controller
     $id = $request->id_materia;
     $grupos = Grupo::select('id_grupo', 'codigo_grupo')
       ->where('id_materia', '=', $id)
+      ->where('id_usuario', '=', null)
       ->get();
     return $grupos;
   }
