@@ -73,10 +73,8 @@ class recuperarContraseñaController extends Controller
         if (count( $correoActual) == 0) {
             return 0;
           }else{
-          //  $token = Str::ramdom(64);
-            $link= $this->rute.'/restablecer_contraseña' . $token.'?email=' . urlencode($request->correo);
-            //$link=route('restablecerCuenta');
-           // $link= $this->rute.'reset-password/';
+
+            $link=route('restablecerCuenta');
             Mail::to($request->correo)->send(new RecuperarContraseña($link));
             return 1;
            
