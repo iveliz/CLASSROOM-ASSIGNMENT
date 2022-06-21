@@ -71,7 +71,8 @@ class recuperarContraseñaController extends Controller
         if (count( $correoActual) == 0) {
             return 0;
           }else{
-            Mail::to($request->correo)->send(new RecuperarContraseña());
+
+            Mail::to($request->correo)->send(new RecuperarContraseña($link));
             return 1;
            
           }
