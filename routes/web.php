@@ -34,6 +34,10 @@ Route::get('/recuperar_cuenta', function () {
   return Inertia::render('RecuperarCuentaPage');
 })->name('recuperarCuenta');
 
+Route::get('/restablecer_contraseña', function () {
+  return Inertia::render('Auth/ResetPassword');
+})->name('restablecerCuenta');
+
 Route::middleware([
   'auth',
   'auth:sanctum',
