@@ -444,7 +444,7 @@ export default function Materias(this: any) {
                                   </span>
                                 </p>
                                 <p className="font-bold">
-                                  {'Grupos: '}
+                                  {'Grupo(s): '}
                                   <span className="font-thin">
                                     {materia.grupos}
                                   </span>
@@ -505,7 +505,7 @@ export default function Materias(this: any) {
                     'No hay materias disponibles para esta carrera'
                   }
                 ></Select>
-                <p className="font-bold mt-4">Grupos</p>
+                <p className="font-bold mt-4">Grupo(s)</p>
                 <Select
                   id="selectGroups"
                   options={listGrupos}
@@ -604,7 +604,7 @@ export default function Materias(this: any) {
                                     </span>
                                   </p>
                                   <p className="font-bold">
-                                    {'Grupos: '}
+                                    {'Grupo(s): '}
                                     <span className="font-thin">
                                       {materia.grupos}
                                     </span>
