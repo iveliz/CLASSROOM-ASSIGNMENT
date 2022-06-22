@@ -43,6 +43,7 @@ class SoliNotification extends Notification implements ShouldBroadcast
         return [
             'mensaje' => $this->message,
             'id_solicitud' => $this->id_soli,
+            'tipo' => $this->tipo,
         ];
     }
 

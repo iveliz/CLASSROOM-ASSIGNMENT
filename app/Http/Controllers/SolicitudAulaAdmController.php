@@ -454,8 +454,9 @@ class SolicitudAulaAdmController extends Controller
       strval($fecha) .
       ' ha sido ACEPTADA';
     //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
-    $usuario = User::where('id', $id_usuario)->first();
-    $usuario->notify(new ResNotification($mensaje, $id_solicitud, 'res'));
+    $usuario = User::where('id',$id_usuario)->first();
+    $usuario->notify(new ResNotification($mensaje,$id_solicitud,'res'));
+        
   }
 
   public function enviarNotificacionRechazar($id_usuario, $fecha, $id_solicitud)
@@ -465,7 +466,7 @@ class SolicitudAulaAdmController extends Controller
       strval($fecha) .
       ' ha sido RECHAZADA';
     //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
-    $usuario = User::where('id', $id_usuario)->first();
-    $usuario->notify(new ResNotification($mensaje, $id_solicitud, 'res'));
+    $usuario = User::where('id',$id_usuario)->first();
+    $usuario->notify(new ResNotification($mensaje,$id_solicitud,'res'));
   }
 }
