@@ -268,14 +268,33 @@ class SolicitudAulaAdmController extends Controller
       }
       $reserva_ocupada = [];
       foreach ($reserva_existente as $reserva) {
-        $reserva_hora = Reserva::select('id_reg_sct')
-          ->where('id_reserva', $reserva)
-          ->where('fecha_reserva', '=', $fecha)
-          ->where('hora_inicio_reserva', '>=', $horaIni)
-          ->orwhere('hora_fin_reserva', '<=', $horaFin)
-          ->get();
-        if (count($reserva_hora) > 0) {
-          array_push($reserva_ocupada, $reserva_hora);
+        for ($i = 0; $i < count($reserva); $i++) {
+          $reserva_id = $reserva[$i]->id_reserva;
+          $reserva_hora = Reserva::select('id_reg_sct')
+            ->where('id_reserva', $reserva_id)
+            ->where('fecha_reserva', '=', $fecha)
+            ->where(function ($query) use ($horaIni, $horaFin) {
+              $query
+                ->orWhere(function ($query) use ($horaIni) {
+                  $query
+                    ->where('hora_inicio_reserva', '<=', $horaIni)
+                    ->where('hora_fin_reserva', '>', $horaIni);
+                })
+                ->orWhere(function ($query) use ($horaFin) {
+                  $query
+                    ->where('hora_inicio_reserva', '<=', $horaFin)
+                    ->where('hora_fin_reserva', '>', $horaFin);
+                })
+                ->orWhere(function ($query) use ($horaIni, $horaFin) {
+                  $query
+                    ->where('hora_inicio_reserva', '>=', $horaIni)
+                    ->where('hora_fin_reserva', '<=', $horaFin);
+                });
+            })
+            ->get();
+          if (count($reserva_hora) > 0) {
+            array_push($reserva_ocupada, $reserva_hora);
+          }
         }
       }
       if (count($reserva_ocupada) == 0) {
@@ -293,7 +312,11 @@ class SolicitudAulaAdmController extends Controller
           $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'aceptada';
           $nuevo_registro_solicitud->save();
 
-          $this->enviarNotificacionConfirm($datos_solicitud->id_usuario,$datos_solicitud->fecha_requerida_solicitud,$datos_solicitud->id_solicitud);
+          $this->enviarNotificacionConfirm(
+            $datos_solicitud->id_usuario,
+            $datos_solicitud->fecha_requerida_solicitud,
+            $datos_solicitud->id_solicitud
+          );
 
           $id_guardado = $nuevo_registro_solicitud->id;
           Solicitudes::where(
@@ -343,7 +366,11 @@ class SolicitudAulaAdmController extends Controller
       $nuevo_registro_solicitud->motivo_reg_sct = $datos_solicitud->motivo;
       $nuevo_registro_solicitud->save();
 
-      $this->enviarNotificacionRechazar($datos_solicitud->id_usuario,$datos_solicitud->fecha_requerida_solicitud,$datos_solicitud->id_solicitud);
+      $this->enviarNotificacionRechazar(
+        $datos_solicitud->id_usuario,
+        $datos_solicitud->fecha_requerida_solicitud,
+        $datos_solicitud->id_solicitud
+      );
 
       Solicitudes::where(
         'id_solicitud',
@@ -420,18 +447,25 @@ class SolicitudAulaAdmController extends Controller
     //
   }
 
-  public function enviarNotificacionConfirm($id_usuario,$fecha,$id_solicitud){
-    $mensaje = "Su solicitud de reserva para la fecha ".strval($fecha)." ha sido ACEPTADA";
+  public function enviarNotificacionConfirm($id_usuario, $fecha, $id_solicitud)
+  {
+    $mensaje =
+      'Su solicitud de reserva para la fecha ' .
+      strval($fecha) .
+      ' ha sido ACEPTADA';
     //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
-    $usuario = User::where('id',$id_usuario)->first();
-    $usuario->notify(new ResNotification($mensaje,$id_solicitud,'res'));
-        
+    $usuario = User::where('id', $id_usuario)->first();
+    $usuario->notify(new ResNotification($mensaje, $id_solicitud, 'res'));
   }
 
-  public function enviarNotificacionRechazar($id_usuario,$fecha,$id_solicitud){
-    $mensaje = "Su solicitud de reserva para la fecha ".strval($fecha)." ha sido RECHAZADA";
+  public function enviarNotificacionRechazar($id_usuario, $fecha, $id_solicitud)
+  {
+    $mensaje =
+      'Su solicitud de reserva para la fecha ' .
+      strval($fecha) .
+      ' ha sido RECHAZADA';
     //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
-    $usuario = User::where('id',$id_usuario)->first();
-    $usuario->notify(new ResNotification($mensaje,$id_solicitud,'res'));
+    $usuario = User::where('id', $id_usuario)->first();
+    $usuario->notify(new ResNotification($mensaje, $id_solicitud, 'res'));
   }
 }
