@@ -31,7 +31,7 @@ export default function (props:any) {
 
   useEffect(()=>{
     getSolicitudes()
-   },[])
+  },[])
   
    const limpiar = (idCard: any) =>{
       let aux = listaRegistro.filter(solicitud => solicitud.id_sct_cnt!==idCard)
