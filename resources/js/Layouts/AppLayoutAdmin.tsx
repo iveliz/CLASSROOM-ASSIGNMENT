@@ -15,6 +15,16 @@ import { Team } from '@/types';
 import IconUser from '../Icons/userIcon';
 import bell1 from '../Icons/Check';
 
+import Echo from 'laravel-echo';
+window.Pusher = require('pusher-js');
+
+declare global {
+  interface Window {
+      Echo:any;
+      Pusher:any;
+  }
+}
+
 interface Props {
   title: string;
   renderHeader?(): JSX.Element;
@@ -64,6 +74,18 @@ export default function AppLayoutAdmin({
   {
     /*imagen aca */
   }
+
+  window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'ASDASD2121',
+    wsHost: window.location.hostname,
+    wsPort: 6001,
+    forceTLS: false,
+    disableStats: true,
+  });
+  window.Echo.private('App.Models.User.16').notification((notification:any) => {
+    console.log(notification)
+  } )
 
   return (
     <div>
