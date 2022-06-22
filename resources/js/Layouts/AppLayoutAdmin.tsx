@@ -220,13 +220,24 @@ console.log("holaaaaa");
                       aria-expanded={open ? 'true' : undefined}
                       onClick={handleClick}
                     >
-                      <Badge color="error" variant="dot" >
+                      {listaMensajes.length!=0 ?(
+                        <Badge color="error" variant="dot"  >
                         <FontAwesomeIcon
                           icon={['fas', 'bell']}
                           inverse
                           className="text-2xl mb-2 "
                         />
                       </Badge>
+
+                      ):(
+                        <Badge  variant="dot"  >
+                        <FontAwesomeIcon
+                          icon={['fas', 'bell']}
+                          inverse
+                          className="text-2xl mb-2 "
+                        />
+                      </Badge>
+                      )}
                     </Button>
                     <Menu
                       id="basic-menu"
