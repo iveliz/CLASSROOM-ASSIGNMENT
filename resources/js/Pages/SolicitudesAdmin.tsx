@@ -12,19 +12,7 @@ import { nanoid } from 'nanoid';
 import CardSolicitudAula from './componentes/CardSolicitudAula';
 const endpoint = 'http://127.0.0.1:8000';
 
-import Echo from 'laravel-echo';
-window.Pusher = require('pusher-js');
-
-declare global {
-  interface Window {
-    Echo: any;
-    Pusher: any;
-  }
-}
-
 export default function () {
- 
-  
  
   const [listaSolicitudAula, setListaSolicitudAula] = useState<any>([]);
   const [stateBack, SetStateBack] = useState(false);

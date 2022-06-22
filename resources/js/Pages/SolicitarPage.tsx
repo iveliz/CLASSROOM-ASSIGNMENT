@@ -131,19 +131,7 @@ let fechaS: String = fechaHoy();
 let materiaS: String = '';
 let horarioL: any;
 
-import Echo from 'laravel-echo';
-window.Pusher = require('pusher-js');
-
-declare global {
-  interface Window {
-    Echo: any;
-    Pusher: any;
-  }
-}
-
 export default function () {
-
-  
 
   const customStyles = {
     content: {

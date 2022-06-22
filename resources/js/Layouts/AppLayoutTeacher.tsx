@@ -226,7 +226,7 @@ export default function AppLayout({
                                   )
                                    )}}
                                 style={{color:'#000', textDecoration:'none'}}
-                                href={route('solicitudes/aulas')}
+                                href={route('solicitudes')}
                                  >
                                     <ListItemText
                                     primary={noti}
