@@ -10,8 +10,22 @@ import JetDropdown from '@/Jetstream/Dropdown';
 import JetDropdownLink from '@/Jetstream/DropdownLink';
 import JetNavLink from '@/Jetstream/NavLink';
 import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { usePage } from '@inertiajs/inertia-react';
 import { Team } from '@/types';
-
+import axios from 'axios';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { Badge } from '@mui/material';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Divider from '@mui/material/Divider';
+import ListItemText from '@mui/material/ListItemText';
+import { useEffect } from 'react';
+import { nanoid } from 'nanoid';
+const endpoint = 'http://127.0.0.1:8000/';
+library.add(fas);
 import Echo from 'laravel-echo';
 window.Pusher = require('pusher-js');
 
@@ -32,11 +46,66 @@ export default function AppLayout({
   renderHeader,
   children,
 }: PropsWithChildren<Props>) {
+  
+  const [listaNotificaciones, SetListaNotificaciones] = useState<any[]>();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [listaMensajes, SetListaMensajes] = useState<any[]>([]);
+  const [listaId, SetListaId] = useState<any[]>([]);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  
+  const getNotificaciones = async () => {
+    SetListaNotificaciones([]);
+     await axios.get(`${endpoint}notificaciones/${id}`).then(response => {
+      SetListaNotificaciones(response.data);
+      console.log(id);
+    });
+  };
+
+  useEffect(() => {
+    getNotificaciones();
+  }, []);
+
+  useEffect(() => {
+    window.Echo.private('App.Models.User.'.concat(id)).notification(
+      (notification: any) => {
+        if (!listaMensajes.includes(notification.message)) {
+          getNotificaciones();
+          console.log('hola');
+        }
+      },
+    );
+  }, [listaNotificaciones]);
+
+  const getMensajeNoti = () => {
+    if (listaNotificaciones != null) {
+      for (let noti of listaNotificaciones) {
+          console.log(noti.data.mensaje);
+          [noti.data].map((noti: any) => {
+            listaMensajes.push(noti.mensaje);
+            listaId.push(noti.id_solicitud);
+          });
+      }
+     
+      console.log(listaMensajes);
+      ;
+    }
+  };
+
+  useEffect(() => {
+    getMensajeNoti();
+  }, [listaNotificaciones]);
+
   const page = useTypedPage();
   const route = useRoute();
   const [showingNavigationDropdown, setShowingNavigationDropdown] =
     useState(false);
-
+  const { user }: any = usePage().props;
   function switchToTeam(e: React.FormEvent, team: Team) {
     e.preventDefault();
     Inertia.put(
@@ -49,7 +118,7 @@ export default function AppLayout({
       },
     );
   }
-
+  let { id, name, email } = user;
   function logout(e: React.FormEvent) {
     e.preventDefault();
     Inertia.post(route('logout'));
@@ -63,9 +132,7 @@ export default function AppLayout({
     forceTLS: false,
     disableStats: true,
   });
-  window.Echo.private('App.Models.User.1').notification(
-    (notification: any) => {},
-  );
+  
 
   return (
     <div>
@@ -111,6 +178,70 @@ export default function AppLayout({
 
               <div className="hidden sm:flex sm:items-center sm:ml-6">
                 <div className="ml-3 relative">
+                <div className="mr-4 mt-2 ">
+                    <Button
+                      id="basic-button"
+                      aria-controls={open ? 'basic-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open ? 'true' : undefined}
+                      onClick={handleClick}
+                    >
+                      <Badge color="error" variant="dot" >
+                        <FontAwesomeIcon
+                          icon={['fas', 'bell']}
+                          inverse
+                          className="text-2xl mb-2 "
+                        />
+                      </Badge>
+                    </Button>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      open={open}
+                      onClose={handleClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                      }}
+                    >
+                     {listaMensajes.length!=0 ?(
+                        listaMensajes.map((noti,index) => {
+                          return (
+                            <div className="text-neutral-900" >
+                              <MenuItem onClick={handleClose} key={nanoid(6)}>
+                                <a
+                                onClick={()=>{
+                                  SetListaMensajes((lista)=>lista.filter((item,indexM)=>
+                                     indexM!=index
+                                  )
+                                   )}}
+                                style={{color:'#000', textDecoration:'none'}}
+                                href={route('solicitudes/aulas')}
+                                 >
+                                    <ListItemText
+                                    primary={noti}
+                                    
+                                    />
+                                
+                                <Divider />
+                                </a>
+                                  
+                              </MenuItem>
+                            </div>
+                          );
+                        })
+                     ) : (
+                      <div className="text-neutral-900" >
+                        <MenuItem onClick={handleClose} key={nanoid(6)}>
+                        <ListItemText
+                          primary="No hay notificaciones"       
+                          />
+                        <Divider />
+                        </MenuItem>
+
+                      </div>
+                     )}
+                    </Menu>
+                  </div>
                   {/* <!-- Teams Dropdown --> */}
                   {page.props.jetstream.hasTeamFeatures ? (
                     <JetDropdown

@@ -2,6 +2,7 @@ import { Inertia } from '@inertiajs/inertia';
 import { InertiaLink, Head } from '@inertiajs/inertia-react';
 import classNames from 'classnames';
 import React, { PropsWithChildren, useState } from 'react';
+import ReactDOM from 'react-dom';
 import useRoute from '@/Hooks/useRoute';
 import useTypedPage from '@/Hooks/useTypedPage';
 import JetApplicationMark from '@/Jetstream/ApplicationMark';
@@ -10,12 +11,27 @@ import JetDropdown from '@/Jetstream/Dropdown';
 import JetDropdownLink from '@/Jetstream/DropdownLink';
 import JetNavLink from '@/Jetstream/NavLink';
 import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink';
-// import Notifications from 'react-notifications-menu';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCoffee } from '@fortawesome/free-solid-svg-icons';
 import { Team } from '@/types';
 import IconUser from '../Icons/userIcon';
 import bell1 from '../Icons/Check';
-
+import axios from 'axios';
+import { ListAltTwoTone, Router } from '@mui/icons-material';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { Badge } from '@mui/material';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Divider from '@mui/material/Divider';
+import ListItemText from '@mui/material/ListItemText';
+import { useEffect } from 'react';
+import { usePage } from '@inertiajs/inertia-react';
+import { nanoid } from 'nanoid';
 import Echo from 'laravel-echo';
+const endpoint = 'http://127.0.0.1:8000/';
+library.add(fas);
 window.Pusher = require('pusher-js');
 
 declare global {
@@ -35,20 +51,86 @@ export default function AppLayoutAdmin({
   renderHeader,
   children,
 }: PropsWithChildren<Props>) {
-  const DEFAULT_NOTIFICATION = {
-    image:
-      'https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png',
-    message: 'Notification one.',
+ 
+  const [listaNotificaciones, SetListaNotificaciones] = useState<any[]>();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { user }: any = usePage().props;
+  const [listaMensajes, SetListaMensajes] = useState<any[]>([]);
+  const [listaId, SetListaId] = useState<any[]>([]);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+   let { id, name, email } = user; 
+  
+  const getNotificaciones = async () => {
+    SetListaNotificaciones([]);
+     await axios.get(`${endpoint}notificaciones/${id}`).then(response => {
+      SetListaNotificaciones(response.data);
+      console.log(id);
+    });
+  };
+  
+  useEffect(() => {
+    getNotificaciones();
+  }, []);
+
+  let numbadge = listaMensajes.length;
+
+  useEffect(() => {
+    window.Echo.private('App.Models.User.'.concat(id)).notification(
+      (notification: any) => {
+        if (!listaMensajes.includes(notification.message)) {
+          getNotificaciones();
+          console.log('hola');
+        }
+      },
+    );
+  }, [listaNotificaciones]);
+ 
+
+console.log("holaaaaa");
+
+  const lsta = {
     detailPage: '/events',
     receivedTime: '12h ago',
   };
+  
+  function onlyUnique(value:any, index:any, self:any) {
+    return self.indexOf(value) === index;
+  }
 
+  const getMensajeNoti = () => {
+    if (listaNotificaciones != null) {
+      for (let noti of listaNotificaciones) {
+          console.log(noti.data.mensaje);
+          [noti.data].map((noti: any) => {
+            listaMensajes.push(noti.mensaje);
+           
+          });
+      }
+     
+      console.log(listaMensajes);
+      ;
+    }
+  };
+  
+ 
+  useEffect(() => {
+    getMensajeNoti();
+  }, [listaNotificaciones]);
+
+  
   const page = useTypedPage();
   const route = useRoute();
   const [showingNavigationDropdown, setShowingNavigationDropdown] =
     useState(false);
 
-  const [data, setData] = useState([DEFAULT_NOTIFICATION]);
+  const [lis, setLis] = useState<{}>();
   const [message, setMessage] = useState('');
 
   function switchToTeam(e: React.FormEvent, team: Team) {
@@ -68,9 +150,6 @@ export default function AppLayoutAdmin({
     e.preventDefault();
     Inertia.post(route('logout'));
   }
-  {
-    /*imagen aca */
-  }
 
   window.Echo = new Echo({
     broadcaster: 'pusher',
@@ -80,9 +159,8 @@ export default function AppLayoutAdmin({
     forceTLS: false,
     disableStats: true,
   });
-  window.Echo.private('App.Models.User.16').notification(
-    (notification: any) => {},
-  );
+
+  
 
   return (
     <div>
@@ -135,20 +213,69 @@ export default function AppLayoutAdmin({
               <div className="hidden sm:flex sm:items-center sm:ml-6">
                 <div className="ml-3 relative">
                   <div className="mr-4 mt-2 ">
-                    {/* <Notifications
-                      id="noti2"
-                      data={data}
-                      header={{
-                        title: 'Notifications',
-                        option: {
-                          text: 'View All',
-                          onClick: () =>
-                        },
+                    <Button
+                      id="basic-button"
+                      aria-controls={open ? 'basic-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open ? 'true' : undefined}
+                      onClick={handleClick}
+                    >
+                      <Badge color="error" variant="dot" >
+                        <FontAwesomeIcon
+                          icon={['fas', 'bell']}
+                          inverse
+                          className="text-2xl mb-2 "
+                        />
+                      </Badge>
+                    </Button>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      open={open}
+                      onClose={handleClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button',
                       }}
-                      icon={
-                        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/OOjs_UI_icon_bell-invert.svg/1024px-OOjs_UI_icon_bell-invert.svg.png'
-                      }
-                    /> */}
+                    >
+                     {listaMensajes.length!=0 ?(
+                        listaMensajes.map((noti,index) => {
+                          return (
+                            <div className="text-neutral-900" >
+                              <MenuItem onClick={handleClose} key={nanoid(6)}>
+                                <a
+                                onClick={()=>{
+                                  
+                                  SetListaMensajes((lista)=>lista.filter((item,indexM)=>
+                                     indexM!=index
+                                  )
+                                   )}}
+                                style={{color:'#000', textDecoration:'none'}}
+                                href={route('solicitudes/aulas')}
+                                 >
+                                    <ListItemText
+                                    primary={noti}
+                                    
+                                  />
+                                
+                                <Divider />
+                                </a>
+                                  
+                              </MenuItem>
+                            </div>
+                          );
+                        })
+                     ) : (
+                      <div className="text-neutral-900" >
+                        <MenuItem onClick={handleClose} key={nanoid(6)}>
+                        <ListItemText
+                          primary="No hay notificaciones"       
+                          />
+                        <Divider />
+                        </MenuItem>
+
+                      </div>
+                     )}
+                    </Menu>
                   </div>
                   {/* <!-- Teams Dropdown --> */}
                   {page.props.jetstream.hasTeamFeatures ? (
