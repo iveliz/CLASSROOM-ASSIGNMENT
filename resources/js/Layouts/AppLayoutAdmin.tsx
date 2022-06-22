@@ -17,11 +17,9 @@ import { Team } from '@/types';
 import IconUser from '../Icons/userIcon';
 import bell1 from '../Icons/Check';
 import axios from 'axios';
-import { ListAltTwoTone } from '@mui/icons-material';
+import { ListAltTwoTone, Router } from '@mui/icons-material';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
-const endpoint = 'http://127.0.0.1:8000/';
-library.add(fas);
 import { Badge } from '@mui/material';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -31,8 +29,9 @@ import ListItemText from '@mui/material/ListItemText';
 import { useEffect } from 'react';
 import { usePage } from '@inertiajs/inertia-react';
 import { nanoid } from 'nanoid';
-
 import Echo from 'laravel-echo';
+const endpoint = 'http://127.0.0.1:8000/';
+library.add(fas);
 window.Pusher = require('pusher-js');
 
 declare global {
@@ -52,10 +51,12 @@ export default function AppLayoutAdmin({
   renderHeader,
   children,
 }: PropsWithChildren<Props>) {
+ 
   const [listaNotificaciones, SetListaNotificaciones] = useState<any[]>();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const { user }: any = usePage().props;
   const [listaMensajes, SetListaMensajes] = useState<any[]>([]);
+  const [listaId, SetListaId] = useState<any[]>([]);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -67,38 +68,59 @@ export default function AppLayoutAdmin({
    let { id, name, email } = user; 
   
   const getNotificaciones = async () => {
-    axios.get(`${endpoint}notificaciones/${id}`).then(response => {
+    SetListaNotificaciones([]);
+     await axios.get(`${endpoint}notificaciones/${id}`).then(response => {
       SetListaNotificaciones(response.data);
       console.log(id);
     });
   };
-
+  
   useEffect(() => {
     getNotificaciones();
   }, []);
 
-  const lista = {
+  let numbadge = listaMensajes.length;
+
+  useEffect(() => {
+    window.Echo.private('App.Models.User.'.concat(id)).notification(
+      (notification: any) => {
+        if (!listaMensajes.includes(notification.message)) {
+          getNotificaciones();
+          console.log('hola');
+        }
+      },
+    );
+  }, [listaNotificaciones]);
+ 
+
+console.log("holaaaaa");
+
+  const lsta = {
     detailPage: '/events',
     receivedTime: '12h ago',
   };
+  
+  function onlyUnique(value:any, index:any, self:any) {
+    return self.indexOf(value) === index;
+  }
 
   const getMensajeNoti = () => {
-  
     if (listaNotificaciones != null) {
       for (let noti of listaNotificaciones) {
-        let mensajeId: any[] = [];
-        console.log(noti.data.mensaje);
-        [noti.data].map((noti: any) => {
-          listaMensajes.push(noti.mensaje);
-        });
+          console.log(noti.data.mensaje);
+          [noti.data].map((noti: any) => {
+            listaMensajes.push(noti.mensaje);
+           
+          });
       }
+     
       console.log(listaMensajes);
       ;
     }
   };
-  const numbadge = listaMensajes.length;
+  
+ 
   useEffect(() => {
-    
     getMensajeNoti();
   }, [listaNotificaciones]);
 
@@ -137,9 +159,7 @@ export default function AppLayoutAdmin({
     forceTLS: false,
     disableStats: true,
   });
-  window.Echo.private('App.Models.User.16').notification((notification:any) => {
-    console.log(notification)
-  } )
+  
 
   return (
     <div>
@@ -199,7 +219,7 @@ export default function AppLayoutAdmin({
                       aria-expanded={open ? 'true' : undefined}
                       onClick={handleClick}
                     >
-                      <Badge badgeContent={3} color="error">
+                      <Badge color="error" variant="dot" >
                         <FontAwesomeIcon
                           icon={['fas', 'bell']}
                           inverse
@@ -217,25 +237,43 @@ export default function AppLayoutAdmin({
                       }}
                     >
                      {listaMensajes.length!=0 ?(
-                        listaMensajes.map(noti => {
+                        listaMensajes.map((noti,index) => {
                           return (
-                            <div >
+                            <div className="text-neutral-900" >
                               <MenuItem onClick={handleClose} key={nanoid(6)}>
-                                <JetNavLink
-                                  href={route('solicitudes/aulas')}
-                                  active={route().current('solicitudes/aulas')}
-                                >
-                                  <ListItemText
+                                <a
+                                onClick={()=>{
+                                  
+                                  SetListaMensajes((lista)=>lista.filter((item,indexM)=>
+                                     indexM!=index
+                                  )
+                                   )}}
+                                style={{color:'#000', textDecoration:'none'}}
+                                href={route('solicitudes/aulas')}
+                                 >
+                                    <ListItemText
                                     primary={noti}
-                                    secondary="hnj snsns"
+                                    
                                   />
-                                </JetNavLink>
+                                
                                 <Divider />
+                                </a>
+                                  
                               </MenuItem>
                             </div>
                           );
                         })
-                     ) : ''}
+                     ) : (
+                      <div className="text-neutral-900" >
+                        <MenuItem onClick={handleClose} key={nanoid(6)}>
+                        <ListItemText
+                          primary="No hay notificaciones"       
+                          />
+                        <Divider />
+                        </MenuItem>
+
+                      </div>
+                     )}
                     </Menu>
                   </div>
                   {/* <!-- Teams Dropdown --> */}
