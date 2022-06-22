@@ -257,7 +257,7 @@ class SolicitudCuentaController extends Controller
     //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
     User::where('id_role',1)
         ->each(function(User $user) use ($mensaje,$id_sct_cnt){
-            $user->notify(new SoliNotification($mensaje,$id_sct_cnt));
+            $user->notify(new SoliNotification($mensaje,$id_sct_cnt,'soli_cuenta'));
         }); 
   }
 }
