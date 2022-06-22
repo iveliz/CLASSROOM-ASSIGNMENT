@@ -94,6 +94,9 @@ export default function Materias(this: any) {
 
   function closeModal2() {
     setIsOpen2(false);
+    clearForm();
+    SetStateMateria(true);
+    SetStateGroups(true);
   }
 
   const handleOpenBack = () => {
@@ -183,6 +186,8 @@ export default function Materias(this: any) {
 
   const getGrupos = (id_materia: number) => {
     SetStateGroups(true);
+    SetStateMateria(true);
+    SetStateCarrera(true);
     SetStateChargeGroups(true);
     axios.post(`${endpoint}/gruposMateria`, { id_materia }).then(response => {
       let aux = [];
@@ -199,6 +204,7 @@ export default function Materias(this: any) {
       }
       SetStateChargeGroups(false);
       SetStateCarrera(false);
+      SetStateMateria(false);
     });
   };
 
@@ -247,7 +253,6 @@ export default function Materias(this: any) {
 
   const handleChangeMateria = () => {
     SetStateMateria(true);
-
     SetStateCarrera(true);
   };
 
@@ -258,7 +263,12 @@ export default function Materias(this: any) {
       alert('Por favor, rellene todas las casillas');
     } else {
       crearMateria();
+      clearForm();
     }
+  }
+
+  const clearForm = () =>{
+    form.reset("carrera","materia","grupos");
   }
 
   const crearMateria = () => {
@@ -280,6 +290,8 @@ export default function Materias(this: any) {
     axios.post(`${endpoint}/agregarMateria`, toCreate).then(response => {
       if (response.data == 2) {
         alert('Esta materia ha sido asignada recientemente , intente de nuevo');
+        closeModal2();
+        clearForm();
       } else if (response.data == 0) {
         alert('Ha ocurrido un error, por favor recargue la página');
       } else {
@@ -408,7 +420,7 @@ export default function Materias(this: any) {
                 <h4 className="text-center text-slate-400 mt-4">
                   {form.data.name.label == ''
                     ? 'Seleccione Docente...'
-                    : Message != ''
+                    : Message != ''||listaMateriasDocente.length==0
                     ? Message
                     : 'Cargando...'}
                 </h4>
@@ -568,10 +580,14 @@ export default function Materias(this: any) {
               </div>
               <Demo>
                 {listaMateriasDocente == null ||
-                listaMateriasDocente.length == 0 ? (
-                  <h4 className="text-center text-slate-400 mt-4">
-                    Seleccione un Docente...
-                  </h4>
+              listaMateriasDocente.length == 0 ? (
+                <h4 className="text-center text-slate-400 mt-4">
+                  {form.data.name.label == ''
+                    ? 'Seleccione Docente...'
+                    : Message != ''||listaMateriasDocente.length==0
+                    ? Message
+                    : 'Cargando...'}
+                </h4>
                 ) : (
                   <List
                     component="nav"
