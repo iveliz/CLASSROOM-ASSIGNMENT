@@ -107,7 +107,7 @@ export default function ResetPassword({ token, email }: Props) {
     if (error == 1 && pass.length < 8) {
       res = pass.length != 0 ? "La contraseña debe tener más de ocho caracteres" : "";
     } else if (error == 2 && confPass != pass) {
-      res = confPass.length == 0 && pass.length == 0 ? "" : "La confirmación no es igual a la nueva contraseña";
+      res = confPass.length == 0 && pass.length == 0 ? "" : "La confirmación no es igual a la contraseña nueva";
     } else if (error == 0 && pass.length < 8) {
       res = "El usuario debe tener mas de ocho caractéres";
     }

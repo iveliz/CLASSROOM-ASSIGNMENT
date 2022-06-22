@@ -31,7 +31,7 @@ Route::get('/', function () {
   return Inertia::render('Auth/Login');
 });
 
-Route::get('/recuperar_cuenta', function () {
+Route::get('/recuperar_contraseña', function () {
   return Inertia::render('RecuperarCuentaPage');
 })->name('recuperarCuenta');
 
