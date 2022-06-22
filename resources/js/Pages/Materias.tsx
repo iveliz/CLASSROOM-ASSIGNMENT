@@ -1,12 +1,10 @@
 import { useForm, Head, usePage } from '@inertiajs/inertia-react';
 import Modal from 'react-modal';
-import React, { useEffect, useRef, useState, memo, useMemo } from 'react';
-import useRoute from '@/Hooks/useRoute';
+import React, { useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
 import DeleteSharpIcon from '@mui/icons-material/DeleteSharp';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import useTypedPage from '@/Hooks/useTypedPage';
 import JetAuthenticationCard from '@/Jetstream/CardAsignacion';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -14,16 +12,14 @@ import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import JetLabel from '@/Jetstream/Label';
-import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import JetValidationErrors from '@/Jetstream/ValidationErrors';
 import axios from 'axios';
 import Select from 'react-select';
 import { styled } from '@mui/material/styles';
 import AppLayout from '@/Layouts/AppLayoutAdmin';
-import { Box, Icon, IconButton } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import TabPanel from '@/Jetstream/TabPanel';
-import { fromPairs } from 'lodash';
 import JetButton from '@/Jetstream/Button';
 import classNames from 'classnames';
 const endpoint = 'http://127.0.0.1:8000';
@@ -50,16 +46,11 @@ export default function Materias(this: any) {
     },
   };
 
-  const page = useTypedPage();
-  const route = useRoute();
   const form = useForm({
     name: { label: '', value: 0 },
     carrera: { label: '', value: 0 },
     materia: { label: '', value: 0 },
-    grupos: [{ label: '', value: 0 }],
-    secondaryEmail: '',
-    userRol: { label: 'Administrador', value: 'Administrador' },
-    terms: false,
+    grupos: [],
   });
 
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -73,11 +64,15 @@ export default function Materias(this: any) {
   const [stateMateria, SetStateMateria] = useState(true);
   const [stateGroups, SetStateGroups] = useState(true);
   const [stateDocente, SetStateDocente] = useState(true);
+  const [stateChargeMateria, SetStateChargeMateria] = useState(false);
+  const [stateChargeGroups, SetStateChargeGroups] = useState(false);
   const [stateButtonAdd, SetStateButtonAdd] = useState(true);
   const [listGrupos, SetListGrupos] = useState<any>();
   const [pagination, SetPagination] = useState(0);
   const [listaMateriasDocente, SetStateListaMaterias] = useState<any>([]);
   const [toDelete, SetToDelete] = useState<any>();
+  const [NotCompleteForm, SetCompleteForm] = useState(true);
+
   const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
   }));
@@ -117,28 +112,27 @@ export default function Materias(this: any) {
         aux.push({ label: name, value: id });
       }
       SetListDocentes(aux);
+      SetStateDocente(false);
     });
   };
 
   const getMaterias = (id_carrera: number) => {
+    SetStateChargeMateria(true);
     axios.post(`${endpoint}/materiasCarrera`, { id_carrera }).then(response => {
       let aux = [];
       for (let { nombre_materia, id_materia } of response.data) {
         aux.push({ label: nombre_materia, value: id_materia });
       }
       SetListMaterias(aux);
-      console.log(form.data.carrera);
-      console.log(form.data.materia);
       if (form.data.carrera.value != 0) {
         SetStateMateria(false);
       }
+      SetStateChargeMateria(false);
       SetStateCarrera(false);
     });
   };
 
   const getCarrera = () => {
-    form.setData('materia', { label: '', value: 0 });
-    form.setData('grupos', []);
     axios.post(`${endpoint}/carreras`).then(response => {
       let aux = [];
       for (let { nombre_carrera, id_carrera } of response.data) {
@@ -151,10 +145,11 @@ export default function Materias(this: any) {
   const getMateriasDocente = (id_usuario: number) => {
     SetMessage('');
     SetStateDocente(true);
+    SetStateButtonAdd(true);
     SetStateListaMaterias([]);
     axios.post(`${endpoint}/materiasDocente`, { id_usuario }).then(response => {
-        console.log(response.data)
-      if(response.data!=0){
+      console.log(response.data);
+      if (response.data != 0) {
         let aux = [];
         for (let {
           nombre_materia,
@@ -176,17 +171,19 @@ export default function Materias(this: any) {
             grupos: ng.join(','),
             id_grupos: nt,
           });
-
         }
         SetStateListaMaterias(aux);
-      }else{
-       SetMessage("Este docente no tiene materias asignadas");
+      } else {
+        SetMessage('Este docente no tiene materias asignadas');
       }
-
+      SetStateDocente(false);
+      SetStateButtonAdd(false);
     });
   };
 
   const getGrupos = (id_materia: number) => {
+    SetStateGroups(true);
+    SetStateChargeGroups(true);
     axios.post(`${endpoint}/gruposMateria`, { id_materia }).then(response => {
       let aux = [];
       for (let { id_grupo, codigo_grupo } of response.data) {
@@ -200,6 +197,7 @@ export default function Materias(this: any) {
       if (form.data.materia.value != 0) {
         SetStateGroups(false);
       }
+      SetStateChargeGroups(false);
       SetStateCarrera(false);
     });
   };
@@ -217,51 +215,68 @@ export default function Materias(this: any) {
 
   useEffect(() => {
     form.setData('materia', { label: '', value: 0 });
-    if (form.data.carrera.label!='') {
-      SetStateMateria(true);
-      SetStateGroups(true);
-      SetStateCarrera(true);
+    if (form.data.carrera.value != 0) {
       getMaterias(form.data.carrera.value);
     }
   }, [form.data.carrera]);
 
   useEffect(() => {
-    console.log(form.data.name.label)
-    if(form.data.name.label!=''){
-        console.log("xd?")
-        getMateriasDocente(form.data.name.value);
-    }
-  }, [form.data.name]);
-
-  useEffect(() => {
     form.setData('grupos', []);
-    if (form.data.materia.label!='') {
-      SetStateMateria(true);
-      SetStateGroups(true);
-      SetStateCarrera(true);
+    if (form.data.materia.value != 0) {
       getGrupos(form.data.materia.value);
     }
   }, [form.data.materia]);
 
+  useEffect(() => {
+    if (form.data.grupos != null) {
+      if (form.data.grupos.length !== 0) {
+        SetCompleteForm(false);
+      } else {
+        SetCompleteForm(true);
+      }
+    } else {
+      SetCompleteForm(true);
+    }
+  }, [form.data.grupos]);
+
+  const handleChangeCarrera = () => {
+    SetStateMateria(true);
+    SetStateGroups(true);
+    SetStateCarrera(true);
+  };
+
+  const handleChangeMateria = () => {
+    SetStateMateria(true);
+
+    SetStateCarrera(true);
+  };
+
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if(form.data.grupos=[]){
-       alert("Por favor, rellene todas las casillas");
-    }else{
-     crearMateria();
+    console.log(form.data.grupos);
+    if (NotCompleteForm) {
+      alert('Por favor, rellene todas las casillas');
+    } else {
+      alert('ta bien shavalardp');
+      //   crearMateria();
     }
   }
 
-  const crearMateria=()=>{
+  const crearMateria = () => {
     handleOpenBack();
-    let gruposId = form.data.grupos.map((x:any) => {return x.value});
-    let codigogrupos = form.data.grupos.map((x:any) => {return x.label});
+    let gruposId = form.data.grupos.map((x: any) => {
+      return x.value;
+    });
+    let codigogrupos = form.data.grupos.map((x: any) => {
+      return x.label;
+    });
     let toCreate = {
       id_carrera: form.data.carrera.value,
       id_materia: form.data.materia.value,
       id_usuario: form.data.name.value,
       codigo_grupos: codigogrupos,
       id_grupos: gruposId,
+      id_admin: id,
     };
     axios.post(`${endpoint}/agregarMateria`, toCreate).then(response => {
       if (response.data == 2) {
@@ -269,18 +284,18 @@ export default function Materias(this: any) {
       } else if (response.data == 0) {
         alert('Ha ocurrido un error, por favor recargue la página');
       } else {
-          listaMateriasDocente.push({
-            materia: form.data.materia.label,
-            id:form.data.materia.value,
-            carrera: form.data.carrera.label,
-            grupos: codigogrupos.join(','),
-            id_grupos:gruposId,
-          }),
-        handleCloseBack();
+        listaMateriasDocente.push({
+          materia: form.data.materia.label,
+          id: form.data.materia.value,
+          carrera: form.data.carrera.label,
+          grupos: codigogrupos.join(','),
+          id_grupos: gruposId,
+        }),
+          handleCloseBack();
       }
     });
     closeModal2();
-  }
+  };
 
   const confirmateDelete = () => {
     handleOpenBack();
@@ -289,6 +304,7 @@ export default function Materias(this: any) {
         id_materia: toDelete.id,
         id_usuario: form.data.name.value,
         id_grupos: toDelete.id_grupos,
+        id_admin: id,
       };
       console.log(deleting);
       axios.post(`${endpoint}/quitarMateria`, deleting).then(response => {
@@ -302,9 +318,9 @@ export default function Materias(this: any) {
               (mt: { materia: any }) => mt != toDelete,
             ),
           );
-          if(listaMateriasDocente.length==0){
-            SetMessage("Este docente no tiene materias asignadas")
-            SetStateDocente(false)
+          if (listaMateriasDocente.length == 0) {
+            SetMessage('Este docente no tiene materias asignadas');
+            SetStateDocente(false);
           }
         }
       });
@@ -318,35 +334,9 @@ export default function Materias(this: any) {
   };
 
   useEffect(() => {
-    if (listaMateriasDocente.length != 0) {
-
-      SetStateDocente(false);
-      SetStateButtonAdd(false);
-    }
-  }, [listaMateriasDocente]);
-
-  useEffect(() => {
-    if (Message!='') {
-      SetStateDocente(false);
-    }
-  }, [Message]);
-
-  useEffect(
-    function () {
-      if (listDocentes != null) {
-        SetStateDocente(false);
-      } else {
-        getDocentes();
-      }
-    },
-    [listDocentes, SetListDocentes],
-  );
-
-  useEffect(() => {
-    if (listCarreras == null) {
-      getCarrera();
-    }
-  }, [listCarreras]);
+    getCarrera();
+    getDocentes();
+  }, []);
 
   return (
     <AppLayout title="Informacion">
@@ -386,9 +376,10 @@ export default function Materias(this: any) {
               id="selectDocente"
               options={listDocentes}
               value={form.data.name}
-              onChange={(e: { label: string; value: number }) =>
-                form.setData('name', e)
-              }
+              onChange={(e: { label: string; value: number }) => {
+                form.setData('name', e);
+                getMateriasDocente(e.value);
+              }}
               isClearable={false}
               isLoading={stateDocente}
               isDisabled={stateDocente}
@@ -416,7 +407,11 @@ export default function Materias(this: any) {
               {listaMateriasDocente == null ||
               listaMateriasDocente.length == 0 ? (
                 <h4 className="text-center text-slate-400 mt-4">
-                  {form.data.name.label==''?"Seleccione Docente...":(Message!=''?Message:"Cargando...")}
+                  {form.data.name.label == ''
+                    ? 'Seleccione Docente...'
+                    : Message != ''
+                    ? Message
+                    : 'Cargando...'}
                 </h4>
               ) : (
                 <List
@@ -479,33 +474,38 @@ export default function Materias(this: any) {
             </div>
             <form onSubmit={onSubmit}>
               <div className="ml-4 mr-4 space-x-4 mt-4">
-                <p className="font-bold">Carrera</p>
+                <p className="font-bold ml-4">Carrera</p>
                 <Select
                   id="selectCarreras"
                   options={listCarreras}
                   value={form.data.carrera}
                   onChange={(e: { label: string; value: number }) => {
                     form.setData('carrera', e);
+                    handleChangeCarrera();
                   }}
                   isDisabled={stateCarrera}
                   isClearable={false}
                   placeholder="Selecciona una Carrera"
                   noOptionsMessage={() => 'No hay carreras disponibles'}
                 ></Select>
-                <p className="font-bold">Materia</p>
+                <p className="font-bold mt-4">Materia</p>
                 <Select
                   id="selectMaterias"
                   options={listMaterias}
+                  isLoading={stateChargeMateria}
                   value={form.data.materia}
                   onChange={(e: { label: string; value: number }) => {
                     form.setData('materia', e);
+                    handleChangeMateria;
                   }}
                   isDisabled={stateMateria}
                   isClearable={false}
                   placeholder="Selecciona una Materia"
-                  noOptionsMessage={() => 'No hay materias disponibles para esta carrera'}
+                  noOptionsMessage={() =>
+                    'No hay materias disponibles para esta carrera'
+                  }
                 ></Select>
-                <p className="font-bold">Grupos</p>
+                <p className="font-bold mt-4">Grupos</p>
                 <Select
                   id="selectGroups"
                   options={listGrupos}
@@ -514,29 +514,30 @@ export default function Materias(this: any) {
                     form.setData('grupos', e);
                   }}
                   isMulti
+                  isLoading={stateChargeGroups}
                   isDisabled={stateGroups}
                   isClearable={false}
                   placeholder="Selecciona grupos"
-                  noOptionsMessage={() => 'No hay grupos disponibles para esta materia'}
+                  noOptionsMessage={() =>
+                    'No hay grupos disponibles para esta materia'
+                  }
                 ></Select>
-                <div className='float-right'>
-                <button
-                  onClick={closeModal2}
-                  type="submit"
-                  className="btn colorPrimary text-white mt-4 mr-4 text-right"
-                >
-                  Cerrar
-                </button>
-                <button
-                  className="btn aceptadaButton text-white mt-4 text-right"
-                  disabled={form.processing}
-                  type="submit"
-                >
-                  Agregar
-                </button>
-
+                <div className="float-right mb-4 mt-4">
+                  <button
+                    onClick={closeModal2}
+                    type="submit"
+                    className="btn colorPrimary text-white  mr-4 text-right"
+                  >
+                    Cerrar
+                  </button>
+                  <button
+                    className="btn aceptadaButton text-white text-right"
+                    disabled={NotCompleteForm}
+                    type="submit"
+                  >
+                    Agregar
+                  </button>
                 </div>
-
               </div>
             </form>
           </Modal>
@@ -648,16 +649,13 @@ export default function Materias(this: any) {
                   </button>
                 </div>
                 <div>
-                  <JetButton
-                    className={classNames('ml-4', {
-                      'opacity-25': form.processing,
-                    })}
-                    disabled={form.processing}
-                    type="button"
+                <button
+                    className="btn aceptadaButton text-white text-right ml-4"
                     onClick={confirmateDelete}
+                    type="button"
                   >
                     Aceptar
-                  </JetButton>
+                  </button>
                 </div>
               </form>
             </Modal>
