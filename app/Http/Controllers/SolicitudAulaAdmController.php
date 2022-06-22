@@ -424,7 +424,7 @@ class SolicitudAulaAdmController extends Controller
     $mensaje = "Su solicitud de reserva para la fecha ".strval($fecha)." ha sido ACEPTADA";
     //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
     $usuario = User::where('id',$id_usuario)->first();
-    $usuario->notify(new ResNotification($mensaje,$id_solicitud));
+    $usuario->notify(new ResNotification($mensaje,$id_solicitud,'res'));
         
   }
 
@@ -432,6 +432,6 @@ class SolicitudAulaAdmController extends Controller
     $mensaje = "Su solicitud de reserva para la fecha ".strval($fecha)." ha sido RECHAZADA";
     //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
     $usuario = User::where('id',$id_usuario)->first();
-    $usuario->notify(new ResNotification($mensaje,$id_solicitud));
+    $usuario->notify(new ResNotification($mensaje,$id_solicitud,'res'));
   }
 }
