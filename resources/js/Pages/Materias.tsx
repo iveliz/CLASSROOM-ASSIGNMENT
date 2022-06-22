@@ -257,8 +257,7 @@ export default function Materias(this: any) {
     if (NotCompleteForm) {
       alert('Por favor, rellene todas las casillas');
     } else {
-      alert('ta bien shavalardp');
-      //   crearMateria();
+      crearMateria();
     }
   }
 
