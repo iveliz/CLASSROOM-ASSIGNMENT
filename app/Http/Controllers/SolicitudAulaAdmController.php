@@ -455,7 +455,7 @@ class SolicitudAulaAdmController extends Controller
       ' ha sido ACEPTADA';
     //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
     $usuario = User::where('id',$id_usuario)->first();
-    $usuario->notify(new ResNotification($mensaje,$id_solicitud,'res'));
+    $usuario->notify(new ResNotification($mensaje,$id_solicitud,'res_aceptada'));
         
   }
 
@@ -467,6 +467,6 @@ class SolicitudAulaAdmController extends Controller
       ' ha sido RECHAZADA';
     //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
     $usuario = User::where('id',$id_usuario)->first();
-    $usuario->notify(new ResNotification($mensaje,$id_solicitud,'res'));
+    $usuario->notify(new ResNotification($mensaje,$id_solicitud,'res_rechazada'));
   }
 }

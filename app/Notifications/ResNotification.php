@@ -52,6 +52,7 @@ class ResNotification extends Notification implements ShouldBroadcast
         return new BroadcastMessage([
             'message' => "$this->message",
             'id_solicitud' => $this->id_soli,
+            'tipo' => $this->tipo,
         ]);
     }
 }

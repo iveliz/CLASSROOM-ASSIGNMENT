@@ -56,7 +56,7 @@ export default function AppLayoutAdmin({
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const { user }: any = usePage().props;
   const [listaMensajes, SetListaMensajes] = useState<any[]>([]);
-  const [mapMensajes, setMapMensajes] = useState<Map<string,any>>(new Map());
+  const [mapMensajes, setMapMensajes] = useState<Map<any,any>>(new Map());
   const [listaId, SetListaId] = useState<any[]>([]);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -95,11 +95,14 @@ export default function AppLayoutAdmin({
 
     echo.private('App.Models.User.'.concat(id)).notification(
       (notification: any) => {
-        if (!listaMensajes.includes(notification.message)) {
+        if (!mapMensajes.has(notification.id)) {
           
           //getNotificaciones();
-          listaMensajes.push(notification.message);
-          mapMensajes.set(notification.id,notification.message);
+          //listaMensajes.push(notification.message);
+          console.log(notification);
+          const aux = {mensaje : notification.message, tipo : notification.tipo}
+          mapMensajes.set(notification.id, aux);
+          //mapMensajes.set(notification.id,notification.message);
           console.log(mapMensajes);
         }
       },
@@ -124,12 +127,13 @@ console.log("holaaaaa");
           console.log(noti.data.mensaje);
           let idNotiMap = noti.id;
           [noti.data].map((noti: any) => {
-            listaMensajes.push(noti.mensaje);
-            mapMensajes.set(idNotiMap,noti.mensaje);
+            //listaMensajes.push(noti.mensaje);
+            const aux = {mensaje:noti.mensaje, tipo:noti.tipo};
+            mapMensajes.set(idNotiMap,aux);
           });
       }
      
-      console.log(listaMensajes);
+      console.log(mapMensajes);
       ;
     }
   };
@@ -164,6 +168,12 @@ console.log("holaaaaa");
   function logout(e: React.FormEvent) {
     e.preventDefault();
     Inertia.post(route('logout'));
+  }
+
+  function leerNotifiacion(idUsuario:any, idNoti:any){
+    axios.post(`${endpoint}leerNotificacion`,{id:idUsuario,idNoti:idNoti}).then(response => {
+
+    });
   }
 
   return (
@@ -252,23 +262,22 @@ console.log("holaaaaa");
                         'aria-labelledby': 'basic-button',
                       }}
                     >
-                     {listaMensajes.length!=0 ?(
-                        listaMensajes.map((noti,index) => {
+                     {mapMensajes.size!=0 ?( 
+                        Array.from(mapMensajes).map(([key, value]) => {
                           return (
                             <div className="text-neutral-900" >
                               <MenuItem onClick={handleClose} key={nanoid(6)}>
                                 <a
                                 onClick={()=>{
-                                  
-                                  SetListaMensajes((lista)=>lista.filter((item,indexM)=>
-                                     indexM!=index
-                                  )
-                                   )}}
+                                  console.log("esta es la llave:"+key);
+                                  leerNotifiacion(id,key);
+                                  console.log("tipo:"+value.tipo);
+                                  }}
                                 style={{color:'#000', textDecoration:'none'}}
                                 href={route('solicitudes/aulas')}
                                  >
                                     <ListItemText
-                                    primary={noti}
+                                    primary={value.mensaje}
                                     
                                   />
                                 
