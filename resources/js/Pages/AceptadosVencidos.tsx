@@ -18,7 +18,7 @@ export default function (props: { solicitudes: any }) {
     axios
       .get(`${endpoint}/api/solicitudes/aceptadas/vencidas/${id}`)
       .then(response => {
-        console.log(response.data);
+
         SetlistaSoli(response.data);
         setMensaje(false)
       });
@@ -49,7 +49,7 @@ export default function (props: { solicitudes: any }) {
           {listaSoliState.map((card:any) => (
             <Cardsolicitud {...card} setProgressActivo={setProgressActivo} key={nanoid(4)} />
           ))}
-          {console.log(listaSoliState)}
+
         </div>
       </div>
     </AppLayout>

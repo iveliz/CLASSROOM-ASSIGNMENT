@@ -22,14 +22,14 @@ export default function ForgotPassword({ status }: Props) {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
+
     axios
-      .post(`${endpoint}/recuperarContraseña/correoElectronico`, { correo: form.data.email})
+      .post(`${endpoint}/recuperarContraseña/correoElectronico`, {
+        correo: form.data.email,
+      })
       .then(response => {
-        if(response.data == 1){
-          console.log("correo valido")
-        }else{
-          console.log("correo no valido")
+        if (response.data == 1) {
+        } else {
         }
       });
     //form.post(route('password.email'));
@@ -37,9 +37,9 @@ export default function ForgotPassword({ status }: Props) {
 
   return (
     <JetAuthenticationCard>
-      
       <div className="mb-4 text-sm text-gray-600">
-      Ahora introduce uno de los correos que tienes en tu cuenta para poder recuperar tu contraseña.
+        Ahora introduce uno de los correos que tienes en tu cuenta para poder
+        recuperar tu contraseña.
       </div>
 
       {status && (

@@ -17,8 +17,8 @@ window.Pusher = require('pusher-js');
 
 declare global {
   interface Window {
-      Echo:any;
-      Pusher:any;
+    Echo: any;
+    Pusher: any;
   }
 }
 
@@ -63,9 +63,9 @@ export default function AppLayout({
     forceTLS: false,
     disableStats: true,
   });
-  window.Echo.private('App.Models.User.1').notification((notification:any) => {
-    console.log(notification)
-  } )
+  window.Echo.private('App.Models.User.1').notification(
+    (notification: any) => {},
+  );
 
   return (
     <div>
@@ -81,9 +81,7 @@ export default function AppLayout({
               <div className="flex">
                 {/* <!-- Logo --> */}
                 <div className="flex-shrink-0 flex items-center">
-                  
-                    <JetApplicationMark className="block h-9 w-auto" />
-               
+                  <JetApplicationMark className="block h-9 w-auto" />
                 </div>
 
                 {/* <!-- Navigation Links --> */}
@@ -108,10 +106,7 @@ export default function AppLayout({
                   >
                     Solicitudes
                   </JetNavLink>
-
-
                 </div>
-
               </div>
 
               <div className="hidden sm:flex sm:items-center sm:ml-6">
@@ -252,7 +247,9 @@ export default function AppLayout({
                       Administrar Cuenta
                     </div>
 
-                    <JetDropdownLink href={route('cambiar_contrasenia_docente')}>
+                    <JetDropdownLink
+                      href={route('cambiar_contrasenia_docente')}
+                    >
                       Cambiar Contraseña
                     </JetDropdownLink>
 
@@ -267,10 +264,12 @@ export default function AppLayout({
                     ) : null}
 
                     <div className="border-t border-gray-100"></div>
-                   
+
                     {/* <!-- Authentication --> */}
                     <form onSubmit={logout}>
-                      <JetDropdownLink as="button">Cerrar Sesión</JetDropdownLink>
+                      <JetDropdownLink as="button">
+                        Cerrar Sesión
+                      </JetDropdownLink>
                     </form>
                   </JetDropdown>
                 </div>

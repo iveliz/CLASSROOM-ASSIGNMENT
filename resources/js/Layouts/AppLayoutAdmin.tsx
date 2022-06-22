@@ -20,24 +20,21 @@ window.Pusher = require('pusher-js');
 
 declare global {
   interface Window {
-      Echo:any;
-      Pusher:any;
+    Echo: any;
+    Pusher: any;
   }
 }
 
 interface Props {
   title: string;
   renderHeader?(): JSX.Element;
-
 }
 
 export default function AppLayoutAdmin({
   title,
   renderHeader,
   children,
-
 }: PropsWithChildren<Props>) {
-
   const DEFAULT_NOTIFICATION = {
     image:
       'https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png',
@@ -83,9 +80,9 @@ export default function AppLayoutAdmin({
     forceTLS: false,
     disableStats: true,
   });
-  window.Echo.private('App.Models.User.16').notification((notification:any) => {
-    console.log(notification)
-  } )
+  window.Echo.private('App.Models.User.16').notification(
+    (notification: any) => {},
+  );
 
   return (
     <div>
@@ -145,7 +142,7 @@ export default function AppLayoutAdmin({
                         title: 'Notifications',
                         option: {
                           text: 'View All',
-                          onClick: () => console.log('Clicked'),
+                          onClick: () =>
                         },
                       }}
                       icon={

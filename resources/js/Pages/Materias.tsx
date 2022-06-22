@@ -151,7 +151,6 @@ export default function Materias(this: any) {
     SetStateButtonAdd(true);
     SetStateListaMaterias([]);
     axios.post(`${endpoint}/materiasDocente`, { id_usuario }).then(response => {
-      console.log(response.data);
       if (response.data != 0) {
         let aux = [];
         for (let {
@@ -258,7 +257,7 @@ export default function Materias(this: any) {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log(form.data.grupos);
+
     if (NotCompleteForm) {
       alert('Por favor, rellene todas las casillas');
     } else {
@@ -267,9 +266,9 @@ export default function Materias(this: any) {
     }
   }
 
-  const clearForm = () =>{
-    form.reset("carrera","materia","grupos");
-  }
+  const clearForm = () => {
+    form.reset('carrera', 'materia', 'grupos');
+  };
 
   const crearMateria = () => {
     handleOpenBack();
@@ -317,12 +316,11 @@ export default function Materias(this: any) {
         id_grupos: toDelete.id_grupos,
         id_admin: id,
       };
-      console.log(deleting);
+
       axios.post(`${endpoint}/quitarMateria`, deleting).then(response => {
         if (response.data == 0) {
           alert('Ha ocurrido un error, por favor recargue la página');
         } else {
-          console.log(response);
           handleCloseBack();
           SetStateListaMaterias(
             listaMateriasDocente.filter(
@@ -420,7 +418,7 @@ export default function Materias(this: any) {
                 <h4 className="text-center text-slate-400 mt-4">
                   {form.data.name.label == ''
                     ? 'Seleccione Docente...'
-                    : Message != ''||listaMateriasDocente.length==0
+                    : Message != '' && !stateButtonAdd
                     ? Message
                     : 'Cargando...'}
                 </h4>
@@ -563,9 +561,10 @@ export default function Materias(this: any) {
                 id="selectDocente"
                 options={listDocentes}
                 value={form.data.name}
-                onChange={(e: { label: string; value: number }) =>
-                  form.setData('name', e)
-                }
+                onChange={(e: { label: string; value: number }) => {
+                    form.setData('name', e);
+                    getMateriasDocente(e.value);
+                  }}
                 isClearable={false}
                 isLoading={stateDocente}
                 isDisabled={stateDocente}
@@ -580,14 +579,14 @@ export default function Materias(this: any) {
               </div>
               <Demo>
                 {listaMateriasDocente == null ||
-              listaMateriasDocente.length == 0 ? (
-                <h4 className="text-center text-slate-400 mt-4">
-                  {form.data.name.label == ''
-                    ? 'Seleccione Docente...'
-                    : Message != ''||listaMateriasDocente.length==0
-                    ? Message
-                    : 'Cargando...'}
-                </h4>
+                listaMateriasDocente.length == 0 ? (
+                  <h4 className="text-center text-slate-400 mt-4">
+                    {form.data.name.label == ''
+                      ? 'Seleccione Docente...'
+                      : Message != '' && !stateButtonAdd
+                      ? Message
+                      : 'Cargando...'}
+                  </h4>
                 ) : (
                   <List
                     component="nav"
@@ -664,7 +663,7 @@ export default function Materias(this: any) {
                   </button>
                 </div>
                 <div>
-                <button
+                  <button
                     className="btn aceptadaButton text-white text-right ml-4"
                     onClick={confirmateDelete}
                     type="button"

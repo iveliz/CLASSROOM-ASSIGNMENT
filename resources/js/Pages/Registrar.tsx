@@ -55,7 +55,7 @@ export default function Registrar(this: any) {
   function closeModal() {
     setIsOpen(false);
   }
-  
+
   const [modalIsOpen, setIsOpen] = useState(false);
   const [stateBack, SetStateBack] = useState(false);
   const [errorMessage, SetErrorMessage] = useState('');
@@ -75,9 +75,9 @@ export default function Registrar(this: any) {
         id_role:(value=='Administrador'?1:2),
         id_admin:id,
       };
-      console.log(account)
+
       axios.post(`${endpoint}/registrarUsuario`, account).then(response => {
-        console.log(response)
+
         handleCloseBack();
          if (response.data == 3) {
           SetErrorMessage(
@@ -88,7 +88,7 @@ export default function Registrar(this: any) {
           SetErrorMessage(
             'El correo principal ingresado ya esta en uso',
           );
-          console.log(response)
+
           openModal();
         } else if (response.data == 1) {
           SetErrorMessage('La cuenta fue creada con éxito');
@@ -102,7 +102,7 @@ export default function Registrar(this: any) {
         }
       });
     }
-   
+
   }
 
   const handleOpenBack = () => {
@@ -144,7 +144,7 @@ export default function Registrar(this: any) {
             autoComplete="name"
           />
         </div>
-        {console.log(form.data.userRol)}
+
 
         <div className="mt-4">
           <JetLabel htmlFor="username">Nombre de Usuario</JetLabel>
@@ -326,6 +326,6 @@ export default function Registrar(this: any) {
     </JetAuthenticationCard>
 </AppLayout>
 
-    
+
   );
 }

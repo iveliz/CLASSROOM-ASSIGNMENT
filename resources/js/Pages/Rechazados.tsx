@@ -48,7 +48,7 @@ export default function () {
           {listaSoliState.map((card:any) => (
             <Cardsolicitud {...card}  setProgressActivo={setProgressActivo}  key={nanoid(4)}/>
           ))}
-          {console.log(listaSoliState)}
+
         </div>
       </div>
     </AppLayout>

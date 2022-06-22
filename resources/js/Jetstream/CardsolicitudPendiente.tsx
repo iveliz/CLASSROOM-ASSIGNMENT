@@ -20,7 +20,7 @@ interface Solicitud {
   setProgressActivo: any;
   created_at: string;
   hora_fin_solicitud: string;
-  hora_requerida_solicitud:any;
+  hora_requerida_solicitud: any;
 }
 
 export default function ({
@@ -38,13 +38,12 @@ export default function ({
   setProgressActivo,
   created_at,
   hora_fin_solicitud,
-  hora_requerida_solicitud
+  hora_requerida_solicitud,
 }: Solicitud) {
   let subtitle: any;
   const [modalIsOpen, setIsOpen] = useState(false);
   const [stateAula, SetAula] = useState(aulas);
 
-  console.log(estado_solicitud);
   let cadenaEstado = '';
   let aula = '';
 

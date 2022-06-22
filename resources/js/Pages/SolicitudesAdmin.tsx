@@ -17,13 +17,12 @@ window.Pusher = require('pusher-js');
 
 declare global {
   interface Window {
-      Echo:any;
-      Pusher:any;
+    Echo: any;
+    Pusher: any;
   }
 }
 
 export default function () {
-
   window.Echo = new Echo({
     broadcaster: 'pusher',
     key: 'ASDASD2121',
@@ -32,24 +31,22 @@ export default function () {
     forceTLS: false,
     disableStats: true,
   });
-  window.Echo.private('notiSoli').listen('SoliEvent', (e:any) => {
-    console.log(e);
-  })
-  window.Echo.private('App.Models.User.16').notification((notification:any) => {
-    console.log(notification)
-  } )
+  window.Echo.private('notiSoli').listen('SoliEvent', (e: any) => {});
+  window.Echo.private('App.Models.User.16').notification(
+    (notification: any) => {},
+  );
 
   const [listaSolicitudAula, setListaSolicitudAula] = useState<any>([]);
   const [stateBack, SetStateBack] = useState(false);
-  const [solicitud, SetSolicitud] = useState<any>(); 
-  
-  const [mensajeEspera,setMensajeEspera] = useState(true);
+  const [solicitud, SetSolicitud] = useState<any>();
+
+  const [mensajeEspera, setMensajeEspera] = useState(true);
   const getSolicitudes = async () => {
     await axios.get(`${endpoint}/solicitudesAula`).then(response => {
       setListaSolicitudAula(response.data);
-      setMensajeEspera(true)
+      setMensajeEspera(true);
     });
-    setMensajeEspera(false)
+    setMensajeEspera(false);
   };
 
   const handleOpenBack = () => {
@@ -62,27 +59,28 @@ export default function () {
 
   const createReserva = () => {
     handleOpenBack();
-    if (!(solicitud.aceptar)) {
+    if (!solicitud.aceptar) {
       let soli = {
         id_solicitud: solicitud.id_solicitud,
         id_usuario: solicitud.id_usuario,
         fecha_requerida_solicitud: solicitud.fecha_requerida_solicitud,
         motivo: solicitud.motivo,
       };
-      console.log(soli);
+
       axios.post(`${endpoint}/rechazarSolicitud`, soli).then(response => {
         if (response.data == 1) {
-          setListaSolicitudAula(listaSolicitudAula.filter((item: any)=>{
-            let {id_solicitud}=item;
-            return id_solicitud!=solicitud.id_solicitud;
-          }));
-          console.log(listaSolicitudAula)
+          setListaSolicitudAula(
+            listaSolicitudAula.filter((item: any) => {
+              let { id_solicitud } = item;
+              return id_solicitud != solicitud.id_solicitud;
+            }),
+          );
+
           SetSolicitud(null);
-        } else{
+        } else {
           alert('Un error ha ocurrido, por favor recargue la página.');
         }
         handleCloseBack();
-        console.log(response)
       });
     } else {
       let soli = {
@@ -95,19 +93,20 @@ export default function () {
       };
       axios.post(`${endpoint}/confirmarSolicitud`, soli).then(response => {
         if (response.data == 1) {
-          setListaSolicitudAula(listaSolicitudAula.filter((item: any)=>{
-            let {id_solicitud}=item;
-            return id_solicitud!=solicitud.id_solicitud;
-          }));
-          console.log(listaSolicitudAula)
+          setListaSolicitudAula(
+            listaSolicitudAula.filter((item: any) => {
+              let { id_solicitud } = item;
+              return id_solicitud != solicitud.id_solicitud;
+            }),
+          );
+
           SetSolicitud(null);
-        }else if(response.data==2) {
+        } else if (response.data == 2) {
           alert('Otro docente ya creo una reserva para esta solicitud.');
-        }else{
+        } else {
           alert('El aula que tratas de asignar ya esta en uso.');
         }
         handleCloseBack();
-        console.log(response)
       });
     }
   };
@@ -117,10 +116,8 @@ export default function () {
   }, []);
 
   useEffect(() => {
-    if(solicitud!=null){
+    if (solicitud != null) {
       createReserva();
-      console.log("esta es la soli")
-      console.log(solicitud)
     }
   }, [solicitud]);
 
@@ -138,12 +135,26 @@ export default function () {
             <p>
               Si encuentra un (*) la solicitud debe ser atendida con urgencia
             </p>
-            <div className='text-center mr-8'>
-              {mensajeEspera?<h5 className='mt-10'>Espere...</h5>:listaSolicitudAula.length==0?<h5 className='mt-10'>Aun no hay solicitudes para mostrar..gri..gri</h5>:''}
+            <div className="text-center mr-8">
+              {mensajeEspera ? (
+                <h5 className="mt-10">Espere...</h5>
+              ) : listaSolicitudAula.length == 0 ? (
+                <h5 className="mt-10">
+                  Aun no hay solicitudes para mostrar..gri..gri
+                </h5>
+              ) : (
+                ''
+              )}
             </div>
             <div>
-              {listaSolicitudAula.map((solicitudAula:any) => {
-                return <CardSolicitudAula {...solicitudAula} responder={SetSolicitud} key={nanoid(4)} />;
+              {listaSolicitudAula.map((solicitudAula: any) => {
+                return (
+                  <CardSolicitudAula
+                    {...solicitudAula}
+                    responder={SetSolicitud}
+                    key={nanoid(4)}
+                  />
+                );
               })}
               <Backdrop
                 sx={{
