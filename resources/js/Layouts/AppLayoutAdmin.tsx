@@ -56,6 +56,7 @@ export default function AppLayoutAdmin({
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const { user }: any = usePage().props;
   const [listaMensajes, SetListaMensajes] = useState<any[]>([]);
+  const [mapMensajes, setMapMensajes] = useState<Map<string,any>>(new Map());
   const [listaId, SetListaId] = useState<any[]>([]);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -67,11 +68,11 @@ export default function AppLayoutAdmin({
 
    let { id, name, email } = user; 
   
-  const getNotificaciones = async () => {
+  const getNotificaciones = () => {
     SetListaNotificaciones([]);
-     await axios.get(`${endpoint}notificaciones/${id}`).then(response => {
+     axios.get(`${endpoint}notificaciones/${id}`).then(response => {
       SetListaNotificaciones(response.data);
-      console.log(id);
+      console.log("response.data = "+response.data);
     });
   };
   
@@ -82,11 +83,24 @@ export default function AppLayoutAdmin({
   let numbadge = listaMensajes.length;
 
   useEffect(() => {
-    window.Echo.private('App.Models.User.'.concat(id)).notification(
+
+    const echo = new Echo({
+      broadcaster: 'pusher',
+      key: 'ASDASD2121',
+      wsHost: window.location.hostname,
+      wsPort: 6001,
+      forceTLS: false,
+      disableStats: true,
+    });
+
+    echo.private('App.Models.User.'.concat(id)).notification(
       (notification: any) => {
         if (!listaMensajes.includes(notification.message)) {
-          getNotificaciones();
-          console.log('hola');
+          
+          //getNotificaciones();
+          listaMensajes.push(notification.message);
+          mapMensajes.set(notification.id,notification.message);
+          console.log(mapMensajes);
         }
       },
     );
@@ -108,9 +122,10 @@ console.log("holaaaaa");
     if (listaNotificaciones != null) {
       for (let noti of listaNotificaciones) {
           console.log(noti.data.mensaje);
+          let idNotiMap = noti.id;
           [noti.data].map((noti: any) => {
             listaMensajes.push(noti.mensaje);
-           
+            mapMensajes.set(idNotiMap,noti.mensaje);
           });
       }
      
@@ -150,17 +165,6 @@ console.log("holaaaaa");
     e.preventDefault();
     Inertia.post(route('logout'));
   }
-
-  window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: 'ASDASD2121',
-    wsHost: window.location.hostname,
-    wsPort: 6001,
-    forceTLS: false,
-    disableStats: true,
-  });
-
-  
 
   return (
     <div>
