@@ -14,15 +14,17 @@ class SoliNotification extends Notification implements ShouldBroadcast
 
     public $message;
     public $id_soli;
+    public $tipo;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($message,$id_soli)
+    public function __construct($message,$id_soli,$tipo)
     {
         $this->message = $message;
         $this->id_soli = $id_soli;
+        $this->tipo = $tipo;
     }
 
     /**
@@ -41,6 +43,7 @@ class SoliNotification extends Notification implements ShouldBroadcast
         return [
             'mensaje' => $this->message,
             'id_solicitud' => $this->id_soli,
+            'tipo' => $this->tipo,
         ];
     }
 

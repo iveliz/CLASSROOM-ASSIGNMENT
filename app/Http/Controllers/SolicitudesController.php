@@ -486,7 +486,7 @@ class SolicitudesController extends Controller
     //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
     User::whereIn('id_role',[1,3])
         ->each(function(User $user) use ($mensaje,$id_solicitud){
-            $user->notify(new SoliNotification($mensaje,$id_solicitud));
+            $user->notify(new SoliNotification($mensaje,$id_solicitud,'soli_aula'));
         });
   }
 }
