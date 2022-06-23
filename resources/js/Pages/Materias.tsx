@@ -22,7 +22,7 @@ import { Box, IconButton } from '@mui/material';
 import TabPanel from '@/Jetstream/TabPanel';
 import JetButton from '@/Jetstream/Button';
 import classNames from 'classnames';
-const endpoint = 'http://127.0.0.1:8000';
+import { endpoint } from '@/Const/Endpoint';
 
 export default function Materias(this: any) {
   const { user }: any = usePage().props;
@@ -562,9 +562,9 @@ export default function Materias(this: any) {
                 options={listDocentes}
                 value={form.data.name}
                 onChange={(e: { label: string; value: number }) => {
-                    form.setData('name', e);
-                    getMateriasDocente(e.value);
-                  }}
+                  form.setData('name', e);
+                  getMateriasDocente(e.value);
+                }}
                 isClearable={false}
                 isLoading={stateDocente}
                 isDisabled={stateDocente}

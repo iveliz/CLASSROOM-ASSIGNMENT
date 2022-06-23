@@ -3,7 +3,7 @@ import image from '../../css/images/userImage.png';
 import Modal from 'react-modal';
 import { useState } from 'react';
 import axios from 'axios';
-const endpoint = 'http://127.0.0.1:8000';
+import { endpoint } from '@/Const/Endpoint';
 interface Solicitud {
   fecha_inicio_reg_sct: String;
   id_solicitud: number;

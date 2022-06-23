@@ -10,10 +10,9 @@ import Backdrop from '@mui/material/Backdrop';
 import { useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import CardSolicitudAula from './componentes/CardSolicitudAula';
-const endpoint = 'http://127.0.0.1:8000';
+import { endpoint } from '@/Const/Endpoint';
 
 export default function () {
- 
   const [listaSolicitudAula, setListaSolicitudAula] = useState<any>([]);
   const [stateBack, SetStateBack] = useState(false);
   const [solicitud, SetSolicitud] = useState<any>();
@@ -100,7 +99,7 @@ export default function () {
   }, [solicitud]);
 
   return (
-    <AppLayout title="Informacion" >
+    <AppLayout title="Informacion">
       <div className="grid grid-cols-6 gap-4">
         <div className=" colorPrimary mt-6 drop-shadow-lg ">
           <Sidebar></Sidebar>

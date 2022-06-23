@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 import Modal from 'react-modal';
 import { nanoid } from 'nanoid';
 import { usePage } from '@inertiajs/inertia-react';
-const endpoint = 'http://127.0.0.1:8000';
+import { endpoint } from '@/Const/Endpoint';
 export default function () {
   const customStyles = {
     content: {

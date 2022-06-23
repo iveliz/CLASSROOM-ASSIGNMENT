@@ -13,7 +13,7 @@ import JetValidationErrors from '@/Jetstream/ValidationErrors';
 import axios from 'axios';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-const endpoint = 'http://127.0.0.1:8000';
+import { endpoint } from '@/Const/Endpoint';
 
 export default function Register(this: any) {
   const customStyles = {
@@ -52,9 +52,9 @@ export default function Register(this: any) {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if(form.data.email!=''&&form.data.email==form.data.secondaryEmail){
-      alert("El correo principal no puede ser igual al secundario")
-    }else{
+    if (form.data.email != '' && form.data.email == form.data.secondaryEmail) {
+      alert('El correo principal no puede ser igual al secundario');
+    } else {
       handleOpenBack();
       let account = {
         nombre_sct_cnt: form.data.name,
@@ -64,17 +64,13 @@ export default function Register(this: any) {
       };
       axios.post(`${endpoint}/crearSolicitudCuenta`, account).then(response => {
         handleCloseBack();
-        if(response.data==5){
-          SetErrorMessage(
-            'El correo principal ingresado ya esta en uso',
-          );
+        if (response.data == 5) {
+          SetErrorMessage('El correo principal ingresado ya esta en uso');
           openModal();
-        }else if(response.data==4){
-          SetErrorMessage(
-            'El nombre de usuario ingresado ya esta en uso',
-          );
+        } else if (response.data == 4) {
+          SetErrorMessage('El nombre de usuario ingresado ya esta en uso');
           openModal();
-        }else if (response.data == 3) {
+        } else if (response.data == 3) {
           SetErrorMessage(
             'Ya se uso antes el correo principal para hacer una solicitud',
           );
@@ -94,9 +90,8 @@ export default function Register(this: any) {
           );
           openModal();
         }
-      })
+      });
     }
-;
   }
 
   const handleOpenBack = () => {
@@ -106,7 +101,6 @@ export default function Register(this: any) {
   const handleCloseBack = () => {
     SetStateBack(false);
   };
-
 
   return (
     <JetAuthenticationCard>
@@ -261,7 +255,6 @@ export default function Register(this: any) {
         )}
 
         <div className="flex items-center justify-end mt-4">
-     
           <InertiaLink
             href={route('login')}
             className="underline text-sm text-gray-600 hover:text-gray-900"

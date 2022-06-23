@@ -8,14 +8,14 @@ import JetInput from '@/Jetstream/Input';
 import JetLabel from '@/Jetstream/Label';
 import JetValidationErrors from '@/Jetstream/ValidationErrors';
 import axios from 'axios';
-
+import { endpoint } from '@/Const/Endpoint';
 interface Props {
   status: string;
 }
 
 export default function ForgotPassword({ status }: Props) {
   const route = useRoute();
-  const endpoint = 'http://127.0.0.1:8000';
+
   const form = useForm({
     email: '',
   });
