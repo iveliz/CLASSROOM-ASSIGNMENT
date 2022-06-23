@@ -46,10 +46,11 @@ export default function AppLayout({
   renderHeader,
   children,
 }: PropsWithChildren<Props>) {
-  
   const [listaNotificaciones, SetListaNotificaciones] = useState<any[]>();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [listaMensajes, SetListaMensajes] = useState<any[]>([]);
+  const [mapMensajes, setMapMensajes] = useState<Map<any, any>>(new Map());
+  const [isReceived, setIsReceived] = useState<boolean>(false);
   const [listaId, SetListaId] = useState<any[]>([]);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -58,42 +59,65 @@ export default function AppLayout({
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
+  const page = useTypedPage();
+  const route = useRoute();
+  const [showingNavigationDropdown, setShowingNavigationDropdown] =
+    useState(false);
+
+  const [lis, setLis] = useState<{}>();
+  const [message, setMessage] = useState('');
+
   const getNotificaciones = async () => {
     SetListaNotificaciones([]);
-     await axios.get(`${endpoint}notificaciones/${id}`).then(response => {
+    await axios.get(`${endpoint}notificaciones/${id}`).then(response => {
       SetListaNotificaciones(response.data);
       console.log(id);
     });
   };
 
   useEffect(() => {
-    getNotificaciones();
-  }, []);
+    const echo = new Echo({
+      broadcaster: 'pusher',
+      key: 'ASDASD2121',
+      wsHost: window.location.hostname,
+      wsPort: 6001,
+      forceTLS: false,
+      disableStats: true,
+    });
 
-  useEffect(() => {
-    window.Echo.private('App.Models.User.'.concat(id)).notification(
-      (notification: any) => {
-        if (!listaMensajes.includes(notification.message)) {
-          getNotificaciones();
-          console.log('hola');
+    echo
+      .private('App.Models.User.'.concat(id))
+      .notification((notification: any) => {
+        if (!mapMensajes.has(notification.id)) {
+          //getNotificaciones();
+          //listaMensajes.push(notification.message);
+          console.log(notification);
+          const aux = {
+            mensaje: notification.message,
+            tipo: notification.tipo,
+          };
+
+          setMapMensajes(mapMensajes.set(notification.id, aux));
+          setIsReceived(true);
+          //mapMensajes.set(notification.id,notification.message);
+          console.log(mapMensajes);
         }
-      },
-    );
+      });
   }, [listaNotificaciones]);
 
   const getMensajeNoti = () => {
     if (listaNotificaciones != null) {
       for (let noti of listaNotificaciones) {
-          console.log(noti.data.mensaje);
-          [noti.data].map((noti: any) => {
-            listaMensajes.push(noti.mensaje);
-            listaId.push(noti.id_solicitud);
-          });
+        console.log(noti.data.mensaje);
+        let idNotiMap = noti.id;
+        [noti.data].map((noti: any) => {
+          //listaMensajes.push(noti.mensaje);
+          const aux = { mensaje: noti.mensaje, tipo: noti.tipo };
+          setMapMensajes(mapMensajes.set(idNotiMap, aux));
+        });
       }
-     
-      console.log(listaMensajes);
-      ;
+
+      console.log(mapMensajes);
     }
   };
 
@@ -101,10 +125,14 @@ export default function AppLayout({
     getMensajeNoti();
   }, [listaNotificaciones]);
 
-  const page = useTypedPage();
-  const route = useRoute();
-  const [showingNavigationDropdown, setShowingNavigationDropdown] =
-    useState(false);
+  useEffect(() => {
+    getNotificaciones();
+  }, []);
+
+  useEffect(() => {
+    getMensajeNoti();
+  }, [listaNotificaciones]);
+
   const { user }: any = usePage().props;
   function switchToTeam(e: React.FormEvent, team: Team) {
     e.preventDefault();
@@ -124,16 +152,11 @@ export default function AppLayout({
     Inertia.post(route('logout'));
   }
 
-  window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: 'ASDASD2121',
-    wsHost: window.location.hostname,
-    wsPort: 6001,
-    forceTLS: false,
-    disableStats: true,
-  });
-  
-
+  function leerNotifiacion(idUsuario: any, idNoti: any) {
+    axios
+      .post(`${endpoint}leerNotificacion`, { id: idUsuario, idNoti: idNoti })
+      .then(response => {});
+  }
   return (
     <div>
       <Head title={title} />
@@ -178,7 +201,7 @@ export default function AppLayout({
 
               <div className="hidden sm:flex sm:items-center sm:ml-6">
                 <div className="ml-3 relative">
-                <div className="mr-4 mt-2 ">
+                  <div className="mr-4 mt-2 ">
                     <Button
                       id="basic-button"
                       aria-controls={open ? 'basic-menu' : undefined}
@@ -186,23 +209,29 @@ export default function AppLayout({
                       aria-expanded={open ? 'true' : undefined}
                       onClick={handleClick}
                     >
-                      {listaMensajes.length!=0 ?(
-                        <Badge color="error" variant="dot"  >
-                        <FontAwesomeIcon
-                          icon={['fas', 'bell']}
-                          inverse
-                          className="text-2xl mb-2 "
-                        />
-                      </Badge>
-
-                      ):(
-                        <Badge  variant="dot"  >
-                        <FontAwesomeIcon
-                          icon={['fas', 'bell']}
-                          inverse
-                          className="text-2xl mb-2 "
-                        />
-                      </Badge>
+                      {isReceived ? (
+                        <div
+                          key={nanoid(5)}
+                          onClick={() => setIsReceived(false)}
+                        >
+                          <Badge color="error" variant="dot">
+                            <FontAwesomeIcon
+                              icon={['fas', 'bell']}
+                              inverse
+                              className="text-2xl mb-2 "
+                            />
+                          </Badge>
+                        </div>
+                      ) : (
+                        <div key={nanoid(5)}>
+                          <Badge variant="dot">
+                            <FontAwesomeIcon
+                              icon={['fas', 'bell']}
+                              inverse
+                              className="text-2xl mb-2 "
+                            />
+                          </Badge>
+                        </div>
                       )}
                     </Button>
                     <Menu
@@ -214,43 +243,70 @@ export default function AppLayout({
                         'aria-labelledby': 'basic-button',
                       }}
                     >
-                     {listaMensajes.length!=0 ?(
-                        listaMensajes.map((noti,index) => {
+                      {mapMensajes.size != 0 ? (
+                        Array.from(mapMensajes).map(([key, value]) => {
                           return (
-                            <div className="text-neutral-900" >
-                              <MenuItem onClick={handleClose} key={nanoid(6)}>
-                                <a
-                                onClick={()=>{
-                                  SetListaMensajes((lista)=>lista.filter((item,indexM)=>
-                                     indexM!=index
-                                  )
-                                   )}}
-                                style={{color:'#000', textDecoration:'none'}}
-                                href={route('solicitudes')}
-                                 >
-                                    <ListItemText
-                                    primary={noti}
-                                    
-                                    />
-                                
-                                <Divider />
-                                </a>
-                                  
-                              </MenuItem>
+                            <div className="text-neutral-900" key={nanoid(5)}>
+                              {value.tipo === 'res_aceptada' ? (
+                                <MenuItem
+                                  onClick={handleClose}
+                                  key={nanoid(6)}
+                                  className="m-2 text-justify"
+                                >
+                                  <a
+                                    className="no-underline "
+                                    onClick={() => {
+                                      console.log('esta es la llave:' + key);
+                                      leerNotifiacion(id, key);
+                                      console.log('tipo:' + value.tipo);
+                                    }}
+                                    style={{
+                                      color: '#27A8A7',
+                                      fontWeight: 'bold',
+                                    }}
+                                    href={route('solicitudes/aceptadas')}
+                                  >
+                                    {value.mensaje}
+                                    <Divider />
+                                  </a>
+                                </MenuItem>
+                              ) : (
+                                <MenuItem
+                                  onClick={handleClose}
+                                  key={nanoid(6)}
+                                  className="m-2 text-justify font-semibold 
+                                "
+                                >
+                                  <a
+                                    className="no-underline"
+                                    onClick={() => {
+                                      console.log('esta es la llave:' + key);
+                                      leerNotifiacion(id, key);
+                                      console.log('tipo:' + value.tipo);
+                                    }}
+                                    style={{
+                                      color: '#4192E8',
+                                      fontWeight: 'bold',
+                                    }}
+                                    href={route('solicitudes/rechazadas')}
+                                  >
+                                    {value.mensaje.toString()}
+
+                                    <Divider />
+                                  </a>
+                                </MenuItem>
+                              )}
                             </div>
                           );
                         })
-                     ) : (
-                      <div className="text-neutral-900" >
-                        <MenuItem onClick={handleClose} key={nanoid(6)}>
-                        <ListItemText
-                          primary="No hay notificaciones"       
-                          />
-                        <Divider />
-                        </MenuItem>
-
-                      </div>
-                     )}
+                      ) : (
+                        <div className="text-neutral-900">
+                          <MenuItem onClick={handleClose} key={nanoid(6)}>
+                            <ListItemText primary="No hay notificaciones" />
+                            <Divider />
+                          </MenuItem>
+                        </div>
+                      )}
                     </Menu>
                   </div>
                   {/* <!-- Teams Dropdown --> */}

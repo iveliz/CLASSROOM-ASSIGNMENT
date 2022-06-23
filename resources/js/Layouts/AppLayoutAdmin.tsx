@@ -12,7 +12,7 @@ import JetDropdownLink from '@/Jetstream/DropdownLink';
 import JetNavLink from '@/Jetstream/NavLink';
 import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCoffee } from '@fortawesome/free-solid-svg-icons';
+import { faClose, faCoffee } from '@fortawesome/free-solid-svg-icons';
 import { Team } from '@/types';
 import IconUser from '../Icons/userIcon';
 import bell1 from '../Icons/Check';
@@ -30,6 +30,7 @@ import { useEffect } from 'react';
 import { usePage } from '@inertiajs/inertia-react';
 import { nanoid } from 'nanoid';
 import Echo from 'laravel-echo';
+import { faFileLines } from '@fortawesome/free-regular-svg-icons';
 const endpoint = 'http://127.0.0.1:8000/';
 library.add(fas);
 window.Pusher = require('pusher-js');
@@ -51,13 +52,13 @@ export default function AppLayoutAdmin({
   renderHeader,
   children,
 }: PropsWithChildren<Props>) {
- 
   const [listaNotificaciones, SetListaNotificaciones] = useState<any[]>();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const { user }: any = usePage().props;
   const [listaMensajes, SetListaMensajes] = useState<any[]>([]);
-  const [mapMensajes, setMapMensajes] = useState<Map<any,any>>(new Map());
+  const [mapMensajes, setMapMensajes] = useState<Map<any, any>>(new Map());
   const [listaId, SetListaId] = useState<any[]>([]);
+  const [isReceived, setIsReceived] = useState<boolean>(false);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -65,25 +66,27 @@ export default function AppLayoutAdmin({
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const page = useTypedPage();
+  const route = useRoute();
+  const [showingNavigationDropdown, setShowingNavigationDropdown] =
+    useState(false);
 
-   let { id, name, email } = user; 
-  
+  const [lis, setLis] = useState<{}>();
+  const [message, setMessage] = useState('');
+
+  let { id, name, email } = user;
+
   const getNotificaciones = () => {
     SetListaNotificaciones([]);
-     axios.get(`${endpoint}notificaciones/${id}`).then(response => {
+    axios.get(`${endpoint}notificaciones/${id}`).then(response => {
       SetListaNotificaciones(response.data);
-      console.log("response.data = "+response.data);
+      console.log('response.data = ' + response.data);
     });
   };
-  
-  useEffect(() => {
-    getNotificaciones();
-  }, []);
 
   let numbadge = listaMensajes.length;
 
   useEffect(() => {
-
     const echo = new Echo({
       broadcaster: 'pusher',
       key: 'ASDASD2121',
@@ -93,64 +96,58 @@ export default function AppLayoutAdmin({
       disableStats: true,
     });
 
-    echo.private('App.Models.User.'.concat(id)).notification(
-      (notification: any) => {
+    echo
+      .private('App.Models.User.'.concat(id))
+      .notification((notification: any) => {
         if (!mapMensajes.has(notification.id)) {
-          
           //getNotificaciones();
           //listaMensajes.push(notification.message);
           console.log(notification);
-          const aux = {mensaje : notification.message, tipo : notification.tipo}
-          mapMensajes.set(notification.id, aux);
+          const aux = {
+            mensaje: notification.message,
+            tipo: notification.tipo,
+          };
+
+          setMapMensajes(mapMensajes.set(notification.id, aux));
+          setIsReceived(true);
           //mapMensajes.set(notification.id,notification.message);
           console.log(mapMensajes);
         }
-      },
-    );
+      });
   }, [listaNotificaciones]);
- 
-
-console.log("holaaaaa");
 
   const lsta = {
     detailPage: '/events',
     receivedTime: '12h ago',
   };
-  
-  function onlyUnique(value:any, index:any, self:any) {
+
+  function onlyUnique(value: any, index: any, self: any) {
     return self.indexOf(value) === index;
   }
 
   const getMensajeNoti = () => {
     if (listaNotificaciones != null) {
       for (let noti of listaNotificaciones) {
-          console.log(noti.data.mensaje);
-          let idNotiMap = noti.id;
-          [noti.data].map((noti: any) => {
-            //listaMensajes.push(noti.mensaje);
-            const aux = {mensaje:noti.mensaje, tipo:noti.tipo};
-            mapMensajes.set(idNotiMap,aux);
-          });
+        console.log(noti.data.mensaje);
+        let idNotiMap = noti.id;
+        [noti.data].map((noti: any) => {
+          //listaMensajes.push(noti.mensaje);
+          const aux = { mensaje: noti.mensaje, tipo: noti.tipo };
+          setMapMensajes(mapMensajes.set(idNotiMap, aux));
+        });
       }
-     
+
       console.log(mapMensajes);
-      ;
     }
   };
-  
- 
+
   useEffect(() => {
     getMensajeNoti();
   }, [listaNotificaciones]);
 
-  
-  const page = useTypedPage();
-  const route = useRoute();
-  const [showingNavigationDropdown, setShowingNavigationDropdown] =
-    useState(false);
-
-  const [lis, setLis] = useState<{}>();
-  const [message, setMessage] = useState('');
+  useEffect(() => {
+    getNotificaciones();
+  }, []);
 
   function switchToTeam(e: React.FormEvent, team: Team) {
     e.preventDefault();
@@ -170,10 +167,10 @@ console.log("holaaaaa");
     Inertia.post(route('logout'));
   }
 
-  function leerNotifiacion(idUsuario:any, idNoti:any){
-    axios.post(`${endpoint}leerNotificacion`,{id:idUsuario,idNoti:idNoti}).then(response => {
-
-    });
+  function leerNotifiacion(idUsuario: any, idNoti: any) {
+    axios
+      .post(`${endpoint}leerNotificacion`, { id: idUsuario, idNoti: idNoti })
+      .then(response => {});
   }
 
   return (
@@ -234,23 +231,26 @@ console.log("holaaaaa");
                       aria-expanded={open ? 'true' : undefined}
                       onClick={handleClick}
                     >
-                      {listaMensajes.length!=0 ?(
-                        <Badge color="error" variant="dot"  >
-                        <FontAwesomeIcon
-                          icon={['fas', 'bell']}
-                          inverse
-                          className="text-2xl mb-2 "
-                        />
-                      </Badge>
-
-                      ):(
-                        <Badge  variant="dot"  >
-                        <FontAwesomeIcon
-                          icon={['fas', 'bell']}
-                          inverse
-                          className="text-2xl mb-2 "
-                        />
-                      </Badge>
+                      {isReceived ? (
+                        <div key={nanoid(5)} onClick={()=>setIsReceived(false)}>
+                          <Badge color="error" variant="dot">
+                            <FontAwesomeIcon
+                              icon={['fas', 'bell']}
+                              inverse
+                              className="text-2xl mb-2 "
+                            />
+                          </Badge>
+                        </div>
+                      ) : (
+                        <div key={nanoid(5)}>
+                          <Badge variant="dot">
+                            <FontAwesomeIcon
+                              icon={['fas', 'bell']}
+                              inverse
+                              className="text-2xl mb-2 "
+                            />
+                          </Badge>
+                        </div>
                       )}
                     </Button>
                     <Menu
@@ -262,43 +262,69 @@ console.log("holaaaaa");
                         'aria-labelledby': 'basic-button',
                       }}
                     >
-                     {mapMensajes.size!=0 ?( 
+                      {mapMensajes.size != 0 ? (
                         Array.from(mapMensajes).map(([key, value]) => {
                           return (
-                            <div className="text-neutral-900" >
-                              <MenuItem onClick={handleClose} key={nanoid(6)}>
-                                <a
-                                onClick={()=>{
-                                  console.log("esta es la llave:"+key);
-                                  leerNotifiacion(id,key);
-                                  console.log("tipo:"+value.tipo);
-                                  }}
-                                style={{color:'#000', textDecoration:'none'}}
-                                href={route('solicitudes/aulas')}
-                                 >
-                                    <ListItemText
-                                    primary={value.mensaje}
+                            <div className="text-neutral-900" key={nanoid(5)}>
+                              {value.tipo === 'soli_aula' ? (
+                                <MenuItem onClick={handleClose} key={nanoid(6)}
+                                className="m-2 text-justify"
+                                >
+                                  <a 
+                                    className="no-underline "
+                                    onClick={() => {
+                                      console.log('esta es la llave:' + key);
+                                      leerNotifiacion(id, key);
+                                      console.log('tipo:' + value.tipo);
+                                    }}
+                                    style={{
+                                      color: '#27A8A7',
+                                      fontWeight: 'bold',
+                                      
+                                    }}
+                                    href={route('solicitudes/aulas')}
+                                  >
+                                   {value.mensaje} 
+                                    <Divider />
+                                  </a>
+                                </MenuItem>
+                              ) : (
+                                <MenuItem onClick={handleClose} key={nanoid(6)} 
+                                className="m-2 text-justify font-semibold 
+                                ">
+                                  <a
+                                    className="no-underline"
+                                    onClick={() => {
+                                      console.log('esta es la llave:' + key);
+                                      leerNotifiacion(id, key);
+                                      console.log('tipo:' + value.tipo);
+                                    }}
+                                    style={{
+                                      color: '#4192E8',
+                                      fontWeight: 'bold',
+                                      
+                                    }}
+                                    href={route('solicitudes/registros')}
+                                  >
                                     
-                                  />
-                                
-                                <Divider />
-                                </a>
-                                  
-                              </MenuItem>
+                                    
+                                   {(value.mensaje).toString()}
+                                    
+                                  <Divider/>
+                                  </a>
+                                </MenuItem>
+                              )}
                             </div>
                           );
                         })
-                     ) : (
-                      <div className="text-neutral-900" >
-                        <MenuItem onClick={handleClose} key={nanoid(6)}>
-                        <ListItemText
-                          primary="No hay notificaciones"       
-                          />
-                        <Divider />
-                        </MenuItem>
-
-                      </div>
-                     )}
+                      ) : (
+                        <div className="text-neutral-900">
+                          <MenuItem onClick={handleClose} key={nanoid(6)}>
+                            <ListItemText primary="No hay notificaciones" />
+                            <Divider />
+                          </MenuItem>
+                        </div>
+                      )}
                     </Menu>
                   </div>
                   {/* <!-- Teams Dropdown --> */}
