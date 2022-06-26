@@ -137,8 +137,16 @@ class AulasDisponiblesController extends Controller
         }
         $aulasNoDispo = $this->aulasNoDisponibles($fecha, $horaIni, $horaFin);
 
+        $tipo_orden = 'ASC';
+        
+        if($cantAlum>150){
+            $tipo_orden = 'DESC';
+        }
+
         $aulasDispo = Aula::whereNotIn('id_aula', $aulasNoDispo)
-            ->orderBy('capacidad_aula')
+            ->orderBy('tipo_aula')
+            ->orderBy('capacidad_aula',$tipo_orden)
+            ->take(30)
             ->get();
 
         $res = array();
@@ -149,10 +157,10 @@ class AulasDisponiblesController extends Controller
                 $aux = array();
                 $aux["vecinos"] = array($aulaAct);
                 $aux["capacidad_total#"] = $aulaAct->capacidad_aula;
-                //array_push($res, $aux);
+                array_push($res, $aux);
 
-                $vecinosAux = $this->cargarVecinos($aulasDispo, $cantAlum, $aulasNoDispo);
-                //$res = array_merge($res, $vecinosAux);
+                $vecinosAux = $this->cargarVecinos($vecinosCand, $cantAlum, $aulasNoDispo);
+                $res = array_merge($res, $vecinosAux);
                 $res = $vecinosAux;
 
                 break;
@@ -211,9 +219,16 @@ class AulasDisponiblesController extends Controller
     }
 
     private function vecinos($id, $capacidad, $aulasNoDispo){
+
+        $tipo_orden = 'ASC';
+        
+        if($capacidad>150){
+            $tipo_orden = 'DESC';
+        }
+
         $vecinos = Vecino::where("vecinos.id_aula", $id)
             ->whereNotIn("vecinos.id_aula_vecina", $aulasNoDispo)
-            ->orderBy('distancia')
+            ->orderBy('distancia',$tipo_orden)
             ->get();
         $idVecinos = $vecinos->pluck('id_aula_vecina');
 
