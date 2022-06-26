@@ -17,7 +17,7 @@ import JetSecondaryButton from '@/Jetstream/SecondaryButton';
 import Modal from 'react-modal';
 import { User } from '@/types';
 
-const endpoint = 'http://127.0.0.1:8000';
+import { endpoint } from '@/Const/Endpoint';
 
 interface Props {
   user: User;

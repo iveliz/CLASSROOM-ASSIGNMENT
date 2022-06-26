@@ -4,7 +4,7 @@ import Modal from 'react-modal';
 import { useState } from 'react';
 import axios from 'axios';
 import { TramRounded } from '@mui/icons-material';
-const endpoint = 'http://127.0.0.1:8000';
+import { endpoint } from '@/Const/Endpoint';
 interface Solicitud {
   fecha_inicio_reg_sct: String;
   id_solicitud: number;

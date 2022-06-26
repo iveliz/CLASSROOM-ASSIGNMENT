@@ -149,6 +149,7 @@ class SolicitudCuentaController extends Controller
     try {
       $usuario_solicitud_existente = SolicitudCuenta::select('id_sct_cnt')
         ->where('usuario_sct_cnt', $datos_solicitud->usuario_sct_cnt)
+        ->where('estado_sct_cnt', 'pendiente')
         ->get();
       $correo_solicitud_existente = SolicitudCuenta::select('id_sct_cnt')
         ->where('correo_principal_sct_cnt', $datos_solicitud->correo_principal)
@@ -176,7 +177,10 @@ class SolicitudCuentaController extends Controller
               $nueva_solicitud->estado_sct_cnt = 'pendiente';
               $nueva_solicitud->save();
 
-              $this->enviarNotificacion($datos_solicitud->usuario_sct_cnt,$nueva_solicitud->id);
+              $this->enviarNotificacion(
+                $datos_solicitud->usuario_sct_cnt,
+                $nueva_solicitud->id
+              );
               $res = 1;
             } else {
               $res = 5;
@@ -250,14 +254,17 @@ class SolicitudCuentaController extends Controller
     }
     return $res;
   }
-  public function enviarNotificacion($nombre,$id_sct_cnt){
+  public function enviarNotificacion($nombre, $id_sct_cnt)
+  {
     //$usuario = User::where('id',$id_usuario)->first();
     //$nombre = $usuario->user_name;
-    $mensaje = "Ha recibido una nueva solicitud (Registro) de: ".$nombre;
+    $mensaje = 'Ha recibido una nueva solicitud (Registro) de: ' . $nombre;
     //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
-    User::where('id_role',1)
-        ->each(function(User $user) use ($mensaje,$id_sct_cnt){
-            $user->notify(new SoliNotification($mensaje,$id_sct_cnt,'soli_cuenta'));
-        }); 
+    User::where('id_role', 1)->each(function (User $user) use (
+      $mensaje,
+      $id_sct_cnt
+    ) {
+      $user->notify(new SoliNotification($mensaje, $id_sct_cnt, 'soli_cuenta'));
+    });
   }
 }

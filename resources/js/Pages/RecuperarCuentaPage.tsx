@@ -9,6 +9,7 @@ import JetButton from '@/Jetstream/Button';
 import JetInput from '@/Jetstream/Input';
 import JetLabel from '@/Jetstream/Label';
 import axios from 'axios';
+import { endpoint } from '@/Const/Endpoint';
 
 interface Props {
   status: string;
@@ -23,7 +24,6 @@ export default function RecuperarCuentaPage({ status }: Props) {
   const [errorEmail, setErrorEmail] = useState(false);
   const [envioExitoso, setEnvioExitoso] = useState(false);
   const [envioEmail, setEnvioEmail] = useState(false);
-  const endpoint = 'http://127.0.0.1:8000';
 
   const form = useForm({
     email: '',

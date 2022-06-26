@@ -12,7 +12,7 @@ import { registerLocale } from 'react-datepicker';
 import Modal from 'react-modal';
 import axios from 'axios';
 import Select, { components } from 'react-select';
-
+import { endpoint } from '@/Const/Endpoint';
 import { usePage } from '@inertiajs/inertia-react';
 import { add, min } from 'lodash';
 import { Inertia } from '@inertiajs/inertia';
@@ -90,7 +90,7 @@ let horariosFinales = [
   '21:45',
 ];
 
-const endpoint = 'http://127.0.0.1:8000';
+
 let listaDocentesMostrar: { label: any; value: any; id: any }[] = [];
 let listaMateriasMostrar: { label: any; value: any }[] = [];
 let listaGruposMostrar: { label: any; value: any }[] = [];
@@ -132,7 +132,6 @@ let materiaS: String = '';
 let horarioL: any;
 
 export default function () {
-
   const customStyles = {
     content: {
       top: '50%',
