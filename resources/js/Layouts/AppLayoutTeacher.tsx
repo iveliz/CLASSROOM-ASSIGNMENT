@@ -27,6 +27,7 @@ import { nanoid } from 'nanoid';
 const endpoint = 'http://127.0.0.1:8000/';
 library.add(fas);
 import Echo from 'laravel-echo';
+import { render } from '@headlessui/react/dist/utils/render';
 window.Pusher = require('pusher-js');
 
 declare global {
@@ -132,7 +133,6 @@ export default function AppLayout({
     forceTLS: false,
     disableStats: true,
   });
-  
 
   return (
     <div>
