@@ -72,7 +72,7 @@ export default function AppLayout({
     SetListaNotificaciones([]);
     await axios.get(`${endpoint}notificaciones/${id}`).then(response => {
       SetListaNotificaciones(response.data);
-      console.log(id);
+      
     });
   };
 
@@ -92,7 +92,7 @@ export default function AppLayout({
         if (!mapMensajes.has(notification.id)) {
           //getNotificaciones();
           //listaMensajes.push(notification.message);
-          console.log(notification);
+          
           const aux = {
             mensaje: notification.message,
             tipo: notification.tipo,
@@ -101,7 +101,7 @@ export default function AppLayout({
           setMapMensajes(mapMensajes.set(notification.id, aux));
           setIsReceived(true);
           //mapMensajes.set(notification.id,notification.message);
-          console.log(mapMensajes);
+         
         }
       });
   }, [listaNotificaciones]);
@@ -109,7 +109,7 @@ export default function AppLayout({
   const getMensajeNoti = () => {
     if (listaNotificaciones != null) {
       for (let noti of listaNotificaciones) {
-        console.log(noti.data.mensaje);
+        
         let idNotiMap = noti.id;
         [noti.data].map((noti: any) => {
           //listaMensajes.push(noti.mensaje);
@@ -118,7 +118,7 @@ export default function AppLayout({
         });
       }
 
-      console.log(mapMensajes);
+      
     }
   };
 
@@ -257,9 +257,9 @@ export default function AppLayout({
                                   <a
                                     className="no-underline "
                                     onClick={() => {
-                                      console.log('esta es la llave:' + key);
+                                      
                                       leerNotifiacion(id, key);
-                                      console.log('tipo:' + value.tipo);
+                                     
                                     }}
                                     style={{
                                       color: '#1C9027',
@@ -271,7 +271,7 @@ export default function AppLayout({
                                   {value.mensaje.split("").slice(0,56)} 
                                   </span>
                                   <span  > 
-                                  {value.mensaje.split("").slice(56,value.mensaje.length-1)}
+                                  {value.mensaje.split("").slice(56,value.mensaje.length)}
                                   </span>
                                     <Divider />
                                   </a>
@@ -286,9 +286,9 @@ export default function AppLayout({
                                   <a
                                     className="no-underline"
                                     onClick={() => {
-                                      console.log('esta es la llave:' + key);
+                                     
                                       leerNotifiacion(id, key);
-                                      console.log('tipo:' + value.tipo);
+                                      
                                     }}
                                     style={{
                                       color: '#C7261B',
@@ -300,7 +300,7 @@ export default function AppLayout({
                                   {value.mensaje.split("").slice(0,56)} 
                                   </span>
                                   <span  > 
-                                  {value.mensaje.split("").slice(56,value.mensaje.length-1)}
+                                  {value.mensaje.split("").slice(56,value.mensaje.length)}
                                   </span>
                                     <Divider />
                                   </a>
