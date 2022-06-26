@@ -158,7 +158,7 @@ export default function () {
                 <h5 className="mt-10">Espere...</h5>
               ) : listaSoliState.length === 0 ? (
                 <h5 className="mt-10">
-                  Aun no hay solicitudes para mostrar..gri..gri
+                  Aún no hay solicitudes para mostrar..gri..gri
                 </h5>
               ) : (
                 ''
@@ -187,7 +187,7 @@ export default function () {
                         className="btn botonBarra text-white"
                         onClick={abrirModals}
                       >
-                        Cancelar Seleccionadas
+                        Cancelar seleccionadas
                       </button>
                     </div>
 

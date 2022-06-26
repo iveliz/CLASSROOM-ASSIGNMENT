@@ -117,7 +117,7 @@ export default function () {
                 <h5 className="mt-10">Espere...</h5>
               ) : listaSolicitudAula.length == 0 ? (
                 <h5 className="mt-10">
-                  Aun no hay solicitudes para mostrar..gri..gri
+                  Aún no hay solicitudes para mostrar..gri..gri
                 </h5>
               ) : (
                 ''

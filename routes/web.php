@@ -64,7 +64,7 @@ Route::middleware([
 
 Route::middleware(['auth:sanctum', 'role:docente', 'checkRoleDocente'])->group(
   function () {
-    Route::get('/dashboard', function () {
+    Route::get('/informacion', function () {
       return Inertia::render('Dashboard');
     })->name('dashboard');
   }
