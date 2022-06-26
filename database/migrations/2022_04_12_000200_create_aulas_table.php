@@ -15,12 +15,13 @@ class CreateAulasTable extends Migration
   {
     Schema::create('aulas', function (Blueprint $table) {
       $table->bigIncrements('id_aula');
-      $table->integer('numero_aula');
-      $table->char('letra_aula', 2)->nullable();
+      $table->string('numero_aula',10);
+      $table->string('letra_aula', 10)->nullable();
       $table->integer('capacidad_aula');
       $table->string('ubicacion_aula', 250);
       $table->string('piso_aula', 50);
       $table->string('descripcion_aula', 250);
+      $table->string('tipo_aula', 250)->nullable();
       $table->time('hora_apertura_aula');
       $table->time('hora_cierre_aula');
       $table->timestamps();
