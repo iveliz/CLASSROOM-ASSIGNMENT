@@ -262,12 +262,17 @@ export default function AppLayout({
                                       console.log('tipo:' + value.tipo);
                                     }}
                                     style={{
-                                      color: '#27A8A7',
+                                      color: '#1C9027',
                                       fontWeight: 'bold',
                                     }}
                                     href={route('solicitudes/aceptadas')}
                                   >
-                                    {value.mensaje}
+                                  <span style={{color: "#000"}} > 
+                                  {value.mensaje.split("").slice(0,56)} 
+                                  </span>
+                                  <span  > 
+                                  {value.mensaje.split("").slice(56,value.mensaje.length-1)}
+                                  </span>
                                     <Divider />
                                   </a>
                                 </MenuItem>
@@ -286,13 +291,17 @@ export default function AppLayout({
                                       console.log('tipo:' + value.tipo);
                                     }}
                                     style={{
-                                      color: '#4192E8',
+                                      color: '#C7261B',
                                       fontWeight: 'bold',
                                     }}
                                     href={route('solicitudes/rechazadas')}
                                   >
-                                    {value.mensaje.toString()}
-
+                                   <span style={{color: "#000"}} > 
+                                  {value.mensaje.split("").slice(0,56)} 
+                                  </span>
+                                  <span  > 
+                                  {value.mensaje.split("").slice(56,value.mensaje.length-1)}
+                                  </span>
                                     <Divider />
                                   </a>
                                 </MenuItem>

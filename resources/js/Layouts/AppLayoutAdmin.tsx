@@ -17,7 +17,7 @@ import { Team } from '@/types';
 import IconUser from '../Icons/userIcon';
 import bell1 from '../Icons/Check';
 import axios from 'axios';
-import { ListAltTwoTone, Router } from '@mui/icons-material';
+import { ListAltTwoTone, MenuSharp, Router } from '@mui/icons-material';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { Badge } from '@mui/material';
@@ -278,13 +278,21 @@ export default function AppLayoutAdmin({
                                       console.log('tipo:' + value.tipo);
                                     }}
                                     style={{
-                                      color: '#27A8A7',
+                                      color: '#198123',
                                       fontWeight: 'bold',
                                       
                                     }}
                                     href={route('solicitudes/aulas')}
                                   >
-                                   {value.mensaje} 
+                                   <span style={{color: "#000"}} > 
+                                  {value.mensaje.split("").slice(0,32)} 
+                                  </span>
+                                  <span  > 
+                                  {value.mensaje.split("").slice(32,38)} 
+                                  </span>
+                                  <span style={{color: "#000"}} > 
+                                  {value.mensaje.split("").slice(38,value.mensaje.length-1)}
+                                  </span>
                                     <Divider />
                                   </a>
                                 </MenuItem>
@@ -300,15 +308,22 @@ export default function AppLayoutAdmin({
                                       console.log('tipo:' + value.tipo);
                                     }}
                                     style={{
-                                      color: '#4192E8',
+                                      color: '#271C90',
                                       fontWeight: 'bold',
                                       
                                     }}
                                     href={route('solicitudes/registros')}
                                   >
-                                    
-                                    
-                                   {(value.mensaje).toString()}
+                                  
+                                  <span style={{color: "#000"}} > 
+                                  {value.mensaje.split("").slice(0,32)} 
+                                  </span>
+                                  <span  > 
+                                  {value.mensaje.split("").slice(32,42)} 
+                                  </span>
+                                  <span style={{color: "#000"}} > 
+                                  {value.mensaje.split("").slice(42,value.mensaje.length-1)}
+                                  </span>
                                     
                                   <Divider/>
                                   </a>
