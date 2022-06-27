@@ -306,12 +306,6 @@ class SolicitudAulaAdmController extends Controller
           $nuevo_registro_solicitud->estado_solicitud_reg_sct = 'aceptada';
           $nuevo_registro_solicitud->save();
 
-          $this->enviarNotificacionConfirm(
-            $datos_solicitud->id_usuario,
-            $datos_solicitud->fecha_requerida_solicitud,
-            $datos_solicitud->id_solicitud
-          );
-
           $id_guardado = $nuevo_registro_solicitud->id;
           Solicitudes::where(
             'id_solicitud',
@@ -332,6 +326,12 @@ class SolicitudAulaAdmController extends Controller
             $nueva_aula_reservada->save();
           }
           $res = 1;
+          
+          $this->enviarNotificacionConfirm(
+            $datos_solicitud->id_usuario,
+            $datos_solicitud->fecha_requerida_solicitud,
+            $datos_solicitud->id_solicitud
+          );
         } else {
           $res = 2;
         }
@@ -360,17 +360,18 @@ class SolicitudAulaAdmController extends Controller
       $nuevo_registro_solicitud->motivo_reg_sct = $datos_solicitud->motivo;
       $nuevo_registro_solicitud->save();
 
-      $this->enviarNotificacionRechazar(
-        $datos_solicitud->id_usuario,
-        $datos_solicitud->fecha_requerida_solicitud,
-        $datos_solicitud->id_solicitud
-      );
 
       Solicitudes::where(
         'id_solicitud',
         $datos_solicitud->id_solicitud
       )->update(['estado_solicitud' => 'rechazada']);
       $res = 1;
+      
+      $this->enviarNotificacionRechazar(
+        $datos_solicitud->id_usuario,
+        $datos_solicitud->fecha_requerida_solicitud,
+        $datos_solicitud->id_solicitud
+      );
     }
     return $res;
   }

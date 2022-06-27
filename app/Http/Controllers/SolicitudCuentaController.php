@@ -178,11 +178,11 @@ class SolicitudCuentaController extends Controller
               $nueva_solicitud->estado_sct_cnt = 'pendiente';
               $nueva_solicitud->save();
 
+              $res = 1;
               $this->enviarNotificacion(
                 $datos_solicitud->usuario_sct_cnt,
                 $nueva_solicitud->id
               );
-              $res = 1;
             } else {
               $res = 5;
             }
