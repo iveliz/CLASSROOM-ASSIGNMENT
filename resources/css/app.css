@@ -7,11 +7,11 @@
   background-color: #2B629C;
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     -moz-appearance: none;
-    appearance: none; 
+    appearance: none;
 }
 
 
@@ -46,7 +46,7 @@ input[type=number]::-webkit-outer-spin-button {
   background-color: rgba(32,78,126,var(--tw-bg-opacity)) !important;
   border-color: rgba(32,78,126,var(--tw-bg-opacity)) !important;
   color: rgba(31,41,55,var(--tw-text-opacity));
-} 
+}
 .side-navigation-panel .side-navigation-panel-select .side-navigation-panel-select-wrap .side-navigation-panel-select-option {
   --tw-text-opacity: 1;
   align-items: center;
@@ -80,14 +80,14 @@ input[type=number]::-webkit-outer-spin-button {
 }
 .side-navigation-panel *, .side-navigation-panel:after, .side-navigation-panel:before {
   border-color: #2b629c !important;
-  
+
   border-style: solid;
   border-width: 0;
   box-sizing: border-box;
 }
 .side-navigation-panel{
   height: 100vh;
- 
+
 
 }
 .side-navigation-panel-select-option-text{
@@ -145,7 +145,7 @@ body {
   left: -9999px;
 }
 
-/* 
+/*
 .preguntas-frecuentes {
 	position: relative;
 	width: 100%;
@@ -257,7 +257,7 @@ body {
     font-size: 1.59rem;
   }*/
 }
-	
+
 @media (min-width: 768px) {
   /*.preguntas {
     padding-top: 5.21rem;*/
@@ -288,7 +288,7 @@ body {
 
 
 /*Ocultar boton de usuario*/
-/*.inline-flex 
+/*.inline-flex
 .rounded-md{
   color : #2B629C;
   background-color: #2B629C !important;
@@ -334,14 +334,14 @@ textarea[disabled]{
 
 .side-navigation-panel-select-inner-option-text{
   color: white;
- 
+
 }
 .fondoModal{
   background-color: #e3e3e3;
 }
 .fondoModal2{
   background-color: white;
-  
+
 }
 
 .card{
@@ -367,10 +367,10 @@ textarea[disabled]{
   border-right-width: 4px;
   background-color: rgba(32,78,126,var(--tw-bg-opacity)) !important;
   border-color:  rgba(32,78,126,var(--tw-bg-opacity)) !important;
-} 
+}
 
 #noti2{
-   position: absolute!;
+   position: initial!;
    z-index:3!;
 }
 

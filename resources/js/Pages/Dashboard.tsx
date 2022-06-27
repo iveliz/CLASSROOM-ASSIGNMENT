@@ -62,7 +62,7 @@ export default function Dashboard() {
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                <h1 className="text-center "><b>Información</b></h1>
             </div>
-            <div className="preguntas-frecuentes-contenedor serif ">
+            <div className="preguntas-frecuentes-contenedor serif relative">
                <div className=" preguntas min-h-max">
                  <h5 className="text-left my-8">En esta sección encontrará información para usar el sistema apropiadamente. </h5>
                </div>
@@ -127,7 +127,7 @@ export default function Dashboard() {
                       </AccordionDetails>
                     </Accordion>
             </div>
-            <div className="initial inset-x-0 bottom-0 h-16 my-8">
+            <div className="relative inset-x-0 bottom-0 h-16 my-8">
               <h5 className="text-center my-8">¿Tienes alguna duda? Contactanos!
               <a className= "text-center ml-2" href="mailto:neolancersrl@gmail.com ?
               subject=Quiero más información con respecto a los servicios que ofrecen.&body=Hola equipo Neolancer! te contacto desde su website, quisiera más información de sus servicios."> neolancersrl@gmail.com </a></h5>

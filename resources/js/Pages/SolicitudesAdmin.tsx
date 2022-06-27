@@ -68,6 +68,7 @@ export default function () {
         hora_fin: solicitud.hora_fin,
         id_aulas: solicitud.id_aulas,
       };
+
       axios.post(`${endpoint}/confirmarSolicitud`, soli).then(response => {
         if (response.data == 1) {
           setListaSolicitudAula(

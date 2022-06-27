@@ -448,8 +448,8 @@ export default function () {
       .then(response => {
         if (response.data === 1) {
           docentesId=[];
-          Inertia.visit('solicitudes/pendientes');
           fechaS = '';
+          Inertia.visit('solicitudes/pendientes');
         } else {
           closeModal();
           openModalError();

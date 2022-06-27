@@ -56,8 +56,8 @@ export default function ({
   const [motivos, SetMotivos] = useState('');
   const [stateBack, SetStateBack] = useState(false);
   const [aulasDisponibles, SetAulaDisponibles] = useState<any[]>();
-  const [aulasId, SetAulasId] = useState<any[]>();
-  const [listaBuscar, SetListaBuscar] = useState<any[]>();
+  const [aulasId, SetAulasId] = useState<any>();
+  const [listaBuscar, SetListaBuscar] = useState<any>();
   const [reserva, SetReserva] = useState({
     fecha: fecha_requerida_solicitud,
     hora_ini: hora_requerida_solicitud,
@@ -227,11 +227,10 @@ export default function ({
 
   const getID = () => {
     let ids = listaBuscar
-      ?.filter(item => {
+      ?.filter((item: { text: string; }) => {
         return item.text == aulaSeleccionada;
-      })
-      .map(item => item.idAula.join(','));
-    SetAulasId(ids);
+      }).map((item: { idAula: any; }) => item.idAula);
+    SetAulasId(ids[0]);
   };
 
   useEffect(() => {
