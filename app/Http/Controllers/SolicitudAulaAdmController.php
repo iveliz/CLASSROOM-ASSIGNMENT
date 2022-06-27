@@ -276,8 +276,8 @@ class SolicitudAulaAdmController extends Controller
                 })
                 ->orWhere(function ($query) use ($horaFin) {
                   $query
-                    ->where('reservas.hora_inicio_reserva', '<=', $horaFin)
-                    ->where('reservas.hora_fin_reserva', '>', $horaFin);
+                    ->where('reservas.hora_inicio_reserva', '<', $horaFin)
+                    ->where('reservas.hora_fin_reserva', '>=', $horaFin);
                 })
                 ->orWhere(function ($query) use ($horaIni, $horaFin) {
                   $query
