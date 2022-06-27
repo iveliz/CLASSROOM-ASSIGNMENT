@@ -41,7 +41,7 @@ export default function ({
   const [modalIsOpen, setIsOpen] = useState(false);
 
   let subtitulo = 'Aula Reservadas: ';
-  let mensaje = aulas.toString();
+  let mensaje = aulas.join(', ');
   let cambio = true;
   const customStyles = {
     content: {
@@ -111,10 +111,10 @@ export default function ({
               <div className=" space-x-4 mt-4 ml-12 text-left ">
                 <div className="flex flex-col">
                   <p className="font-bold mr-4">
-                    Nombre(s) de Docente(s): {docentes.toString()}
+                    Nombre(s) de Docente(s): {docentes.join(', ')}
                   </p>
                   <p className="font-bold ">Materia: {materia_solicitud} </p>
-                  <p className="font-bold ">Grupo(s): {grupos.toString()} </p>
+                  <p className="font-bold ">Grupo(s): {grupos.join(', ')} </p>
                   <p className="font-bold ">
                     Cantidad de estudiantes: {cantidad_estudiantes_solicitud}{' '}
                   </p>
