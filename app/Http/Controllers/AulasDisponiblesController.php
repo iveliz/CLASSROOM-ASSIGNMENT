@@ -270,8 +270,8 @@ class AulasDisponiblesController extends Controller
                     $query->where('reservas.hora_inicio_reserva', '<=', $horaIni)
                         ->where('reservas.hora_fin_reserva', '>', $horaIni);
                 })->orWhere(function ($query) use ($horaFin) {
-                    $query->where('reservas.hora_inicio_reserva', '<=', $horaFin)
-                        ->where('reservas.hora_fin_reserva', '>', $horaFin);
+                    $query->where('reservas.hora_inicio_reserva', '<', $horaFin)
+                        ->where('reservas.hora_fin_reserva', '>=', $horaFin);
                 })->orWhere(function ($query) use ($horaIni, $horaFin) {
                     $query->where('reservas.hora_inicio_reserva', '>=', $horaIni)
                         ->where('reservas.hora_fin_reserva', '<=', $horaFin);
