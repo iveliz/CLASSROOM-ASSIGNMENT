@@ -31,7 +31,8 @@ import { usePage } from '@inertiajs/inertia-react';
 import { nanoid } from 'nanoid';
 import Echo from 'laravel-echo';
 import { faFileLines } from '@fortawesome/free-regular-svg-icons';
-const endpoint = 'http://127.0.0.1:8000/';
+import { endpoint } from '@/Const/Endpoint';
+
 library.add(fas);
 window.Pusher = require('pusher-js');
 
@@ -78,7 +79,7 @@ export default function AppLayoutAdmin({
 
   const getNotificaciones = () => {
     SetListaNotificaciones([]);
-    axios.get(`${endpoint}notificaciones/${id}`).then(response => {
+    axios.get(`${endpoint}/notificaciones/${id}`).then(response => {
       SetListaNotificaciones(response.data);
      
     });
@@ -169,7 +170,7 @@ export default function AppLayoutAdmin({
 
   function leerNotifiacion(idUsuario: any, idNoti: any) {
     axios
-      .post(`${endpoint}leerNotificacion`, { id: idUsuario, idNoti: idNoti })
+      .post(`${endpoint}/leerNotificacion`, { id: idUsuario, idNoti: idNoti })
       .then(response => {});
   }
 

@@ -24,7 +24,7 @@ import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 import { useEffect } from 'react';
 import { nanoid } from 'nanoid';
-const endpoint = 'http://127.0.0.1:8000/';
+import { endpoint } from '@/Const/Endpoint';
 library.add(fas);
 import Echo from 'laravel-echo';
 import { render } from '@headlessui/react/dist/utils/render';
@@ -70,7 +70,7 @@ export default function AppLayout({
 
   const getNotificaciones = async () => {
     SetListaNotificaciones([]);
-    await axios.get(`${endpoint}notificaciones/${id}`).then(response => {
+    await axios.get(`${endpoint}/notificaciones/${id}`).then(response => {
       SetListaNotificaciones(response.data);
       
     });
@@ -155,7 +155,7 @@ export default function AppLayout({
 
   function leerNotifiacion(idUsuario: any, idNoti: any) {
     axios
-      .post(`${endpoint}leerNotificacion`, { id: idUsuario, idNoti: idNoti })
+      .post(`${endpoint}/leerNotificacion`, { id: idUsuario, idNoti: idNoti })
       .then(response => {});
   }
   return (
