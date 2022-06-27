@@ -163,7 +163,7 @@ class SolicitudAulaAdmController extends Controller
       }
     }
 
-    for ($i = 0; $i < $cont; $i++) {
+    for ($i = 0; $i < count($solicitudesCercanas); $i++) {
       $res[$i]['prioridad'] = 'alta';
     }
 
