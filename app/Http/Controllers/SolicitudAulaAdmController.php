@@ -257,15 +257,9 @@ class SolicitudAulaAdmController extends Controller
     $reserva_existente = [];
     try {
       $aulas = $datos_solicitud->id_aulas;
-      for ($i = 0; $i < count($aulas); $i++) {
-        $aula = $aulas[$i];
-        $aulareserva = AulaReserva::select('id_reserva')
-          ->where('id_aula', $aula)
-          ->get();
-        if (count($aulareserva) > 0) {
-          array_push($reserva_existente, $aulareserva);
-        }
-      }
+      $reserva_existente = AulaReserva::select('id_reserva')
+        ->whereIn('id_aula', $aulas)
+        ->get();
       $reserva_ocupada = [];
       foreach ($reserva_existente as $reserva) {
         for ($i = 0; $i < count($reserva); $i++) {
@@ -277,18 +271,18 @@ class SolicitudAulaAdmController extends Controller
               $query
                 ->orWhere(function ($query) use ($horaIni) {
                   $query
-                    ->where('hora_inicio_reserva', '<=', $horaIni)
-                    ->where('hora_fin_reserva', '>', $horaIni);
+                    ->where('reservas.hora_inicio_reserva', '<=', $horaIni)
+                    ->where('reservas.hora_fin_reserva', '>', $horaIni);
                 })
                 ->orWhere(function ($query) use ($horaFin) {
                   $query
-                    ->where('hora_inicio_reserva', '<=', $horaFin)
-                    ->where('hora_fin_reserva', '>', $horaFin);
+                    ->where('reservas.hora_inicio_reserva', '<=', $horaFin)
+                    ->where('reservas.hora_fin_reserva', '>', $horaFin);
                 })
                 ->orWhere(function ($query) use ($horaIni, $horaFin) {
                   $query
-                    ->where('hora_inicio_reserva', '>=', $horaIni)
-                    ->where('hora_fin_reserva', '<=', $horaFin);
+                    ->where('reservas.hora_inicio_reserva', '>=', $horaIni)
+                    ->where('reservas.hora_fin_reserva', '<=', $horaFin);
                 });
             })
             ->get();
@@ -454,9 +448,10 @@ class SolicitudAulaAdmController extends Controller
       strval($fecha) .
       ' ha sido ACEPTADA';
     //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
-    $usuario = User::where('id',$id_usuario)->first();
-    $usuario->notify(new ResNotification($mensaje,$id_solicitud,'res_aceptada'));
-        
+    $usuario = User::where('id', $id_usuario)->first();
+    $usuario->notify(
+      new ResNotification($mensaje, $id_solicitud, 'res_aceptada')
+    );
   }
 
   public function enviarNotificacionRechazar($id_usuario, $fecha, $id_solicitud)
@@ -466,7 +461,9 @@ class SolicitudAulaAdmController extends Controller
       strval($fecha) .
       ' ha sido RECHAZADA';
     //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
-    $usuario = User::where('id',$id_usuario)->first();
-    $usuario->notify(new ResNotification($mensaje,$id_solicitud,'res_rechazada'));
+    $usuario = User::where('id', $id_usuario)->first();
+    $usuario->notify(
+      new ResNotification($mensaje, $id_solicitud, 'res_rechazada')
+    );
   }
 }
