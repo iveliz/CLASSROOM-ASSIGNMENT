@@ -153,6 +153,7 @@ class SolicitudCuentaController extends Controller
         ->get();
       $correo_solicitud_existente = SolicitudCuenta::select('id_sct_cnt')
         ->where('correo_principal_sct_cnt', $datos_solicitud->correo_principal)
+        ->where('estado_sct_cnt', 'pendiente')
         ->get();
       $usuarioActual = DB::table('users')
         ->select('users.user_name')
