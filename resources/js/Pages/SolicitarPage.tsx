@@ -443,13 +443,14 @@ export default function () {
   };
 
   const sendSoli = () => {
+    console.log(solicitud)
     axios
       .post(`${endpoint}/api/solicitudes/crear`, solicitud)
       .then(response => {
         if (response.data === 1) {
           docentesId=[];
-          fechaS = '';
-          Inertia.visit('solicitudes/pendientes');
+          fechaS = fechaHoy();
+          Inertia.visit(('solicitudes/pendientes'),{preserveState:false})
         } else {
           closeModal();
           openModalError();

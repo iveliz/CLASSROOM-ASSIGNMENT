@@ -72,7 +72,7 @@ export default function AppLayout({
     SetListaNotificaciones([]);
     await axios.get(`${endpoint}/notificaciones/${id}`).then(response => {
       SetListaNotificaciones(response.data);
-      
+
     });
   };
 
@@ -92,7 +92,7 @@ export default function AppLayout({
         if (!mapMensajes.has(notification.id)) {
           //getNotificaciones();
           //listaMensajes.push(notification.message);
-          
+
           const aux = {
             mensaje: notification.message,
             tipo: notification.tipo,
@@ -101,7 +101,7 @@ export default function AppLayout({
           setMapMensajes(mapMensajes.set(notification.id, aux));
           setIsReceived(true);
           //mapMensajes.set(notification.id,notification.message);
-         
+
         }
       });
   }, [listaNotificaciones]);
@@ -109,7 +109,7 @@ export default function AppLayout({
   const getMensajeNoti = () => {
     if (listaNotificaciones != null) {
       for (let noti of listaNotificaciones) {
-        
+
         let idNotiMap = noti.id;
         [noti.data].map((noti: any) => {
           //listaMensajes.push(noti.mensaje);
@@ -118,7 +118,7 @@ export default function AppLayout({
         });
       }
 
-      
+
     }
   };
 
@@ -130,9 +130,6 @@ export default function AppLayout({
     getNotificaciones();
   }, []);
 
-  useEffect(() => {
-    getMensajeNoti();
-  }, [listaNotificaciones]);
 
   const { user }: any = usePage().props;
   function switchToTeam(e: React.FormEvent, team: Team) {
@@ -257,9 +254,9 @@ export default function AppLayout({
                                   <a
                                     className="no-underline "
                                     onClick={() => {
-                                      
+
                                       leerNotifiacion(id, key);
-                                     
+
                                     }}
                                     style={{
                                       color: '#1C9027',
@@ -267,10 +264,10 @@ export default function AppLayout({
                                     }}
                                     href={route('solicitudes/aceptadas')}
                                   >
-                                  <span style={{color: "#000"}} > 
-                                  {value.mensaje.split("").slice(0,56)} 
+                                  <span style={{color: "#000"}} >
+                                  {value.mensaje.split("").slice(0,56)}
                                   </span>
-                                  <span  > 
+                                  <span  >
                                   {value.mensaje.split("").slice(56,value.mensaje.length)}
                                   </span>
                                     <Divider />
@@ -280,15 +277,15 @@ export default function AppLayout({
                                 <MenuItem
                                   onClick={handleClose}
                                   key={nanoid(6)}
-                                  className="m-2 text-justify font-semibold 
+                                  className="m-2 text-justify font-semibold
                                 "
                                 >
                                   <a
                                     className="no-underline"
                                     onClick={() => {
-                                     
+
                                       leerNotifiacion(id, key);
-                                      
+
                                     }}
                                     style={{
                                       color: '#C7261B',
@@ -296,10 +293,10 @@ export default function AppLayout({
                                     }}
                                     href={route('solicitudes/rechazadas')}
                                   >
-                                   <span style={{color: "#000"}} > 
-                                  {value.mensaje.split("").slice(0,56)} 
+                                   <span style={{color: "#000"}} >
+                                  {value.mensaje.split("").slice(0,56)}
                                   </span>
-                                  <span  > 
+                                  <span  >
                                   {value.mensaje.split("").slice(56,value.mensaje.length)}
                                   </span>
                                     <Divider />
