@@ -448,6 +448,7 @@ export default function () {
       .post(`${endpoint}/api/solicitudes/crear`, solicitud)
       .then(response => {
         if (response.data === 1) {
+          docentesNombres=[];
           docentesId=[];
           fechaS = fechaHoy();
           Inertia.visit(('solicitudes/pendientes'),{preserveState:false})

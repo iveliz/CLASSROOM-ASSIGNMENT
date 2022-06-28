@@ -81,7 +81,7 @@ export default function AppLayoutAdmin({
     SetListaNotificaciones([]);
     axios.get(`${endpoint}/notificaciones/${id}`).then(response => {
       SetListaNotificaciones(response.data);
-     
+
     });
   };
 
@@ -103,7 +103,7 @@ export default function AppLayoutAdmin({
         if (!mapMensajes.has(notification.id)) {
           //getNotificaciones();
           //listaMensajes.push(notification.message);
-         
+
           const aux = {
             mensaje: notification.message,
             tipo: notification.tipo,
@@ -112,7 +112,7 @@ export default function AppLayoutAdmin({
           setMapMensajes(mapMensajes.set(notification.id, aux));
           setIsReceived(true);
           //mapMensajes.set(notification.id,notification.message);
-         
+
         }
       });
   }, [listaNotificaciones]);
@@ -129,7 +129,7 @@ export default function AppLayoutAdmin({
   const getMensajeNoti = () => {
     if (listaNotificaciones != null) {
       for (let noti of listaNotificaciones) {
-       
+
         let idNotiMap = noti.id;
         [noti.data].map((noti: any) => {
           //listaMensajes.push(noti.mensaje);
@@ -138,7 +138,7 @@ export default function AppLayoutAdmin({
         });
       }
 
-     
+
     }
   };
 
@@ -271,61 +271,61 @@ export default function AppLayoutAdmin({
                                 <MenuItem onClick={handleClose} key={nanoid(6)}
                                 className="m-2 text-justify"
                                 >
-                                  <a 
+                                  <a
                                     className="no-underline "
                                     onClick={() => {
-                                     
+
                                       leerNotifiacion(id, key);
-                                     
+
                                     }}
                                     style={{
                                       color: '#198123',
                                       fontWeight: 'bold',
-                                      
+
                                     }}
                                     href={route('solicitudes/aulas')}
                                   >
-                                   <span style={{color: "#000"}} > 
-                                  {value.mensaje.split("").slice(0,32)} 
+                                   <span style={{color: "#000"}} >
+                                  {value.mensaje.split("").slice(0,32)}
                                   </span>
-                                  <span  > 
-                                  {value.mensaje.split("").slice(32,38)} 
+                                  <span  >
+                                  {value.mensaje.split("").slice(32,38)}
                                   </span>
-                                  <span style={{color: "#000"}} > 
+                                  <span style={{color: "#000"}} >
                                   {value.mensaje.split("").slice(38,value.mensaje.length)}
                                   </span>
                                     <Divider />
                                   </a>
                                 </MenuItem>
                               ) : (
-                                <MenuItem onClick={handleClose} key={nanoid(6)} 
-                                className="m-2 text-justify font-semibold 
+                                <MenuItem onClick={handleClose} key={nanoid(6)}
+                                className="m-2 text-justify font-semibold
                                 ">
                                   <a
                                     className="no-underline"
                                     onClick={() => {
-                                      
+
                                       leerNotifiacion(id, key);
-                                     
+
                                     }}
                                     style={{
                                       color: '#271C90',
                                       fontWeight: 'bold',
-                                      
+
                                     }}
                                     href={route('solicitudes/registros')}
                                   >
-                                  
-                                  <span style={{color: "#000"}} > 
-                                  {value.mensaje.split("").slice(0,32)} 
+
+                                  <span style={{color: "#000"}} >
+                                  {value.mensaje.split("").slice(0,32)}
                                   </span>
-                                  <span  > 
-                                  {value.mensaje.split("").slice(32,42)} 
+                                  <span  >
+                                  {value.mensaje.split("").slice(32,42)}
                                   </span>
-                                  <span style={{color: "#000"}} > 
+                                  <span style={{color: "#000"}} >
                                   {value.mensaje.split("").slice(42,value.mensaje.length)}
                                   </span>
-                                    
+
                                   <Divider/>
                                   </a>
                                 </MenuItem>
@@ -593,10 +593,10 @@ export default function AppLayoutAdmin({
                 ) : null}
 
                 <div>
-                  <div className="font-medium text-base text-gray-800">
+                  <div className="font-medium text-base text-sky-300">
                     {page.props.user.name}
                   </div>
-                  <div className="font-medium text-sm text-gray-500">
+                  <div className="font-medium text-sm text-sky-300">
                     {page.props.user.email}
                   </div>
                 </div>
@@ -629,7 +629,7 @@ export default function AppLayoutAdmin({
                 {/* <!-- Authentication --> */}
                 <form method="POST" onSubmit={logout}>
                   <JetResponsiveNavLink as="button">
-                    Log Out
+                    Cerrar Sesión
                   </JetResponsiveNavLink>
                 </form>
 

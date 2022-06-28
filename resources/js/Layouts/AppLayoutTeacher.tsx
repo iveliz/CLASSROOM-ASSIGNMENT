@@ -563,10 +563,10 @@ export default function AppLayout({
                 ) : null}
 
                 <div>
-                  <div className="font-medium text-base text-gray-800">
+                  <div className="font-medium text-base text-sky-300">
                     {page.props.user.name}
                   </div>
-                  <div className="font-medium text-sm text-gray-500">
+                  <div className="font-medium text-sm text-sky-300">
                     {page.props.user.email}
                   </div>
                 </div>
@@ -599,7 +599,7 @@ export default function AppLayout({
                 {/* <!-- Authentication --> */}
                 <form method="POST" onSubmit={logout}>
                   <JetResponsiveNavLink as="button">
-                    Log Out
+                    Cerrar Sesión
                   </JetResponsiveNavLink>
                 </form>
 

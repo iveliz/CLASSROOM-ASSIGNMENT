@@ -33,12 +33,12 @@ export default function JetDropdown({
   })();
 
   return (
-    <div className="relative">
+    <div>
       <div onClick={() => setOpen(!open)}>{renderTrigger()}</div>
 
       {/* <!-- Full Screen Dropdown Overlay --> */}
       <div
-        className="fixed inset-0 z-40"
+        className="absolute"
         style={{ display: open ? 'block' : 'none' }}
         onClick={() => setOpen(false)}
       ></div>
