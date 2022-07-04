@@ -67,4 +67,10 @@ class User extends Authenticatable
   {
     return $this->hasMany(CorreoElectronico::class);
   }
+
+  public function routeNotificationForMail($notification)
+  {
+      // Return email address only...
+      return $this->email;
+  }
 }
