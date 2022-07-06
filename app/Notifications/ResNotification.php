@@ -49,6 +49,7 @@ class ResNotification extends Notification implements ShouldBroadcast
         }
         
         return (new MailMessage)
+                    ->subject('Respuesta a su Solicitud')
                     ->greeting('Se ha respondido una de tus solicitudes de reserva de aula')
                     ->line($linea)
                     ->action('Ver Solicitud', $url);

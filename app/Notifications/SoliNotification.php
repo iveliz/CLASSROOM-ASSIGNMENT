@@ -40,14 +40,16 @@ class SoliNotification extends Notification implements ShouldBroadcast
 
     public function toMail($notifiable){
         $url = url('/solicitudes/aulas');
-
+        $tipoSoli = 'reserva de aula';
         $linea = 'Se ha enviado una nueva solicitud de reserva de aula';
         if($this->tipo == 'soli_cuenta'){
             $linea = 'Se ha enviado una nueva solicitud de registro de cuenta';
             $url = url('/solicitudes/registros');
+            $tipoSoli = 'registro de cuenta';
         }
         
         return (new MailMessage)
+                    ->subject('Solicitud de '.$tipoSoli)
                     ->greeting($linea)
                     ->line('Para responder la responder la solicitud de click al siguiente botón o enlace:')
                     ->action('Ver Solicitud', $url);
