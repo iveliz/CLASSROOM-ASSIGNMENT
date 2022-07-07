@@ -146,11 +146,12 @@ class materiaController extends Controller
       ->select(
         'materias.id_materia',
         'materias.nombre_materia',
-        'materias.id_carrera',
         'carreras.nombre_carrera',
         'carreras.facultad_carrera'
       )
-      ->groupby('materias.id_materia')
+      ->groupby('materias.id_materia','materias.nombre_materia',
+      'carreras.nombre_carrera',
+      'carreras.facultad_carrera')
       ->where('grupos.id_usuario', '=', $id_user)
       ->get();
     if (count($materias) > 0) {

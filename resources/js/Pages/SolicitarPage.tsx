@@ -443,7 +443,6 @@ export default function () {
   };
 
   const sendSoli = () => {
-    console.log(solicitud)
     axios
       .post(`${endpoint}/api/solicitudes/crear`, solicitud)
       .then(response => {

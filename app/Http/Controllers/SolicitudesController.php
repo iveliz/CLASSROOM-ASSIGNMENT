@@ -285,7 +285,7 @@ class SolicitudesController extends Controller
             $solicitud_existente=Solicitudes::select('id_solicitud')
             ->where('materia_solicitud',$nueva_solicitud->materia_solicitud)
             ->where('id_usuario',$datos_solicitud->id_usuario)
-            ->where('cantidad_estudiantes_solicitud',$nueva_solicitud->cantidad_estudiantes_solicitud)
+            //->where('cantidad_estudiantes_solicitud',$nueva_solicitud->cantidad_estudiantes_solicitud)
             ->where('motivo_reserva_solicitud',$nueva_solicitud->motivo_reserva_solicitud)
             ->where('periodos_solicitud',$nueva_solicitud->periodos_solicitud)
             ->where('fecha_requerida_solicitud',$nueva_solicitud->fecha_requerida_solicitud)
