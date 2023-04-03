@@ -2,6 +2,7 @@ import { Inertia } from '@inertiajs/inertia';
 import { InertiaLink, Head } from '@inertiajs/inertia-react';
 import classNames from 'classnames';
 import React, { PropsWithChildren, useState } from 'react';
+import ReactDOM from 'react-dom';
 import useRoute from '@/Hooks/useRoute';
 import useTypedPage from '@/Hooks/useTypedPage';
 import JetApplicationMark from '@/Jetstream/ApplicationMark';
@@ -10,49 +11,144 @@ import JetDropdown from '@/Jetstream/Dropdown';
 import JetDropdownLink from '@/Jetstream/DropdownLink';
 import JetNavLink from '@/Jetstream/NavLink';
 import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink';
-// import Notifications from 'react-notifications-menu';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClose, faCoffee } from '@fortawesome/free-solid-svg-icons';
 import { Team } from '@/types';
 import IconUser from '../Icons/userIcon';
 import bell1 from '../Icons/Check';
-
+import axios from 'axios';
+import { ListAltTwoTone, MenuSharp, Router } from '@mui/icons-material';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { Badge } from '@mui/material';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Divider from '@mui/material/Divider';
+import ListItemText from '@mui/material/ListItemText';
+import { useEffect } from 'react';
+import { usePage } from '@inertiajs/inertia-react';
+import { nanoid } from 'nanoid';
 import Echo from 'laravel-echo';
+import { faFileLines } from '@fortawesome/free-regular-svg-icons';
+import { endpoint } from '@/Const/Endpoint';
+
+library.add(fas);
 window.Pusher = require('pusher-js');
 
 declare global {
   interface Window {
-      Echo:any;
-      Pusher:any;
+    Echo: any;
+    Pusher: any;
   }
 }
 
 interface Props {
   title: string;
   renderHeader?(): JSX.Element;
-
 }
 
 export default function AppLayoutAdmin({
   title,
   renderHeader,
   children,
-
 }: PropsWithChildren<Props>) {
-
-  const DEFAULT_NOTIFICATION = {
-    image:
-      'https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png',
-    message: 'Notification one.',
-    detailPage: '/events',
-    receivedTime: '12h ago',
+  const [listaNotificaciones, SetListaNotificaciones] = useState<any[]>();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { user }: any = usePage().props;
+  const [listaMensajes, SetListaMensajes] = useState<any[]>([]);
+  const [mapMensajes, setMapMensajes] = useState<Map<any, any>>(new Map());
+  const [listaId, SetListaId] = useState<any[]>([]);
+  const [isReceived, setIsReceived] = useState<boolean>(false);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
   };
-
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const page = useTypedPage();
   const route = useRoute();
   const [showingNavigationDropdown, setShowingNavigationDropdown] =
     useState(false);
 
-  const [data, setData] = useState([DEFAULT_NOTIFICATION]);
+  const [lis, setLis] = useState<{}>();
   const [message, setMessage] = useState('');
+
+  let { id, name, email } = user;
+
+  const getNotificaciones = () => {
+    SetListaNotificaciones([]);
+    axios.get(`${endpoint}/notificaciones/${id}`).then(response => {
+      SetListaNotificaciones(response.data);
+
+    });
+  };
+
+  let numbadge = listaMensajes.length;
+
+  useEffect(() => {
+    const echo = new Echo({
+      broadcaster: 'pusher',
+      key: 'ASDASD2121',
+      wsHost: window.location.hostname,
+      wsPort: 6001,
+      forceTLS: false,
+      disableStats: true,
+    });
+
+    echo
+      .private('App.Models.User.'.concat(id))
+      .notification((notification: any) => {
+        if (!mapMensajes.has(notification.id)) {
+          //getNotificaciones();
+          //listaMensajes.push(notification.message);
+
+          const aux = {
+            mensaje: notification.message,
+            tipo: notification.tipo,
+          };
+
+          setMapMensajes(mapMensajes.set(notification.id, aux));
+          setIsReceived(true);
+          //mapMensajes.set(notification.id,notification.message);
+
+        }
+      });
+  }, [listaNotificaciones]);
+
+  const lsta = {
+    detailPage: '/events',
+    receivedTime: '12h ago',
+  };
+
+  function onlyUnique(value: any, index: any, self: any) {
+    return self.indexOf(value) === index;
+  }
+
+  const getMensajeNoti = () => {
+    if (listaNotificaciones != null) {
+      for (let noti of listaNotificaciones) {
+
+        let idNotiMap = noti.id;
+        [noti.data].map((noti: any) => {
+          //listaMensajes.push(noti.mensaje);
+          const aux = { mensaje: noti.mensaje, tipo: noti.tipo };
+          setMapMensajes(mapMensajes.set(idNotiMap, aux));
+        });
+      }
+
+
+    }
+  };
+
+  useEffect(() => {
+    getMensajeNoti();
+  }, [listaNotificaciones]);
+
+  useEffect(() => {
+    getNotificaciones();
+  }, []);
 
   function switchToTeam(e: React.FormEvent, team: Team) {
     e.preventDefault();
@@ -71,21 +167,12 @@ export default function AppLayoutAdmin({
     e.preventDefault();
     Inertia.post(route('logout'));
   }
-  {
-    /*imagen aca */
-  }
 
-  window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: 'ASDASD2121',
-    wsHost: window.location.hostname,
-    wsPort: 6001,
-    forceTLS: false,
-    disableStats: true,
-  });
-  window.Echo.private('App.Models.User.16').notification((notification:any) => {
-    console.log(notification)
-  } )
+  function leerNotifiacion(idUsuario: any, idNoti: any) {
+    axios
+      .post(`${endpoint}/leerNotificacion`, { id: idUsuario, idNoti: idNoti })
+      .then(response => {});
+  }
 
   return (
     <div>
@@ -138,20 +225,123 @@ export default function AppLayoutAdmin({
               <div className="hidden sm:flex sm:items-center sm:ml-6">
                 <div className="ml-3 relative">
                   <div className="mr-4 mt-2 ">
-                    {/* <Notifications
-                      id="noti2"
-                      data={data}
-                      header={{
-                        title: 'Notifications',
-                        option: {
-                          text: 'View All',
-                          onClick: () => console.log('Clicked'),
-                        },
+                    <Button
+                      id="basic-button"
+                      aria-controls={open ? 'basic-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open ? 'true' : undefined}
+                      onClick={handleClick}
+                    >
+                      {isReceived ? (
+                        <div key={nanoid(5)} onClick={()=>setIsReceived(false)}>
+                          <Badge color="error" variant="dot">
+                            <FontAwesomeIcon
+                              icon={['fas', 'bell']}
+                              inverse
+                              className="text-2xl mb-2 "
+                            />
+                          </Badge>
+                        </div>
+                      ) : (
+                        <div key={nanoid(5)}>
+                          <Badge variant="dot">
+                            <FontAwesomeIcon
+                              icon={['fas', 'bell']}
+                              inverse
+                              className="text-2xl mb-2 "
+                            />
+                          </Badge>
+                        </div>
+                      )}
+                    </Button>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      open={open}
+                      onClose={handleClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button',
                       }}
-                      icon={
-                        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/OOjs_UI_icon_bell-invert.svg/1024px-OOjs_UI_icon_bell-invert.svg.png'
-                      }
-                    /> */}
+                    >
+                      {mapMensajes.size != 0 ? (
+                        Array.from(mapMensajes).map(([key, value]) => {
+                          return (
+                            <div className="text-neutral-900" key={nanoid(5)}>
+                              {value.tipo === 'soli_aula' ? (
+                                <MenuItem onClick={handleClose} key={nanoid(6)}
+                                className="m-2 text-justify"
+                                >
+                                  <a
+                                    className="no-underline "
+                                    onClick={() => {
+
+                                      leerNotifiacion(id, key);
+
+                                    }}
+                                    style={{
+                                      color: '#198123',
+                                      fontWeight: 'bold',
+
+                                    }}
+                                    href={route('solicitudes/aulas')}
+                                  >
+                                   <span style={{color: "#000"}} >
+                                  {value.mensaje.split("").slice(0,32)}
+                                  </span>
+                                  <span  >
+                                  {value.mensaje.split("").slice(32,38)}
+                                  </span>
+                                  <span style={{color: "#000"}} >
+                                  {value.mensaje.split("").slice(38,value.mensaje.length)}
+                                  </span>
+                                    <Divider />
+                                  </a>
+                                </MenuItem>
+                              ) : (
+                                <MenuItem onClick={handleClose} key={nanoid(6)}
+                                className="m-2 text-justify font-semibold
+                                ">
+                                  <a
+                                    className="no-underline"
+                                    onClick={() => {
+
+                                      leerNotifiacion(id, key);
+
+                                    }}
+                                    style={{
+                                      color: '#271C90',
+                                      fontWeight: 'bold',
+
+                                    }}
+                                    href={route('solicitudes/registros')}
+                                  >
+
+                                  <span style={{color: "#000"}} >
+                                  {value.mensaje.split("").slice(0,32)}
+                                  </span>
+                                  <span  >
+                                  {value.mensaje.split("").slice(32,42)}
+                                  </span>
+                                  <span style={{color: "#000"}} >
+                                  {value.mensaje.split("").slice(42,value.mensaje.length)}
+                                  </span>
+
+                                  <Divider/>
+                                  </a>
+                                </MenuItem>
+                              )}
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="text-neutral-900">
+                          <MenuItem onClick={handleClose} key={nanoid(6)}>
+                            <ListItemText primary="No hay notificaciones" />
+                            <Divider />
+                          </MenuItem>
+                        </div>
+                      )}
+                    </Menu>
                   </div>
                   {/* <!-- Teams Dropdown --> */}
                   {page.props.jetstream.hasTeamFeatures ? (
@@ -403,10 +593,10 @@ export default function AppLayoutAdmin({
                 ) : null}
 
                 <div>
-                  <div className="font-medium text-base text-gray-800">
+                  <div className="font-medium text-base text-sky-300">
                     {page.props.user.name}
                   </div>
-                  <div className="font-medium text-sm text-gray-500">
+                  <div className="font-medium text-sm text-sky-300">
                     {page.props.user.email}
                   </div>
                 </div>
@@ -439,7 +629,7 @@ export default function AppLayoutAdmin({
                 {/* <!-- Authentication --> */}
                 <form method="POST" onSubmit={logout}>
                   <JetResponsiveNavLink as="button">
-                    Log Out
+                    Cerrar Sesión
                   </JetResponsiveNavLink>
                 </form>
 

@@ -5,7 +5,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { nanoid } from 'nanoid';
 import { usePage } from '@inertiajs/inertia-react';
-const endpoint = 'http://127.0.0.1:8000';
+import { endpoint } from '@/Const/Endpoint';
 import {
   Button,
   Checkbox,
@@ -29,13 +29,12 @@ interface SolicitudRegistro {
     user_name: String;
     email_principal: String;
   };
-  actualizar:any;
-  setProgressActivo:any;
-  correoDocente:String;
+  actualizar: any;
+  setProgressActivo: any;
+  correoDocente: String;
   motivo: String;
   hora_fin_solicitud: string;
-  created_at:any;
-
+  created_at: any;
 }
 
 export default function ({
@@ -51,7 +50,6 @@ export default function ({
   correoDocente,
   motivo,
   created_at,
-
 }: SolicitudRegistro) {
   const style = {
     position: 'absolute' as 'absolute',
@@ -159,7 +157,6 @@ export default function ({
   const responder = () => {
     handleOpenBack();
     axios.post(`${endpoint}/aulasDisponibles`).then(response => {
-      console.log(response.data);
       handleCloseBack();
     });
   };
@@ -168,7 +165,6 @@ export default function ({
   let { id, name, email } = user;
 
   const createReserva = () => {
-
     let solicitud_ctn;
     let solicitud_ctn2;
     if (radioRechazar) {
@@ -176,19 +172,17 @@ export default function ({
         id_sct_cnt: id_sct_cnt,
         id: user.id,
         correoDocente: correo_principal_sct_cnt,
-        motivo:motivos,
-
+        motivo: motivos,
       };
       axios
         .post(`${endpoint}/rechazarSolicitudCuenta`, solicitud_ctn)
         .then(response => {
           actualizar(id_sct_cnt);
           handleCloseBack();
-          console.log(response.data);
-          console.log('rechazada');
+
           setProgressActivo(false);
         });
-    setProgressActivo(true);
+      setProgressActivo(true);
     } else {
       solicitud_ctn2 = {
         id_sct_cnt: id_sct_cnt,
@@ -199,21 +193,19 @@ export default function ({
         id_role: 2,
         id_admin: user.id,
       };
-      console.log(solicitud_ctn2);
+
       axios
         .post(`${endpoint}/registrarUsuario`, solicitud_ctn2)
         .then(response => {
-          console.log(response);
           actualizar(id_sct_cnt);
           handleCloseBack();
           handleOpen();
           setProgressActivo(false);
         });
-        setProgressActivo(true);
+      setProgressActivo(true);
     }
     closeModalConfir();
     closeModal();
-
   };
 
   function ChildModalConfirmation() {
@@ -249,7 +241,6 @@ export default function ({
                 >
                   Aceptar
                 </button>
-
               </div>
             </form>
           </Box>
@@ -261,9 +252,7 @@ export default function ({
     return (
       <React.Fragment>
         <div className="d-flex justify-content-between">
-          <p className="rechazada mt-2">
-            Ya hay un usuario con Nombre similar
-          </p>
+          <p className="rechazada mt-2">Ya hay un usuario con Nombre similar</p>
           <button
             type="button"
             className="btn verUsuarioButton text-white  mr-8 "
@@ -314,8 +303,7 @@ export default function ({
       </React.Fragment>
     );
   }
-  console.log(usuarioSimilar);
-  console.log(user.id);
+
   return (
     <div>
       <div className="card mt-3 mr-8">
@@ -363,15 +351,12 @@ export default function ({
                           Fecha de solicitud: {fecha}
                         </p>
                         <p className="font-bold">
-                          Fecha de Creación:{' '}
-                          {created_at.substring(0, 10)}
+                          Fecha de Creación: {created_at.substring(0, 10)}
                         </p>
 
-                       <p className="font-bold">
-                          Hora de Creación:{' '}
-                          {created_at.substring(11, 16)}
+                        <p className="font-bold">
+                          Hora de Creación: {created_at.substring(11, 16)}
                         </p>
-
                       </div>
                     </div>
                     <div className=" fondoModal2 ">

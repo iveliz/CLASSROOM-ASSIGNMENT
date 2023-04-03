@@ -4,30 +4,29 @@ import AppLayout from '@/Layouts/AppLayoutTeacher';
 import Sidebar from '@/Jetstream/Sidebar';
 import axios from 'axios';
 import Cardsolicitud from '@/Jetstream/CardsolicitudAceptadasV';
-import { useEffect } from "react";
-import { nanoid } from 'nanoid'
+import { useEffect } from 'react';
+import { nanoid } from 'nanoid';
 import { usePage } from '@inertiajs/inertia-react';
-const endpoint = 'http://127.0.0.1:8000'
+import { endpoint } from '@/Const/Endpoint';
 export default function (props: { solicitudes: any }) {
   const [listaSoliState, SetlistaSoli] = useState([]);
   const { user }: any = usePage().props;
   let { id, name, email } = user;
 
   const getSolicitudes = () => {
-    setMensaje(true)
+    setMensaje(true);
     axios
       .get(`${endpoint}/api/solicitudes/aceptadas/vencidas/${id}`)
       .then(response => {
-        console.log(response.data);
         SetlistaSoli(response.data);
-        setMensaje(false)
+        setMensaje(false);
       });
   };
-  useEffect(()=>{
-    getSolicitudes()
-   },[])
-  const [progressActivo,setProgressActivo] = useState(true);
-  const [mensaje,setMensaje] = useState(true);
+  useEffect(() => {
+    getSolicitudes();
+  }, []);
+  const [progressActivo, setProgressActivo] = useState(true);
+  const [mensaje, setMensaje] = useState(true);
   return (
     <AppLayout title="Informacion">
       <div className="grid grid-cols-6 gap-4">
@@ -37,19 +36,29 @@ export default function (props: { solicitudes: any }) {
         <div className="col-span-5">
           <div className=" mt-6 ">
             <div className="d-flex flex-row ">
-            <h1 className="font-bold p-2 mb-2">Solicitudes Aceptadas Vencidas</h1>
+              <h1 className="font-bold p-2 mb-2">
+                Solicitudes Aceptadas Vencidas
+              </h1>
             </div>
-            <div className='text-center mr-8'>
-              {mensaje?
-              <h5 className='mt-10'>Espere...</h5>:listaSoliState.length===0?
-              <h5 className='mt-10'>Aun no hay solicitudes para mostrar..gri..gri</h5>:''}
+            <div className="text-center mr-8">
+              {mensaje ? (
+                <h5 className="mt-10">Espere...</h5>
+              ) : listaSoliState.length === 0 ? (
+                <h5 className="mt-10">
+                  Aún no hay solicitudes para mostrar
+                </h5>
+              ) : (
+                ''
+              )}
             </div>
-
           </div>
-          {listaSoliState.map((card:any) => (
-            <Cardsolicitud {...card} setProgressActivo={setProgressActivo} key={nanoid(4)} />
+          {listaSoliState.map((card: any) => (
+            <Cardsolicitud
+              {...card}
+              setProgressActivo={setProgressActivo}
+              key={nanoid(4)}
+            />
           ))}
-          {console.log(listaSoliState)}
         </div>
       </div>
     </AppLayout>

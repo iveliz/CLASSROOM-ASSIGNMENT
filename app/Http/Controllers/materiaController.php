@@ -69,7 +69,7 @@ class materiaController extends Controller
           )
             ->select('materias.id_materia', 'nombre_materia')
             ->where('grupos.id_usuario', '=', $ids[$x])
-            ->groupBY('materias.id_materia')
+            ->groupBY('materias.id_materia','nombre_materia')
             ->get()
         );
         $bb = false;
@@ -83,7 +83,7 @@ class materiaController extends Controller
           )
             ->select('materias.id_materia', 'nombre_materia')
             ->where('grupos.id_usuario', '=', $ids[$x])
-            ->groupBY('materias.id_materia')
+            ->groupBY('materias.id_materia','nombre_materia')
             ->get()
         );
         $mats1 = $mats1->intersect($mats2);
@@ -146,11 +146,12 @@ class materiaController extends Controller
       ->select(
         'materias.id_materia',
         'materias.nombre_materia',
-        'materias.id_carrera',
         'carreras.nombre_carrera',
         'carreras.facultad_carrera'
       )
-      ->groupby('materias.id_materia')
+      ->groupby('materias.id_materia','materias.nombre_materia',
+      'carreras.nombre_carrera',
+      'carreras.facultad_carrera')
       ->where('grupos.id_usuario', '=', $id_user)
       ->get();
     if (count($materias) > 0) {

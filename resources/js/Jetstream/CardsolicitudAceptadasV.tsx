@@ -3,7 +3,7 @@ import image from '../../css/images/userImage.png';
 import Modal from 'react-modal';
 import { useState } from 'react';
 import axios from 'axios';
-const endpoint = 'http://127.0.0.1:8000';
+import { endpoint } from '@/Const/Endpoint';
 interface Solicitud {
   fecha_inicio_reg_sct: String;
   id_solicitud: number;
@@ -17,7 +17,7 @@ interface Solicitud {
   aulas: [];
   created_at: string;
   hora_fin_solicitud: string;
-  hora_requerida_solicitud:any;
+  hora_requerida_solicitud: any;
 }
 
 export default function ({
@@ -33,18 +33,17 @@ export default function ({
   setProgressActivo,
   created_at,
   hora_fin_solicitud,
-  hora_requerida_solicitud
+  hora_requerida_solicitud,
 }: Solicitud) {
   let subtitle: any;
   const [modalIsOpen, setIsOpen] = useState(false);
   const [stateAula, SetAula] = useState(aulas);
 
-  console.log(estado_solicitud);
   let cadenaEstado = '';
   let aula = '';
 
   let subtitulo = 'Aula(s) Reservada';
-  let mensaje = aulas.toString();
+  let mensaje = aulas.join(', ');
 
   const customStyles = {
     content: {
@@ -107,10 +106,10 @@ export default function ({
               <div className=" space-x-4 mt-4 ml-12 text-left ">
                 <div className="flex flex-col">
                   <p className="font-bold mr-4">
-                    Nombre(s) de Docente(s): {docentes.toString()}
+                    Nombre(s) de Docente(s): {docentes.join(', ')}
                   </p>
                   <p className="font-bold ">Materia: {materia_solicitud} </p>
-                  <p className="font-bold ">Grupo(s): {grupos.toString()} </p>
+                  <p className="font-bold ">Grupo(s): {grupos.join(', ')} </p>
                   <p className="font-bold ">
                     Cantidad de estudiantes: {cantidad_estudiantes_solicitud}{' '}
                   </p>

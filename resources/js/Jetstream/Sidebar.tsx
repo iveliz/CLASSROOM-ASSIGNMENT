@@ -10,14 +10,14 @@ import { Inertia } from '@inertiajs/inertia';
 export default function () {
   let ruta = window.location.pathname;
   ruta = ruta.replace('/solicitudes/', '');
-  console.log(ruta);
+
   return (
     <>
       <Navigation
         // you can use your own router's api to get pathname
         activeItemId={ruta}
         onSelect={({ itemId }) => {
-          if (itemId != ruta &&itemId!="") {
+          if (itemId != ruta && itemId != '') {
             Inertia.visit(itemId);
           }
         }}
@@ -35,14 +35,14 @@ export default function () {
             elemBefore: () => <Check></Check>,
             subNav: [
               {
-               title:"Aceptadas Vigentes",
-               itemId:"aceptadas",
-               elemBefore: () => <p className='text-white'>o</p>,
+                title: 'Aceptadas Vigentes',
+                itemId: 'aceptadas',
+                elemBefore: () => <p className="text-white">o</p>,
               },
               {
                 title: 'Aceptadas Vencidas',
                 itemId: 'aceptadas-vencidas',
-                 elemBefore: () => <p className='text-white'>o</p>,
+                elemBefore: () => <p className="text-white">o</p>,
                 // Requires v1.9.1+ (https://github.com/abhijithvijayan/react-minimal-side-navigation/issues/13)
               },
             ],

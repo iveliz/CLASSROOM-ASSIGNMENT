@@ -36,7 +36,23 @@ class ResNotification extends Notification implements ShouldBroadcast
      */
     public function via($notifiable)
     {
-        return ['broadcast','database'];
+        return ['broadcast','database','mail'];
+    }
+
+    public function toMail($notifiable){
+        $url = url('/solicitudes/rechazadas');
+
+        $linea = 'Su solicitud de reserva de aula ha sido rechazada';
+        if($this->tipo == 'res_aceptada'){
+            $linea = 'Su solicitud de reserva de aula ha sido aceptada';
+            $url = url('/solicitudes/aceptadas');
+        }
+        
+        return (new MailMessage)
+                    ->subject('Respuesta a su Solicitud')
+                    ->greeting('Se ha respondido una de tus solicitudes de reserva de aula')
+                    ->line($linea)
+                    ->action('Ver Solicitud', $url);
     }
     
     public function toArray($notifiable)
@@ -44,6 +60,7 @@ class ResNotification extends Notification implements ShouldBroadcast
         return [
             'mensaje' => $this->message,
             'id_solicitud' => $this->id_soli,
+            'tipo' => $this->tipo,
         ];
     }
 
@@ -51,6 +68,7 @@ class ResNotification extends Notification implements ShouldBroadcast
         return new BroadcastMessage([
             'message' => "$this->message",
             'id_solicitud' => $this->id_soli,
+            'tipo' => $this->tipo,
         ]);
     }
 }

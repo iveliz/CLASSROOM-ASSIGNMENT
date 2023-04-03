@@ -22,7 +22,7 @@ import { Box, IconButton } from '@mui/material';
 import TabPanel from '@/Jetstream/TabPanel';
 import JetButton from '@/Jetstream/Button';
 import classNames from 'classnames';
-const endpoint = 'http://127.0.0.1:8000';
+import { endpoint } from '@/Const/Endpoint';
 
 export default function Materias(this: any) {
   const { user }: any = usePage().props;
@@ -94,6 +94,9 @@ export default function Materias(this: any) {
 
   function closeModal2() {
     setIsOpen2(false);
+    clearForm();
+    SetStateMateria(true);
+    SetStateGroups(true);
   }
 
   const handleOpenBack = () => {
@@ -148,7 +151,6 @@ export default function Materias(this: any) {
     SetStateButtonAdd(true);
     SetStateListaMaterias([]);
     axios.post(`${endpoint}/materiasDocente`, { id_usuario }).then(response => {
-      console.log(response.data);
       if (response.data != 0) {
         let aux = [];
         for (let {
@@ -183,6 +185,8 @@ export default function Materias(this: any) {
 
   const getGrupos = (id_materia: number) => {
     SetStateGroups(true);
+    SetStateMateria(true);
+    SetStateCarrera(true);
     SetStateChargeGroups(true);
     axios.post(`${endpoint}/gruposMateria`, { id_materia }).then(response => {
       let aux = [];
@@ -199,6 +203,7 @@ export default function Materias(this: any) {
       }
       SetStateChargeGroups(false);
       SetStateCarrera(false);
+      SetStateMateria(false);
     });
   };
 
@@ -247,20 +252,23 @@ export default function Materias(this: any) {
 
   const handleChangeMateria = () => {
     SetStateMateria(true);
-
     SetStateCarrera(true);
   };
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log(form.data.grupos);
+
     if (NotCompleteForm) {
       alert('Por favor, rellene todas las casillas');
     } else {
-      alert('ta bien shavalardp');
-      //   crearMateria();
+      crearMateria();
+      clearForm();
     }
   }
+
+  const clearForm = () => {
+    form.reset('carrera', 'materia', 'grupos');
+  };
 
   const crearMateria = () => {
     handleOpenBack();
@@ -281,6 +289,8 @@ export default function Materias(this: any) {
     axios.post(`${endpoint}/agregarMateria`, toCreate).then(response => {
       if (response.data == 2) {
         alert('Esta materia ha sido asignada recientemente , intente de nuevo');
+        closeModal2();
+        clearForm();
       } else if (response.data == 0) {
         alert('Ha ocurrido un error, por favor recargue la página');
       } else {
@@ -306,12 +316,11 @@ export default function Materias(this: any) {
         id_grupos: toDelete.id_grupos,
         id_admin: id,
       };
-      console.log(deleting);
+
       axios.post(`${endpoint}/quitarMateria`, deleting).then(response => {
         if (response.data == 0) {
           alert('Ha ocurrido un error, por favor recargue la página');
         } else {
-          console.log(response);
           handleCloseBack();
           SetStateListaMaterias(
             listaMateriasDocente.filter(
@@ -409,7 +418,7 @@ export default function Materias(this: any) {
                 <h4 className="text-center text-slate-400 mt-4">
                   {form.data.name.label == ''
                     ? 'Seleccione Docente...'
-                    : Message != ''
+                    : Message != '' && !stateButtonAdd
                     ? Message
                     : 'Cargando...'}
                 </h4>
@@ -552,9 +561,10 @@ export default function Materias(this: any) {
                 id="selectDocente"
                 options={listDocentes}
                 value={form.data.name}
-                onChange={(e: { label: string; value: number }) =>
-                  form.setData('name', e)
-                }
+                onChange={(e: { label: string; value: number }) => {
+                  form.setData('name', e);
+                  getMateriasDocente(e.value);
+                }}
                 isClearable={false}
                 isLoading={stateDocente}
                 isDisabled={stateDocente}
@@ -571,7 +581,11 @@ export default function Materias(this: any) {
                 {listaMateriasDocente == null ||
                 listaMateriasDocente.length == 0 ? (
                   <h4 className="text-center text-slate-400 mt-4">
-                    Seleccione un Docente...
+                    {form.data.name.label == ''
+                      ? 'Seleccione Docente...'
+                      : Message != '' && !stateButtonAdd
+                      ? Message
+                      : 'Cargando...'}
                   </h4>
                 ) : (
                   <List
@@ -649,7 +663,7 @@ export default function Materias(this: any) {
                   </button>
                 </div>
                 <div>
-                <button
+                  <button
                     className="btn aceptadaButton text-white text-right ml-4"
                     onClick={confirmateDelete}
                     type="button"

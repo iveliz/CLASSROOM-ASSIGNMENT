@@ -10,15 +10,30 @@ import JetDropdown from '@/Jetstream/Dropdown';
 import JetDropdownLink from '@/Jetstream/DropdownLink';
 import JetNavLink from '@/Jetstream/NavLink';
 import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { usePage } from '@inertiajs/inertia-react';
 import { Team } from '@/types';
-
+import axios from 'axios';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { Badge } from '@mui/material';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Divider from '@mui/material/Divider';
+import ListItemText from '@mui/material/ListItemText';
+import { useEffect } from 'react';
+import { nanoid } from 'nanoid';
+import { endpoint } from '@/Const/Endpoint';
+library.add(fas);
 import Echo from 'laravel-echo';
+import { render } from '@headlessui/react/dist/utils/render';
 window.Pusher = require('pusher-js');
 
 declare global {
   interface Window {
-      Echo:any;
-      Pusher:any;
+    Echo: any;
+    Pusher: any;
   }
 }
 
@@ -32,11 +47,91 @@ export default function AppLayout({
   renderHeader,
   children,
 }: PropsWithChildren<Props>) {
+  const [listaNotificaciones, SetListaNotificaciones] = useState<any[]>();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [listaMensajes, SetListaMensajes] = useState<any[]>([]);
+  const [mapMensajes, setMapMensajes] = useState<Map<any, any>>(new Map());
+  const [isReceived, setIsReceived] = useState<boolean>(false);
+  const [listaId, SetListaId] = useState<any[]>([]);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const page = useTypedPage();
   const route = useRoute();
   const [showingNavigationDropdown, setShowingNavigationDropdown] =
     useState(false);
 
+  const [lis, setLis] = useState<{}>();
+  const [message, setMessage] = useState('');
+
+  const getNotificaciones = async () => {
+    SetListaNotificaciones([]);
+    await axios.get(`${endpoint}/notificaciones/${id}`).then(response => {
+      SetListaNotificaciones(response.data);
+
+    });
+  };
+
+  useEffect(() => {
+    const echo = new Echo({
+      broadcaster: 'pusher',
+      key: 'ASDASD2121',
+      wsHost: window.location.hostname,
+      wsPort: 6001,
+      forceTLS: false,
+      disableStats: true,
+    });
+
+    echo
+      .private('App.Models.User.'.concat(id))
+      .notification((notification: any) => {
+        if (!mapMensajes.has(notification.id)) {
+          //getNotificaciones();
+          //listaMensajes.push(notification.message);
+
+          const aux = {
+            mensaje: notification.message,
+            tipo: notification.tipo,
+          };
+
+          setMapMensajes(mapMensajes.set(notification.id, aux));
+          setIsReceived(true);
+          //mapMensajes.set(notification.id,notification.message);
+
+        }
+      });
+  }, [listaNotificaciones]);
+
+  const getMensajeNoti = () => {
+    if (listaNotificaciones != null) {
+      for (let noti of listaNotificaciones) {
+
+        let idNotiMap = noti.id;
+        [noti.data].map((noti: any) => {
+          //listaMensajes.push(noti.mensaje);
+          const aux = { mensaje: noti.mensaje, tipo: noti.tipo };
+          setMapMensajes(mapMensajes.set(idNotiMap, aux));
+        });
+      }
+
+
+    }
+  };
+
+  useEffect(() => {
+    getMensajeNoti();
+  }, [listaNotificaciones]);
+
+  useEffect(() => {
+    getNotificaciones();
+  }, []);
+
+
+  const { user }: any = usePage().props;
   function switchToTeam(e: React.FormEvent, team: Team) {
     e.preventDefault();
     Inertia.put(
@@ -49,24 +144,17 @@ export default function AppLayout({
       },
     );
   }
-
+  let { id, name, email } = user;
   function logout(e: React.FormEvent) {
     e.preventDefault();
     Inertia.post(route('logout'));
   }
 
-  window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: 'ASDASD2121',
-    wsHost: window.location.hostname,
-    wsPort: 6001,
-    forceTLS: false,
-    disableStats: true,
-  });
-  window.Echo.private('App.Models.User.1').notification((notification:any) => {
-    console.log(notification)
-  } )
-
+  function leerNotifiacion(idUsuario: any, idNoti: any) {
+    axios
+      .post(`${endpoint}/leerNotificacion`, { id: idUsuario, idNoti: idNoti })
+      .then(response => {});
+  }
   return (
     <div>
       <Head title={title} />
@@ -81,9 +169,7 @@ export default function AppLayout({
               <div className="flex">
                 {/* <!-- Logo --> */}
                 <div className="flex-shrink-0 flex items-center">
-                  
-                    <JetApplicationMark className="block h-9 w-auto" />
-               
+                  <JetApplicationMark className="block h-9 w-auto" />
                 </div>
 
                 {/* <!-- Navigation Links --> */}
@@ -108,14 +194,128 @@ export default function AppLayout({
                   >
                     Solicitudes
                   </JetNavLink>
-
-
                 </div>
-
               </div>
 
               <div className="hidden sm:flex sm:items-center sm:ml-6">
                 <div className="ml-3 relative">
+                  <div className="mr-4 mt-2 ">
+                    <Button
+                      id="basic-button"
+                      aria-controls={open ? 'basic-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open ? 'true' : undefined}
+                      onClick={handleClick}
+                    >
+                      {isReceived ? (
+                        <div
+                          key={nanoid(5)}
+                          onClick={() => setIsReceived(false)}
+                        >
+                          <Badge color="error" variant="dot">
+                            <FontAwesomeIcon
+                              icon={['fas', 'bell']}
+                              inverse
+                              className="text-2xl mb-2 "
+                            />
+                          </Badge>
+                        </div>
+                      ) : (
+                        <div key={nanoid(5)}>
+                          <Badge variant="dot">
+                            <FontAwesomeIcon
+                              icon={['fas', 'bell']}
+                              inverse
+                              className="text-2xl mb-2 "
+                            />
+                          </Badge>
+                        </div>
+                      )}
+                    </Button>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      open={open}
+                      onClose={handleClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                      }}
+                    >
+                      {mapMensajes.size != 0 ? (
+                        Array.from(mapMensajes).map(([key, value]) => {
+                          return (
+                            <div className="text-neutral-900" key={nanoid(5)}>
+                              {value.tipo === 'res_aceptada' ? (
+                                <MenuItem
+                                  onClick={handleClose}
+                                  key={nanoid(6)}
+                                  className="m-2 text-justify"
+                                >
+                                  <a
+                                    className="no-underline "
+                                    onClick={() => {
+
+                                      leerNotifiacion(id, key);
+
+                                    }}
+                                    style={{
+                                      color: '#1C9027',
+                                      fontWeight: 'bold',
+                                    }}
+                                    href={route('solicitudes/aceptadas')}
+                                  >
+                                  <span style={{color: "#000"}} >
+                                  {value.mensaje.split("").slice(0,56)}
+                                  </span>
+                                  <span  >
+                                  {value.mensaje.split("").slice(56,value.mensaje.length)}
+                                  </span>
+                                    <Divider />
+                                  </a>
+                                </MenuItem>
+                              ) : (
+                                <MenuItem
+                                  onClick={handleClose}
+                                  key={nanoid(6)}
+                                  className="m-2 text-justify font-semibold
+                                "
+                                >
+                                  <a
+                                    className="no-underline"
+                                    onClick={() => {
+
+                                      leerNotifiacion(id, key);
+
+                                    }}
+                                    style={{
+                                      color: '#C7261B',
+                                      fontWeight: 'bold',
+                                    }}
+                                    href={route('solicitudes/rechazadas')}
+                                  >
+                                   <span style={{color: "#000"}} >
+                                  {value.mensaje.split("").slice(0,56)}
+                                  </span>
+                                  <span  >
+                                  {value.mensaje.split("").slice(56,value.mensaje.length)}
+                                  </span>
+                                    <Divider />
+                                  </a>
+                                </MenuItem>
+                              )}
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="text-neutral-900">
+                          <MenuItem onClick={handleClose} key={nanoid(6)}>
+                            <ListItemText primary="No hay notificaciones" />
+                            <Divider />
+                          </MenuItem>
+                        </div>
+                      )}
+                    </Menu>
+                  </div>
                   {/* <!-- Teams Dropdown --> */}
                   {page.props.jetstream.hasTeamFeatures ? (
                     <JetDropdown
@@ -252,7 +452,9 @@ export default function AppLayout({
                       Administrar Cuenta
                     </div>
 
-                    <JetDropdownLink href={route('cambiar_contrasenia_docente')}>
+                    <JetDropdownLink
+                      href={route('cambiar_contrasenia_docente')}
+                    >
                       Cambiar Contraseña
                     </JetDropdownLink>
 
@@ -267,10 +469,12 @@ export default function AppLayout({
                     ) : null}
 
                     <div className="border-t border-gray-100"></div>
-                   
+
                     {/* <!-- Authentication --> */}
                     <form onSubmit={logout}>
-                      <JetDropdownLink as="button">Cerrar Sesión</JetDropdownLink>
+                      <JetDropdownLink as="button">
+                        Cerrar Sesión
+                      </JetDropdownLink>
                     </form>
                   </JetDropdown>
                 </div>
@@ -359,10 +563,10 @@ export default function AppLayout({
                 ) : null}
 
                 <div>
-                  <div className="font-medium text-base text-gray-800">
+                  <div className="font-medium text-base text-sky-300">
                     {page.props.user.name}
                   </div>
-                  <div className="font-medium text-sm text-gray-500">
+                  <div className="font-medium text-sm text-sky-300">
                     {page.props.user.email}
                   </div>
                 </div>
@@ -395,7 +599,7 @@ export default function AppLayout({
                 {/* <!-- Authentication --> */}
                 <form method="POST" onSubmit={logout}>
                   <JetResponsiveNavLink as="button">
-                    Log Out
+                    Cerrar Sesión
                   </JetResponsiveNavLink>
                 </form>
 

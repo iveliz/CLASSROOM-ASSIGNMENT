@@ -49,7 +49,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 
 export default function Dashboard() {
-  
+
 
   const [expanded, setExpanded] = React.useState<string | false>('');
 
@@ -65,19 +65,19 @@ export default function Dashboard() {
       <div className="py-12">
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                <h1 className="text-center "><b>Información</b></h1>
-            </div>                         
-            <div className="preguntas-frecuentes-contenedor serif "> 
-               <div className=" preguntas min-h-max"> 
+            </div>
+            <div className="preguntas-frecuentes-contenedor serif relative ">
+               <div className=" preguntas min-h-max">
                  <h5 className="text-left my-8">En esta sección encontrará información para usar el sistema apropiadamente. </h5>
                </div>
-               
+
                     <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
                       <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
                         <h5>¿Qué es la sección de solicitudes de registro?</h5>
                       </AccordionSummary>
                       <AccordionDetails>
                         <h6>
-                          La sección de <b>solicitudes de registro</b> es un espacio de trabajo donde nos llegarán las solicitudes de registro de los docentes 
+                          La sección de <b>solicitudes de registro</b> es un espacio de trabajo donde nos llegarán las solicitudes de registro de los docentes
                           para tener usuario, en cual verificaremos los datos de los docentes en dicha solicitud.
                         </h6>
                       </AccordionDetails>
@@ -89,22 +89,22 @@ export default function Dashboard() {
                       </AccordionSummary>
                       <AccordionDetails>
                         <h6>
-                          La sección de <b>solicitudes de aula</b> es un espacio de trabajo donde nos llegarán las solicitudes de aula requeridos por los docentes 
+                          La sección de <b>solicitudes de aula</b> es un espacio de trabajo donde nos llegarán las solicitudes de aula requeridos por los docentes
                           , en cual verificaremos los datos de la solitud.
                         </h6>
                       </AccordionDetails>
                     </Accordion>
-                    
-            </div>  
-            
-            <div className="  absolute inset-x-0 bottom-0 h-16 my-8">
-              <h5 className="text-center my-8">¿Tienes alguna duda? Contactanos! 
-              <a className= "text-center ml-2" href="mailto:neolancersrl@gmail.com ?
-              subject=Quiero más información con respecto a los servicios que ofrecen.&body=Hola equipo Neolancer! te contacto desde su website, quisiera más información de sus servicios."> neolancersrl@gmail.com </a></h5> 
+
             </div>
-            
+
+            <div className="relative inset-x-0 bottom-0 h-16 my-8">
+              <h5 className="text-center my-8">¿Tienes alguna duda? Contactanos!
+              <a className= "text-center ml-2" href="mailto:neolancersrl@gmail.com ?
+              subject=Quiero más información con respecto a los servicios que ofrecen.&body=Hola equipo Neolancer! te contacto desde su website, quisiera más información de sus servicios."> neolancersrl@gmail.com </a></h5>
+            </div>
+
      </div>
-     
-  </AppLayout>    
+
+  </AppLayout>
   );
 }

@@ -12,7 +12,7 @@ import { registerLocale } from 'react-datepicker';
 import Modal from 'react-modal';
 import axios from 'axios';
 import Select, { components } from 'react-select';
-
+import { endpoint } from '@/Const/Endpoint';
 import { usePage } from '@inertiajs/inertia-react';
 import { add, min } from 'lodash';
 import { Inertia } from '@inertiajs/inertia';
@@ -44,7 +44,7 @@ let horarios = [
 let horariosMostrar: any[] = [];
 
 let hoy = new Date();
-console.log(hoy);
+
 let ultimoDia = new Date();
 ultimoDia.setMonth(11);
 ultimoDia.setDate(31);
@@ -90,7 +90,7 @@ let horariosFinales = [
   '21:45',
 ];
 
-const endpoint = 'http://127.0.0.1:8000';
+
 let listaDocentesMostrar: { label: any; value: any; id: any }[] = [];
 let listaMateriasMostrar: { label: any; value: any }[] = [];
 let listaGruposMostrar: { label: any; value: any }[] = [];
@@ -131,33 +131,7 @@ let fechaS: String = fechaHoy();
 let materiaS: String = '';
 let horarioL: any;
 
-import Echo from 'laravel-echo';
-window.Pusher = require('pusher-js');
-
-declare global {
-  interface Window {
-      Echo:any;
-      Pusher:any;
-  }
-}
-
 export default function () {
-
-  window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: 'ASDASD2121',
-    wsHost: window.location.hostname,
-    wsPort: 6001,
-    forceTLS: false,
-    disableStats: true,
-  });
-  window.Echo.private('notiSoli').listen('SoliEvent', (e:any) => {
-    console.log(e);
-  })
-  window.Echo.private('App.Models.User.1').notification((notification:any) => {
-    console.log(notification)
-  } )
-
   const customStyles = {
     content: {
       top: '50%',
@@ -202,7 +176,7 @@ export default function () {
         }
       }
     }
-    if(horariosMostrar.length==0){
+    if (horariosMostrar.length == 0) {
       horariosMostrar = horarios;
     }
     setSelectedHorario(horariosMostrar[0]);
@@ -262,7 +236,6 @@ export default function () {
         setStateGrupo(false);
         setStateNombres(false);
         setStateGrupoGharge(false);
-        console.log(response.data);
       });
   };
 
@@ -278,8 +251,6 @@ export default function () {
       setStateMateria(false);
       setStateMateriaCharge(false);
       setStateNombres(false);
-      console.log(response.data);
-      console.log(listaMateriasMostrar);
     });
   };
 
@@ -294,7 +265,7 @@ export default function () {
         if (docentesNombres.length == 0) {
           docentesNombres.push(name);
         }
-        console.log(listaDocentesMostrar);
+
         setStateMateria(true);
         setStateMateriaCharge(true);
         getMaterias(Id);
@@ -305,7 +276,6 @@ export default function () {
         for (let { id, name } of response.data) {
           listaDocentesMostrar.push({ label: name, value: name, id: id });
         }
-        console.log(listaDocentesMostrar);
       });
     }
   };
@@ -331,7 +301,6 @@ export default function () {
   }
 
   const handleChangeGrupos = (grupos: any) => {
-    console.log(grupos);
     setSelectedGroups(grupos);
     gruposS = [];
     if (grupos != null) {
@@ -373,7 +342,6 @@ export default function () {
   };
 
   const handleChangeMateria = (materia: any) => {
-    console.log(selectedGroups + 'estado');
     setSelectedMateria(materia);
     let { label, value } = materia;
     materiaS = value;
@@ -392,12 +360,10 @@ export default function () {
   const handleChangeHorario = (horario: any) => {
     setSelectedHorario(horario);
 
-    console.log(horario);
     let { label, value, pos } = horario;
     setMaxOfNumber(6);
     let numero = 21 - pos;
     if (numero < 6) {
-      console.log(numero + 'entreaquis');
       setMaxOfNumber(numero);
     }
     horarioS = value;
@@ -413,14 +379,12 @@ export default function () {
       }
       i += 1;
     }
-    console.log(horarioS);
   };
 
   const handleChangeTipo = (tipo: any) => {
     setSelectedTipo(tipo);
     let { label, value } = tipo;
     tipoS = value;
-    console.log(tipoS);
   };
 
   const handleChangePeriodo = (periodo: any) => {
@@ -430,24 +394,21 @@ export default function () {
     let i = 0;
     while (noEncontrado) {
       if (horariosFinales[i] === horarioL) {
-        console.log('posicion' + horariosFinales[i]);
         setHoraFin(horariosFinales[i + periodo]);
         noEncontrado = false;
       }
       i += 1;
     }
-    console.log(periodoS);
   };
 
   const handleChangeCantidad = (cantidad: any) => {
     setSelectedCantidad(cantidad);
     cantidadS = cantidad;
-    console.log(cantidadS);
   };
   const handleChangeCalendario = (fecha: any) => {
     let s = '';
     let sD = '';
-    console.log(fecha.getDate());
+
     if (fecha.getMonth() + 1 < 10) {
       s = '0';
     }
@@ -467,8 +428,6 @@ export default function () {
     esHoy = fecha;
     horaHoy();
     fechaS = formatted_date;
-
-    console.log(fechaS);
   };
 
   const solicitud = {
@@ -488,19 +447,18 @@ export default function () {
       .post(`${endpoint}/api/solicitudes/crear`, solicitud)
       .then(response => {
         if (response.data === 1) {
-          Inertia.visit('solicitudes/pendientes');
-          fechaS="";
-
+          docentesNombres=[];
+          docentesId=[];
+          fechaS = fechaHoy();
+          Inertia.visit(('solicitudes/pendientes'),{preserveState:false})
         } else {
           closeModal();
           openModalError();
         }
-        console.log(response.data);
       });
   };
 
   const validarDatos = () => {
-    console.log(gruposS.length + 'tamaño xd');
     let cantidad = parseInt(selectedCantidad);
     if (materiaS === '') {
       alert('El campo de materias no puede estar vacio');
@@ -528,7 +486,6 @@ export default function () {
     return event.preventDefault();
   };
 
-  console.log(solicitud);
   return (
     <>
       <AppLayout title="Informacion">

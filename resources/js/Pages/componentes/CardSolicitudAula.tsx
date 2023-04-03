@@ -5,7 +5,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { nanoid } from 'nanoid';
 import Xsquare from '../../Icons/X-square';
-const endpoint = 'http://127.0.0.1:8000';
+import { endpoint } from '@/Const/Endpoint';
 import {
   Button,
   Checkbox,
@@ -31,7 +31,7 @@ interface SolicitudAula {
   hora_requerida_solicitud: string;
   hora_fin_solicitud: string;
   responder: any;
-  created_at:string;
+  created_at: string;
 }
 
 export default function ({
@@ -47,7 +47,7 @@ export default function ({
   hora_requerida_solicitud,
   hora_fin_solicitud,
   responder,
-  created_at
+  created_at,
 }: SolicitudAula) {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [radioAceptar, SetRadioAceptar] = useState(true);
@@ -56,8 +56,8 @@ export default function ({
   const [motivos, SetMotivos] = useState('');
   const [stateBack, SetStateBack] = useState(false);
   const [aulasDisponibles, SetAulaDisponibles] = useState<any[]>();
-  const [aulasId, SetAulasId] = useState<any[]>();
-  const [listaBuscar, SetListaBuscar] = useState<any[]>();
+  const [aulasId, SetAulasId] = useState<any>();
+  const [listaBuscar, SetListaBuscar] = useState<any>();
   const [reserva, SetReserva] = useState({
     fecha: fecha_requerida_solicitud,
     hora_ini: hora_requerida_solicitud,
@@ -137,13 +137,13 @@ export default function ({
   };
 
   const openModal = () => {
-      let hora=hora_requerida_solicitud.substring(0,5)
-      let st= fecha_requerida_solicitud+" "+ hora;
-      if(new Date() > new Date(st)){
-         alert("Esta solicitud ya venció, por favor recargue la página")
-      }else{
-        setIsOpen(true);
-      }
+    let hora = hora_requerida_solicitud.substring(0, 5);
+    let st = fecha_requerida_solicitud + ' ' + hora;
+    if (new Date() > new Date(st)) {
+      alert('Esta solicitud ya venció, por favor recargue la página');
+    } else {
+      setIsOpen(true);
+    }
   };
 
   const closeModal = () => {
@@ -201,7 +201,6 @@ export default function ({
   const createReserva = () => {
     let soli;
 
-
     if (radioRechazar) {
       soli = {
         id_solicitud: id_solicitud,
@@ -210,7 +209,6 @@ export default function ({
         motivo: motivos,
         aceptar: false,
       };
-
     } else {
       soli = {
         id_solicitud: id_solicitud,
@@ -221,7 +219,6 @@ export default function ({
         id_aulas: aulasId,
         aceptar: true,
       };
-
     }
     responder(soli);
     closeModalConfir();
@@ -230,11 +227,10 @@ export default function ({
 
   const getID = () => {
     let ids = listaBuscar
-      ?.filter(item => {
+      ?.filter((item: { text: string; }) => {
         return item.text == aulaSeleccionada;
-      })
-      .map(item => item.idAula.join(','));
-    SetAulasId(ids);
+      }).map((item: { idAula: any; }) => item.idAula);
+    SetAulasId(ids[0]);
   };
 
   useEffect(() => {
@@ -253,7 +249,6 @@ export default function ({
         `¿Está seguro de aceptar asignando : ${aulaSeleccionada} a  esta solicitud?`,
       );
       getID();
-
     }
   }, [aulaSeleccionada]);
 
@@ -347,7 +342,7 @@ export default function ({
                   value={value}
                   onChange={handleChange}
                 >
-                  {listaMostrar.length!=0 ? (
+                  {listaMostrar.length != 0 ? (
                     listaMostrar.map(aula => {
                       return (
                         <FormControlLabel
@@ -359,7 +354,7 @@ export default function ({
                       );
                     })
                   ) : (
-                    <div className='text-center'>
+                    <div className="text-center">
                       <p className="rechazada">
                         No hay Aulas disponibles para asignar
                       </p>
@@ -376,7 +371,7 @@ export default function ({
               >
                 Atrás
               </button>
-              {listaMostrar.length!=0 ? (
+              {listaMostrar.length != 0 ? (
                 <button
                   type="button"
                   className="btn aceptadaButton text-white mr-6 ml-2 mb-4"
@@ -433,13 +428,13 @@ export default function ({
                     <div className=" space-x-4  ml-12 text-left fondoModal">
                       <div className="mt-4 flex flex-col">
                         <p className="font-bold mr-4">
-                          Nombre(s) de Docente(s): {docentes.toString()}
+                          Nombre(s) de Docente(s): {docentes.join(', ')}
                         </p>
                         <p className="font-bold ">
                           Materia: {materia_solicitud}{' '}
                         </p>
                         <p className="font-bold ">
-                          Grupo(s): {grupos.toString()}{' '}
+                          Grupo(s): {grupos.join(', ')}{' '}
                         </p>
                         <p className="font-bold ">
                           Cantidad de estudiantes:{' '}
@@ -449,13 +444,11 @@ export default function ({
                           Para fecha: {fecha_requerida_solicitud}
                         </p>
                         <p className="font-bold">
-                          Fecha de Creación:{' '}
-                          {created_at.substring(0, 10)}
+                          Fecha de Creación: {created_at.substring(0, 10)}
                         </p>
 
-                       <p className="font-bold">
-                          Hora de Creación:{' '}
-                          {created_at.substring(11, 16)}
+                        <p className="font-bold">
+                          Hora de Creación: {created_at.substring(11, 16)}
                         </p>
 
                         <p className="font-bold">
@@ -463,8 +456,7 @@ export default function ({
                           {hora_requerida_solicitud.substring(0, 5)}
                         </p>
                         <p className="font-bold">
-                          Hora Fin:{' '}
-                          {hora_fin_solicitud.substring(0, 5)}
+                          Hora Fin: {hora_fin_solicitud.substring(0, 5)}
                         </p>
                       </div>
                     </div>

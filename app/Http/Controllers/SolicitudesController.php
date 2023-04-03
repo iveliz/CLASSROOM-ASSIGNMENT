@@ -285,7 +285,7 @@ class SolicitudesController extends Controller
             $solicitud_existente=Solicitudes::select('id_solicitud')
             ->where('materia_solicitud',$nueva_solicitud->materia_solicitud)
             ->where('id_usuario',$datos_solicitud->id_usuario)
-            ->where('cantidad_estudiantes_solicitud',$nueva_solicitud->cantidad_estudiantes_solicitud)
+            //->where('cantidad_estudiantes_solicitud',$nueva_solicitud->cantidad_estudiantes_solicitud)
             ->where('motivo_reserva_solicitud',$nueva_solicitud->motivo_reserva_solicitud)
             ->where('periodos_solicitud',$nueva_solicitud->periodos_solicitud)
             ->where('fecha_requerida_solicitud',$nueva_solicitud->fecha_requerida_solicitud)
@@ -319,7 +319,6 @@ class SolicitudesController extends Controller
                 if($coincidencia==false){
                     $nueva_solicitud->save();
                     $id_nueva_solicitud = $nueva_solicitud->id_solicitud;
-                    $this->enviarNotificacionSoli($datos_solicitud->id_usuario,$id_nueva_solicitud);
                     
                     
                     foreach ($datos_solicitud->grupos_solicitud as $grupo){
@@ -336,12 +335,12 @@ class SolicitudesController extends Controller
                         
                     }
                     $res=1;
+                    $this->enviarNotificacionSoli($datos_solicitud->id_usuario,$id_nueva_solicitud);
                 }
                 //$res=$docente_distinto?1:0;
             }else{
                 $nueva_solicitud->save();
                 $id_nueva_solicitud = $nueva_solicitud->id_solicitud;
-                $this->enviarNotificacionSoli($datos_solicitud->id_usuario,$id_nueva_solicitud);
                 
                 foreach ($datos_solicitud->grupos_solicitud as $grupo){
                     $nuevo_grupo = new GrupoSolicitudes;
@@ -357,6 +356,7 @@ class SolicitudesController extends Controller
                     
                 }
                 $res=1;
+                $this->enviarNotificacionSoli($datos_solicitud->id_usuario,$id_nueva_solicitud);
             }
             
             
