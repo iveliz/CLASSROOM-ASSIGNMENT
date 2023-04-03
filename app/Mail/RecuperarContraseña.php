@@ -11,14 +11,16 @@ class RecuperarContraseña extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $info;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($data)
     {
         //
+      $this->info=$data;
     }
 
     /**

@@ -10,9 +10,11 @@ use App\Models\CorreoElectronico;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\userMail;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class recuperarContraseñaController extends Controller
 {
+  public $rute = 'http://127.0.0.1:8000';
     /**
      * Display a listing of the resource.
      *
@@ -71,7 +73,9 @@ class recuperarContraseñaController extends Controller
         if (count( $correoActual) == 0) {
             return 0;
           }else{
-            Mail::to($request->correo)->send(new RecuperarContraseña());
+
+            $link=route('restablecerCuenta');
+            Mail::to($request->correo)->send(new RecuperarContraseña($link));
             return 1;
            
           }

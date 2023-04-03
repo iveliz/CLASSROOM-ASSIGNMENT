@@ -12,6 +12,16 @@ import JetNavLink from '@/Jetstream/NavLink';
 import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink';
 import { Team } from '@/types';
 
+import Echo from 'laravel-echo';
+window.Pusher = require('pusher-js');
+
+declare global {
+  interface Window {
+      Echo:any;
+      Pusher:any;
+  }
+}
+
 interface Props {
   title: string;
   renderHeader?(): JSX.Element;
@@ -44,6 +54,18 @@ export default function AppLayout({
     e.preventDefault();
     Inertia.post(route('logout'));
   }
+
+  window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'ASDASD2121',
+    wsHost: window.location.hostname,
+    wsPort: 6001,
+    forceTLS: false,
+    disableStats: true,
+  });
+  window.Echo.private('App.Models.User.1').notification((notification:any) => {
+    console.log(notification)
+  } )
 
   return (
     <div>
