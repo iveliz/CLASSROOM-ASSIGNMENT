@@ -22,6 +22,12 @@ export default function () {
     },
   };
 
+ 
+  function ocultarBarra (){
+    let divB = document.querySelector("AppLayout .grid grid-cols-6 gap-4 .col-span-5 .mt-6 .barraCeleste");
+    divB 
+  }
+
   const [modalIsOpen, setIsOpen] = useState(false);
   const [modalIsOpenVoid, setIsOpenVoid] = useState(false);
   function openModal() {
@@ -59,12 +65,13 @@ export default function () {
 
   const getSolicitudes = () => {
     if(renderizar){
+      setMensaje(true)
       axios.get(`${endpoint}/api/solicitudes/pendientes/${id}`).then(response => {
         console.log(response.data);
         SetlistaSoli(response.data);
+        setMensaje(false)
       });
     }
-
   };
 
   useEffect(() => {
@@ -132,17 +139,36 @@ export default function () {
     }
   }
 
+  const [progressActivo,setProgressActivo] = useState(false);
+  const [mensaje,setMensaje] = useState(true);
+ 
 
   return (
-    <AppLayout title="Informacion">
-      <div className="grid grid-cols-6 gap-4">
+    
+    <AppLayout title="Informacion" >
+      <div className="grid grid-cols-6 gap-4"> 
         <div className=" colorPrimary mt-6 drop-shadow-lg ">
           <Sidebar></Sidebar>
         </div>
-        <div className="col-span-5">
-          <div className=" mt-6 ">
-            <h1 className="font-bold">Solicitudes Pendientes</h1>
-            <div className="fondoBarra  mr-8 ">
+        <div className="col-span-5"> 
+          <div className=" mt-6 "> 
+            <div className="d-flex flex-row">
+               <h1 className="p-2 mb-2  font-bold ">Solicitudes Pendientes </h1>
+            </div>
+            
+             <div className='text-center mr-8'>
+              {mensaje?
+              <h5 className='mt-10'>Espere...</h5>
+              :listaSoliState.length===0?
+              <h5 className='mt-10'>Aun no hay solicitudes para mostrar..gri..gri</h5>
+              :''}
+             </div>
+            
+            
+           { listaSoliState.length !==0 &&  
+            <div id="barraCeleste" className="barraC"
+            >
+             <div className="fondoBarra mr-8 ">
               <div className="flex">
                 <div className="mt-3 ml-4">
                   <input
@@ -160,6 +186,8 @@ export default function () {
                   <button type="button" className="btn botonBarra text-white" onClick={abrirModals}>
                     Cancelar Seleccionadas
                   </button>
+              </div>
+
                   <Modal
                     isOpen={modalIsOpen}
                     onAfterOpen={afterOpenModal}
@@ -193,6 +221,7 @@ export default function () {
                     </form>
                   </Modal>
                 <div>
+            
                 <Modal
                     isOpen={modalIsOpenVoid}
                     onAfterOpen={afterOpenModalVoid}
@@ -222,7 +251,7 @@ export default function () {
                  
                 </div>
               </div>
-            </div>
+            </div>}
           </div>
           <div>
             {listaSoliState.map(card => (
@@ -230,6 +259,7 @@ export default function () {
                 {...card}
                 handleSelect={handleSelect}
                 listaSeleccion={listaSeleccion}
+                setProgressActivo={setProgressActivo} 
                 key={nanoid(5)}
               />
             ))}

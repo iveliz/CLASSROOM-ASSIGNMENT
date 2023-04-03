@@ -13,9 +13,12 @@ interface Solicitud {
   cantidad_estudiantes_solicitud: Number;
   estado_solicitud: String;
   aulas: [];
-
   handleSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   listaSeleccion: number[];
+  setProgressActivo: any;
+  created_at: string;
+  hora_fin_solicitud: string;
+  hora_requerida_solicitud:any;
 }
 
 export default function ({
@@ -28,9 +31,12 @@ export default function ({
   docentes,
   estado_solicitud,
   aulas,
-
   handleSelect,
   listaSeleccion,
+  setProgressActivo,
+  created_at,
+  hora_fin_solicitud,
+  hora_requerida_solicitud
 }: Solicitud) {
   const [modalIsOpen, setIsOpen] = useState(false);
 
@@ -63,6 +69,7 @@ export default function ({
 
   return (
     <div>
+      {setProgressActivo(true)}
       <div className="card mt-3 mr-8">
         <div className="card-body ">
           <div className="hstack gap-3 items-end ">
@@ -115,6 +122,22 @@ export default function ({
                     Para fecha: {fecha_requerida_solicitud}
                   </p>
                   <p className="font-bold">
+                    Hora Inicio: {hora_requerida_solicitud.substring(0, 5)}
+                  </p>
+                  <p className="font-bold">
+                    Fecha de Creación: {created_at.substring(0, 10)}
+                  </p>
+
+                  <p className="font-bold">
+                    Hora de Creación: {created_at.substring(11, 16)}
+                  </p>
+                  <p className="font-bold">
+                    Hora Fin: {hora_fin_solicitud.substring(0, 5)}
+                  </p>
+                  <p className="font-bold">
+                    Hora Fin: {hora_fin_solicitud.substring(0, 5)}
+                  </p>
+                  <p className="font-bold">
                     <span className="aceptada">{subtitulo}</span>
                     {mensaje}
                   </p>
@@ -135,7 +158,4 @@ export default function ({
       </div>
     </div>
   );
-}
-{
-  /*( =ω=)..nyaa falta cancelar e informacion */
 }

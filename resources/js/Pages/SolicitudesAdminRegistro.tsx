@@ -5,6 +5,7 @@ import Sidebar from '@/Jetstream/SidebarAdmin';
 import CircularProgress from '@mui/material/CircularProgress';
 import { solicitudes } from '@/Const/solicitudes';
 import Cardsolicitud from '@/Jetstream/CardsolicitudPendiente';
+import Backdrop from '@mui/material/Backdrop';
 import axios from 'axios';
 import { useEffect } from "react";
 import { nanoid } from 'nanoid';
@@ -18,11 +19,14 @@ export default function (props:any) {
 
   const [listaRegistro,setListaRegistro] = useState<any[]>([]);
   const [progressActivo,setProgressActivo] = useState(false);
+  const [mensajeEspera,setMensajeEspera] = useState(true);
   const getSolicitudes=  async()=>{
     await axios.get(`${endpoint}/SolicitudCuenta`).then((response)=>{
       setListaRegistro(response.data);
       console.log(response.data)
+      setMensajeEspera(true)
     })
+    setMensajeEspera(false)
   }
 
   useEffect(()=>{
@@ -44,16 +48,27 @@ export default function (props:any) {
 
         </div>
         <div className="col-span-5">
-          <div className="ml-5 mt-6 ">
+          <div className="ml-5 mt-6">
             <div className="d-flex flex-row">
               <div> <h1 className="p-2 font-bold">Solicitudes de Registros</h1></div>
-              <div className="p-2 ml-2">{progressActivo ?<CircularProgress />:''}</div>
             </div>
-            <div>
+            <div className='text-center mr-8'>
+              {mensajeEspera?<h5 className='mt-10'>Espere...</h5>:listaRegistro.length==0?<h5 className='mt-10'>Aun no hay solicitudes para mostrar..gri..gri</h5>:''}
+            </div>
+            <div className=''>
               {(listaRegistro.map((registro) => {
                 
                 return <CardSolicitudCuenta{...registro} setProgressActivo={setProgressActivo} actualizar={limpiar} key={nanoid(4)} />
               }))}
+              <Backdrop
+                sx={{
+                  color: '#fff',
+                  zIndex: theme => theme.zIndex.drawer + 1,
+                }}
+                open={progressActivo}
+              >
+                <CircularProgress color="inherit" />
+              </Backdrop>
             </div>
           </div>
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SoliEvent;
 use Illuminate\Http\Request;
 use App\Models\Solicitudes;
 use App\Models\GrupoSolicitudes;
@@ -10,8 +11,13 @@ use App\Models\RegistroSolicitudes;
 use App\Models\Reserva;
 use App\Models\AulaReserva;
 use App\Models\Aula;
+use App\Models\User;
+use App\Notifications\ResNotification;
+use App\Notifications\SoliNotification;
+use App\Notifications\SoliNotificationDB;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use stdClass;
 
 class SolicitudesController extends Controller
 {
@@ -42,6 +48,7 @@ class SolicitudesController extends Controller
 
             $soli->grupos=$grupos_solicitud;
             $soli->docentes=$docentes_solicitud;
+            $soli->hora_fin_solicitud=$this->horaFin($soli['hora_requerida_solicitud'],$soli['periodos_solicitud']);
         }
         
         return $solicitudes;
@@ -72,6 +79,8 @@ class SolicitudesController extends Controller
 
             $soli->grupos=$grupos_solicitud;
             $soli->docentes=$docentes_solicitud;
+            $soli->hora_fin_solicitud=$this->horaFin($soli['hora_requerida_solicitud'],$soli['periodos_solicitud']);
+            $soli->hora_creacion = $this->horaCreacion($soli['created_at']);
         }
 
         return $solicitudes;
@@ -101,6 +110,8 @@ class SolicitudesController extends Controller
 
             $soli->grupos=$grupos_solicitud;
             $soli->docentes=$docentes_solicitud;
+            $soli->hora_fin_solicitud = $this->horaFin($soli['hora_requerida_solicitud'],$soli['periodos_solicitud']);
+            $soli->hora_creacion = $this->horaCreacion($soli['created_at']);
         }
 
         return $solicitudes;
@@ -142,6 +153,8 @@ class SolicitudesController extends Controller
             $soli->grupos=$grupos_solicitud;
             $soli->docentes=$docentes_solicitud;
             $soli->aulas=$aulas_reservadas;
+            $soli->hora_fin_solicitud=$this->horaFin($soli['hora_requerida_solicitud'],$soli['periodos_solicitud']);
+            $soli->hora_creacion = $this->horaCreacion($soli['created_at']);
         }
 
         $res = array();
@@ -189,6 +202,8 @@ class SolicitudesController extends Controller
             $soli->grupos=$grupos_solicitud;
             $soli->docentes=$docentes_solicitud;
             $soli->aulas=$aulas_reservadas;
+            $soli->hora_fin_solicitud=$this->horaFin($soli['hora_requerida_solicitud'],$soli['periodos_solicitud']);
+            $soli->hora_creacion = $this->horaCreacion($soli['created_at']);
         }
 
         $res = array();
@@ -236,6 +251,8 @@ class SolicitudesController extends Controller
             $soli->grupos=$grupos_solicitud;
             $soli->docentes=$docentes_solicitud;
             $soli->aulas=$aulas_reservadas;
+            $soli->hora_fin_solicitud=$this->horaFin($soli['hora_requerida_solicitud'],$soli['periodos_solicitud']);
+            $soli->hora_creacion = $this->horaCreacion($soli['created_at']);
         }
 
         $res = array();
@@ -302,6 +319,7 @@ class SolicitudesController extends Controller
                 if($coincidencia==false){
                     $nueva_solicitud->save();
                     $id_nueva_solicitud = $nueva_solicitud->id_solicitud;
+                    $this->enviarNotificacionSoli($datos_solicitud->id_usuario,$id_nueva_solicitud);
                     
                     
                     foreach ($datos_solicitud->grupos_solicitud as $grupo){
@@ -323,7 +341,7 @@ class SolicitudesController extends Controller
             }else{
                 $nueva_solicitud->save();
                 $id_nueva_solicitud = $nueva_solicitud->id_solicitud;
-                
+                $this->enviarNotificacionSoli($datos_solicitud->id_usuario,$id_nueva_solicitud);
                 
                 foreach ($datos_solicitud->grupos_solicitud as $grupo){
                     $nuevo_grupo = new GrupoSolicitudes;
@@ -433,4 +451,42 @@ class SolicitudesController extends Controller
         return $res;
     }
 
+    private function horaFin($hora, $periodos)
+  {
+    #hora = 00:00:00
+    $hh = substr($hora, 0, 2);
+    $mm = substr($hora, 3, 2);
+    $ss = substr($hora, 6, 2);
+    $hh_int = intval($hh);
+    $mm_int = intval($mm);
+    $ss_int = intval($ss);
+    $mm_int = (int) ($periodos * 45 + $mm) % 60;
+    $hh_int = (int) ($hh + ($periodos * 45 + $mm) / 60);
+    if ($mm_int < 10) {
+      $mm = '0' . strval($mm_int);
+    } else {
+      $mm = strval($mm_int);
+    }
+    if ($hh_int < 10) {
+      $hh = '0' . strval($hh_int);
+    } else {
+      $hh = strval($hh_int);
+    }
+    return $hh . ':' . $mm . ':' . $ss;
+  }
+
+  private function horaCreacion($hora){
+      return substr($hora,-8);
+  }
+  
+  public function enviarNotificacionSoli($id_usuario,$id_solicitud){
+    $usuario = User::where('id',$id_usuario)->first();
+    $nombre = $usuario->user_name;
+    $mensaje = "Ha recibido una nueva solicitud (Aula) de: ".$nombre;
+    //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
+    User::whereIn('id_role',[1,3])
+        ->each(function(User $user) use ($mensaje,$id_solicitud){
+            $user->notify(new SoliNotification($mensaje,$id_solicitud));
+        });
+  }
 }

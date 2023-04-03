@@ -29,6 +29,6 @@ class userMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Esto es una prueba de correo')->view('usuarioMail');
+        return $this->subject('Informacion de registro de cuenta')->view('usuarioMail');
     }
 }

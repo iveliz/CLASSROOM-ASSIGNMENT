@@ -31,6 +31,11 @@ interface SolicitudRegistro {
   };
   actualizar:any;
   setProgressActivo:any;
+  correoDocente:String;
+  motivo: String;
+  hora_fin_solicitud: string;
+  created_at:any;
+
 }
 
 export default function ({
@@ -43,6 +48,10 @@ export default function ({
   usuarioSimilar,
   actualizar,
   setProgressActivo,
+  correoDocente,
+  motivo,
+  created_at,
+
 }: SolicitudRegistro) {
   const style = {
     position: 'absolute' as 'absolute',
@@ -159,13 +168,16 @@ export default function ({
   let { id, name, email } = user;
 
   const createReserva = () => {
-  
+
     let solicitud_ctn;
     let solicitud_ctn2;
     if (radioRechazar) {
       solicitud_ctn = {
         id_sct_cnt: id_sct_cnt,
         id: user.id,
+        correoDocente: correo_principal_sct_cnt,
+        motivo:motivos,
+
       };
       axios
         .post(`${endpoint}/rechazarSolicitudCuenta`, solicitud_ctn)
@@ -237,7 +249,7 @@ export default function ({
                 >
                   Aceptar
                 </button>
-             
+
               </div>
             </form>
           </Box>
@@ -350,6 +362,16 @@ export default function ({
                         <p className="font-bold ">
                           Fecha de solicitud: {fecha}
                         </p>
+                        <p className="font-bold">
+                          Fecha de Creación:{' '}
+                          {created_at.substring(0, 10)}
+                        </p>
+
+                       <p className="font-bold">
+                          Hora de Creación:{' '}
+                          {created_at.substring(11, 16)}
+                        </p>
+
                       </div>
                     </div>
                     <div className=" fondoModal2 ">

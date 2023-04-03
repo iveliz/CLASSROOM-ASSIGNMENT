@@ -21,16 +21,17 @@ import axios from 'axios';
 interface SolicitudAula {
   id_solicitud: Number;
   id_usuario: Number;
-  fecha_requerida_solicitud: String;
-  name: String;
-  prioridad: String;
+  fecha_requerida_solicitud: string;
+  name: string;
+  prioridad: string;
   docentes: [];
-  materia_solicitud: String;
+  materia_solicitud: string;
   grupos: [];
   cantidad_estudiantes_solicitud: Number;
-  hora_requerida_solicitud: String;
-  hora_fin_solicitud: String;
+  hora_requerida_solicitud: string;
+  hora_fin_solicitud: string;
   responder: any;
+  created_at:string;
 }
 
 export default function ({
@@ -46,6 +47,7 @@ export default function ({
   hora_requerida_solicitud,
   hora_fin_solicitud,
   responder,
+  created_at
 }: SolicitudAula) {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [radioAceptar, SetRadioAceptar] = useState(true);
@@ -135,7 +137,13 @@ export default function ({
   };
 
   const openModal = () => {
-    setIsOpen(true);
+      let hora=hora_requerida_solicitud.substring(0,5)
+      let st= fecha_requerida_solicitud+" "+ hora;
+      if(new Date() > new Date(st)){
+         alert("Esta solicitud ya venció, por favor recargue la página")
+      }else{
+        setIsOpen(true);
+      }
   };
 
   const closeModal = () => {
@@ -148,7 +156,7 @@ export default function ({
     handleOpenBack();
     axios.post(`${endpoint}/aulasDisponibles`, reserva).then(response => {
       SetAulaDisponibles(response.data);
-      console.log(response.data);
+
       handleCloseBack();
       handleOpen();
     });
@@ -193,7 +201,7 @@ export default function ({
   const createReserva = () => {
     let soli;
 
-    console.log(aulasId);
+
     if (radioRechazar) {
       soli = {
         id_solicitud: id_solicitud,
@@ -202,7 +210,7 @@ export default function ({
         motivo: motivos,
         aceptar: false,
       };
-      console.log('rechazado');
+
     } else {
       soli = {
         id_solicitud: id_solicitud,
@@ -213,7 +221,7 @@ export default function ({
         id_aulas: aulasId,
         aceptar: true,
       };
-      console.log('aceptado');
+
     }
     responder(soli);
     closeModalConfir();
@@ -245,7 +253,7 @@ export default function ({
         `¿Está seguro de aceptar asignando : ${aulaSeleccionada} a  esta solicitud?`,
       );
       getID();
-      console.log(aulasId);
+
     }
   }, [aulaSeleccionada]);
 
@@ -441,8 +449,22 @@ export default function ({
                           Para fecha: {fecha_requerida_solicitud}
                         </p>
                         <p className="font-bold">
+                          Fecha de Creación:{' '}
+                          {created_at.substring(0, 10)}
+                        </p>
+
+                       <p className="font-bold">
+                          Hora de Creación:{' '}
+                          {created_at.substring(11, 16)}
+                        </p>
+
+                        <p className="font-bold">
                           Hora Inicio:{' '}
                           {hora_requerida_solicitud.substring(0, 5)}
+                        </p>
+                        <p className="font-bold">
+                          Hora Fin:{' '}
+                          {hora_fin_solicitud.substring(0, 5)}
                         </p>
                       </div>
                     </div>

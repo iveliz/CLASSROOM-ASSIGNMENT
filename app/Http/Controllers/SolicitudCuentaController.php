@@ -7,6 +7,11 @@ use App\Models\RegistroCuenta;
 use App\Models\CorreoElectronico;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Mail\userMailRechazo;
+use App\Models\RegistroSolicitudes;
+use App\Models\User;
+use App\Notifications\SoliNotification;
+use Illuminate\Support\Facades\Mail;
 class SolicitudCuentaController extends Controller
 {
   /**
@@ -98,6 +103,7 @@ class SolicitudCuentaController extends Controller
       'usuario_sct_cnt',
       'correo_principal_sct_cnt',
       'correo_secundario_sct_cnt',
+      'created_at',
       DB::raw("(DATE_FORMAT(created_at, '%d-%m-%Y')) as fecha")
     )
       ->where('estado_sct_cnt', 'pendiente')
@@ -125,7 +131,7 @@ class SolicitudCuentaController extends Controller
           levenshtein(
             strtolower($soli->nombre_sct_cnt),
             strtolower($usuariosActuales[$i]->name)
-          ) <= 5 
+          ) <= 5
         ) {
           $soli->usuarioSimilar = $usuariosActuales[$i];
           $encontrado = true;
@@ -169,6 +175,8 @@ class SolicitudCuentaController extends Controller
                 $datos_solicitud->correo_secundario;
               $nueva_solicitud->estado_sct_cnt = 'pendiente';
               $nueva_solicitud->save();
+
+              $this->enviarNotificacion($datos_solicitud->usuario_sct_cnt,$nueva_solicitud->id);
               $res = 1;
             } else {
               $res = 5;
@@ -229,10 +237,27 @@ class SolicitudCuentaController extends Controller
           $datos_solicitud->id_sct_cnt
         )->update(['estado_sct_cnt' => 'rechazada']);
         $res = 1;
+
+        $send = new RegistroSolicitudes();
+        $send->motivo_reg_sct = $datos_solicitud->motivo;
+
+        Mail::to($datos_solicitud->correoDocente)->send(
+          new userMailRechazo($send)
+        );
       }
     } catch (\Throwable $th) {
       $res = $th;
     }
     return $res;
+  }
+  public function enviarNotificacion($nombre,$id_sct_cnt){
+    //$usuario = User::where('id',$id_usuario)->first();
+    //$nombre = $usuario->user_name;
+    $mensaje = "Ha recibido una nueva solicitud (Registro) de: ".$nombre;
+    //$usuario->notify(new SoliNotificationDB($mensaje,$id_solicitud));
+    User::where('id_role',1)
+        ->each(function(User $user) use ($mensaje,$id_sct_cnt){
+            $user->notify(new SoliNotification($mensaje,$id_sct_cnt));
+        }); 
   }
 }

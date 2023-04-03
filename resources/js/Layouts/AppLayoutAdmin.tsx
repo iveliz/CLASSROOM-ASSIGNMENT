@@ -10,22 +10,39 @@ import JetDropdown from '@/Jetstream/Dropdown';
 import JetDropdownLink from '@/Jetstream/DropdownLink';
 import JetNavLink from '@/Jetstream/NavLink';
 import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink';
+// import Notifications from 'react-notifications-menu';
 import { Team } from '@/types';
+import IconUser from '../Icons/userIcon';
+import bell1 from '../Icons/Check';
 
 interface Props {
   title: string;
   renderHeader?(): JSX.Element;
+
 }
 
 export default function AppLayoutAdmin({
   title,
   renderHeader,
   children,
+
 }: PropsWithChildren<Props>) {
+
+  const DEFAULT_NOTIFICATION = {
+    image:
+      'https://cutshort-data.s3.amazonaws.com/cloudfront/public/companies/5809d1d8af3059ed5b346ed1/logo-1615367026425-logo-v6.png',
+    message: 'Notification one.',
+    detailPage: '/events',
+    receivedTime: '12h ago',
+  };
+
   const page = useTypedPage();
   const route = useRoute();
   const [showingNavigationDropdown, setShowingNavigationDropdown] =
     useState(false);
+
+  const [data, setData] = useState([DEFAULT_NOTIFICATION]);
+  const [message, setMessage] = useState('');
 
   function switchToTeam(e: React.FormEvent, team: Team) {
     e.preventDefault();
@@ -44,6 +61,9 @@ export default function AppLayoutAdmin({
     e.preventDefault();
     Inertia.post(route('logout'));
   }
+  {
+    /*imagen aca */
+  }
 
   return (
     <div>
@@ -59,9 +79,7 @@ export default function AppLayoutAdmin({
               <div className="flex">
                 {/* <!-- Logo --> */}
                 <div className="flex-shrink-0 flex items-center">
-                  
-                    <JetApplicationMark className="block h-9 w-auto" />
-               
+                  <JetApplicationMark className="block h-9 w-auto" />
                 </div>
 
                 {/* <!-- Navigation Links --> */}
@@ -86,14 +104,33 @@ export default function AppLayoutAdmin({
                   >
                     Registrar
                   </JetNavLink>
-
-
+                  <JetNavLink
+                    href={route('materias')}
+                    active={route().current('materias')}
+                  >
+                    Materias
+                  </JetNavLink>
                 </div>
-
               </div>
 
               <div className="hidden sm:flex sm:items-center sm:ml-6">
                 <div className="ml-3 relative">
+                  <div className="mr-4 mt-2 ">
+                    {/* <Notifications
+                      id="noti2"
+                      data={data}
+                      header={{
+                        title: 'Notifications',
+                        option: {
+                          text: 'View All',
+                          onClick: () => console.log('Clicked'),
+                        },
+                      }}
+                      icon={
+                        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/OOjs_UI_icon_bell-invert.svg/1024px-OOjs_UI_icon_bell-invert.svg.png'
+                      }
+                    /> */}
+                  </div>
                   {/* <!-- Teams Dropdown --> */}
                   {page.props.jetstream.hasTeamFeatures ? (
                     <JetDropdown
@@ -247,7 +284,9 @@ export default function AppLayoutAdmin({
                     <div className="border-t border-gray-100"></div>
                     {/* <!-- Authentication --> */}
                     <form onSubmit={logout}>
-                      <JetDropdownLink as="button">Cerrar Sesión</JetDropdownLink>
+                      <JetDropdownLink as="button">
+                        Cerrar Sesión
+                      </JetDropdownLink>
                     </form>
                   </JetDropdown>
                 </div>
@@ -319,6 +358,12 @@ export default function AppLayoutAdmin({
                 active={route().current('registrar')}
               >
                 Registrar
+              </JetResponsiveNavLink>
+              <JetResponsiveNavLink
+                href={route('materias')}
+                active={route().current('materias')}
+              >
+                Materias
               </JetResponsiveNavLink>
             </div>
 

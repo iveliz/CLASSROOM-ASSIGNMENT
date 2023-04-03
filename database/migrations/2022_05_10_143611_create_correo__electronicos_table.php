@@ -21,7 +21,7 @@ class CreateCorreoElectronicosTable extends Migration
             ->on('users')
             ->onDelete('set null');
             $table->string('email_principal', 250)->unique();
-            $table->string('email_secundario', 250)->unique();;
+            $table->string('email_secundario', 250)->unique();
             $table->timestamps();
 
         });
